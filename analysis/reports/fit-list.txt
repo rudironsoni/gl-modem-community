@@ -1,0 +1,32 @@
+FIT description: ARM64 OpenWrt FIT (Flattened Image Tree)
+Created:         Mon Jun 29 12:59:20 2026
+ Image 0 (kernel-1)
+  Description:  ARM64 OpenWrt Linux-6.12.94
+  Created:      Mon Jun 29 12:59:20 2026
+  Type:         Kernel Image
+  Compression:  lzma compressed
+  Data Size:    5279755 Bytes = 5156.01 KiB = 5.04 MiB
+  Architecture: AArch64
+  OS:           Linux
+  Load Address: 0x48000000
+  Entry Point:  0x48000000
+  Hash algo:    crc32
+  Hash value:   0f62ff79
+  Hash algo:    sha1
+  Hash value:   c847d5370841df70f0db3fa24478107b0d5e4d37
+ Image 1 (fdt-1)
+  Description:  ARM64 OpenWrt glinet_gl-mt3000 device tree blob
+  Created:      Mon Jun 29 12:59:20 2026
+  Type:         Flat Device Tree
+  Compression:  uncompressed
+  Data Size:    24076 Bytes = 23.51 KiB = 0.02 MiB
+  Architecture: AArch64
+  Hash algo:    crc32
+  Hash value:   5505f540
+  Hash algo:    sha1
+  Hash value:   59e33bc7673a82d2467d29369e7d0088f5089fe2
+ Default Configuration: 'config-1'
+ Configuration 0 (config-1)
+  Description:  OpenWrt glinet_gl-mt3000
+  Kernel:       kernel-1
+  FDT:          fdt-1

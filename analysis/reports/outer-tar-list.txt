@@ -1,0 +1,4 @@
+drwxr-xr-x  0 0      0           0 Jun 29 14:59 sysupgrade-glinet_gl-mt3000/
+-rw-r--r--  0 0      0          23 Jun 29 14:59 sysupgrade-glinet_gl-mt3000/CONTROL
+-rw-r--r--  0 0      0     5305224 Jun 29 14:59 sysupgrade-glinet_gl-mt3000/kernel
+-rw-r--r--  0 0      0    71297024 Jun 29 14:59 sysupgrade-glinet_gl-mt3000/root

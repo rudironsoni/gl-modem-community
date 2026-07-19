@@ -1,0 +1,3 @@
+/repo/work/identify/sysupgrade-glinet_gl-mt3000/CONTROL: BOA archive data
+/repo/work/identify/sysupgrade-glinet_gl-mt3000/kernel: Device Tree Blob version 17, size=5305224, boot CPU=0, string block size=108, DT structure block size=5304676
+/repo/work/identify/sysupgrade-glinet_gl-mt3000/root: Squashfs filesystem, little endian, version 4.0, xz compressed, 71296534 bytes, 4595 inodes, blocksize: 262144 bytes, created: Mon Jun 29 12:59:20 2026

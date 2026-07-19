@@ -1,0 +1,1 @@
+/Users/rudimar.ronsoni@feverup.com/src/rudironsoni/openwrt-mt3000-travel-router/gl_modem/mt3000-gl-modem-research/work/extraction-new/outer/sysupgrade-glinet_gl-mt3000/root
