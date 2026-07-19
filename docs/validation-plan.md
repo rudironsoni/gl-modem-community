@@ -37,3 +37,39 @@ Run each case with browser UI and mobile app where available: modem disconnected
 For every test record request, response, ubus event, AT transcript with identifiers redacted, interface/address/route/DNS state, process exit, and timeout. Compare failures against stock numeric and JSON error contracts.
 
 Success requires basic identity, SIM state, registration, APN connect/disconnect, route/DNS, reconnect, and UI/app status to be reproduced. Advanced signal, cell, band, lock, temperature, and reset remain separate gates. Offline analysis alone cannot pass any runtime gate.
+
+### FM350 `0.1.2-r1` focused loop
+
+Install and restart both layers so an already-running stock `modem_AT` process cannot survive the bind-mount change:
+
+```sh
+sha256sum /tmp/gl-modem-community-0.1.2-r1.apk
+apk add --allow-untrusted /tmp/gl-modem-community-0.1.2-r1.apk
+/etc/init.d/gl_modem_community enable
+/etc/init.d/gl_modem_community restart
+/etc/init.d/gl_cellular_manager restart
+```
+
+The expected package SHA-256 is `58eabf76096e9f6778268f4f53a791c4313c0c049aa60833e776339a21e7269a`.
+
+Before pressing Connect, capture:
+
+```sh
+mount | grep -E '(/usr/bin/modem_AT|/lib/modem_data/modem_list.json)'
+ubus list -v cellular.sim
+ubus list -v cellular.modem
+logread | grep -E 'FM350 modem_AT compatibility|modem_AT: Bus:|SIM INSERT|common_get_pdp|set min function|pdp state|get_v4_info|Dial success'
+```
+
+Pass for the primary hypothesis requires `FM350 modem_AT compatibility active bus=2-1 port=/dev/ttyUSB3` and no new `Failed to set min function` after Connect. Then verify the secondary boundary: a `CGDCONT` CID is found, `CGACT` becomes active, `CGPADDR` yields an address, and `network.interface.modem_2_1_s1` reaches up state. The Wi-Fi repeater's `wwan`/`sta0` address is unrelated and must not be counted as cellular success.
+
+If `common_get_pdp: cid ... not found` continues, capture raw `AT+CGDCONT?` through the stock authenticated AT method before changing anything else. If PDP activation succeeds but netifd fails, the remaining defect is the `xmm` handoff, not SIM detection or APN parsing.
+
+Revert with:
+
+```sh
+/etc/init.d/gl_modem_community stop
+apk del gl-modem-community
+/etc/init.d/gl_cellular_manager restart
+mount | grep -E '(/usr/bin/modem_AT|/lib/modem_data/modem_list.json)' || true
+```

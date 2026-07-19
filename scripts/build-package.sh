@@ -42,5 +42,6 @@ make package/gl-modem-community/compile V=s
 artifact=$(find "$SDK_DIR/bin/packages" -type f -name "$PACKAGE_ARTIFACT" -print | head -n 1)
 test -n "$artifact"
 cp "$artifact" "$REPO_DIR/artifacts/"
+chmod 0644 "$REPO_DIR/artifacts/$PACKAGE_ARTIFACT"
 shasum -a 256 "$artifact" | sed "s#  $REPO_DIR/#  #" > "$ANALYSIS_DIR/hashes/gl-modem-community.apk.sha256"
 printf '%s\n' "${artifact#$REPO_DIR/}" > "$ANALYSIS_DIR/reports/package-artifact-path.txt"

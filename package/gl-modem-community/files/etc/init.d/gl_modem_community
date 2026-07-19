@@ -8,9 +8,22 @@ USE_PROCD=1
 RUNTIME_DIR=/var/run/gl-modem-community
 STOCK_LIST=/lib/modem_data/modem_list.json
 MERGED_LIST=$RUNTIME_DIR/modem_list.json
+MODEM_AT=/usr/bin/modem_AT
+STOCK_MODEM_AT=$RUNTIME_DIR/modem_AT.stock
+MODEM_AT_WRAPPER=/usr/libexec/gl-modem-community/modem_AT-wrapper
 
 is_mounted() {
 	grep -F " $STOCK_LIST " /proc/mounts >/dev/null 2>&1
+}
+
+is_modem_at_mounted() {
+	grep -F " $MODEM_AT " /proc/mounts >/dev/null 2>&1
+}
+
+mount_modem_at_wrapper() {
+	is_modem_at_mounted && return 0
+	cp -p "$MODEM_AT" "$STOCK_MODEM_AT" || return 1
+	mount -o bind "$MODEM_AT_WRAPPER" "$MODEM_AT" || return 1
 }
 
 start_service() {
@@ -20,6 +33,7 @@ start_service() {
 	[ "$enabled" -eq 1 ] || return 0
 
 	mkdir -p "$RUNTIME_DIR"
+	mount_modem_at_wrapper || return 1
 	/usr/libexec/gl-modem-community/merge-models \
 		"$STOCK_LIST" /usr/share/gl-modem-community/drivers.d "$MERGED_LIST" || return 1
 
@@ -28,6 +42,7 @@ start_service() {
 
 stop_service() {
 	is_mounted && umount "$STOCK_LIST"
+	is_modem_at_mounted && umount "$MODEM_AT"
 	return 0
 }
 

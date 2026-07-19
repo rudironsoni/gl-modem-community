@@ -6,6 +6,9 @@
 - [UNVERIFIED] Whether FM350 `CGMI`/`CGMM` response formatting passes the stock common parser.
 - [CONFIRMED] FM350 uses `ttyUSB`, not `ttyACM`, in the observed RNDIS composition. Product-specific AT offsets are `2` for `7126`/USB interface `04` and `3` for `7127`/USB interface `06`.
 - [UNVERIFIED] Correct data interface addressing, `supports_ip_type`, direct-IP prefix, gateway, MTU, and MAC behavior on this router/firmware.
+- [CONFIRMED] Stock `function_at_common` reaches SIM insert and reads ICCID/IMSI, then fails before PDP activation with missing `CGDCONT` definitions and a failed minimum-function transition.
+- [UNVERIFIED] Whether FM350-only `CFUN=0` to `CFUN=4` translation lets stock `CGDCONT`, `CGACT`, and `CGPADDR` complete.
+- [UNVERIFIED] Whether the UI's SIM state failure is caused by the padded ICCID suffix `f`, a failed status poll, or a frontend schema expectation.
 - [UNVERIFIED] Whether a later binary allowlist exists after hotplug admission.
 - [UNVERIFIED] Mobile-app transport and tolerance of partial capabilities.
 - [UNVERIFIED] Runtime behavior of the Lua `.so` fallback and exact GL error propagation.

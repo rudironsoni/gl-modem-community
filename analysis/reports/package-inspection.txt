@@ -1,13 +1,16 @@
 [CONFIRMED] Official OpenWrt SDK build completed with exit status 0.
+
 SDK: openwrt-sdk-25.12.5-mediatek-filogic_gcc-14.3.0_musl.Linux-x86_64.tar.zst
 SDK SHA-256: ff4a38a397caa2cfe1c39e18f84ddede14878221b3593c3f2c4cfe24e3ec4c25
-Artifact: gl-modem-community-0.1.1-r1.apk
-Artifact size: 6,660 bytes
-Artifact SHA-256: 85e8107318b0f922953e07d0ec4d8a0b166ebb1a84409639fe18942b1a9140e1
+Artifact: gl-modem-community-0.1.2-r1.apk
+Artifact size: 8,707 bytes
+Artifact SHA-256: 58eabf76096e9f6778268f4f53a791c4313c0c049aa60833e776339a21e7269a
 APK schema: v3
-APK arch: noarch
+APK arch: aarch64_cortex-a53
 APK license: GPL-3.0-only
-APK installed-size: 13,791 bytes
+APK installed-size: 19,334 bytes
 APK dependencies: comgt>=0, jq>=0, kmod-usb-acm>=0, kmod-usb-net-rndis>=0, kmod-usb-serial-option>=0, libc
+FM350 compatibility ELF packaged size: 4,098 bytes
+FM350 compatibility ELF packaged SHA-256: 00d2f6bbf32f20b69355e3a3c18e4122adb7dad06d36577170ee6bcd514386b0
 
-Inspected with the SDK's own apk-tools 3.0.5 `adbdump` command. The APK itself is ignored by Git.
+Inspected with the SDK's apk-tools 3.0.5 `adbdump` command.
