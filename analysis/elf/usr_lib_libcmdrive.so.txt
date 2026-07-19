@@ -1,7 +1,7 @@
 path: /usr/lib/libcmdrive.so
 sha256: f4bf9b1750f96da82f8ec7311d729c9d568bc384dcd4a592c84c23077050642b
 
-/Users/rudimar.ronsoni@feverup.com/src/rudironsoni/openwrt-mt3000-travel-router/gl_modem/mt3000-gl-modem-research/extracted/rootfs/usr/lib/libcmdrive.so: ELF 64-bit LSB shared object, ARM aarch64, version 1 (SYSV), dynamically linked, no section header
+/usr/lib/libcmdrive.so: ELF 64-bit LSB shared object, ARM aarch64, version 1 (SYSV), dynamically linked, no section header
 
 ## readelf -h -l -d -n -s
 ELF Header:

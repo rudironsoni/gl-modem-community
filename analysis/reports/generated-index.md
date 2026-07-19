@@ -1,7 +1,9 @@
 # Generated evidence index
 
-Generated UTC: 2026-07-19T19:11:02Z
+Generated UTC: 2026-07-19T19:20:20Z
 
+- ``analysis/callgraphs/.gitkeep
+- ``analysis/configs/.gitkeep
 - ``analysis/configs/etc_config_glmodem
 - ``analysis/configs/etc_openwrt_release
 - ``analysis/configs/etc_os-release

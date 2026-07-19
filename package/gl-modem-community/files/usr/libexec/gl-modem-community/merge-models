@@ -1,0 +1,26 @@
+#!/bin/sh
+# SPDX-License-Identifier: GPL-3.0-only
+set -eu
+
+base=${1:?base modem list required}
+drivers=${2:?driver directory required}
+output=${3:?output path required}
+tmp="${output}.tmp.$$"
+trap 'rm -f "$tmp"' EXIT INT TERM
+
+jq -e '.modems | type == "array"' "$base" >/dev/null
+cp "$base" "$tmp"
+
+for fragment in "$drivers"/*.json; do
+	[ -f "$fragment" ] || continue
+	jq -e '.modems | type == "array"' "$fragment" >/dev/null
+	jq -s '
+		{modems: ((.[0].modems + .[1].modems)
+		| unique_by((.bus_type // "") + ":" + (.vid // "") + ":" + (.pid // "")))}
+	' "$tmp" "$fragment" > "${tmp}.next"
+	mv "${tmp}.next" "$tmp"
+done
+
+jq -e '.modems | length > 0' "$tmp" >/dev/null
+mv "$tmp" "$output"
+trap - EXIT INT TERM

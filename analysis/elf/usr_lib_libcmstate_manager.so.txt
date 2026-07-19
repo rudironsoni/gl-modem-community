@@ -1,7 +1,7 @@
 path: /usr/lib/libcmstate_manager.so
 sha256: a72ea2d1d568f3060324fa7c0d293d1a186c9ffac7c26834c2cd97713813e9d7
 
-/Users/rudimar.ronsoni@feverup.com/src/rudironsoni/openwrt-mt3000-travel-router/gl_modem/mt3000-gl-modem-research/extracted/rootfs/usr/lib/libcmstate_manager.so: ELF 64-bit LSB shared object, ARM aarch64, version 1 (SYSV), dynamically linked, no section header
+/usr/lib/libcmstate_manager.so: ELF 64-bit LSB shared object, ARM aarch64, version 1 (SYSV), dynamically linked, no section header
 
 ## readelf -h -l -d -n -s
 ELF Header:

@@ -1,7 +1,7 @@
 path: /usr/lib/libcm_sim.so
 sha256: 12dc73d6ed710148b1300a531d6498490c2d304602a6ba1d380ad3f137bdb17d
 
-/Users/rudimar.ronsoni@feverup.com/src/rudironsoni/openwrt-mt3000-travel-router/gl_modem/mt3000-gl-modem-research/extracted/rootfs/usr/lib/libcm_sim.so: ELF 64-bit LSB shared object, ARM aarch64, version 1 (SYSV), dynamically linked, no section header
+/usr/lib/libcm_sim.so: ELF 64-bit LSB shared object, ARM aarch64, version 1 (SYSV), dynamically linked, no section header
 
 ## readelf -h -l -d -n -s
 ELF Header:

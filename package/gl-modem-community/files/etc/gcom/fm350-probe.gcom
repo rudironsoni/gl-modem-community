@@ -1,0 +1,15 @@
+opengt
+set com 57600n81
+set senddelay 0.05
+waitquiet 1 0.2
+send "AT^m"
+waitfor 2 "OK"
+if % = -1 goto timeout
+send "AT+CPIN?^m"
+waitfor 2 "+CPIN:" "+CME ERROR:"
+if % = 1 goto simerr
+exit 0
+:timeout
+exit 1
+:simerr
+exit 2

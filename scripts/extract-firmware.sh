@@ -28,5 +28,5 @@ mkdir -p "$EXTRACT_DIR/rootfs"
 # metadata remains in rootfs.tar and the generated manifest; omit them here.
 tar --exclude='./dev/*' -xf "$rm_target/rootfs.tar" -C "$EXTRACT_DIR/rootfs"
 cp -R "$rm_target/outer" "$EXTRACT_DIR/outer"
-printf '%s\n' "$root_image" > "$ANALYSIS_DIR/reports/root-image-source.txt"
-printf '%s\n' "$kernel_image" > "$ANALYSIS_DIR/reports/kernel-image-source.txt"
+printf '%s\n' "${root_image#$REPO_DIR/}" > "$ANALYSIS_DIR/reports/root-image-source.txt"
+printf '%s\n' "${kernel_image#$REPO_DIR/}" > "$ANALYSIS_DIR/reports/kernel-image-source.txt"

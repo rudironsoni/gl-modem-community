@@ -1,0 +1,23 @@
+opengt
+set com 115200n81
+set comecho off
+set senddelay 0.02
+waitquiet 0.2 0.2
+if $env("MODE") = "pin" goto pin
+send "AT+CGAUTH="
+send $env("CID")
+send ","
+send $env("AUTH")
+send ",\""
+send $env("USER")
+send "\",\""
+send $env("PASS")
+send "\"^m"
+goto response
+:pin
+send "AT+CPIN=\""
+send $env("PINCODE")
+send "\"^m"
+:response
+get 3 "" $s
+print $s

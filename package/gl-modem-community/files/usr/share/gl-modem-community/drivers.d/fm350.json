@@ -1,0 +1,46 @@
+{
+  "modems": [
+    {
+      "bus_type": "USB",
+      "pid": "7126",
+      "vid": "0e8d",
+      "name": "FM350-GL",
+      "vendor": "fibocom",
+      "traffic_stat_method": "iface",
+      "supports_5g": true,
+      "supports_port": [
+        {
+          "port_type": "USB",
+          "port_name": "ttyACM",
+          "port_offset_at": 0
+        }
+      ],
+      "sim_slot_num": 1,
+      "supports_function_map": "function_at_common",
+      "supports_proto": ["xmm"],
+      "supports_feature": [],
+      "supports_ip_type": 1
+    },
+    {
+      "bus_type": "USB",
+      "pid": "7127",
+      "vid": "0e8d",
+      "name": "FM350-GL",
+      "vendor": "fibocom",
+      "traffic_stat_method": "iface",
+      "supports_5g": true,
+      "supports_port": [
+        {
+          "port_type": "USB",
+          "port_name": "ttyACM",
+          "port_offset_at": 0
+        }
+      ],
+      "sim_slot_num": 1,
+      "supports_function_map": "function_at_common",
+      "supports_proto": ["xmm"],
+      "supports_feature": [],
+      "supports_ip_type": 1
+    }
+  ]
+}

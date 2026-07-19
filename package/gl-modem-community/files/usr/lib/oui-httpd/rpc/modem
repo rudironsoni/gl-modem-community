@@ -1,0 +1,81 @@
+-- SPDX-License-Identifier: GPL-3.0-only
+-- Transparent stock modem RPC dispatcher with community-driver hooks.
+
+local cjson = require "cjson"
+local driver_dir = "/usr/share/gl-modem-community/rpc-drivers"
+local drivers = {}
+
+local function load_drivers()
+    local pipe = io.popen("find " .. driver_dir .. " -type f -name '*.lua' 2>/dev/null | sort")
+    if not pipe then return end
+    for path in pipe:lines() do
+        local ok, driver = pcall(dofile, path)
+        if ok and type(driver) == "table" and type(driver.methods) == "table" then
+            drivers[#drivers + 1] = driver
+        end
+    end
+    pipe:close()
+end
+
+local function usb_id_for_bus(bus)
+    if type(bus) ~= "string" or not bus:match("^[%w%.:_-]+$") then return nil end
+    local base = "/sys/bus/usb/devices/" .. bus
+    local vf = io.open(base .. "/idVendor", "r")
+    local pf = io.open(base .. "/idProduct", "r")
+    if not vf or not pf then
+        if vf then vf:close() end
+        if pf then pf:close() end
+        return nil
+    end
+    local vid = vf:read("*l")
+    local pid = pf:read("*l")
+    vf:close()
+    pf:close()
+    if not vid or not pid then return nil end
+    return vid:lower() .. ":" .. pid:lower()
+end
+
+local function vendor_call(method, args)
+    local response = ngx.location.capture("/cgi-bin/glc", {
+        method = ngx.HTTP_POST,
+        body = cjson.encode({ object = "modem", method = method, args = args or {} }),
+    })
+    if response.status ~= ngx.HTTP_OK then return -32603 end
+    local code = tonumber(response.body:match("^(-?%d+)"))
+    if not code then return -32603 end
+    if code ~= 0 then return code end
+    local payload = response.body:match("^-?%d+ (.*)$")
+    if not payload or payload == "" then return cjson.null end
+    local ok, decoded = pcall(cjson.decode, payload)
+    return ok and decoded or -32603
+end
+
+local function dispatch(method, args)
+    local id = usb_id_for_bus(args and args.bus)
+    if id then
+        for _, driver in ipairs(drivers) do
+            if driver.usb_ids and driver.usb_ids[id] and driver.methods[method] then
+                return driver.methods[method](args)
+            end
+        end
+    end
+    return vendor_call(method, args)
+end
+
+load_drivers()
+
+local methods = {}
+for _, method in ipairs({
+    "set_profile", "get_sim_config", "set_sim_config", "set_connect",
+    "set_sim_pin_code", "get_slot_failover_config", "set_slot_failover_config",
+    "set_apn_db_update", "remove_profile", "set_cell_tower", "get_cell_tower",
+    "scan_cell_tower", "set_operator_config", "scan_operator_list",
+    "get_operator_config", "send_at_command", "get_slot_config",
+    "get_traffic_config", "set_traffic_config", "disconnect", "get_debug_msg",
+    "get_profile_list"
+}) do
+    local name = method
+    methods[name] = function(args) return dispatch(name, args or {}) end
+end
+
+return methods

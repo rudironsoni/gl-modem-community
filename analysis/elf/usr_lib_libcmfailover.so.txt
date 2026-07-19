@@ -1,7 +1,7 @@
 path: /usr/lib/libcmfailover.so
 sha256: 75a4fd4676c515ae4e9b064a0d849f37971f86323b03492036cd6d7ecdca67d7
 
-/Users/rudimar.ronsoni@feverup.com/src/rudironsoni/openwrt-mt3000-travel-router/gl_modem/mt3000-gl-modem-research/extracted/rootfs/usr/lib/libcmfailover.so: ELF 64-bit LSB shared object, ARM aarch64, version 1 (SYSV), dynamically linked, no section header
+/usr/lib/libcmfailover.so: ELF 64-bit LSB shared object, ARM aarch64, version 1 (SYSV), dynamically linked, no section header
 
 ## readelf -h -l -d -n -s
 ELF Header:

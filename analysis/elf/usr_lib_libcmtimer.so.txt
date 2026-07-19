@@ -1,7 +1,7 @@
 path: /usr/lib/libcmtimer.so
 sha256: e78a43d130d96df22679abcc7e7ad9ee5b22f2665c40fa50357a5cf72ccbc4cf
 
-/Users/rudimar.ronsoni@feverup.com/src/rudironsoni/openwrt-mt3000-travel-router/gl_modem/mt3000-gl-modem-research/extracted/rootfs/usr/lib/libcmtimer.so: ELF 64-bit LSB shared object, ARM aarch64, version 1 (SYSV), dynamically linked, no section header
+/usr/lib/libcmtimer.so: ELF 64-bit LSB shared object, ARM aarch64, version 1 (SYSV), dynamically linked, no section header
 
 ## readelf -h -l -d -n -s
 ELF Header:

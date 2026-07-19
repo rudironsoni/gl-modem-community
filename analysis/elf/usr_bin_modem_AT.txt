@@ -1,7 +1,7 @@
 path: /usr/bin/modem_AT
 sha256: bd66dfd4e70402ff2828bee9bc9fb2fa1756289d2cd24d18938a9aee57821b66
 
-/Users/rudimar.ronsoni@feverup.com/src/rudironsoni/openwrt-mt3000-travel-router/gl_modem/mt3000-gl-modem-research/extracted/rootfs/usr/bin/modem_AT: ELF 64-bit LSB executable, ARM aarch64, version 1 (SYSV), dynamically linked, interpreter /lib/ld-musl-aarch64.so.1, no section header
+/usr/bin/modem_AT: ELF 64-bit LSB executable, ARM aarch64, version 1 (SYSV), dynamically linked, interpreter /lib/ld-musl-aarch64.so.1, no section header
 
 ## readelf -h -l -d -n -s
 ELF Header:

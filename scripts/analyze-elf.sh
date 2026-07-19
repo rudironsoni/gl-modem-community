@@ -16,7 +16,7 @@ while IFS= read -r rel; do
             sha=$(shasum -a 256 "$ROOT/$rel" | awk '{print $1}')
             {
                 printf 'path: /%s\nsha256: %s\n\n' "$rel" "$sha"
-                file "$ROOT/$rel"
+			file "$ROOT/$rel" | sed "s#^$ROOT##"
             } > "$out"
             in_container sh -c '
 f=/repo/extracted/rootfs/'"$rel"'

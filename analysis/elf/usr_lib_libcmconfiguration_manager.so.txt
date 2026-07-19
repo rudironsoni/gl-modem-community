@@ -1,7 +1,7 @@
 path: /usr/lib/libcmconfiguration_manager.so
 sha256: 92a57b70584068f98b8ec778f8589dc23c9c631a999cbacf86d68e8cd7815116
 
-/Users/rudimar.ronsoni@feverup.com/src/rudironsoni/openwrt-mt3000-travel-router/gl_modem/mt3000-gl-modem-research/extracted/rootfs/usr/lib/libcmconfiguration_manager.so: ELF 64-bit LSB shared object, ARM aarch64, version 1 (SYSV), dynamically linked, no section header
+/usr/lib/libcmconfiguration_manager.so: ELF 64-bit LSB shared object, ARM aarch64, version 1 (SYSV), dynamically linked, no section header
 
 ## readelf -h -l -d -n -s
 ELF Header:

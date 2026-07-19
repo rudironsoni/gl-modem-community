@@ -1,7 +1,7 @@
 path: /usr/lib/oui-httpd/rpc/modem.so
 sha256: ed6bd09e2bc58887c0f6f5d0ac7a8d8ab6cd9a196d5da4669383874252672ddc
 
-/Users/rudimar.ronsoni@feverup.com/src/rudironsoni/openwrt-mt3000-travel-router/gl_modem/mt3000-gl-modem-research/extracted/rootfs/usr/lib/oui-httpd/rpc/modem.so: ELF 64-bit LSB shared object, ARM aarch64, version 1 (SYSV), dynamically linked, no section header
+/usr/lib/oui-httpd/rpc/modem.so: ELF 64-bit LSB shared object, ARM aarch64, version 1 (SYSV), dynamically linked, no section header
 
 ## readelf -h -l -d -n -s
 ELF Header:

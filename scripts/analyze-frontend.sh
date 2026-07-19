@@ -5,11 +5,12 @@ set -eu
 ROOT="$EXTRACT_DIR/rootfs"
 mkdir -p "$ANALYSIS_DIR/frontend/original" "$ANALYSIS_DIR/frontend/beautified" "$ANALYSIS_DIR/frontend"
 
-find "$ROOT/www" -type f \( -name '*.js' -o -name '*.js.gz' \) -print | LC_ALL=C sort > "$ANALYSIS_DIR/frontend/javascript-paths.txt"
+find "$ROOT/www" -type f \( -name '*.js' -o -name '*.js.gz' \) -print |
+	sed "s#^$ROOT/##" | LC_ALL=C sort > "$ANALYSIS_DIR/frontend/javascript-paths.txt"
 
 : > "$ANALYSIS_DIR/frontend/bundle-sha256.tsv"
-while IFS= read -r js; do
-    rel=${js#"$ROOT/"}
+while IFS= read -r rel; do
+	js="$ROOT/$rel"
     key=$(printf '%s' "$rel" | tr '/' '_')
 	case "$js" in
 		*.gz) gzip -dc "$js" > "$ANALYSIS_DIR/frontend/original/${key%.gz}" ;;

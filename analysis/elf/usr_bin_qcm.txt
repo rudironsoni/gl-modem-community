@@ -1,7 +1,7 @@
 path: /usr/bin/qcm
 sha256: cfa556d9f14cf41b61dca444ada1b41eec14024a6934f9c631f3b70773ea7ee8
 
-/Users/rudimar.ronsoni@feverup.com/src/rudironsoni/openwrt-mt3000-travel-router/gl_modem/mt3000-gl-modem-research/extracted/rootfs/usr/bin/qcm: ELF 64-bit LSB executable, ARM aarch64, version 1 (SYSV), dynamically linked, interpreter /lib/ld-musl-aarch64.so.1, no section header
+/usr/bin/qcm: ELF 64-bit LSB executable, ARM aarch64, version 1 (SYSV), dynamically linked, interpreter /lib/ld-musl-aarch64.so.1, no section header
 
 ## readelf -h -l -d -n -s
 ELF Header:
