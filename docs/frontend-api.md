@@ -1,0 +1,38 @@
+# Frontend cellular API
+
+Conclusion: [CONFIRMED] The stock frontend sends JSON-RPC 2.0 calls to `/rpc` using `{"jsonrpc":"2.0","id":...,"method":"call","params":[sid,"modem",method,args]}` and consumes cellular status through `/ws`.
+
+Evidence: beautified assets under `analysis/frontend/beautified/` and `scripts/analyze-frontend.sh`.
+
+Confidence: confirmed.
+
+Alternative explanations: the mobile app was not supplied and may use the same backend with a different transport wrapper.
+
+How to verify dynamically: capture browser and mobile-app requests against an isolated router.
+
+| UI operation | Transport | Object/topic | Method | Request evidence | Response evidence | Polling |
+|---|---|---|---|---|---|---|
+| Profiles | JSON-RPC | `modem` | `get_profile_list`, `set_profile`, `remove_profile` | object arguments in bundle | fields consumed in bundle | event driven plus refresh |
+| SIM | JSON-RPC | `modem` | `get_sim_config`, `set_sim_config`, `set_sim_pin_code` | object arguments | SIM fields consumed | websocket status |
+| Connect | JSON-RPC | `modem` | `set_connect`, `disconnect` | profile/slot data | status/error fields | websocket status |
+| Operator | JSON-RPC | `modem` | `get_operator_config`, `set_operator_config`, `scan_operator_list` | operator settings | list/status fields | manual scan |
+| Cell tower | JSON-RPC | `modem` | `get_cell_tower`, `set_cell_tower`, `scan_cell_tower` | feature-specific data | tower list/status | manual scan |
+| Diagnostics | JSON-RPC | `modem` | `send_at_command`, `get_debug_msg` | command/options | text/status | manual |
+| Configuration | JSON-RPC | `modem` | slot, failover, traffic, APN update methods | object arguments | settings/status | refresh |
+| Live modem | WebSocket | `cellular.modems_info`, `cellular.modems_status` | subscription | topic | JSON event | server updates |
+| Live SIM | WebSocket | `cellular.sims_info`, `cellular.sims_status` | subscription | topic | JSON event | server updates |
+| Live network | WebSocket | `cellular.networks_info`, `cellular.networks_status` | subscription | topic | JSON event | server updates |
+
+The complete confirmed method list is also emitted under `analysis/frontend/`.
+
+Conclusion: [CONFIRMED] Frontend `unsupportedModem()` returns true when `currentModemType === 2`; type `0` is displayed as built-in. [INFERENCE] Type `1` represents a supported external modem based on adjacent branches.
+
+Evidence: frontend bundle control flow.
+
+Confidence: confirmed for the comparison, medium for type `1` meaning.
+
+Alternative explanations: type `1` could encode a narrower external category.
+
+How to verify dynamically: compare websocket payloads for built-in, officially supported USB, unsupported USB, and FM350 devices.
+
+The general status UI is capability-driven enough to tolerate missing advanced fields, but band, cell-lock, and AT pages contain Quectel/Sierra branches. A generic-path FM350 should not be assumed to expose those features.

@@ -1,0 +1,1149 @@
+    200 /lib/ld-musl-aarch64.so.1
+    df1 memcpy
+    df8 malloc
+    dff calloc
+    e06 memset
+    e0d pthread_mutex_unlock
+    e22 pthread_mutex_lock
+    e35 pthread_cond_wait
+    e47 strlen
+    e4e strchr
+    e55 _fini
+    e5b __register_frame_info
+    e71 __deregister_frame_info
+    e89 strncasecmp
+    e95 cfsetispeed
+    ea1 closedir
+    eaa setsockopt
+    eb5 fprintf
+    ebd cfsetospeed
+    ec9 strdup
+    ed0 fopen
+    ed6 fgets
+    edc __stack_chk_fail
+    eed readlink
+    ef6 clock_gettime
+    f04 fcntl
+    f0a __errno_location
+    f1b opendir
+    f23 nanosleep
+    f2d pthread_attr_setdetachstate
+    f49 __stack_chk_guard
+    f5b memmove
+    f63 readdir
+    f6b strerror
+    f74 access
+    f7b tcsetattr
+    f85 asprintf
+    f8e pthread_attr_init
+    fa0 socketpair
+    fab strcat
+    fb2 tcgetattr
+    fbc pthread_create
+    fcb strsep
+    fd2 snprintf
+    fdb pthread_cond_timedwait
+    ff2 lseek
+    ff8 poll
+    ffd pthread_join
+   100a memcmp
+   1011 pthread_cond_signal
+   1025 connect
+   102d sscanf
+   1034 usleep
+   103b ioctl
+   1041 strcasecmp
+   104c system
+   1053 glob
+   1058 globfree
+   1061 mknod
+   1067 getpid
+   106e stdout
+   1075 perror
+   107c popen
+   1082 strncmp
+   108a pthread_exit
+   1097 pthread_self
+   10a4 tolower
+   10ac strcmp
+   10b3 alarm
+   10b9 strtoul
+   10c1 strtol
+   10c8 socket
+   10cf strncpy
+   10d7 localtime
+   10e1 tcflush
+   10e9 cfmakeraw
+   10f3 kill
+   10f8 strcpy
+   10ff gettimeofday
+   110c strstr
+   1113 fread
+   1119 fclose
+   1120 __libc_start_main
+   1132 pclose
+   1139 atoi
+   113e fwrite
+   1145 libgcc_s.so.1
+   1153 libc.so
+   115b GLIBC_2.0
+   221b 9`bI
+   233f T@[`xa
+   2bbc `bA9 
+   303b ybz`
+   3113 * kE
+   34de @xXR
+   3764 cku8
+   385e @yxQ
+   38bf *@7@8
+   38fe @xPQ
+   3937 q`2@x
+   3958 !Hw8w
+   3988 `2@x-Q
+   39b8 `2@x!Q
+   3a04 `R@x
+   3a54 `2@x
+   3a80 `2@x
+   3aac `2@x
+   3ad8 `2@x
+   3b04 `2@x
+   3b30 `2@x
+   3b5c `2@x
+   3cc1 jt8!
+   3e4a @9`*
+   3e8a @9`*
+   3fc2 @9`*
+   4002 @9`*
+   45cc #hb8
+   45d1 h"8B
+   4942 @x?M
+   4986 @x.M
+   49e5 J38s
+   4a11 J38 
+   4a27 x!`Q
+   4b55 " K`
+   5066 @yvK
+   50a2 @ygK
+   50fa @yQK
+   5872 @9@kE
+   58fa @yQI
+   5abc `R@x
+   5d31 FA9~
+   5da1 "@y'H
+   5db1 &@y#H
+   605a @xyG
+   607a @xqG
+   6162 @y7G
+   6462 @ywF
+   65b2 @y#F
+   6d4a @y=D
+   6d8a @y-D
+   6de5 *C9 
+   708e @ylC
+   70ca @y]C
+   70ee @xTC
+   7182 @y/C
+   7327 y`R@x
+   7470 `#@yt
+   74aa @yeB
+   74e6 @yVB
+   7690  X`xa
+   784c `6@9
+   7857 T`:@9
+   7891 +AyA
+   78d0 `Z@9
+   7ab3 y`R@x
+   7c0a @9"x
+   7e0a @ysB
+   7ecd 0@9?
+   7f49 `@9!d
+   7f55 ha8?
+   8066 @yv?
+   8082 @yo?
+   80c2 @y_?
+   8102 @yO?
+   819e @x(?
+   8268  p@x
+   8274 `r@x
+   8454 !H`8
+   84ee @xT>
+   8553 *@kE
+   8686 @9`&
+   868e @9`*
+   870a @9`&
+   8926 @xK=
+   8936 AxG=
+   894e @9 X@9
+   895b T3\@9
+   8b46 @9 	
+   8cd8 C\@9
+   8ce3 TB4@y_@
+   8cfd X@9_
+   adc4 aBA9
+   addc `FA9
+   af3f TaJ@
+   b15f TaJ@
+   b697 TaJ@
+   b6de P)!<
+   b71d sA9t
+   b98e @9_8
+   bbcf T8kE
+   bd65 hb8#hb8D
+   be43 7`*@
+   c423 7`*@
+   ceec ?`;9
+   cfad L@9?
+   d357 T`R^
+   d5d1 j68`
+   d609 j68`
+   d641 j68`
+   d679 j68`
+   e8db * kE
+   ef24 aBG9
+   f27b T`BC
+   f397 *@kE
+   f702 A9zR
+   f795 oA9?
+   f97d oA9!
+   f985 kA9?
+   f9fa A9zR
+   fa61 oA9?
+   fad7 T",@
+   fc7a A9`R
+   fc85 kA9?
+   fca5 oA9?
+  10353 <=p@
+  10377 T!|@
+  103eb T!|@
+  10463 T!|@
+  104db T!|@
+  105ab T!|@
+  10623 T!|@
+  10673 <=p@
+  10697 T!|@
+  10745 hc8c
+  10765 hb8#h"8B
+  10dcc "h 8!
+  10dfd j38s
+  10f4d <@9sB
+  1129b 5s~|
+  11710 cju8!
+  1174b Ta&@
+  11817 5`&@
+  11987 5`&@
+  11af3 5`&@
+  120d3 6{6@
+  1240f Tu*@
+  12693 6u"@
+  127db Tu2@
+  12b29 jb8a
+  12b2f 6e"@
+  12b5b 6{:@
+  12e5d hd8Dh#8c
+  12e6f T_h#8
+  135dd @A9b
+  13cc3 9y6 
+  14285 *C9`
+  1483b 5`&@
+  1485b Ta2@
+  1486f Ta.@
+  1487f Ta2@
+  14e67 4a.@
+  14e77 *`B 
+  14ec7 4a6@
+  14ed7 *`B 
+  14f37 4a>@
+  14f47 *`B 
+  15f10 bh`8_
+  15f81 (O9`
+  160fb *`kE
+  164b5 ha8B
+  164c0 "h#x!
+  16658 `jc8
+  16665 j#8x
+  16bb1 *C9`
+  1700f 4`BA9
+  17038 cBA9
+  173a3 4`:F9
+  173ab 4`rF9@
+  1765f 4`:F9
+  177b0 a*C9`
+  17a13 * kE
+  180fb * kE
+  182db * kE
+  18653 *@kE
+  18910 [%s] failed to open %s, errno: %d (%s)
+  18938 [%s] failed to get ClientID for 0x%02x errno: %d (%s)
+  1896f [%s] Get clientWDS = %d
+  18988 [%s] Get clientDMS = %d
+  189a1 [%s] Get clientNAS = %d
+  189ba [%s] Get clientUIM = %d
+  189d3 [%s] Get clientWDA = %d
+  189ec [%s] %s Failed to open %s, errno: %d (%s)
+  18a17 [%s] %s poll=%d, errno: %d (%s)
+  18a38 [%s] %s poll err/hup/inval
+  18a54 [%s] epoll fd = %d, events = 0x%04x
+  18a79 [%s] %s read=%d errno: %d (%s)
+  18a99 [%s] %s exit
+  18aa7 [%s] %s QMIType: %d has no clientID
+  18acc [%s] %s write=%d, errno: %d (%s)
+  18aee unknow_%x
+  18af8 {%02x,	%04x,	
+  18b06 %02x 
+  18b0f TransactionId:      %02x
+  18b29 QMICTLType:         %04x	%s
+  18b46 Length:             %04x
+  18b60 TransactionId:    %04x
+  18b78 Type:               %04x	%s
+  18b95 PDS/QOS/CTL/unknown!
+  18baa [%s] %s
+  18bb3 QMI_COEX_GET_WWAN_STATE_REQ
+  18bcf QMI_COEX_GET_WWAN_STATE_RESP
+  18bec QMIUIM_READ_TRANSPARENT_REQ
+  18c08 QMIUIM_READ_TRANSPARENT_RESP
+  18c25 QMIUIM_READ_TRANSPARENT_IND
+  18c41 QMIUIM_READ_RECORD_REQ
+  18c58 QMIUIM_READ_RECORD_RESP
+  18c70 QMIUIM_READ_RECORD_IND
+  18c87 QMIUIM_WRITE_TRANSPARENT_REQ
+  18ca4 QMIUIM_WRITE_TRANSPARENT_RESP
+  18cc2 QMIUIM_WRITE_TRANSPARENT_IND
+  18cdf QMIUIM_WRITE_RECORD_REQ
+  18cf7 QMIUIM_WRITE_RECORD_RESP
+  18d10 QMIUIM_WRITE_RECORD_IND
+  18d28 QMIUIM_SET_PIN_PROTECTION_REQ
+  18d46 QMIUIM_SET_PIN_PROTECTION_RESP
+  18d65 QMIUIM_SET_PIN_PROTECTION_IND
+  18d83 QMIUIM_VERIFY_PIN_REQ
+  18d99 QMIUIM_VERIFY_PIN_RESP
+  18db0 QMIUIM_VERIFY_PIN_IND
+  18dc6 QMIUIM_UNBLOCK_PIN_REQ
+  18ddd QMIUIM_UNBLOCK_PIN_RESP
+  18df5 QMIUIM_UNBLOCK_PIN_IND
+  18e0c QMIUIM_CHANGE_PIN_REQ
+  18e22 QMIUIM_CHANGE_PIN_RESP
+  18e39 QMIUIM_CHANGE_PIN_IND
+  18e4f QMIUIM_DEPERSONALIZATION_REQ
+  18e6c QMIUIM_DEPERSONALIZATION_RESP
+  18e8a QMIUIM_EVENT_REG_REQ
+  18e9f QMIUIM_EVENT_REG_RESP
+  18eb5 QMIUIM_GET_CARD_STATUS_REQ
+  18ed0 QMIUIM_GET_CARD_STATUS_RESP
+  18eec QMIUIM_STATUS_CHANGE_IND
+  18f05 QMIWDS_ADMIN_SET_DATA_FORMAT_REQ
+  18f26 QMIWDS_ADMIN_SET_DATA_FORMAT_RESP
+  18f48 QMIWDS_ADMIN_GET_DATA_FORMAT_REQ
+  18f69 QMIWDS_ADMIN_GET_DATA_FORMAT_RESP
+  18f8b QMIWDS_ADMIN_SET_QMAP_SETTINGS_REQ
+  18fae QMIWDS_ADMIN_SET_QMAP_SETTINGS_RESP
+  18fd2 QMIWDS_ADMIN_GET_QMAP_SETTINGS_REQ
+  18ff5 QMIWDS_ADMIN_GET_QMAP_SETTINGS_RESP
+  19019 QMI_WDA_SET_LOOPBACK_CONFIG_REQ
+  19039 QMI_WDA_SET_LOOPBACK_CONFIG_RESP
+  1905a QMI_WDA_SET_LOOPBACK_CONFIG_IND
+  1907a QMIWMS_SET_EVENT_REPORT_REQ
+  19096 QMIWMS_SET_EVENT_REPORT_RESP
+  190b3 QMIWMS_EVENT_REPORT_IND
+  190cb QMIWMS_RAW_SEND_REQ
+  190df QMIWMS_RAW_SEND_RESP
+  190f4 QMIWMS_RAW_WRITE_REQ
+  19109 QMIWMS_RAW_WRITE_RESP
+  1911f QMIWMS_RAW_READ_REQ
+  19133 QMIWMS_RAW_READ_RESP
+  19148 QMIWMS_MODIFY_TAG_REQ
+  1915e QMIWMS_MODIFY_TAG_RESP
+  19175 QMIWMS_DELETE_REQ
+  19187 QMIWMS_DELETE_RESP
+  1919a QMIWMS_GET_MESSAGE_PROTOCOL_REQ
+  191ba QMIWMS_GET_MESSAGE_PROTOCOL_RESP
+  191db QMIWMS_LIST_MESSAGES_REQ
+  191f4 QMIWMS_LIST_MESSAGES_RESP
+  1920e QMIWMS_GET_SMSC_ADDRESS_REQ
+  1922a QMIWMS_GET_SMSC_ADDRESS_RESP
+  19247 QMIWMS_SET_SMSC_ADDRESS_REQ
+  19263 QMIWMS_SET_SMSC_ADDRESS_RESP
+  19280 QMIWMS_GET_STORE_MAX_SIZE_REQ
+  1929e QMIWMS_GET_STORE_MAX_SIZE_RESP
+  192bd QMINAS_SET_EVENT_REPORT_REQ
+  192d9 QMINAS_SET_EVENT_REPORT_RESP
+  192f6 QMINAS_EVENT_REPORT_IND
+  1930e QMINAS_GET_SIGNAL_STRENGTH_REQ
+  1932d QMINAS_GET_SIGNAL_STRENGTH_RESP
+  1934d QMINAS_PERFORM_NETWORK_SCAN_REQ
+  1936d QMINAS_PERFORM_NETWORK_SCAN_RESP
+  1938e QMINAS_INITIATE_NW_REGISTER_REQ
+  193ae QMINAS_INITIATE_NW_REGISTER_RESP
+  193cf QMINAS_INITIATE_ATTACH_REQ
+  193ea QMINAS_INITIATE_ATTACH_RESP
+  19406 QMINAS_GET_SERVING_SYSTEM_REQ
+  19424 QMINAS_GET_SERVING_SYSTEM_RESP
+  19443 QMINAS_SERVING_SYSTEM_IND
+  1945d QMINAS_GET_HOME_NETWORK_REQ
+  19479 QMINAS_GET_HOME_NETWORK_RESP
+  19496 QMINAS_GET_PREFERRED_NETWORK_REQ
+  194b7 QMINAS_GET_PREFERRED_NETWORK_RESP
+  194d9 QMINAS_SET_PREFERRED_NETWORK_REQ
+  194fa QMINAS_SET_PREFERRED_NETWORK_RESP
+  1951c QMINAS_GET_FORBIDDEN_NETWORK_REQ
+  1953d QMINAS_GET_FORBIDDEN_NETWORK_RESP
+  1955f QMINAS_SET_FORBIDDEN_NETWORK_REQ
+  19580 QMINAS_SET_FORBIDDEN_NETWORK_RESP
+  195a2 QMINAS_SET_TECHNOLOGY_PREF_REQ
+  195c1 QMINAS_SET_TECHNOLOGY_PREF_RESP
+  195e1 QMINAS_GET_RF_BAND_INFO_REQ
+  195fd QMINAS_GET_RF_BAND_INFO_RESP
+  1961a QMINAS_GET_CELL_LOCATION_INFO_REQ
+  1963c QMINAS_GET_CELL_LOCATION_INFO_RESP
+  1965f QMINAS_GET_PLMN_NAME_REQ
+  19678 QMINAS_GET_PLMN_NAME_RESP
+  19692 QUECTEL_PACKET_TRANSFER_START_IND
+  196b4 QUECTEL_PACKET_TRANSFER_END_IND
+  196d4 QMINAS_GET_SYS_INFO_REQ
+  196ec QMINAS_GET_SYS_INFO_RESP
+  19705 QMINAS_SYS_INFO_IND
+  19719 QMINAS_GET_SIG_INFO_REQ
+  19731 QMINAS_GET_SIG_INFO_RESP
+  1974a QMI_QOS_SET_EVENT_REPORT_REQ
+  19767 QMI_QOS_SET_EVENT_REPORT_RESP
+  19785 QMI_QOS_SET_EVENT_REPORT_IND
+  197a2 QMI_QOS_BIND_DATA_PORT_REQ
+  197bd QMI_QOS_BIND_DATA_PORT_RESP
+  197d9 QMI_QOS_INDICATION_REGISTER_REQ
+  197f9 QMI_QOS_INDICATION_REGISTER_RESP
+  1981a QMI_QOS_GLOBAL_QOS_FLOW_IND
+  19836 QMI_QOS_GET_QOS_INFO_REQ
+  1984f QMI_QOS_GET_QOS_INFO_RESP
+  19869 QMIDMS_SET_EVENT_REPORT_REQ
+  19885 QMIDMS_SET_EVENT_REPORT_RESP
+  198a2 QMIDMS_EVENT_REPORT_IND
+  198ba QMIDMS_GET_DEVICE_CAP_REQ
+  198d4 QMIDMS_GET_DEVICE_CAP_RESP
+  198ef QMIDMS_GET_DEVICE_MFR_REQ
+  19909 QMIDMS_GET_DEVICE_MFR_RESP
+  19924 QMIDMS_GET_DEVICE_MODEL_ID_REQ
+  19943 QMIDMS_GET_DEVICE_MODEL_ID_RESP
+  19963 QMIDMS_GET_DEVICE_REV_ID_REQ
+  19980 QMIDMS_GET_DEVICE_REV_ID_RESP
+  1999e QMIDMS_GET_MSISDN_REQ
+  199b4 QMIDMS_GET_MSISDN_RESP
+  199cb QMIDMS_GET_DEVICE_SERIAL_NUMBERS_REQ
+  199f0 QMIDMS_GET_DEVICE_SERIAL_NUMBERS_RESP
+  19a16 QMIDMS_UIM_SET_PIN_PROTECTION_REQ
+  19a38 QMIDMS_UIM_SET_PIN_PROTECTION_RESP
+  19a5b QMIDMS_UIM_VERIFY_PIN_REQ
+  19a75 QMIDMS_UIM_VERIFY_PIN_RESP
+  19a90 QMIDMS_UIM_UNBLOCK_PIN_REQ
+  19aab QMIDMS_UIM_UNBLOCK_PIN_RESP
+  19ac7 QMIDMS_UIM_CHANGE_PIN_REQ
+  19ae1 QMIDMS_UIM_CHANGE_PIN_RESP
+  19afc QMIDMS_UIM_GET_PIN_STATUS_REQ
+  19b1a QMIDMS_UIM_GET_PIN_STATUS_RESP
+  19b39 QMIDMS_GET_DEVICE_HARDWARE_REV_REQ
+  19b5c QMIDMS_GET_DEVICE_HARDWARE_REV_RESP
+  19b80 QMIDMS_GET_OPERATING_MODE_REQ
+  19b9e QMIDMS_GET_OPERATING_MODE_RESP
+  19bbd QMIDMS_SET_OPERATING_MODE_REQ
+  19bdb QMIDMS_SET_OPERATING_MODE_RESP
+  19bfa QMIDMS_GET_ACTIVATED_STATUS_REQ
+  19c1a QMIDMS_GET_ACTIVATED_STATUS_RESP
+  19c3b QMIDMS_ACTIVATE_AUTOMATIC_REQ
+  19c59 QMIDMS_ACTIVATE_AUTOMATIC_RESP
+  19c78 QMIDMS_ACTIVATE_MANUAL_REQ
+  19c93 QMIDMS_ACTIVATE_MANUAL_RESP
+  19caf QMIDMS_UIM_GET_ICCID_REQ
+  19cc8 QMIDMS_UIM_GET_ICCID_RESP
+  19ce2 QMIDMS_UIM_GET_CK_STATUS_REQ
+  19cff QMIDMS_UIM_GET_CK_STATUS_RESP
+  19d1d QMIDMS_UIM_SET_CK_PROTECTION_REQ
+  19d3e QMIDMS_UIM_SET_CK_PROTECTION_RESP
+  19d60 QMIDMS_UIM_UNBLOCK_CK_REQ
+  19d7a QMIDMS_UIM_UNBLOCK_CK_RESP
+  19d95 QMIDMS_UIM_GET_IMSI_REQ
+  19dad QMIDMS_UIM_GET_IMSI_RESP
+  19dc6 QMIDMS_UIM_GET_STATE_REQ
+  19ddf QMIDMS_UIM_GET_STATE_RESP
+  19df9 QMIDMS_GET_BAND_CAP_REQ
+  19e11 QMIDMS_GET_BAND_CAP_RESP
+  19e2a QMIWDS_SET_EVENT_REPORT_REQ
+  19e46 QMIWDS_SET_EVENT_REPORT_RESP
+  19e63 QMIWDS_EVENT_REPORT_IND
+  19e7b QMIWDS_START_NETWORK_INTERFACE_REQ
+  19e9e QMIWDS_START_NETWORK_INTERFACE_RESP
+  19ec2 QMIWDS_STOP_NETWORK_INTERFACE_REQ
+  19ee4 QMIWDS_STOP_NETWORK_INTERFACE_RESP
+  19f07 QMIWDS_GET_PKT_SRVC_STATUS_REQ
+  19f26 QMIWDS_GET_PKT_SRVC_STATUS_RESP
+  19f46 QMIWDS_GET_PKT_SRVC_STATUS_IND
+  19f65 QMIWDS_GET_CURRENT_CHANNEL_RATE_REQ
+  19f89 QMIWDS_GET_CURRENT_CHANNEL_RATE_RESP
+  19fae QMIWDS_GET_PKT_STATISTICS_REQ
+  19fcc QMIWDS_GET_PKT_STATISTICS_RESP
+  19feb QMIWDS_MODIFY_PROFILE_SETTINGS_REQ
+  1a00e QMIWDS_MODIFY_PROFILE_SETTINGS_RESP
+  1a032 QMIWDS_GET_PROFILE_SETTINGS_REQ
+  1a052 QMIWDS_GET_PROFILE_SETTINGS_RESP
+  1a073 QMIWDS_GET_DEFAULT_SETTINGS_REQ
+  1a093 QMIWDS_GET_DEFAULT_SETTINGS_RESP
+  1a0b4 QMIWDS_GET_RUNTIME_SETTINGS_REQ
+  1a0d4 QMIWDS_GET_RUNTIME_SETTINGS_RESP
+  1a0f5 QMIWDS_GET_MIP_MODE_REQ
+  1a10d QMIWDS_GET_MIP_MODE_RESP
+  1a126 QMIWDS_GET_DATA_BEARER_REQ
+  1a141 QMIWDS_GET_DATA_BEARER_RESP
+  1a15d QMIWDS_DUN_CALL_INFO_REQ
+  1a176 QMIWDS_DUN_CALL_INFO_RESP
+  1a190 QMIWDS_DUN_CALL_INFO_IND
+  1a1a9 QMIWDS_SET_CLIENT_IP_FAMILY_PREF_REQ
+  1a1ce QMIWDS_SET_CLIENT_IP_FAMILY_PREF_RESP
+  1a1f4 QMIWDS_SET_AUTO_CONNECT_REQ
+  1a210 QMIWDS_SET_AUTO_CONNECT_RESP
+  1a22d QMIWDS_BIND_MUX_DATA_PORT_REQ
+  1a24b QMIWDS_BIND_MUX_DATA_PORT_RESP
+  1a26a QMUX_CTL_FLAG_TYPE_CMD
+  1a281 QMUX_CTL_FLAG_TYPE_RSP
+  1a298 QMUX_CTL_FLAG_TYPE_IND
+  1a2af QMICTL_SET_INSTANCE_ID_REQ
+  1a2ca QMICTL_SET_INSTANCE_ID_RESP
+  1a2e6 QMICTL_GET_VERSION_REQ
+  1a2fd QMICTL_GET_VERSION_RESP
+  1a315 QMICTL_GET_CLIENT_ID_REQ
+  1a32e QMICTL_GET_CLIENT_ID_RESP
+  1a348 QMICTL_RELEASE_CLIENT_ID_REQ
+  1a365 QMICTL_RELEASE_CLIENT_ID_RESP
+  1a383 QMICTL_REVOKE_CLIENT_ID_IND
+  1a39f QMICTL_INVALID_CLIENT_ID_IND
+  1a3bc QMICTL_SET_DATA_FORMAT_REQ
+  1a3d7 QMICTL_SET_DATA_FORMAT_RESP
+  1a3f3 QMICTL_SYNC_REQ
+  1a403 QMICTL_SYNC_RESP
+  1a414 QMICTL_SYNC_IND
+  1a424 UNKNOWN
+  1a42c [%s] %s fail to malloc
+  1a444 vnet.mobi
+  1a44e ctnet@mycdma.cn
+  1a45e [%s] %s message timeout
+  1a477 [%s] %s(%d)
+  1a484 [%s] %s err = %d
+  1a496 [%s] %s QMUXResult = 0x%x, QMUXError = 0x%x
+  1a4c3 [%s] %s WdsConnectionIPv%dHandle
+  1a4e5 DISCONNECTED
+  1a4f2 [%s] %s %sConnectionStatus: %s
+  1a512 [%s] call_end_reason is %d
+  1a52e [%s] call_end_reason_type is %d
+  1a54f [%s] call_end_reason_verbose is %d
+  1a573 [%s] %s WdsConnectionIPv4Handle: 0x%08x
+  1a59c [%s] %s WdsConnectionIPv6Handle: 0x%08x
+  1a5c5 [%s] %s[%d] %s/%s/%s/%d/%s
+  1a5e1 [%s] no need to set skip the rest
+  1a604 [%s] %s(loopback_state=%d, replication_factor=%u)
+  1a637 [%s] qmap_settings.rx_urb_size = %u
+  1a65c [%s] qmap_settings.ul_data_aggregation_max_datagrams  = %u
+  1a698 [%s] qmap_settings.ul_data_aggregation_max_size       = %u
+  1a6d4 [%s] qmap_settings.dl_minimum_padding                 = %u
+  1a710 [%s] %s %s
+  1a71c TD-SCDMA
+  1a725 UNKNOW
+  1a72c eHRPD
+  1a732 Attached
+  1a73b Detached
+  1a744 [%s] %s MCC: %d, MNC: %d, PS: %s, DataCap: %s
+  1a773 [%s] %s SIMStatus: %s
+  1a78a [%s] nobody care this qmi msg!!
+  1a7ab GPRS
+  1a7b0 EDGE
+  1a7b5 HSDPA
+  1a7bb HSUPA
+  1a7c1 UMTS
+  1a7c6 1XRTT
+  1a7cc 1XEVDO
+  1a7d3 1XEVDO_REVA
+  1a7df 1XEVDO_REVB
+  1a7ef SIM_ABSENT
+  1a7fa SIM_NOT_READY
+  1a808 SIM_READY
+  1a812 SIM_PIN
+  1a81a SIM_PUK
+  1a822 SIM_NETWORK_PERSONALIZATION
+  1a83e IPV4
+  1a843 NULL
+  1a848 IPV6
+  1a84d IPV4V6
+  1a854 5G_NSA
+  1a85b 5G_SA
+  1a861 1XEVDV
+  1a868 3XRTT
+  1a872 CUSTOM
+  1a879 [%s] %s cdc_wdm_fd = -1
+  1a892 [%s] QMIType %d has no clientID
+  1a8b3 [%s] %s poll=%d, revents = 0x%x, errno: %d (%s)
+  1a8e4 [%s] Get clientQOS = %d
+  1a8fd [%s] Get clientWMS = %d
+  1a916 [%s] Get clientPDS = %d
+  1a92f [%s] Get clientCOEX = %d
+  1a949 quectel-qmi-proxy
+  1a95b %s%c
+  1a960 [%s] cdc_wdm_fd = %d
+  1a976 [%s] poll fd = %d, events = 0x%04x
+  1a99a [%s] %s nreads=%d,  pQCQMI->QMIHdr.Length = %d
+  1a9cc [%s] fail to open (%s), errno: %d (%s)
+  1a9f4 [%s] atc_fd = %d
+  1aa06 +QCCID:
+  1aa0e AT+QCCID
+  1aa17 [%s] handshake fail, TODO ... 
+  1aa37 +QCFG:
+  1aa3e AT+QCFG="usbnet"
+  1aa4f +QNETDEVCTL:
+  1aa5c AT+QNETDEVCTL=?
+  1aa6c AT+CGREG=2
+  1aa77 AT+CEREG=2
+  1aa82 AT+C5GREG=2
+  1aa8e +QNETDEVSTATUS:
+  1aa9e AT+QNETDEVSTATUS=?
+  1aab1 AT+QCFG="NAT"
+  1aabf AT+QCFG="NAT",%d
+  1aad0 at+cfun=1,1
+  1aadc AT+QNETDEVCTL=0,%d,%d
+  1aaf2 AT+QNETDEVCTL=%d,0,%d
+  1ab08 AT+CPIN=%s
+  1ab13 AT+CIMI
+  1ab1b AT+QICSGP=%d,%d,"%s","%s","%s",%d
+  1ab3d AT+QICSGP=%d,"%s","%s","%s",%d
+  1ab5c AT+CGDCONT=%d,"%s","%s"
+  1ab74 +COPS:
+  1ab7b at+cops?
+  1ab84 %d%d%s%d
+  1ab8d +QENG:
+  1ab94 at+qeng="servingcell"
+  1abaa servingcell
+  1abb6 SEARCH
+  1abbd LIMSRV
+  1abc4 NOCONN
+  1abcb NR5G-SA
+  1abd3 %s,%s,%s,%s,%d,%d,%x,%d,%x,%d,%d,%d,%d,%d,%d,%d
+  1ac03 NR5G-NSA
+  1ac0c %s%s%s%s%d%d%d%dd
+  1ac1e %s%s%s%s%s%s%x%d%d%d%d%d%x%d%d%d%d%d%d%d
+  1ac47 +QENDC:
+  1ac4f at+qendc
+  1ac58 RG801H
+  1ac5f ifconfig %s up
+  1ac6e EC200H
+  1ac75 +CGACT:
+  1ac7d AT+CGACT?
+  1ac87 AT+CGACT=1,%d
+  1ac95 AT+QNETDEVCTL=1,%d,%d
+  1acab AT+QNETDEVCTL=%d,1,%d
+  1acc1 AT+QNETDEVSTATUS=%d
+  1acd5 +QNETDEVSTATUS
+  1ace4 AT+COPS=3,0;+COPS?;+COPS=3,1;+COPS?;+COPS=3,2;+COPS?
+  1ad19 +CGREG:
+  1ad21 AT+CGREG?
+  1ad2b +CEREG:
+  1ad33 AT+CEREG?
+  1ad3d +C5GREG:
+  1ad46 AT+C5GREG?
+  1ad51 %d%d%x%x%d
+  1ad5c %d%d%x%x
+  1ad65 AT+QICSGP=%d
+  1ad72 +QICSGP:
+  1ad7b AT+QICSGP=%d,%d,"","","",0
+  1ad96 %d%d%s%s%s%d
+  1ada3 +CGDCONT:
+  1adad AT+CGDCONT?
+  1adb9 %d%s%s
+  1adc0 AT+CGMR
+  1adc8 +CPIN:
+  1adcf AT+CPIN?
+  1add8 SIM PIN
+  1ade0 SIM PUK
+  1ade8 PH-NET PIN
+  1adf3 %s%s%s%s%s%s%s%s%s%s
+  1ae08 %u.%u.%u.%u
+  1ae14 %02X%02X%02X%02X
+  1ae25 AT+CGPADDR=%d
+  1ae33 +CGPADDR:
+  1ae3d %d.%d.%d.%d
+  1ae49 [%s] %s %d.%d.%d.%d
+  1ae5e AT+QNETDEVCTL?
+  1ae6d [%s] ERROR: Input line exceeded buffer
+  1ae96 [%s] atchannel: EOF reached
+  1aeb3 [%s] atchannel: read error %s
+  1aed2 [%s] AT< %s
+  1aedf +QIND: "FOTA","END",0
+  1aef8 [%s] AT> %s^Z
+  1af09 [%s] Unsupported AT command type %d
+  1af2f [%s] readerLoop create fail!
+  1af4d pthread_create
+  1af5d [%s] at_close
+  1af6c [%s] AT> %s
+  1af7b ATE0Q0V1
+  1af84 +CME ERROR:
+  1af90 +CMT:
+  1af96 +CDS:
+  1af9c +CBM:
+  1afa2 +CMTI:
+  1afa9 ERROR
+  1afaf +CMS ERROR:
+  1afbb NO CARRIER
+  1afc6 NO ANSWER
+  1afd0 NO DIALTONE
+  1afdc COMMAND NOT SUPPORT
+  1aff0 [%s] (%s) = %lx
+  1b001 /bNumEndpoints
+  1b010 /bInterfaceClass
+  1b021 /bInterfaceSubClass
+  1b035 /bInterfaceProtocol
+  1b049 [%s] driver -> %s
+  1b05c %15[^=]=%15s
+  1b069 :%d:%03d:
+  1b073 /sys/class/net/pcie_mhi0
+  1b08c /sys/class/net/rmnet_mhi0
+  1b0a6 [%s] qmidevice_detect failed
+  1b0c8 /dev/mhi_MBIM%s
+  1b0d8 /dev/mhi_MBIM
+  1b0e6 /dev/mhi_QMI0%s
+  1b0f6 /dev/mhi_QMI0
+  1b104 /sys/class/net/sipa_dummy0
+  1b11f pcie
+  1b124 /dev/stty_nr31
+  1b133 [%s] atdevice_detect failed
+  1b150 [%s] %s unknow bInterfaceClass=%d, bInterfaceSubClass=%d
+  1b18a /sys/bus/usb/devices
+  1b19f [%s] opendir %s failed: %s
+  1b1bb %s/%s
+  1b1c1 /idVendor
+  1b1cb /idProduct
+  1b1d6 /busnum
+  1b1de /devnum
+  1b1e6 /bNumInterfaces
+  1b1f6 [%s] Find %s/%s idVendor=0x%x idProduct=0x%x, bus=0x%03x, dev=0x%03x
+  1b23c %s/%s:1.%d/net
+  1b24b usb0
+  1b250 %s/%s:1.4/net:%s
+  1b261 qcqmi0
+  1b268 %s/%s:1.4/GobiQMI:%s
+  1b27d /dev/%s
+  1b285 %s/%s:1.4
+  1b28f %s/%s:1.%d
+  1b29a /GobiQMI
+  1b2a3 /usbmisc
+  1b2ac [%s] access %s  failed, errno: %d (%s)
+  1b2d4 /uevent
+  1b2dc MAJOR
+  1b2e2 MINOR
+  1b2e8 [%s] get major and minor failed
+  1b309 [%s] please mknod %s c %d %d
+  1b327 [%s] unknow at interface for USB idProduct:%04x
+  1b359 %s/%s:1.%d/tty
+  1b368 [%s] Auto find qmichannel = %s
+  1b388 [%s] Auto find usbnet_adapter = %s
+  1b3ac [%s] network interface '%s' or qmidev '%s' is not exist
+  1b3e5 [%s] %s ioctl USBDEVFS_GETDRIVER failed, kernel driver may be inactive
+  1b42d [%s] %s find interface %d has match the driver %s
+  1b460 [%s] %s detach kernel driver failed
+  1b485 [%s] %s detach kernel driver success
+  1b4ab /dev/bus/usb/%03d/%03d
+  1b4c2 [%s] %s fail to open %s
+  1b4db [%s] Cannot get control socket: errno(%d)(%s)
+  1b50a [%s] ioctl() error: errno(%d)(%s)
+  1b52d [%s] netcard driver = %s, driver version = %s
+  1b55c [%s] ioctl('%s') error: errno(%d)(%s)
+  1b583 [%s] netcard carrier = %d
+  1b59e /sys/module/usbmon
+  1b5b1 [%s] usbmon is not load, please execute "modprobe usbmon" or "insmod usbmon.ko"
+  1b602 /sys/kernel/debug/usb
+  1b618 [%s] debugfs is not mount, please execute "mount -t debugfs none_debugs /sys/kernel/debug"
+  1b674 /sys/kernel/debug/usb/usbmon/%du
+  1b695 [%s] open %s error(%d) (%s)
+  1b6b2 cat /sys/kernel/debug/usb/devices >> %s
+  1b6dd [%s] %s -> %s
+  1b6ec [%s] Cannot open directory: %s, errno: %d (%s)
+  1b71c %s/%s/exe
+  1b726 %s/%s/fd
+  1b72f [%s] %s/%s/exe -> %s
+  1b745 [%s] force kill %s/%s/exe -> %s
+  1b766 [%s] %s Faild to create main_control_fd: %d (%s)
+  1b798 [%s] %s Failed to create thread control socket pair: %d (%s)
+  1b7d6 /proc/self/exe
+  1b7e5 /proc
+  1b7eb [%s] %s Failed to create QMIThread: %d (%s)
+  1b818 [%s] %s Failed to init QMIThread: %d (%s)
+  1b843 [%s] %s Failed to qmi init: %d (%s)
+  1b868 [%s] %s poll err/hup
+  1b87e [%s] trying to get ipv6 address
+  1b89f [%s] try to requestSetupDataCall %lu second later
+  1b8d2 [%s] your sim card may not support ipv6, please contact your carrier
+  1b918 [%s] check whether the sim card has obtained an ipv6 address. AT command 'AT+CGPADDR'
+  1b96f [%s] localIP: %d.%d.%d.%d VS remoteIP: %d.%d.%d.%d
+  1b9a3 [%s] main recv MODEM RESET SIGNAL
+  1b9c6 [%s] SetLoopBackInd: loopback_state=%d, replication_factor=%d
+  1ba05 [%s] %s Error joining to listener thread (%s)
+  1ba34 [%s] Usage: %s [options]
+  1ba4e [%s] -s [apn [user password auth]]          Set apn/user/password/auth get from your network provider. auth: 1~pap, 2~chap, 3~MsChapV2
+  1bad6 [%s] -p pincode                             Verify sim card pin if sim card is locked
+  1bb2d [%s] -p [quectel-][qmi|mbim]-proxy          Request to use proxy
+  1bb6f [%s] -f logfilename                         Save log message of this program to file
+  1bbc5 [%s] -u usbmonlog filename                  Save usbmon log to file
+  1bc0a [%s] -i interface                           Specify which network interface to setup data call when multi-modems exits
+  1bc82 [%s] -4                                     Setup IPv4 data call (default)
+  1bcce [%s] -6                                     Setup IPv6 data call
+  1bd10 [%s] -n pdn                                 Specify which pdn to setup data call (default 1 for QMI, 0 for MBIM)
+  1bd82 [%s] -k pdn                                 Specify which pdn to hangup data call (by send SIGINT to 'quectel-CM -n pdn')
+  1bdfd [%s] -m iface-idx                           Bind QMI data call to wwan0_<iface idx> when QMAP used. E.g '-n 7 -m 1' bind pdn-7 data call to wwan0_1
+  1be92 [%s] -b                                     Enable network interface bridge function (default 0)
+  1bef4 [%s] -v                                     Verbose log mode, for debug purpose.
+  1bf46 [%s] [Examples]
+  1bf57 [%s] Example 1: %s 
+  1bf6c [%s] Example 2: %s -s 3gnet 
+  1bf8a [%s] Example 3: %s -s 3gnet carl 1234 1 -p 1234 -f gobinet_log.txt
+  1bfce [%s] QConnectManager_Linux_V1.6.3.1
+  1bff5 none
+  1bffe chap
+  1c003 MsChapV2
+  1c00c [%s] unknow auth '%s'
+  1c023 quectel-mbim-proxy
+  1c036 [%s] unknow -p '%s'
+  1c04b [%s] send SIGINT to process %d
+  1c06e [%s] Fail to open %s, errno: %d(%s)
+  1c093 [%s] Modem works in MBIM mode
+  1c0b2 [%s] Modem works in QMI mode
+  1c0d0 /dev/qcqmi
+  1c0db [%s] Modem works in ECM_RNDIS_NCM mode
+  1c103 [%s] unsupport software_interface %d
+  1c129 Undefined
+  1c133 MBIMMSGTypeUnknow
+  1c145 MBIMContextIPTypeUnknow
+  1c15d [%s] %s ReadyState = %s
+  1c176 [%s] %s SIMICCID = %s
+  1c18d [%s] %s SubscriberID = %s
+  1c1a8 [%s] %s Number = %s
+  1c1bd [%s] %s NwError = %u
+  1c1d3 [%s] %s RegisterState = %s
+  1c1ef [%s] %s RegisterMode = %s
+  1c20a [%s] %s PacketServiceState = %s
+  1c22b [%s] %s HighestAvailableDataClass = %s
+  1c253 [%s] %s UplinkSpeed = %ld
+  1c26e [%s] %s DownlinkSpeed = %ld
+  1c28b %02x%02x%02x%02x-%02x%02x-%02x%02x-%02x%02x-%02x%02x%02x%02x%02x%02x
+  1c2d0 a289cc33-bcbb-8b4f-b6b0-133ec2aae6df
+  1c2f5 [%s] %s SessionId = %u
+  1c30d [%s] %s ActivationState = %s (%u)
+  1c330 [%s] %s IPType = %s
+  1c345 [%s] %s VoiceCallState = %s
+  1c362 [%s] %s ContextType = %s
+  1c37c unknow
+  1c383 [%s] %s DeviceServiceId = %s (%s)
+  1c3a6 [%s] %s CID = %s (%u)
+  1c3c5 query
+  1c3cb %02X:
+  1c3d1 [%s] %s Header:
+  1c3e2 [%s] %s MessageLength = %u
+  1c3fe [%s] %s MessageType =  %s (0x%08x)
+  1c422 [%s] %s TransactionId = %u
+  1c43e [%s] %s Contents:
+  1c451 [%s] %s MaxControlTransfer = %u
+  1c472 [%s] %s Status = %u
+  1c487 [%s] %s CommandType = %s (%u)
+  1c4a6 [%s] %s InformationBufferLength = %u
+  1c4cc [%s] %s Rssi = %u
+  1c4df [%s] %s ErrorRate = %u
+  1c4f7 [%s] %s SignalStrengthInterval = %u
+  1c51c [%s] %s RssiThreshold = %u
+  1c538 [%s] %s ErrorRateThreshold = %u
+  1c559 3d01dcc5-fef5-4d05-0d3a-bef7058e9aaf
+  1c57e [%s] %s ErrorStatusCode = %u
+  1c59c [%s] %s pthread_cond_timeout_np=%d
+  1c5c0 [%s] %s(sessionID=%d)
+  1c5d7 [%s] %s:%d err=%d, Status=%d
+  1c5f5 [%s] %s IPv4ConfigurationAvailable = 0x%x
+  1c620 [%s] %s IPv6ConfigurationAvailable = 0x%x
+  1c64b [%s] %s IPv4AddressCount = 0x%x
+  1c66c [%s] %s IPv4AddressOffset = 0x%x
+  1c68e [%s] %s IPv6AddressCount = 0x%x
+  1c6af [%s] %s IPv6AddressOffset = 0x%x
+  1c6d1 [%s] %s IPv4 = %u.%u.%u.%u/%u
+  1c6f0 [%s] %s gw = %u.%u.%u.%u
+  1c70a [%s] %s dns1 = %u.%u.%u.%u
+  1c726 [%s] %s dns2 = %u.%u.%u.%u
+  1c742 [%s] %s ipv4 mtu = %u
+  1c759 [%s] %s IPv6 = %02x%02x:%02x%02x:%02x%02x:%02x%02x:%02x%02x:%02x%02x:%02x%02x:%02x%02x/%d
+  1c7b4 [%s] %s gw = %02x%02x:%02x%02x:%02x%02x:%02x%02x:%02x%02x:%02x%02x:%02x%02x:%02x%02x
+  1c80a [%s] %s dns1 = %02x%02x:%02x%02x:%02x%02x:%02x%02x:%02x%02x:%02x%02x:%02x%02x:%02x%02x
+  1c862 [%s] %s dns2 = %02x%02x:%02x%02x:%02x%02x:%02x%02x:%02x%02x:%02x%02x:%02x%02x:%02x%02x
+  1c8ba [%s] %s ipv6 mtu = %u
+  1c8d1 d1a30bc2-f97a-6e43-bf65-c7e24fb0f0d3
+  1c8f6 [%s] SubscriberReadyState %s -> %s 
+  1c91b [%s] RegisterState %s -> %s 
+  1c939 [%s] PacketServiceState %s -> %s 
+  1c95c [%s] ActivationState %s -> %s 
+  1c97c [%s] %s(onoff=%d, sessionID=%d)
+  1c99d [%s] not enough memory
+  1c9b6 7E5E2A7E-4E6F-7272-736B-656E7E5E2A7E
+  1c9db [%s] %s()
+  1c9e6 [%s] SubscriberId: %s
+  1c9fd [%s] SimIccId:     %s
+  1ca14 [%s] CurrentDataClass = %s
+  1ca30 838cf7fb-8d0d-4d7f-871e-d71dbefbb39b
+  1ca55 [%s] DeviceId:     %s
+  1ca6c [%s] FirmwareInfo: %s
+  1ca83 [%s] HardwareInfo: %s
+  1ca9a [%s] %s( %d )
+  1caa9 [%s] HwRadioState: %d, SwRadioState: %d
+  1cad2 None
+  1cad7 1XEVDORevA
+  1cae2 1XEVDORevB
+  1caed Custom
+  1caf4 Unknown
+  1cafc Attaching
+  1cb06 Detaching
+  1cb10 Automatic
+  1cb1a Manual
+  1cb21 Deregistered
+  1cb2e Searching
+  1cb38 Home
+  1cb3d Roaming
+  1cb45 Partner
+  1cb4d Denied
+  1cb54 NotInitialized
+  1cb63 NotInserted
+  1cb6f BadSim
+  1cb76 Failure
+  1cb7e NotActivated
+  1cb8b DeviceLocked
+  1cb98 InProgress
+  1cba3 HangUp
+  1cbaa MBIMContextIPTypeDefault
+  1cbc3 MBIMContextIPTypeIPv4
+  1cbd9 MBIMContextIPTypeIPv6
+  1cbef MBIMContextIPTypeIPv4v6
+  1cc07 MBIMContextIPTypeIPv4AndIPv6
+  1cc24 Activating
+  1cc2f Deactivated
+  1cc3b Deactivating
+  1cc48 UUID_BASIC_CONNECT
+  1cc5b UUID_BASIC_CONNECT_EXT
+  1cc72 533fbeeb-14fe-4467-9f90-33a223e56c3f
+  1cc97 UUID_SMS
+  1cca0 e550a0c8-5e82-479e-82f7-10abf4c3351f
+  1ccc5 UUID_USSD
+  1cccf 4bf38476-1e6a-41db-b1d8-bed289c25bdb
+  1ccf4 UUID_PHONEBOOK
+  1cd03 d8f20131-fcb5-4e17-8602-d6ed3816164c
+  1cd28 UUID_STK
+  1cd31 1d2b5ff7-0aa1-48b2-aa52-50f15767174e
+  1cd56 UUID_AUTH
+  1cd60 c08a26dd-7718-4382-8482-6e0d583c4d0e
+  1cd85 UUID_DSS
+  1cd8e uuid_ext_qmux
+  1cd9c 883b7c26-985f-43fa-9804-27d7fb80959c
+  1cdc1 uuid_mshsd
+  1cdcc 2d0c12c9-0e6a-495a-915c-8d174fe5d63c
+  1cdf1 uuid_qmbe
+  1cdfb e9f7dea2-feaf-4009-93ce-90a3694103b6
+  1ce20 UUID_MSFWID
+  1ce2c 5967bdcc-7fd2-49a2-9f5c-b2e70e527db3
+  1ce51 uuid_atds
+  1ce5b 6427015f-579d-48f5-8c54-f43ed1e76f83
+  1ce80 uuid_qdu
+  1ce89 c2f6588e-f037-4bc9-8665-f4d44bd09367
+  1ceae UUID_MS_UICC_LOW_LEVEL
+  1cec5 68223D04-9F6C-4E0F-822D-28441FB72340
+  1ceea UUID_MS_SARControl
+  1cefd 8d8b9eba-37be-449b-8f1e-61cb034a702e
+  1cf22 UUID_VOICEEXTENSIONS
+  1cf37 UUID_LIBMBIM_PROXY
+  1cf4a MBIM_OPEN_MSG
+  1cf58 MBIM_CLOSE_MSG
+  1cf67 MBIM_COMMAND_MSG
+  1cf78 MBIM_HOST_ERROR_MSG
+  1cf8c MBIM_OPEN_DONE
+  1cf9b MBIM_CLOSE_DONE
+  1cfab MBIM_COMMAND_DONE
+  1cfbd MBIM_FUNCTION_ERROR_MSG
+  1cfd5 MBIM_INDICATE_STATUS_MSG
+  1cfee MBIM_CID_DEVICE_CAPS
+  1d003 MBIM_CID_SUBSCRIBER_READY_STATUS
+  1d024 MBIM_CID_RADIO_STATE
+  1d039 MBIM_CID_PIN
+  1d046 MBIM_CID_PIN_LIS
+  1d057 MBIM_CID_HOME_PROVIDER
+  1d06e MBIM_CID_PREFERRED_PROVIDERS
+  1d08b MBIM_CID_VISIBLE_PROVIDERS
+  1d0a6 MBIM_CID_REGISTER_STATE
+  1d0be MBIM_CID_PACKET_SERVICE
+  1d0d6 MBIM_CID_SIGNAL_STATE
+  1d0ec MBIM_CID_CONNECT
+  1d0fd MBIM_CID_PROVISIONED_CONTEXTS
+  1d11b MBIM_CID_SERVICE_ACTIVATION
+  1d137 MBIM_CID_IP_CONFIGURATION
+  1d151 MBIM_CID_DEVICE_SERVICES
+  1d16a MBIM_CID_DEVICE_SERVICE_SUBSCRIBE_LIST
+  1d191 MBIM_CID_PACKET_STATISTICS
+  1d1ac MBIM_CID_NETWORK_IDLE_HINT
+  1d1c7 MBIM_CID_EMERGENCY_MODE
+  1d1df MBIM_CID_IP_PACKET_FILTERS
+  1d1fa MBIM_CID_MULTICARRIER_PROVIDERS
+  1d21a MBIM_CID_MS_PROVISIONED_CONTEXT_V2
+  1d23d MBIM_CID_MS_NETWORK_BLACKLIST
+  1d25b MBIM_CID_MS_LTE_ATTACH_CONFIG
+  1d279 MBIM_CID_MS_LTE_ATTACH_STATUS
+  1d297 MBIM_CID_MS_SYS_CAPS
+  1d2ac MBIM_CID_MS_DEVICE_CAPS_V2
+  1d2c7 MBIM_CID_MS_DEVICE_SLOT_MAPPING
+  1d2e7 MBIM_CID_MS_SLOT_INFO_STATUS
+  1d304 MBIM_CID_MS_PCO
+  1d314 MBIM_CID_MS_DEVICE_RESET
+  1d32d MBIM_CID_MS_BASE_STATIONS_INFO
+  1d34c MBIM_CID_MS_LOCATION_INFO_STATUS
+  1d36d MBIM_CID_NOT_DEFINED
+  1d382 MBIM_CID_MS_PIN_EX
+  1d395 MBIM_CID_MS_VERSION
+  1d3a9 MBIM_CID_MS_UICC_ATR
+  1d3be MBIM_CID_MS_UICC_OPEN_CHANNEL
+  1d3dc MBIM_CID_MS_UICC_CLOSE_CHANNEL
+  1d3fb MBIM_CID_MS_UICC_APDU
+  1d411 MBIM_CID_MS_UICC_TERMINAL_CAPABILITY
+  1d436 MBIM_CID_MS_UICC_RESET
+  1d44d MBIM_CID_MS_APP_LIST
+  1d462 [%s] warnning: fail to fread(%s), fread=%zu, buf_size=%zu: (%s)
+  1d4a3 [%s] warnning: fail to fwrite(%s), fwrite=%zu, buf_size=%zu: (%s)
+  1d4e6 /sys/class/net/%s/bridge_mode
+  1d504 /sys/class/net/%s/bridge_ipv4
+  1d522 [%s] fail to access %s, errno: %d (%s)
+  1d54a /sys/module/%s/parameters/bridge_mode
+  1d570 /sys/module/%s/parameters/bridge_ipv4
+  1d596 /sys/class/net/
+  1d5a6 0x%x
+  1d5ab [%s] echo '%s' > %s
+  1d5c0 0x%x:%d
+  1d5c8 /dev/cdc-wdm
+  1d5d5 /sys/class/net/%s/qmi/rawip
+  1d5f1 [%s] Fail to fopen(%s, "w"), errno: %d (%s)
+  1d61e [%s] Fail to fwrite(%s), errno: %d (%s)
+  1d647 %02d
+  1d64d /sys/class/net/%s.%d
+  1d662 [%s] mbim_qmap_mode = %d, vlan_id = 0x%02x, qmap_netcard = %s
+  1d6a1 /sys/class/net/%s/device/driver
+  1d6c1 /sys/class/net/%s/qmap_mode
+  1d6dd /sys/module/%s/parameters/qmap_mode
+  1d701 /sys/class/net/%s/device/driver/module/parameters/qmap_mode
+  1d73d %.16s.%d
+  1d746 /sys/class/net/qmimux%d
+  1d75e /sys/class/net/%s/qmi/add_mux
+  1d77c [%s] If use QMAP by /sys/class/net/%s/qmi/add_mux
+  1d7af [%s] File:%s Line:%d Please make sure add next patch to qmi_wwan.c
+  1d7f3 /sys/class/net/%s/qmap_size
+  1d80f [%s] qmap_mode = %d, qmap_version = %d, qmap_size = %d, muxid = 0x%02x, qmap_netcard = %s
+  1d86a %x:%x:%x:%x:%x:%x:%x:%x
+  1d882 /sys/class/net/%s/qmi/raw_ip
+  1d89f gl-sdk4-cellular-26.163.12373~1111f6a/plugin/quec_CM/udhcpc.c
+  1d8dd [%s] %s %d fail to open(%s), errno:%d (%s)
+  1d909 [%s] File:%s Line:%d udhcpc fail to get ip address, try next:
+  1d948 ifconfig %s down
+  1d959 [%s] echo Y > /sys/class/net/%s/qmi/raw_ip
+  1d985 /sys/class/net/%s/link_state
+  1d9a2 [%s] Fail to access %s, errno: %d (%s)
+  1d9cf /sbin/ip
+  1d9d8 ip -%d address flush dev %s
+  1d9f4 ip -%d address add %s/%u dev %s
+  1da14 ip -%d route add default via %s dev %s
+  1da3b ifconfig %s %s netmask %s
+  1da55 route del default dev %s
+  1da6e route add default gw %s dev %s
+  1da8d ip -%d route add default dev %s
+  1daad ifconfig %s %s/%u
+  1dabf route -A inet6 add default dev %s
+  1dae1 [%s] change mtu %d -> %d
+  1dafb [%s] pcscf1: %s
+  1db0c [%s] pcscf2: %s
+  1db1d /usr/share/udhcpc/default.script
+  1db3e /etc//udhcpc/default.script
+  1db5a [%s] No default.script found, it should be in '/usr/share/udhcpc/' or '/etc//udhcpc' depend on your udhcpc version!
+  1dbcf busybox udhcpc -f -n -q -t 5 -i %s
+  1dbf2 /lib/netifd/dhcp.script
+  1dc0a /sbin/ifup
+  1dc15 /sbin/ifstatus
+  1dc24 /proc/sys/net/ipv6/conf/all/forwarding
+  1dc4b killall dibbler-client
+  1dc62 ifconfig %s 0.0.0.0
+  1dc76 %02d-%02d_%02d:%02d:%02d:%03d
+  1dc94 /dev/tty
+  1dc9d [%s] Failed to open %s, errno: %d (%s)
+  1dcc5 [%s] connect %s errno: %d (%s)
+  1dce5 [%s] connect to %s sockfd = %d
+  1dd05 [%s] ret=%d, msecs=%u, t=%u
+  1dd22 # IPV%d %s
+  1dd2d /etc/resolv.conf
+  1dd3e [%s] fopen %s fail, errno:%d (%s)
+  1dd61 nameserver %s %s
+  1dd73 -n %d
+  1dd79 /proc/*/cmdline
+  1dd89 [%s] glob error, errno = %d(%s)
+  1ddaa [%s] open %s failed, errno = %d(%s)
+  1ddcf [%s] %s: %s
+  1dddc [%s] socket() failed: %s
+  1ddf7 [%s] ioctl(0x%x, qmap_settings) errno:%d (%s), rc=%d
+  1de2d [%s] ioctl(0x%x, qmap_settings) failed: %s, rc=%d
+  1de60 GobiNetThread
+  1de6e GobiNetSendQMI
+  1dea2 9pOp
+  1ee00 ComposeQMUXMsg
+  1ee0f requestRadioPower
+  1ee21 requestGetIPAddress
+  1ee35 requestDeactivateDefaultPDP
+  1ee51 requestQueryDataCall
+  1ee66 requestSetupDataCall
+  1eea0 requestGetProfile
+  1eeb2 requestSetProfile
+  1eec4 requestEnterSimPin
+  1eed7 requestSetLoopBackState
+  1eeef requestSetEthMode
+  1ef01 requestBaseBandVersion
+  1ef18 requestGetHomeNetwork
+  1ef2e requestRegistrationState2
+  1ef48 requestRegistrationState
+  1f000 requestGetSIMStatus
+  1f014 requestGetPINStatus
+  1f0c8 QmiWwanSendQMI
+  1f0d7 ComposeQCTLMsg
+  1f0e6 QmiWwanGetClientID
+  1f0f9 QmiWwanInit
+  1f105 libqmi_proxy_open
+  1f117 QmiWwanThread
+  1f125 QmiWwanReleaseClientID
+  1f160 onClose
+  1f168 onTimeout
+  1f172 atc_read_thread
+  1f182 requestGetICCID
+  1f192 requestGetIMSI
+  1f1c8 requestSetProfile
+  1f1da requestGetProfile
+  1f1ee requestGetIPAddress
+  1f320 onReaderClosed
+  1f32f at_send_command_full_nolock
+  1f34b get_driver_type
+  1f35b usbfs_is_kernel_driver_alive
+  1f378 usbfs_detach_kernel_driver
+  1f393 usbfs_attach_kernel_driver
+  1f3ae reattach_driver
+  1f3ec qmi_main
+  1fb80 mbim_send_command
+  1fb92 mbim_ip_config
+  1fba1 qmi_over_mbim_qmidev_send
+  1fbbb mbim_set_connect
+  1fbcc mbim_subscriber_status_query
+  1fbe9 mbim_register_state_query
+  1fc03 mbim_packet_service_query
+  1fc1d mbim_packet_service_set
+  1fc35 mbim_query_connect
+  1fc48 mbim_close_device
+  1fc5a mbim_read_thread
+  1fc6b mbim_proxy_configure
+  1fc80 mbim_open_device
+  1fc91 mbim_device_caps_query
+  1fca8 mbim_device_services_query
+  1fcc3 mbim_ms_version_query
+  1fcd9 mbim_set_radio_state
+  1fdb0 ql_qmi_qmap_mode_detect
+  1fdc8 ql_raw_ip_mode_check
+  24038 255.225.255.255

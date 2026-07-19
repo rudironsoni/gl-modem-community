@@ -1,0 +1,450 @@
+    775 A4(y
+    782 !lFJ
+   1779 _fini
+   177f __cxa_finalize
+   178e __deregister_frame_info
+   17a6 __register_frame_info
+   17bc __stack_chk_guard
+   17ce __stack_chk_fail
+   17df __gl_log_level__
+   17f0 ___gl_log
+   17fa __errno_location
+   180b snprintf
+   1814 mkdir
+   181a fopen
+   1820 fprintf
+   1828 fclose
+   182f unlink
+   1836 fflush
+   183d fileno
+   1844 fsync
+   184a rename
+   1851 read
+   1856 memcmp
+   185d memset
+   1864 localtime
+   186e strftime
+   1877 json_delete
+   1883 fstat
+   1889 write
+   188f json_array_insert_new
+   18a5 get_limit_config_value
+   18bc json_load_file
+   18cb json_object_get
+   18db json_array_size
+   18eb json_array_get
+   18fa json_integer_value
+   190d json_string_value
+   191f strdup
+   1926 is_modem_ntp_sync
+   1938 access
+   193f perror
+   1946 calculate_next_clean_time
+   1960 free
+   1965 mktime
+   196c fputc
+   1972 manual_reset_traffic
+   1987 cleanup_traffic_by_bus
+   199e system
+   19a5 strcmp
+   19ac clean_traffic_data
+   19bf get_max_count_by_name
+   19d5 jsonw_load_file
+   19e5 jsonw_decref
+   19f2 check_traffic_exceeds
+   1a08 strtoull
+   1a11 get_interval_by_name
+   1a26 stderr
+   1a2d fputs
+   1a33 collect_signal_data
+   1a47 get_func_map_by_bus
+   1a5b signal_array
+   1a68 json_array
+   1a73 json_object
+   1a7f json_integer
+   1a8c jsonw_object_set_new
+   1aa1 json_string
+   1aad json_dumps
+   1ab8 json_array_remove
+   1aca collect_signal_data_all_bus
+   1ae6 get_modems_info
+   1af6 jsonw_object_get
+   1b07 jsonw_string_value
+   1b1a jsonw_integer_value
+   1b2e signal_monitor_global_callback
+   1b4d update_slot_traffic
+   1b61 fscanf
+   1b68 notify_dial_stop
+   1b79 slot_event_queue_push_for_bus
+   1b97 calc_add_traffic
+   1ba8 opendir
+   1bb0 readdir
+   1bb8 closedir
+   1bc1 strncmp
+   1bc9 get_iface_traffic
+   1bdb bus_slot_to_interface_name
+   1bf6 get_l3_device_for_ifname
+   1c0f get_at_traffic
+   1c1e get_at_result
+   1c2c strncpy
+   1c34 strstr
+   1c3b strlen
+   1c42 strchr
+   1c49 restore_dail
+   1c56 get_dial_state_by_bus
+   1c6c common_get_sim_status
+   1c82 async_spawn
+   1c8e blobmsg_parse
+   1c9c add_slot_pri_by_id
+   1caf check_reset_date
+   1cc0 fgets
+   1cc6 strtoll
+   1cce bus_to_config_name
+   1ce1 jsonw_deep_copy
+   1cf1 _get_slot_type_by_bus
+   1d07 _get_pid_vid_by_bus
+   1d1b collect_traffic_data
+   1d30 save_traffic_config
+   1d44 check_file_is_exist
+   1d58 get_flash_enable
+   1d69 collect_traffic_data_all_bus
+   1d86 traffic_monitor_global_callback
+   1da6 init_collection_config
+   1dbd jsonw_dump_file
+   1dcd init_data_collect_mgr
+   1de3 init_timer_mgr
+   1df2 timer_obj
+   1dfc gl_timer_create
+   1e0c gl_get_model
+   1e19 get_all_traffic_stats
+   1e2f blob_buf_init
+   1e3d global_blob_b
+   1e4b blobmsg_add_json_from_string
+   1e68 jsonw_dumps
+   1e74 ubus_send_reply
+   1e84 get_all_signals_json
+   1e99 jsonw_array_append_new
+   1eb0 jsonw_object
+   1ebd gl_ubus_add_object
+   1ed0 ubus_strerror
+   1ede deinit_data_collect_ubus_server
+   1efe gl_ubus_remove_object
+   1f14 set_traffic_date
+   1f25 atoi
+   1f2a get_level_config
+   1f3b signals_value
+   1f49 _is_bus_valid
+   1f57 gl_ubus_par_call
+   1f68 jsonw_loads
+   1f74 set_traffic_config
+   1f87 get_modem_log_level
+   1f9b gl_log_level
+   1fa8 error_to_string
+   1fb8 jsonw_object_set
+   1fc9 json_dump_file
+   1fd8 _get_current_sim_slot
+   1fee get_traffic_config
+   2001 json_object_set_new
+   2015 json_true
+   201f json_loads
+   202a json_false
+   2035 get_signals
+   2041 get_bus_list
+   204e strtok_r
+   2057 modem_is_build_in
+   206d libjansson.so.4
+   207d libguci.so
+   2088 libgl-utils.so
+   2097 libgl_log.so
+   20a4 libubus.so.20251202
+   20b8 libubox.so.20260213
+   20cc libblobmsg_json.so.20260213
+   20e8 libgcc_s.so.1
+   20f6 libc.so
+   20fe libcmcollect.so
+   210e GLIBC_2.0
+   2118 JANSSON_4
+   3569  @qa
+   8ddb 4`J@9
+   ae65 @@9#
+   b905 BI9p
+   b935 BI9p
+   b96c Path exists but is not a directory: %s
+   b994 gl-sdk4-cellular-26.163.12373~1111f6a/function/collect/data_collect.c
+   b9da stat failed for %s: %s
+   b9f2 mkdir failed for %s: %s
+   ba0b %s.tmp
+   ba14 atomic_write_ull_file fopen failed %s: %s
+   ba3f atomic_write_ull_file fprintf failed %s: %s
+   ba6c atomic_write_ull_file fflush failed %s: %s
+   ba98 atomic_write_ull_file fsync failed %s: %s
+   bac3 atomic_write_ull_file rename %s -> %s failed: %s
+   baf5 /etc/gl_modem_traffic/%s
+   bb0e /tmp/gl_modem_traffic/%s
+   bb27 %s/anomaly.log
+   bb38 %Y-%m-%d %H:%M:%S
+   bb4a [%s] net_type=%s modem_type:%d reason=%s old=%llu new=%llu
+   bb86 open src failed %s: %s
+   bb9e fstat failed %s: %s
+   bbb3 open tmp failed %s: %s
+   bbcb read failed %s: %s
+   bbdf write failed %s: %s
+   bbf4 rename failed %s -> %s: %s
+   bc10 open directory failed %s: %s
+   bc2e fsync directory failed %s: %s
+   bc4d /etc/config/traffic.json
+   bc66 Failed to load %s: %s (line %d, column %d)
+   bc92 Missing 'bus:%s' node in %s
+   bcaf save_to_flash
+   bcbd save_to_flash 'bus:%s' node in %s
+   bce0 limit
+   bce6 Missing limit node in %s
+   bd00 slot
+   bd05 enable
+   bd0c limit enable is %d ,bus:%s slot:%d type:%d
+   bd38 _limit enable is %d ,bus:%s slot:%d _slot:%d type:%d _type:%d key %s
+   bd7e key:%s ,value:%s
+   bd90 /tmp/modem-ntp-valid
+   bda5 access
+   bdac calculate_next_clean_time: NTP not synced, skip
+   bddd localtime failed
+   bdef reset_period
+   bdfc reset_period is NULL
+   be12 reset_period is %s year%d month%d day%d hour%d min%d sec%d
+   be4e Unsupported reset_period: %s
+   be6c mktime failed
+   be7b /tmp/gl_modem_traffic
+   be91 /etc/gl_modem_traffic
+   bea7 calculate_next_clean_time ensure directory failed: bus=%s slot=%d type=%d
+   bef2 /tmp/gl_modem_traffic/%s/total_sim%d
+   bf17 /tmp/gl_modem_traffic/%s/total_esim%d
+   bf3d calculate_next_clean_time open failed %s: %s
+   bf6b clean tmp success 
+   bf7f /etc/gl_modem_traffic/%s/total_sim%d
+   bfa4 /etc/gl_modem_traffic/%s/total_esim%d
+   bfca clean etc success 
+   bfde /etc/gl_modem_traffic/%s/clean_time_sim%d
+   c008 /etc/gl_modem_traffic/%s/clean_time_esim%d
+   c033 %lld
+   c038 calculate_next_clean_time next_time is %lld
+   c065 esim
+   c06a /tmp/gl_modem_traffic/%s/total_%s%d
+   c08e /tmp/gl_modem_traffic/%s/clean_time_%s%d
+   c0b7 /etc/gl_modem_traffic/%s/total_%s%d
+   c0db /etc/gl_modem_traffic/%s/clean_time_%s%d
+   c104 manual_reset_traffic: bus=%s slot=%d type=%d
+   c132 rm -rf %s
+   c13c cleanup_traffic_by_bus: removed %s
+   c160 cleanup_traffic_by_bus: released sync_state for %s
+   c194 /etc/config/collection.json
+   c1b0 Invalid input: name is NULL.
+   c1ce File %s does not exist.
+   c1e7 Failed to read JSON file %s.
+   c205 timers
+   c20c timers_array failed
+   c221 name
+   c226 max_count
+   c230 No object with name '%s' found in JSON file.
+   c25e threshold
+   c268 Traffic exceeds : %llu >= %llu (bus:%s slot:%d)
+   c299 Traffic not exceeds : %llu < %llu (bus:%s slot:%d)
+   c2cd interval
+   c2d6 signal_info
+   c2e2 collect_signal_data,func_map is NULL,bus=%s
+   c30f collect_signal_data,max_count=%d,bus=%s,dds=%d
+   c33f timestamp
+   c349 strength
+   c352 network_type
+   c35f rsrp
+   c364 rsrq
+   c369 rssi
+   c36e sinr
+   c373 rscp
+   c378 ecio
+   c381 new_entry content: %s, net_mode=%d
+   c3a5 json_array_insert_new failed
+   c3c3 signal_array length: %zu, max_count: %d
+   c3ec collect_signal_data_all_bus: get_modems_info failed
+   c421 modems
+   c42c supports_feature
+   c43d signal_up
+   c447 collect_signal_data_all_bus: collecting bus=%s
+   c477 signal_monitor_global_callback
+   c497 %llu
+   c49c update_slot_traffic: failed to parse %s, will try flash fallback
+   c4de update_slot_traffic: failed to parse flash file %s
+   c512 update_slot_traffic: both tmp and flash reads failed for %s; assuming 0 (initial)
+   c564 update_slot_traffic atomic write failed %s
+   c590 update_slot_traffic bus=%s slot=%d old=%llu new=%llu add=%llu source_total=%llu
+   c5e1 update_slot_traffic stop_dial bus:%s, slot:%d type:%d
+   c618 calc_add_traffic mk %s
+   c630 opendir failed %s: %s
+   c64a %s/%s
+   c650 clean_time_
+   c65c remove clean_time file failed %s: %s
+   c682 calc_add_traffic sync from flash done: %s -> %s
+   c6b3 /tmp/gl_modem_traffic/%s/total_%s
+   c6d5 /etc/gl_modem_traffic/%s/total_%s
+   c6fa calc_add_traffic: failed to parse %s, resetting old_value to 0
+   c73a Failed to write total file %s, skip increment for this round
+   c778 increment_jump_10g
+   c78b Counter rollback but new_value too large: bus=%s net_type=%s old=%llu new=%llu, assuming 0
+   c7e7 calc_add_traffic bus=%s net_type=%s old=%llu new=%llu add=%llu
+   c827 Single increment too large for %s (net_type:%s) %llu bytes, capping to %llu
+   c874 increment_exceed
+   c885 get_iface_traffic constructing interface names failed for bus:%s, slot:%d
+   c8d0 get_iface_traffic for iface_name:%s
+   c8f5 /sys/class/net/%s/statistics/rx_bytes
+   c91b /sys/class/net/%s/statistics/tx_bytes
+   c941 /tmp/gl_modem_traffic/%s/if_slot%d_%s
+   c967 iface counter rollback too large: bus=%s slot=%d if=%s old=%llu new=%llu
+   c9b1 iface_rollback_too_large
+   c9ca iface_counter_rollback
+   c9e1 get_iface_traffic bus=%s slot=%d if=%s new=%llu old=%llu delta=%llu
+   ca26 get_at_traffic use 5G counter command for bus=%s slot=%d
+   ca60 AT+QGDNRCNT?
+   ca6d +QGDNRCNT: 
+   ca79 Failed to obtain 5G counter traffic values bus=%s slot=%d
+   cab4 get_at_traffic use 4G counter command for bus=%s slot=%d
+   caee AT+QGDCNT?
+   caf9 Failed to obtain 4G counter traffic values bus=%s slot=%d
+   cb34 get_at_traffic label=%s output=%s
+   cb57 Failed to parse AT traffic response for prefix %s bus=%s slot=%d
+   cb99 get_at_traffic label=%s tx=%llu rx=%llu total=%llu
+   cbcd data_collect start dialup on bus:%s slot:%d sim status:%d
+   cc08 restore_dail cm_dial_restore bus:%s, slot:%d type:%d
+   cc3e ubus -t 5 call cellular.cm cm_dial_restore '{"bus":"%s","slot":%d,"nw_st":3}'
+   cc8c ubus handle_traffic_clean slot %d type %d bus %s
+   ccbe handle_traffic_clean: clean_traffic_data failed for bus=%s slot=%d type=%d
+   cd0a check_reset_date: NTP not synced, skip (bus=%s slot=%d)
+   cd43 Missing reset_period for bus %s slot %d
+   cd6c Empty reset_period for bus %s slot %d
+   cd93 File %s does not exist: %s
+   cdaf Failed to open %s: %s
+   cdc6 Failed to read from %s: %s
+   cde2 Invalid clean_time format in %s
+   ce03 Failed to get current time: %s
+   ce23 cur_time %ld exceeds the clean_time %ld for SIM%d
+   ce56 check_reset_date: next_time invalid bus=%s slot=%d cur=%ld next=%ld
+   ce9b cur_time %ld < clean_time %ld for SIM%d
+   cec4 /etc/config/cellular/slot_map.json
+   cee7 slot_feature
+   cef4 get_slot_type_by_bus failed to parse ubus response
+   cf28 failover
+   cf31 slot_type
+   cf3b get_slot_type_by_bus: slot_type missing for %s
+   cf6b get_slot_type_by_bus: failover not found for %s
+   cf9c get_slot_type_by_bus: location_id %s not found
+   cfcc External Module
+   cfdc Embedded Module
+   cfec Failed to get the current card slot type object
+   d01d Failed to obtain the current card slot type
+   d04a collect_traffic_data modem fail
+   d06b traffic_stat_method
+   d07f supports_5g
+   d08e AT+QCSQ
+   d096 collect_traffic_data: failed to get QCSQ bus=%s slot=%d
+   d0cf NOSERVICE
+   d0d9 collect_traffic_data: QCSQ reports NOSERVICE, skip traffic collect bus=%s slot=%d output=%s
+   d136 collect_traffic_data: bus=%s slot=%d traffic_method=%s supports_5g=%d counter=%s
+   d188 collect_traffic_data: get %s AT traffic failed bus=%s slot=%d
+   d1c7 Get the current bus %s card slot %d %s traffic value %llu
+   d202 Failed to get the traffic value for kernel
+   d22e new_value:%llu add_value:%llu slot_type:%s modem_type:%s
+   d268 collect_traffic_data_all_bus: get_modems_info failed
+   d29e process_modem_traffic: invalid slot for bus=%s
+   d2ce process_modem_traffic: collect failed bus=%s
+   d2fc traffic_monitor_global_callback
+   d31d File %s already exists.
+   d336 traffic_info
+   d343 Failed to write JSON to file %s.
+   d365 Successfully created %s.
+   d37f The module number parameter is invalid
+   d3a7 No modem detected, only create traffic timer
+   d3d5 signal timer skipped: model is empty
+   d3fb /lib/modem_data/product_baseline.json
+   d421 signal timer skipped: failed to load baseline %s
+   d453 support_historical_signal
+   d46d signal timer skipped: support_historical_signal is missing or not array
+   d4b6 signal timer enabled for model %s
+   d4d9 /tmp/gl_modem_traffic/
+   d4f0 get_all_traffic_stats dir err 
+   d510 get_all_traffic_stats_dname %s
+   d530 get_all_traffic_stats sim%d value %llu
+   d558 traffic_total
+   d566 get_all_traffic_stats esim%d value %llu
+   d58f get_all_traffic_stats bus %s traffic size %d
+   d5bd ubus handle_get_traffic 
+   d5d7 ubus handle_get_traffic bus:%s
+   d5fa ubus handle_get_signals time %d
+   d61b Failed to add object: %s
+   d635 Failed to remove object: %s
+   d652 set_traffic_date in bus%s
+   d66d month
+   d677 hour
+   d67c set_traffic_date 0000000 %s
+   d699 set_traffic_date reset_period %s
+   d6bb /etc/gl_crontabs/crontabs.d/traffic-%s-sim%d
+   d6e8 /etc/gl_crontabs/crontabs.d/traffic-%s-esim%d
+   d716 ubus call cellular.collect clean_traffic '{\"bus\":\"%s\",\"slot\":%d,\"type\":%d}'
+   d76a echo "0 %d %d %d * %s" > %s
+   d786 echo "0 %d %d %d,%d,%d,%d * %s" > %s
+   d7ab echo "0 %d %d * * %s" > %s
+   d7c6 echo "0 %d * * %d %s" > %s
+   d7e1 echo "0 %d * * * %s" > %s
+   d7fb set_traffic_date cron cmd: %s
+   d81a set_traffic_date next_year %d next_month %d next_day %d hour %d
+   d85b Failed to calculate next reset time
+   d880 Failed to adjust date
+   d897 /etc/gl_modem_traffic/
+   d8ae set_traffic_date Failed to write time file
+   d8da set_traffic_date next_time %ld
+   d8fa level
+   d900 get_modem_info
+   d90f status
+   d916 cellular.modem
+   d925 set_traffic_config api in
+   d940 Missing required parameter: bus
+   d961 Created new traffic config file
+   d982 Created new config section for bus: %s
+   d9aa set_traffic_config mk %s
+   d9c4 Failed to save traffic config to file
+   d9eb Processing traffic index: %zu
+   da0a ubus call cellular.failover switch_event '{"event":"DATA_RESET","slot":%d,"bus":"%s"}'
+   da61 restore_dail err bus:%s, slot:%d type:%d
+   da8b set_traffic_config ensure dir failed /tmp/gl_modem_traffic
+   dac7 set_traffic_config ensure dir failed %s
+   daf0 echo %s > %s
+   dafd ubus call cellular.network update_status '{"bus":"%s","slot":%d}'
+   db3f write SIM%d type%d traffic data %s 
+   db64 Processing limit index: %zu
+   db81 rm /tmp/gl_crontabs/crontabs.d/traffic-%s-sim%d;rm /etc/gl_crontabs/crontabs.d/traffic-%s-sim%d;/etc/init.d/gl_timer restart
+   dbfe rm /tmp/gl_crontabs/crontabs.d/traffic-%s-esim%d;rm /etc/gl_crontabs/crontabs.d/traffic-%s-esim%d;/etc/init.d/gl_timer restart
+   dc7d rm /tmp/gl_crontabs/crontabs.d/traffic-%s*;rm /etc/gl_crontabs/crontabs.d/traffic-%s*;/etc/init.d/gl_timer restart;rm /etc/gl_modem_traffic/%s/*
+   dd0e err_code
+   dd17 err_msg
+   dd1f get_traffic_config api in
+   dd3a get_traffic
+   dd46 get_traffic_config traffic: %s
+   dd66 get_traffic_config type %d slot %d traffic data %s 
+   dd9d get_traffic_config type %d slot %d traffic data 0 
+   ddd1 get_traffic_config out
+   dde9 cellular.collect
+   ddfa get_signals api in
+   de10 time
+   de15 get_signals
+   de21 Bus does not exist
+   de35 total_sim1
+   de40 total_esim1
+   de4c total_sim2
+   de57 total_esim2
+   de63 total_4g
+   de6c total_5g
+   de75 clean_traffic
+   de83 NULL
+   de88 EVDO
+   de91 WCDMA
+   de97 TDSCDMA
+   dea3 NR5G-NSA
+   deac NR5G-SA
+   deb4 +QGDCNT: 

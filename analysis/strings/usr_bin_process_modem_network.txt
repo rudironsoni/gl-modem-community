@@ -1,0 +1,15 @@
+      0 #!/bin/sh
+      b . /lib/functions/modem.sh
+     26 . /lib/functions/gl_log.sh
+     42 iface="$(get_modem_iface)"
+     5d iface_s1="${iface}_s1"
+     74 iface_s2="${iface}_s2"
+     8c if uci get network.$iface_s1 >/dev/null 2>&1; then
+     bf     uci delete network.$iface_s1
+     e4 if uci get network.$iface_s2 >/dev/null 2>&1; then
+    117     uci delete network.$iface_s2
+    13c uci commit network >/dev/null 2>&1
+    160 if [ "$(uci -q get glmodem.global.log_level)" = "1" ]; then
+    19c     uci -q set glmodem.global.log_level=0
+    1c6     uci commit glmodem >/dev/null 2>&1
+    1f1 sync

@@ -1,0 +1,487 @@
+    5ba ]@9/b;
+    5d3 	&4&xj`
+    5eb i&4&x)
+   11f1 _fini
+   11f7 __cxa_finalize
+   1206 __deregister_frame_info
+   121e __register_frame_info
+   1234 __stack_chk_guard
+   1246 guci_get_name
+   1254 strcmp
+   125b __stack_chk_fail
+   126c strlen
+   1273 memcpy
+   127a strstr
+   1281 fprintf
+   1289 fputs
+   128f fseek
+   1295 fread
+   129b memset
+   12a2 fwrite
+   12a9 opendir
+   12b1 __gl_log_level__
+   12c2 ___gl_log
+   12cc readdir
+   12d4 snprintf
+   12dd stat
+   12e2 closedir
+   12eb access
+   12f2 fopen
+   12f8 fgets
+   12fe strncmp
+   1306 fclose
+   130d mkstemp
+   1315 guci_add_list
+   1323 fdopen
+   132a unlink
+   1331 fflush
+   1338 fileno
+   133f fsync
+   1345 rename
+   134c strtol
+   1353 get_cid
+   135b get_func_map_by_bus
+   136f sleep
+   1375 parse_imsi_info
+   1385 get_cid_by_plmn
+   1395 mark_section_synced
+   13a9 guci_set
+   13b2 guci_commit
+   13be convert_config_to_json
+   13d5 jsonw_object
+   13e2 jsonw_true
+   13ed jsonw_object_set_new
+   1402 jsonw_integer
+   1410 jsonw_string
+   141d jsonw_false
+   1429 create_band_json_object
+   1441 jsonw_loads
+   144d write_band_and_dial_config_to_slot_map
+   1474 get_pid_vid_by_bus
+   1487 bus_slot_to_config_name
+   149f jsonw_load_file
+   14af jsonw_object_get
+   14c0 jsonw_dump_file
+   14d0 jsonw_decref
+   14dd is_iccid_in_json_file
+   14f3 remove_iccid_from_json_file
+   150f jsonw_object_del
+   1520 append_or_update_json_file
+   153b jsonw_deep_copy
+   154b jsonw_object_iter
+   155d jsonw_object_iter_key
+   1573 jsonw_object_iter_value
+   158b jsonw_object_iter_next
+   15a2 is_section_sim_synced
+   15b8 atoi
+   15bd guci_section_count
+   15d0 guci_section_name
+   15e2 need_to_sync_iccid
+   15f5 get_sim_configs_type1
+   160b malloc
+   1612 strncpy
+   161a process_sim_configs_type1
+   1634 str_to_ip_type
+   1643 get_network_configs
+   1657 find_network_by_sim_num
+   166f process_sim_configs_type2
+   1689 write_sim_config_to_json
+   16a2 guci_init
+   16ac guci_free
+   16b6 check_sim_configuration
+   16ce get_current_sim_slot
+   16e3 is_tower_or_operator_synced
+   16ff get_tower_configs
+   1711 get_operator_configs
+   1726 create_tower_json_object
+   173f create_operator_json_object
+   175b write_tower_operator_config_to_slot_feature
+   1787 check_slot_configuration
+   17a0 json_array_size
+   17b0 json_array_get
+   17bf jsonw_string_value
+   17d2 get_json_string
+   17e2 check_traffic_configuration
+   17fe bus_to_uci_section
+   1811 jsonw_array
+   181d device_has_esim
+   182d jsonw_array_append_new
+   1844 jsonw_array_size
+   1855 check_apnprofile_configuration
+   1874 jsonw_array_get
+   1884 jsonw_array_remove
+   1897 check_phone_and_email_configuration
+   18bb strnlen
+   18c3 guci_get_list_count
+   18d7 guci_get_list_index
+   18eb guci_set_name
+   18f9 strcspn
+   1901 check_failove_configuration
+   191d migrate_legacy_sms_flatten
+   1938 gettimeofday
+   1945 strdup
+   194c calloc
+   1953 libjansson.so.4
+   1963 libguci.so
+   196e libgl-utils.so
+   197d libgl_log.so
+   198a libubus.so.20251202
+   199e libubox.so.20260213
+   19b2 libblobmsg_json.so.20260213
+   19ce libgcc_s.so.1
+   19dc libc.so
+   19e4 libcmconfiguration_manager.so
+   1a02 JANSSON_4
+   1a0c GLIBC_2.0
+   293d H@9?
+   2a71 H@9? 
+   6af8 `BB9
+   6b94 `BC9@
+   6bc0 `bC9@
+   6de0 `"D9@
+   6e0c `bD9
+   7233 TACA
+   9d65 #B9 
+   9ea4 ?k48
+   a9f5 #D97
+   aa6d #F9'
+   b51d SB9!
+   b825 SB9!
+   bec0 Bus: %s
+   bec9 Slot: 1
+   bed9 SMS migrate: processing legacy dir:%s synced_count:%d
+   bf10 gl-sdk4-cellular-26.163.12373~1111f6a/configuration_manager/configuration_manager.c
+   bf67 %s/%s
+   bf6d SMS migrate: processing legacy subdir bus=%s
+   bf9b SMS migrate: target %s already exists, skipping copy of %s
+   bfd7 SMS migrate: %s already marked synced, skipping %s
+   c00b Bus:
+   c010 Slot:
+   c016 %s/.%s.tmpXXXXXX
+   c029 SMS migrate: failed copying %s -> %s (bus=%s) code=%d
+   c060 SMS migrate: copied %s -> %s (bus=%s, injected=%s)
+   c094 glmodem.sms_sync.%s
+   c0a8 Failed to rename %s to %s; keeping temp file
+   c0d6 get sim imsi failed,ret:%d (retry %d/%d)
+   c100 %s%s
+   c105 get sim imsi %s,cid:%d
+   c11d glmodem.%s.sim_synced
+   c133 Failed to set sync flag for %s
+   c153 glmodem
+   c15b Failed to commit UCI changes
+   c179 Marked %s as synced
+   c18e NONE
+   c193 manual
+   c19a ip_type
+   c1a6 apns
+   c1b6 pincode
+   c1be auth
+   c1c3 username
+   c1cc password
+   c1d5 roaming
+   c1e1 band_enable
+   c1ed band_filter_mode
+   c1fe band_list
+   c208 (not set)
+   c212 Invalid parameters for write_band_and_dial_config_to_slot_map
+   c251 Failed to get PID/VID for bus %s
+   c273 Failed to generate slot config name for bus %s, slot %d
+   c2ac Generated slot config name: %s for ICCID: %s
+   c2da /etc/config/cellular/slot_map.json
+   c2fd Failed to create root JSON object
+   c320 slot_feature
+   c32d slot_multi_priority
+   c341 is_single_dial
+   c350 AUTO
+   c355 network_mode
+   c362 Failed to create band JSON object
+   c385 band
+   c38a Added band config to slot %s (band_enable=%d)
+   c3b9 band_enable=0, skipping band config for slot %s
+   c3ea Failed to create dial_config JSON object
+   c414 device
+   c41b device is empty, not adding device field for slot %s
+   c451 protocol
+   c45a protocol is empty, not adding protocol field for slot %s
+   c494 dial_config
+   c4a0 Added dial_config to slot %s: device=%s, protocol=%s
+   c4d6 No device or protocol config, skipping dial_config for slot %s
+   c516 Failed to write slot_map.json file
+   c53a Successfully wrote config to slot_map.json for slot %s
+   c572 Removed ICCID %s from JSON file
+   c593 Failed to write JSON file after removing ICCID %s
+   c5c6 ICCID %s already exists in JSON file, updating
+   c5f6 Adding new ICCID %s to JSON file
+   c618 Failed to create final JSON object
+   c63c Failed to write JSON to file: %s
+   c65e glmodem.@sim
+   c66b glmodem.@network
+   c67c ICCID %s already exists and synced in config sim
+   c6ae network_sim%d
+   c6bc Synchronized or section does not exist
+   c6e4 /etc/config/cellular/sim_map.json
+   c706 ICCID %s not found in JSON file
+   c727 ICCID %s exists in JSON but not synced in UCI, need to re-sync
+   c767 Failed to allocate memory for %d SIM configs
+   c795 Failed to get section name at index %d
+   c7bd Skipping anonymous section
+   c7d9 SIM config %s is already synced, skipping
+   c804 proto
+   c80a ttl_ipv6
+   c813 Found %d unsynced SIM configuration(s) (type1)
+   c843 error: Failed to convert SIM config %s to JSON
+   c873 error: Failed to add SIM config %s to JSON
+   c89f Successfully processed ICCID %s
+   c8c0 Failed to allocate memory for %d network configs
+   c8f2 Skipping anonymous network section
+   c916 Network config %s is already synced, skipping
+   c945 No unsynced network configurations found for SIM%d
+   c979 Found %d unsynced network configuration(s) for SIM%d (type2)
+   c9b7 No network configuration found for SIM%d (ICCID: %s)
+   c9ed Processing SIM%d: ICCID=%s, Network=%s
+   ca15 error: Failed to convert SIM%d configuration to JSON
+   ca4b error: Failed to add SIM%d configuration to JSON
+   ca7d Successfully processed network config %s
+   caa7 Failed to initialize UCI context
+   cac9 Failed to create JSON object
+   cae7 No unsynced type1 configurations found, trying type2...
+   cb20 No unsynced SIM configurations found
+   cb46 Successfully processed %d unsynced SIM configuration(s)
+   cb7f Failed to append or update JSON to file: %s
+   cbac Successfully processed %d SIM configuration(s) to %s
+   cbe2 Invalid ICCID
+   cbf1 ICCID %s already exists and synced, or section does not exist; skipping processing
+   cc45 ICCID %s exists but not synced, removing from JSON file
+   cc7e Failed to remove ICCID %s from JSON file
+   cca8 Failed to check sync status for ICCID %s
+   ccd3 SUCCESS: SIM configuration exported and updated successfully
+   cd12 INFO: No unsynced SIM configurations found, no file update
+   cd4f ERROR: Failed to export SIM configuration (error code: %d)
+   cd8b glmodem.@tower
+   cd9a glmodem.@operator
+   cdad INFO: tower exit need to update 
+   cdd0 INFO: operator exit need to update 
+   cdf6 INFO: tower and operator config no exit, no update
+   ce2b INFO: tower or operator is already exists and synced
+   ce61 Failed to allocate memory for %d tower configs
+   ce91 Failed to get tower section name at index %d
+   cebf Skipping anonymous tower section
+   cee1 Skipping synced tower section
+   cf00 Invalid SIM number in tower name: %s
+   cf2a freq
+   cf3b srxlev
+   cf42 bandwidth
+   cf4c cellid
+   cf57 network_type
+   cf64 Loaded tower config: %s (SIM%d)
+   cf85 Loaded %d tower configs
+   cf9e Failed to allocate memory for %d operator configs
+   cfd1 Failed to get operator section name at index %d
+   d002 Skipping anonymous operator section
+   d027 Skipping synced operator section
+   d049 Invalid SIM number in operator name: %s
+   d072 long_opername
+   d080 short_opername
+   d08f plmn
+   d098 format
+   d09f Loaded operator config: %s (SIM%d)
+   d0c3 Loaded %d operator configs
+   d0df lock
+   d0e4 squal
+   d0ea Invalid parameters for write_tower_operator_config_to_slot_feature
+   d12e No tower or operator configs to write
+   d155 Added tower config to slot %s
+   d174 Added operator config to slot %s
+   d196 Successfully updated tower/operator config objects
+   d1ca slot_feature parameter is required
+   d1ee tower or operator is already exists and synced, skipping processing
+   d233 supports_feature
+   d244 lock_carrier
+   d251 lock_tower
+   d25c lock_tower_support=%d,lock_carrier_support=%d
+   d28f No bus or lock_tower/lock_carrier not supported, skipping processing
+   d2d5 Failed to get tower configs
+   d2f2 Failed to get operator configs
+   d312 glmodem.%s.slot_synced
+   d329 Successfully synchronized tower/operator configs
+   d35b Failed to update slot_feature object
+   d381 tower or operator does not exist, skipping processing
+   d3b8 check_traffic_configuration bus=%s
+   d3dc Invalid bus parameter
+   d3f3 extract bus name: %s
+   d409 %s_traffic_limit
+   d41a Processing traffic config for bus: %s (modem: %s)
+   d44d Traffic config %s is already synced, skipping
+   d47c Looking for traffic config: %s (from bus: %s)
+   d4ab glmodem.@modem
+   d4ba No traffic config found for modem: %s
+   d4e1 Failed to allocate memory for traffic config
+   d50f save_to_flash
+   d51d sim1_enable
+   d529 sim2_enable
+   d535 sim1_threshold
+   d544 sim1_unit
+   d54e sim1_reset_period
+   d560 sim1_day
+   d569 sim1_hour
+   d573 sim2_threshold
+   d582 sim2_unit
+   d58c sim2_reset_period
+   d59e sim2_day
+   d5a7 sim2_hour
+   d5b1 Loaded traffic config: %s
+   d5cc   SIM1: enable=%d, threshold=%s, unit=%s, period=%s, day=%s, hour=%s
+   d612   SIM2: enable=%d, threshold=%s, unit=%s, period=%s, day=%s, hour=%s
+   d658 Failed to get traffic configs
+   d677 No traffic configurations to process
+   d69d Processing traffic config: %s
+   d6bc slot
+   d6c1 Failed to create traffic JSON object for %s
+   d6ee /etc/config/traffic.json
+   d707 Traffic config for bus %s already exists, updating
+   d73b Adding new traffic config for bus %s
+   d761 Failed to write traffic JSON to file: %s
+   d78b Successfully wrote traffic config to %s
+   d7b4 Failed to update traffic.json for %s
+   d7da glmodem.%s.traffic_synced
+   d7f4 Successfully processed and synced traffic config %s
+   d829 Failed to mark traffic config %s as synced
+   d859 check_apnprofile_configuration
+   d879 apnprofile.@rule
+   d88a No apnprofile configurations found
+   d8ae Found %d apnprofile configuration(s)
+   d8d4 /etc/config/cellular/apnprofile.json
+   d8f9 Existing APNPROFILE file found, will update it
+   d929 No existing APNPROFILE file, creating new one
+   d958 custom_profiles
+   d968 Using existing custom_profiles array with %zu entries
+   d99f Failed to create custom_profiles array
+   d9c7 Created new custom_profiles array
+   d9ea Skipping anonymous apnprofile section
+   da11 Processing apnprofile config: %s
+   da33 apnprofile
+   da3e Already synchronized, checking if needs update: %s
+   da72 Section %s maybe needs synchronization
+   da9a Failed to create profile object for %s
+   dac2 Missing device for profile %s, skipping
+   daeb Removed old profile with id %s from JSON
+   db15 description
+   db21 Missing description for profile %s, skipping
+   db4f apnprofile.%s.apnprofile_synced
+   db6f Successfully updated apnprofile config: %s
+   db9b No new apnprofile configurations found
+   dbc3 Removed %d old and added %d new apnprofile configuration(s)
+   dc00 Failed to write apnprofile JSON to file: %s
+   dc2d Successfully wrote %d apnprofile configuration(s) to %s (total: %zu)
+   dc73 (empty)
+   dc7b (hidden)
+   dc84 check_phone_and_email_configuration
+   dca9 sms_forward_synced
+   dcbc phone
+   dcc2 glforward
+   dccc email
+   dcd2 Phone config needs synchronization
+   dcf6 Email config needs synchronization
+   dd1a glforward.@phones
+   dd2c Found %d anonymous phones section(s) in glforward
+   dd5f All configurations are already synchronized
+   dd8c /etc/config/cellular/sms_forward.json
+   ddb2 Existing SMS forward file found, will update it
+   dde3 modem_mode
+   ddee single
+   ddf5 single_sim
+   de00 sim1
+   de05 sim2
+   de0a dual_sim
+   de13 encryption
+   de1e subject
+   de26 Created new SMS forward JSON structure
+   de4e Failed to get phones section name at index %d
+   de7d Processing phones config: %s
+   de9b phone_number
+   dea8 No phone_number found in section %s, skipping
+   ded7 country_code
+   dee4 full_number
+   def0 Added phone: country_code=%s, phone_number=%s, full_number=%s
+   df2f Processing phone service config: phone
+   df57 Set phone enable: %d
+   df6d forward_numbers
+   df7d glforward.phone.phone_numbers
+   df9b Found %d phone_numbers in list
+   dfbb phone_numbers=%s in list
+   dfd5 Added forward number: %s
+   dfef Marked phone service config as synchronized
+   e01c Processing email service config: email
+   e044 /etc/ssmtp/ssmtp.conf
+   e05a mailhub=
+   e066 Found mailhub: %s
+   e079 AuthUser=
+   e083 Found AuthUser: %s
+   e097 AuthPass=
+   e0a1 Found AuthPass: %s
+   e0b5 smtp
+   e0ba mailhub not found in %s
+   e0d3 account
+   e0db AuthUser not found in %s
+   e0f5 AuthPass not found in %s
+   e10f Added ssmtp config: smtp=%s, account=%s, password=%s
+   e145 ssmtp config file %s not found, setting empty values
+   e17b Set email enable: %d
+   e191 Set email encryption: %d
+   e1ab Set email subject: %s
+   e1c2 glforward.email.emails
+   e1d9 Found %d emails in list
+   e1f2 emails=%s in list
+   e205 Added email: %s
+   e216 Marked email config as synchronized
+   e23b No phone or email configurations found in glforward
+   e270 Processed %d phone/email configuration items from glforward
+   e2ad Failed to write SMS forward JSON to file: %s
+   e2db Successfully wrote SMS forward configuration to %s
+   e30f Invalid parameters for check_failove_configuration
+   e343 check_failove_configuration: bus=%s
+   e368 Extracted bus name: %s
+   e380 %s_dual
+   e388 Looking for failover config: %s
+   e3a9 No failover config found for modem: %s
+   e3d1 Failover config %s is already synced, skipping
+   e401 main_sim
+   e40a Required option 'main_sim' not found for %s
+   e437 failover_interval
+   e449 failover_interval option not found for %s, using default: 0
+   e486 timing_enable
+   e494 timing_enable option not found for %s, using default: 0
+   e4cd timing_hour
+   e4d9 Required option 'timing_hour' not found for %s
+   e509 timing_min
+   e514 Required option 'timing_min' not found for %s
+   e543 Failover config loaded: enable=%d, main_sim=%s, interval=%d, timing_enable=%d, hour=%s, min=%s, valid=%d
+   e5ad Failed to get failover config for %s
+   e5d3 Failover config %s is invalid, missing required options
+   e60c failover
+   e615 Found unsynced failover config: %s
+   e639 Found existing failover object, updating only new fields
+   e673 enable_switch
+   e681 enable_timing
+   e692 slot_type
+   e69c Updated existing failover object, preserved slot_type, current_sim, esim2_enable
+   e6ee No existing failover object found, creating new one with default values
+   e737 Failed to create failover JSON object
+   e75e current_sim
+   e76a Failed to create or update failover JSON object for %s
+   e7a2 Added new failover object to modem_s
+   e7c8 Failover object already exists in modem_s
+   e7f3 glmodem.%s.failover_synced
+   e80e Successfully synchronized failover config %s
+   e83c SMS migrate: failed to init uci context
+   e865 SMS migrate: processing legacy dir:%s
+   e88c glmodem.@sms_sync
+   e89e Failed to create sms_sync section
+   e8c1 Failed to commit glmodem after creating sms_sync section
+   e8fb SMS migrate: completed in %ld ms
+   e91d /etc/spool/sms/incoming
+   e935 /etc/spool/sms/storage
+   e94c /etc/spool/sms/sent
+   e960 /etc/spool/sms/outgoing
+   e978 /etc/spool/sms/checked
+   e98f /etc/spool/sms/failed

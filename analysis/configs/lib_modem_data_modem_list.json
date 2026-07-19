@@ -1,0 +1,878 @@
+{
+    "modems": [
+        {
+            "bus_type": "CPU",
+            "pid": "0133",
+            "vid": "2c7c",
+            "name": "RG650V",
+            "vendor": "quectel",
+            "traffic_stat_method": "at",
+            "supports_5g": true,
+            "supports_port": {
+                "port_at": "/dev/smd9"
+            },
+            "sim_slot_num": 2,
+            "standby_type": 1,
+            "supports_function_map": "function_at_quectel",
+            "supports_private_map": "function_private_rg650v",
+            "supports_proto": [
+                "rmnet"
+            ],
+            "supports_feature": [
+                "sms",
+                "lock_tower",
+                "lock_carrier",
+                "signal_up",
+                "network_type"
+            ],
+            "supports_esim": [
+                2
+            ],
+            "supports_rrc_seg": ["RG650V-EU"],
+            "supports_band": {
+                "RG650V-NA": {
+                    "lte_band": [
+                        2,
+                        4,
+                        5,
+                        7,
+                        12,
+                        13,
+                        14,
+                        17,
+                        25,
+                        26,
+                        29,
+                        30,
+                        38,
+                        41,
+                        42,
+                        43,
+                        48,
+                        66,
+                        71
+                    ],
+                    "nsa_band": [
+                        2,
+                        5,
+                        7,
+                        12,
+                        13,
+                        14,
+                        25,
+                        26,
+                        29,
+                        30,
+                        38,
+                        41,
+                        48,
+                        66,
+                        70,
+                        71,
+                        77,
+                        78
+                    ],
+                    "sa_band": [
+                        2,
+                        5,
+                        7,
+                        12,
+                        13,
+                        14,
+                        25,
+                        26,
+                        29,
+                        30,
+                        38,
+                        41,
+                        48,
+                        66,
+                        70,
+                        71,
+                        77,
+                        78
+                    ]
+                },
+                "RG650V-EU": {
+                    "lte_band": [
+                        1,
+                        3,
+                        5,
+                        7,
+                        8,
+                        20,
+                        28,
+                        32,
+                        38,
+                        40,
+                        41,
+                        42,
+                        43
+                    ],
+                    "nsa_band": [
+                        1,
+                        3,
+                        5,
+                        7,
+                        8,
+                        20,
+                        26,
+                        28,
+                        38,
+                        40,
+                        41,
+                        75,
+                        76,
+                        77,
+                        78
+                    ],
+                    "sa_band": [
+                        1,
+                        3,
+                        5,
+                        7,
+                        8,
+                        20,
+                        26,
+                        28,
+                        38,
+                        40,
+                        41,
+                        75,
+                        76,
+                        77,
+                        78
+                    ]
+                }
+            }
+        },
+        {
+            "bus_type": "PCIE",
+            "pid": "0304",
+            "vid": "17cb",
+            "name": "EM160R",
+            "vendor": "quectel",
+            "traffic_stat_method": "at",
+            "supports_5g": false,
+            "supports_port": {
+                "port_type": "PCIE",
+                "port_dm": "/dev/mhi_DIAG",
+                "port_at": "/dev/mhi_DUN",
+                "port_qmi": "/dev/mhi_QMI0"
+            },
+            "sim_slot_num": 2,
+            "standby_type": 3,
+            "supports_function_map": "function_at_quectel",
+            "supports_private_map": "function_private_em160r",
+            "supports_proto": [
+                "qcm"
+            ],
+            "supports_feature": [
+                "sms",
+                "signal_up"
+            ]
+        },
+        {
+            "bus_type": "PCIE",
+            "pid": "0308",
+            "vid": "17cb",
+            "name": "RM520N",
+            "vendor": "quectel",
+            "traffic_stat_method": "at",
+            "supports_5g": true,
+            "supports_port": {
+                "port_type": "PCIE",
+                "port_dm": "/dev/mhi_DIAG",
+                "port_at": "/dev/mhi_DUN",
+                "port_qmi": "/dev/mhi_QMI0"
+            },
+            "sim_slot_num": 2,
+            "standby_type": 3,
+            "supports_function_map": "function_at_quectel",
+            "supports_private_map": "function_private_rm520n",
+            "supports_proto": [
+                "qcm"
+            ],
+            "supports_feature": [
+                "sms",
+                "lock_tower",
+                "lock_carrier",
+                "signal_up",
+                "network_type"
+            ],
+            "supports_band": {
+                "RM520N-GL": {
+                    "lte_band": [
+                        1,
+                        2,
+                        3,
+                        4,
+                        5,
+                        7,
+                        8,
+                        12,
+                        13,
+                        14,
+                        17,
+                        18,
+                        19,
+                        20,
+                        25,
+                        26,
+                        28,
+                        29,
+                        30,
+                        32,
+                        34,
+                        38,
+                        39,
+                        40,
+                        41,
+                        42,
+                        43,
+                        46,
+                        48,
+                        66,
+                        71
+                    ],
+                    "nsa_band": [
+                        1,
+                        2,
+                        3,
+                        5,
+                        7,
+                        8,
+                        12,
+                        13,
+                        14,
+                        18,
+                        20,
+                        25,
+                        26,
+                        28,
+                        29,
+                        30,
+                        38,
+                        40,
+                        41,
+                        48,
+                        66,
+                        70,
+                        71,
+                        75,
+                        76,
+                        77,
+                        78,
+                        79
+                    ],
+                    "sa_band": [
+                        1,
+                        2,
+                        3,
+                        5,
+                        7,
+                        8,
+                        12,
+                        13,
+                        14,
+                        18,
+                        20,
+                        25,
+                        26,
+                        28,
+                        29,
+                        30,
+                        38,
+                        40,
+                        41,
+                        48,
+                        66,
+                        70,
+                        71,
+                        75,
+                        76,
+                        77,
+                        78,
+                        79
+                    ]
+                }
+            }
+        },
+        {
+            "bus_type": "USB",
+            "pid": "0801",
+            "vid": "2c7c",
+            "name": "RM520N",
+            "vendor": "quectel",
+            "traffic_stat_method": "at",
+            "supports_5g": true,
+            "supports_port": [
+                {
+                    "port_type": "USB",
+                    "port_name": "ttyUSB",
+                    "port_offset_dm": 0,
+                    "port_offset_gps": 1,
+                    "port_offset_at": 2,
+                    "port_offset_ppp": 3
+                },
+                {
+                    "port_type": "WDM",
+                    "port_name": "cdc-wdm",
+                    "port_offset_qmi": 0
+                }
+            ],
+            "sim_slot_num": 2,
+            "standby_type": 3,
+            "supports_function_map": "function_at_quectel",
+            "supports_private_map": "function_private_rm520n",
+            "supports_proto": [
+                "qcm",
+                "qmi",
+                "3g"
+            ],
+            "supports_feature": [
+                "sms",
+                "network_type"
+            ],
+            "supports_band": {
+                "RM520N-GL": {
+                    "lte_band": [
+                        1,
+                        2,
+                        3,
+                        4,
+                        5,
+                        7,
+                        8,
+                        12,
+                        13,
+                        14,
+                        17,
+                        18,
+                        19,
+                        20,
+                        25,
+                        26,
+                        28,
+                        29,
+                        30,
+                        32,
+                        34,
+                        38,
+                        39,
+                        40,
+                        41,
+                        42,
+                        43,
+                        46,
+                        48,
+                        66,
+                        71
+                    ],
+                    "nsa_band": [
+                        1,
+                        2,
+                        3,
+                        5,
+                        7,
+                        8,
+                        12,
+                        13,
+                        14,
+                        18,
+                        20,
+                        25,
+                        26,
+                        28,
+                        29,
+                        30,
+                        38,
+                        40,
+                        41,
+                        48,
+                        66,
+                        70,
+                        71,
+                        75,
+                        76,
+                        77,
+                        78,
+                        79
+                    ],
+                    "sa_band": [
+                        1,
+                        2,
+                        3,
+                        5,
+                        7,
+                        8,
+                        12,
+                        13,
+                        14,
+                        18,
+                        20,
+                        25,
+                        26,
+                        28,
+                        29,
+                        30,
+                        38,
+                        40,
+                        41,
+                        48,
+                        66,
+                        70,
+                        71,
+                        75,
+                        76,
+                        77,
+                        78,
+                        79
+                    ]
+                }
+            }
+        },
+        {
+            "bus_type": "USB",
+            "pid": "0620",
+            "vid": "2c7c",
+            "name": "EM160R",
+            "vendor": "quectel",
+            "traffic_stat_method": "at",
+            "supports_5g": false,
+            "supports_port": [
+                {
+                    "port_type": "USB",
+                    "port_name": "ttyUSB",
+                    "port_offset_dm": 0,
+                    "port_offset_gps": 1,
+                    "port_offset_at": 2,
+                    "port_offset_ppp": 3
+                },
+                {
+                    "port_type": "WDM",
+                    "port_name": "cdc-wdm",
+                    "port_offset_qmi": 0
+                }
+            ],
+            "sim_slot_num": 2,
+            "standby_type": 3,
+            "supports_function_map": "function_at_quectel",
+            "supports_private_map": "function_private_em160r",
+            "supports_proto": [
+                "qcm",
+                "qmi",
+                "3g"
+            ],
+            "supports_feature": [
+                "sms"
+            ]
+        },
+        {
+            "bus_type": "USB",
+            "pid": "030e",
+            "vid": "2c7c",
+            "name": "EM05G",
+            "vendor": "quectel",
+            "traffic_stat_method": "at",
+            "supports_5g": false,
+            "supports_port": [
+                {
+                    "port_type": "USB",
+                    "port_name": "ttyUSB",
+                    "port_offset_dm": 0,
+                    "port_offset_gps": 1,
+                    "port_offset_at": 2,
+                    "port_offset_ppp": 3
+                },
+                {
+                    "port_type": "WDM",
+                    "port_name": "cdc-wdm",
+                    "port_offset_qmi": 0
+                }
+            ],
+            "sim_slot_num": 1,
+            "supports_function_map": "function_at_quectel",
+            "supports_private_map": "function_private_em05g",
+            "supports_proto": [
+                "qcm",
+                "qmi",
+                "3g"
+            ],
+            "supports_feature": [
+                "sms"
+            ]
+        },
+        {
+            "bus_type": "USB",
+            "pid": "030b",
+            "vid": "2c7c",
+            "name": "EM060K EG060K EM120K EG120K",
+            "vendor": "quectel",
+            "traffic_stat_method": "at",
+            "supports_5g": false,
+            "supports_port": [
+                {
+                    "port_type": "USB",
+                    "port_name": "ttyUSB",
+                    "port_offset_dm": 0,
+                    "port_offset_gps": 1,
+                    "port_offset_at": 2,
+                    "port_offset_ppp": 3
+                },
+                {
+                    "port_type": "WDM",
+                    "port_name": "cdc-wdm",
+                    "port_offset_qmi": 0
+                }
+            ],
+            "sim_slot_num": 2,
+            "supports_function_map": "function_at_quectel",
+            "supports_private_map": "function_private_em060k",
+            "supports_proto": [
+                "qcm",
+                "qmi",
+                "3g"
+            ],
+            "supports_feature": [
+                "sms",
+                "signal_up"
+            ],
+            "supports_band": {
+                "EG120K-NA": {
+                    "lte_band": [
+                        2,
+                        4,
+                        5,
+                        7,
+                        12,
+                        13,
+                        14,
+                        25,
+                        26,
+                        29,
+                        30,
+                        41,
+                        48,
+                        66,
+                        71
+                    ]
+                },
+                "EG120K-EU": {
+                    "lte_band": [
+                        1,
+                        3,
+                        5,
+                        7,
+                        8,
+                        20,
+                        28,
+                        32,
+                        38,
+                        40,
+                        41,
+                        42,
+                        43
+                    ]
+                }
+            }
+        },
+        {
+            "bus_type": "USB",
+            "name": "EP06",
+            "pid": "0306",
+            "vid": "2c7c",
+            "vendor": "quectel",
+            "traffic_stat_method": "at",
+            "supports_5g": false,
+            "supports_port": [
+                {
+                    "port_type": "USB",
+                    "port_name": "ttyUSB",
+                    "port_offset_dm": 0,
+                    "port_offset_gps": 1,
+                    "port_offset_at": 2,
+                    "port_offset_ppp": 3
+                },
+                {
+                    "port_type": "WDM",
+                    "port_name": "cdc-wdm",
+                    "port_offset_qmi": 0
+                }
+            ],
+            "sim_slot_num": 1,
+            "supports_function_map": "function_at_quectel",
+            "supports_private_map": "function_private_ep06",
+            "supports_proto": [
+                "qcm",
+                "qmi",
+                "3g"
+            ],
+            "supports_feature": [
+                "sms"
+            ]
+        },
+        {
+            "bus_type": "USB",
+            "pid": "0125",
+            "vid": "2c7c",
+            "name": "EC25",
+            "vendor": "quectel",
+            "traffic_stat_method": "at",
+            "supports_5g": false,
+            "supports_port": [
+                {
+                    "port_type": "USB",
+                    "port_name": "ttyUSB",
+                    "port_offset_dm": 0,
+                    "port_offset_gps": 1,
+                    "port_offset_at": 2,
+                    "port_offset_ppp": 3
+                },
+                {
+                    "port_type": "WDM",
+                    "port_name": "cdc-wdm",
+                    "port_offset_qmi": 0
+                }
+            ],
+            "sim_slot_num": 1,
+            "supports_function_map": "function_at_quectel",
+            "supports_private_map": "function_private_ec25",
+            "supports_proto": [
+                "qcm",
+                "qmi",
+                "3g"
+            ],
+            "supports_feature": [
+                "sms"
+            ]
+        },
+        {
+            "bus_type": "USB",
+            "pid": "9215",
+            "vid": "05c6",
+            "name": "EC20",
+            "vendor": "quectel",
+            "traffic_stat_method": "at",
+            "supports_5g": false,
+            "supports_port": [
+                {
+                    "port_type": "USB",
+                    "port_name": "ttyUSB",
+                    "port_offset_dm": 0,
+                    "port_offset_gps": 1,
+                    "port_offset_at": 2,
+                    "port_offset_ppp": 3
+                },
+                {
+                    "port_type": "WDM",
+                    "port_name": "cdc-wdm",
+                    "port_offset_qmi": 0
+                }
+            ],
+            "sim_slot_num": 1,
+            "supports_function_map": "function_at_quectel",
+            "supports_private_map": "function_private_ec20",
+            "supports_proto": [
+                "qcm",
+                "qmi",
+                "3g"
+            ],
+            "supports_feature": [
+                "sms"
+            ]
+        },
+        {
+            "bus_type": "USB",
+            "pid": "1506",
+            "vid": "12d1",
+            "name": "E3276",
+            "vendor": "huawei",
+            "traffic_stat_method": "iface",
+            "supports_5g": false,
+            "supports_port": [
+                {
+                    "port_type": "USB",
+                    "port_name": "ttyUSB",
+                    "port_offset_at": 0,
+                    "port_offset_ppp": 1,
+                    "port_offset_dm": 2
+                }
+            ],
+            "sim_slot_num": 1,
+            "supports_function_map": "function_at_huawei",
+            "supports_private_map": "function_private_e3276",
+            "supports_proto": [
+                "ncm",
+                "3g"
+            ],
+            "supports_feature": [
+                "sms"
+            ],
+            "supports_ip_type": 1
+        },
+        {
+            "bus_type": "USB",
+            "pid": "fffe",
+            "vid": "19d2",
+            "name": "QD91F",
+            "vendor": "Qualcomm",
+            "traffic_stat_method": "iface",
+            "supports_5g": false,
+            "supports_port": [
+                {
+                    "port_type": "USB",
+                    "port_name": "ttyUSB",
+                    "port_offset_at": 0,
+                    "port_offset_ppp": 1
+                }
+            ],
+            "sim_slot_num": 1,
+            "supports_function_map": "function_at_common",
+            "supports_private_map": "function_private_qd91f",
+            "supports_proto": [
+                "3g",
+                "ncm"
+            ],
+            "supports_feature": [
+                "sms"
+            ]
+        },
+        {
+            "bus_type": "USB",
+            "pid": "0167",
+            "vid": "19d2",
+            "name": "MF820B",
+            "vendor": "ZTE",
+            "traffic_stat_method": "iface",
+            "supports_5g": false,
+            "supports_port": [
+                {
+                    "port_type": "USB",
+                    "port_name": "ttyUSB",
+                    "port_offset_dm": 0,
+                    "port_offset_gps": 1,
+                    "port_offset_at": 2,
+                    "port_offset_ppp": 3
+                },
+                {
+                    "port_type": "WDM",
+                    "port_name": "cdc-wdm",
+                    "port_offset_qmi": 0
+                }
+            ],
+            "sim_slot_num": 1,
+            "supports_function_map": "function_at_common",
+            "supports_private_map": "function_private_mf820b",
+            "supports_proto": [
+                "qmi",
+                "3g"
+            ],
+            "supports_feature": [
+                "sms"
+            ]
+        },
+        {
+            "bus_type": "USB",
+            "pid": "9000",
+            "vid": "2357",
+            "name": "MA260",
+            "vendor": "TP-Link",
+            "traffic_stat_method": "iface",
+            "supports_5g": false,
+            "supports_port": [
+                {
+                    "port_type": "USB",
+                    "port_name": "ttyUSB",
+                    "port_offset_at": 2,
+                    "port_offset_dm": 1,
+                    "port_offset_ppp": 0
+                },
+                {
+                    "port_type": "WDM",
+                    "port_name": "cdc-wdm",
+                    "port_offset_qmi": 0
+                }
+            ],
+            "sim_slot_num": 1,
+            "supports_function_map": "function_at_common",
+            "supports_private_map": "function_private_ma260",
+            "supports_proto": [
+                "qmi",
+                "3g"
+            ],
+            "supports_feature": [
+                "sms"
+            ]
+        },
+        {
+            "bus_type": "USB",
+            "pid": "b001",
+            "vid": "1410",
+            "name": "USB551L",
+            "vendor": "Novatel",
+            "traffic_stat_method": "iface",
+            "supports_5g": false,
+            "supports_port": [
+                {
+                    "port_type": "USB",
+                    "port_name": "ttyUSB",
+                    "port_offset_at": 0,
+                    "port_offset_gps": 1,
+                    "port_offset_dm": 2,
+                    "port_offset_ppp": 3
+                },
+                {
+                    "port_type": "WDM",
+                    "port_name": "cdc-wdm",
+                    "port_offset_qmi": 0
+                }
+            ],
+            "sim_slot_num": 1,
+            "supports_function_map": "function_at_common",
+            "supports_private_map": "function_private_usb551l",
+            "supports_proto": [
+                "qmi",
+                "3g"
+            ],
+            "supports_feature": [
+                "sms"
+            ]
+        },
+        {
+            "bus_type": "USB",
+            "pid": "0512",
+            "vid": "2c7c",
+            "name": "EM12G",
+            "vendor": "Qualcomm",
+            "traffic_stat_method": "iface",
+            "supports_5g": false,
+            "supports_port": [
+                {
+                    "port_type": "USB",
+                    "port_name": "ttyUSB",
+                    "port_offset_dm": 0,
+                    "port_offset_gps": 1,
+                    "port_offset_at": 2,
+                    "port_offset_ppp": 3
+                },
+                {
+                    "port_type": "WDM",
+                    "port_name": "cdc-wdm",
+                    "port_offset_qmi": 0
+                }
+            ],
+            "sim_slot_num": 1,
+            "supports_function_map": "function_at_common",
+            "supports_private_map": "function_private_em12g",
+            "supports_proto": [
+                "qcm",
+                "qmi",
+                "3g"
+            ],
+            "supports_feature": [
+                "sms"
+            ]
+        }
+    ]
+}

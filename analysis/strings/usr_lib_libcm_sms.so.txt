@@ -1,0 +1,321 @@
+    67c nHni
+   13e9 _fini
+   13ef __cxa_finalize
+   13fe __deregister_frame_info
+   1416 __register_frame_info
+   142c __stack_chk_guard
+   143e opendir
+   1446 __gl_log_level__
+   1457 ___gl_log
+   1461 readdir
+   1469 strcmp
+   1470 snprintf
+   1479 parse_bus_from_sms_file
+   1491 memset
+   1498 remove
+   149f closedir
+   14a8 __stack_chk_fail
+   14b9 getShellCommandReturnDynamic
+   14d6 jsonw_object
+   14e3 jsonw_string
+   14f0 jsonw_decref
+   14fd jsonw_object_set_new
+   1512 jsonw_dumps
+   151e gl_ubus_par_call
+   152f json_delete
+   153b gl_ubus_call
+   1548 json_loads
+   1553 json_object_get
+   1563 json_array_size
+   1573 json_array_get
+   1582 json_string_value
+   1594 jsonw_object_get
+   15a5 jsonw_string_value
+   15b8 jsonw_integer_value
+   15cc strncpy
+   15d4 set_sms_batch
+   15e2 mkdir
+   15e8 rename
+   15ef common_sms_env_check
+   1604 execute_at_command
+   1617 is_ok
+   161d get_wan_dds_id
+   162c strcasecmp
+   1637 has_keystr
+   1642 async_spawn
+   164e sleep
+   1654 iconv_open
+   165f strlen
+   1666 malloc
+   166d iconv_close
+   1679 iconv
+   167f strncat
+   1687 mktemp
+   168e write_file
+   1699 basename
+   16a2 access
+   16a9 common_get_sms_list
+   16bd strstr
+   16c4 json_object
+   16d0 decode_sms_from_file
+   16e5 json_integer
+   16f2 json_string
+   16fe jsonw_array_append_new
+   1715 common_set_sms
+   1724 common_remove_sms
+   1736 common_send_sms
+   1746 sms_update_config
+   1758 migrate_legacy_sms_flatten
+   1773 fopen
+   1779 fscanf
+   1780 fclose
+   1787 stat
+   178c fread
+   1792 fwrite
+   1799 get_modem_log_level
+   17ad gl_log_level
+   17ba api_error_to_string
+   17ce json_array
+   17d9 json_integer_value
+   17ec handle_signal
+   17fa running
+   1802 cleanup
+   180a server_fd
+   1814 atoi
+   1819 strchr
+   1820 memcpy
+   1827 strtol
+   182e __errno_location
+   183f blobmsg_parse
+   184d blob_buf_init
+   185b blobmsg_add_field
+   186d ubus_send_reply
+   187d blob_buf_free
+   188b map_input_level
+   189b getpid
+   18a2 check_at_cpms
+   18b0 print_buffer_hex
+   18c1 handle_client_request
+   18d7 recv
+   18dc sscanf
+   18e3 send
+   18e8 _get_current_sim_slot
+   18fe client_thread
+   190c inet_ntoa
+   1916 ntohs
+   191c select
+   1923 pthread_exit
+   1930 sms_ubus_set
+   193d uloop_init
+   1948 ubus_connect
+   1955 uloop_fd_add
+   1962 ubus_add_object
+   1972 ubus_strerror
+   1980 uloop_run_timeout
+   1992 ubus_free
+   199c uloop_done
+   19a7 sms_ubus_thread
+   19b7 main
+   19bc atexit
+   19c3 pthread_create
+   19d2 pthread_detach
+   19e1 socket
+   19e8 setsockopt
+   19f3 get_port
+   19fc inet_addr
+   1a06 htons
+   1a0c bind
+   1a11 listen
+   1a18 accept
+   1a1f libgcc_s.so.1
+   1a2d libc.so
+   1a35 libcm_sms.so
+   1a42 GLIBC_2.0
+   2d94 `BB9
+   4620 `ja8fha8!
+   490d #J9 
+   67cd j;8@
+   6da0 !Hs8`
+   7945 rF9p
+   797c Delete SMS from directory:%s bus:%s
+   79a1 gl-sdk4-cellular-26.163.12373~1111f6a/_sms/sms.c
+   79d5 %s%s
+   79da Delete SMS from file:%s
+   79f3 Batch delete SMS from directory %s
+   7a17 pidof %s 2>/dev/null
+   7a30 update_info
+   7a3c cellular.network
+   7a4d get_modem_info
+   7a5c cellular.modem
+   7a6b modems
+   7a72 supports_feature
+   7a87 standby_type
+   7a94 sim_slot_num
+   7aa1 modem bus number:%d
+   7ab6 Move SMS from file %s to %s
+   7ad7 get_wan_dds_id failed
+   7aee AT+CEREG?
+   7b00 +CREG Attaching Network Successfully
+   7b26 AT+C5GREG?
+   7b31 +CEREG Attaching Network Successfully
+   7b58 +C5GREG Attaching Network Successfully
+   7b80 AT+CPMS="ME","ME","ME"
+   7b97 +CPMS Set ME successfully
+   7bb2 The current network environment has SMS sending
+   7be3 The current network environment does not allow SMS sending
+   7c1f bus %s does not support sms
+   7c3c sms_manager
+   7c48 sms_manager process missing, restart sms_manager service
+   7c82 /etc/init.d/sms_manager restart
+   7ca2 sms_manager process is still not ready within total timeout[%d] seconds
+   7ceb smsd
+   7cf0 smsd process missing, restart smstools3 service
+   7d21 /etc/init.d/smstools3 restart
+   7d3f smsd process is still not ready within total timeout[%d] seconds
+   7d81 SMS service is not ready, sending is forbidden
+   7db1 The current network does not have SMS sending
+   7de0 UTF-8
+   7de6 UCS-2BE
+   7dee len %d, body: %s
+   7dff Send SMS Content:%s Phone Number:%s Timeout:%d Bus:%s Slot:%d
+   7e3e To: 
+   7e43 To_TOA: National
+   7e55 Sender: 
+   7e5e Bus: 
+   7e64 Slot: 
+   7e6b Alphabet: UTF-8
+   7e7d /etc/spool/sms/outgoing/GMS_XXXXXX
+   7ea0 /etc/spool/sms/sent/%s
+   7eb7 /etc/spool/sms/failed/%s
+   7ed0 Start getting SMS list
+   7eec .LOCK
+   7ef2 sms path %s
+   7eff status
+   7f06 Start setting bus %s SMS name %s to Format %d
+   7f35 /etc/spool/sms/storage/
+   7f4d /etc/spool/sms/incoming/
+   7f66 Start removing bus %s SMS %s Scope %d
+   7f8d Failed to get modem bus, ret=%d
+   7fae No modules detected, skipping configuration generation
+   7fe6 support_sms_feature(%s) failed, ret=%d
+   800e No modules support SMS, skipping SMS config generation
+   8046 /tmp/sms_manager_port
+   805c %s not found, cannot continue
+   807b open %s failed
+   808b failed to read sms port from %s
+   80ac get_modem_standby failed for bus %s, use default single sim
+   80e9 devices = GMS*1-%d
+   80fc incoming = /etc/spool/sms/incoming
+   811f outgoing = /etc/spool/sms/outgoing
+   8142 checked = /etc/spool/sms/checked
+   8163 failed = /etc/spool/sms/failed
+   8182 sent = /etc/spool/sms/sent
+   819d eventhandler = /etc/forward
+   81b9 receive_before_send = no
+   81d2 autosplit = 3
+   81e0 logfile = 1
+   81ec loglevel = 1
+   81f9 blocktime = 300
+   8209 blockafter = 4096
+   821d [GMS%d]
+   8225 init = AT+CPMS="ME","ME","ME"
+   8243 device = @127.0.0.1:%d
+   825a bus = %s
+   8263 slot = %d
+   826d standby_type = %d
+   827f incoming = yes
+   828e pin = ignore
+   829b check_network = no
+   82ae baudrate = 115200
+   82c0 send_retries = 0
+   82d1 read_timeout_pdu = 60
+   82e9 /tmp/smstools.cfg
+   82fb SMS configuration unchanged, skipping write
+   832a /tmp/smstools.tmp
+   833c open temp config file %s failed
+   835d rename temp config failed
+   8378 SMS configuration has been updated %s
+   839f Bus does not exist
+   83b3 list
+   83b8 Modem does not exist
+   83ce err_code
+   83d7 err_msg
+   83df name
+   83e4 scope
+   83ea Failed to send SMS
+   83fe phone_number
+   840b body
+   8410 timeout
+   8418 sender
+   841f slot
+   8424 /etc/spool/sms/sent/
+   8439 /etc/spool/sms/outgoing/
+   8452 /etc/spool/sms/checked/
+   846a /etc/spool/sms/failed/
+   8482 Cleaning up resources...
+   849c gl-sdk4-cellular-26.163.12373~1111f6a/_sms/sms_manage.c
+   84d4 AT+CMGS=
+   84dd at+qnvr=3532,0
+   84ef +QNVR:
+   84f6 Invalid response
+   8508 No valid values found
+   851f QNVR hex value:%s
+   8532 The maximum number of attempts to send a modem SMS is:%d
+   856c /tmp/sms_max_retry_time
+   8584 set_debug_log_level: missing 'level' parameter
+   85b4 debug level changed to %d __gl_log_level__:%d pid:%d
+   85ee resp
+   85f3 AT+CPMS?
+   85ff Check CPMS success
+   8613 Buffer Content (len=%d):
+   862d Offset   Hex    Dec    Char/Control
+   8652 ------  -----  -----  -------------
+   8677 [%04d]   0x%02X    %3d    
+   8692 '%c'
+   8698 '\0' (NULL)
+   86a5 '\a' (Bell)
+   86b2 '\b' (Backspace)
+   86c4 '\t' (Tab)
+   86d0 '\n' (Newline)
+   86e0 '\v' (Vertical Tab)
+   86f5 '\f' (Form Feed)
+   8707 '\r' (Carriage Return)
+   871f '\\' (Backslash)
+   8731 '\x%02X' (Non-printable)
+   874b recv fail
+   8756 Received len[%d] buffer[%s]
+   8773 bus#%31[^|]|slot#%31[^|]|command#%1024[^
+   879e sscanf failed matched %d
+   87bb Print SMS content:
+   87cf Bus:[%s]
+   87d9 Slot:[%s]
+   87e4 Command:[%s]
+   87f2 Invalid command
+   8803 AT+QUIMSLOT?
+   8812 +QUIMSLOT: %d
+   8828 _get_current_sim_slot failed, bus:%s ret:%d
+   8857 ERROR
+   885f %16[^=]=%d
+   886c The length of the SMS is %d
+   8889 AT+CMGS=%d,%s
+   8897 rcv_len:%d The content of the SMS is is %s
+   88c3 Thread started for client %s:%u (fd=%d)
+   88ec select in thread failed
+   8905 Client %s:%u disconnected
+   8920 Failed to connect to ubus
+   893b Failed to publish object '%s': %s
+   895e Failed to start SMS ubus thread
+   897f socket() create failed
+   8997 setsockopt() failed
+   89ac 127.0.0.1
+   89b6 bind() failed
+   89c5 listen() failed
+   89d6 SMS service started on port %d (PID=%d)
+   89ff select() failed
+   8a10 accept() failed
+   8a21 Max clients reached, rejecting connection
+   8a4c malloc() failed
+   8a5d pthread_create() failed
+   8a76 Accepted new client %s:%u (slot=%d)
+   8a9b set_sms_log_level
+   8ad0 ")07>E

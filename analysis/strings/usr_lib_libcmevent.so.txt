@@ -1,0 +1,47 @@
+    287 &[ll
+    571 _fini
+    577 __cxa_finalize
+    586 __deregister_frame_info
+    59e __register_frame_info
+    5b4 pthread_mutex_unlock
+    5c9 pthread_mutex_lock
+    5dc pthread_cond_wait
+    5ee free
+    5f3 event_router_destroy
+    608 printf
+    60f pthread_cond_broadcast
+    626 pthread_join
+    633 pthread_mutex_destroy
+    649 pthread_cond_destroy
+    65e puts
+    663 event_router_create
+    677 calloc
+    67e pthread_mutex_init
+    691 pthread_cond_init
+    6a3 pthread_create
+    6b2 event_router_subscribe
+    6c9 event_router_unsubscribe
+    6e2 event_router_publish_async
+    6fd memcpy
+    704 pthread_cond_signal
+    718 event_router_publish_sync
+    732 libjansson.so.4
+    742 libguci.so
+    74d libgl-utils.so
+    75c libgl_log.so
+    769 libubus.so.20251202
+    77d libubox.so.20260213
+    791 libblobmsg_json.so.20260213
+    7ad libgcc_s.so.1
+    7bb libc.so
+    7c3 libcmevent.so
+    7d1 GLIBC_2.0
+    a38 `"@9
+    b63 QaB@
+   1580 [%s-%d]event_router_destroy start
+   15a3 [%s-%d]Send cond broadcast
+   15bf [%s-%d]pread join comp
+   15d7 event_router_destroy end
+   15f0 event_router_subscribe start
+   160d event_router_subscribe end
+   1628 event_router_destroy

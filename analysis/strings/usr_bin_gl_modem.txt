@@ -1,0 +1,113 @@
+    200 /lib/ld-musl-aarch64.so.1
+    8c1 strcmp
+    8c8 memset
+    8cf malloc
+    8d6 fclose
+    8dd strstr
+    8e4 strncpy
+    8ec __stack_chk_guard
+    8fe exit
+    903 fprintf
+    90b strncat
+    913 fread
+    919 free
+    91e atoi
+    923 fopen
+    929 strlen
+    930 __stack_chk_fail
+    941 usleep
+    948 strcasecmp
+    953 _init
+    959 _fini
+    95f gl_ubus_par_call
+    970 stderr
+    977 gl_log_level
+    984 jsonw_object
+    991 jsonw_string
+    99e jsonw_dumps
+    9aa jsonw_decref
+    9b7 jsonw_integer
+    9c5 jsonw_object_set_new
+    9da get_modem_log_level
+    9ee error_to_string
+    9fe compare_strings_case_insensitive
+    a1f notify_dial_start
+    a31 disconnect_by_qmap
+    a44 notify_dial_stop
+    a55 memmove
+    a5d execute_at_command
+    a70 signal
+    a77 sms_update_config
+    a89 fputs
+    a8f check_traffic_configuration
+    aab check_apnprofile_configuration
+    aca check_phone_and_email_configuration
+    aee split_at_string
+    afe charset_convert
+    b0e __register_frame_info
+    b24 __deregister_frame_info
+    b3c __libc_start_main
+    b4e libgl-utils.so
+    b5d libgl_log.so
+    b6a libcmjson.so
+    b77 libcmcm.so
+    b82 libcm_modem.so
+    b91 libcmstate_manager.so
+    ba7 libcm_sim.so
+    bb4 libcm_sms.so
+    bc1 libcmconfiguration_manager.so
+    bdf libcmutils.so
+    bed libgcc_s.so.1
+    bfb libc.so
+    c03 GLIBC_2.0
+   163d Ha8a
+   16a3 T!{`
+   16ef T!{`
+   20cf Ss~@
+   21d8 Usage: %s [options]
+   21ed options:
+   21f6 	-B <bus> -U <SUB> <AT> <AT_CMD>             Send AT to the specified subscription card slot
+   2253 	-B <bus> -S <SLOT> <connect-auto>           Specify the modem card slot to auto-diale
+   22aa 	-B <bus> -S <SLOT> <disconnect>             Specify the modem card slot to disconnect
+   2301 	-B <bus> <init>                             Initialize the module
+   2344 	-B <bus> <sms-config>                       SMS configuration file initialization
+   2397 	-B <bus> <convert> <sms_file> <sms_lenght>  SMS encoding format conversion
+   23e3 	-B <bus> -C <check_traffic_config>          Check traffic configuration
+   242c 	-B <bus> -C <check_apnprofile_config>       Check apnprofile configuration
+   2478 	-B <bus> -C <check_sms_forward_config>      Check sms_forward configuration
+   24c5 	[Examples]
+   24d1 	Example 1: %s -B 1-1.2 -U 1 AT AT+CGMI
+   24fa 	Example 2: %s -B 1-1.2 -U 0 AT AT
+   251e 	Example 3: %s -B 1-1.2 -S 1 connect-auto
+   2549 	Example 4: %s -B 1-1.2 -S 1 disconnect
+   2572 	Example 5: %s -B 1-1.2 -C check_traffic_config
+   25a3 	Example 6: %s -B 1-1.2 -C check_apnprofile_config
+   25d7 	Example 7: %s -B 1-1.2 -C check_sms_forward_config
+   260c connect-auto
+   2619 init
+   261e sms-config
+   2629 convert
+   2631 check_traffic_config
+   2646 check_apnprofile_config
+   265e check_sms_forward_config
+   267b Error: -B Bus parameters need to be specified
+   26b3 Error: AT commands require command content to be specified
+   26ef Error: Convert needs to specify the file and length
+   2724 Error: check_traffic_config requires configuration parameter
+   2762 Error: check_apnprofile_config requires configuration parameter
+   27a3 Error: check_sms_forward_config requires configuration parameter
+   27e5 Error: Unknown command '%s'
+   280d ERROR
+   281a Disconnecting QMAP...
+   2830 Invalid arguments
+   2842 auto_connnect_network_cmd_handle success
+   286b disconnnect_network_cmd_handle success
+   2896 update_status
+   28a4 cellular.network
+   28b5 update_info
+   28c2 Usage:<gl_modem> -B <bus> <AT> <command>
+   28f2 UTF-8
+   28f8 UCS2
+   28fd generic_sms_cfg_cmd_handle success
+   2920 generic_sms_cfg_cmd_handle failed
+   2944 0w@FwLNwwwwwwwXcm

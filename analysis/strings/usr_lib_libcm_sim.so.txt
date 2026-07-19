@@ -1,0 +1,470 @@
+    813 - P0 
+    906 RS,!
+    953 qInl"
+    962 Qy.:
+   1d99 _fini
+   1d9f __cxa_finalize
+   1dae __deregister_frame_info
+   1dc6 __register_frame_info
+   1ddc memset
+   1de3 __stack_chk_guard
+   1df5 snprintf
+   1dfe open
+   1e03 dprintf
+   1e0b close
+   1e11 __stack_chk_fail
+   1e22 jsonw_object_iter
+   1e34 strcmp
+   1e3b jsonw_object_iter_key
+   1e51 jsonw_object_get
+   1e62 jsonw_object_iter_value
+   1e7a jsonw_string_value
+   1e8d jsonw_string
+   1e9a jsonw_object_set_new
+   1eaf jsonw_string_equal
+   1ec2 jsonw_object_iter_next
+   1ed9 jsonw_integer_value
+   1eed jsonw_integer
+   1efb jsonw_int_equal
+   1f0b jsonw_object_del
+   1f1c json_true
+   1f26 jsonw_bool_equal
+   1f37 json_false
+   1f42 __gl_log_level__
+   1f53 ___gl_log
+   1f5d blob_buf_init
+   1f6b global_blob_b
+   1f79 ubus_send_reply
+   1f89 blobmsg_parse
+   1f97 jsonw_load_file
+   1fa7 blobmsg_add_json_from_string
+   1fc4 jsonw_decref
+   1fd1 jsonw_dumps
+   1fdd blobmsg_add_json_from_file
+   1ff8 json_delete
+   2004 blobmsg_add_field
+   2016 strlen
+   201d json_object_set_new
+   2031 json_object_get
+   2041 json_object_iter
+   2052 json_object_iter_key
+   2067 json_object_key_to_iter
+   207f json_object_iter_value
+   2096 json_object_iter_next
+   20ac imsi_to_mcc_mnc
+   20bc memcpy
+   20c3 sim_info_init
+   20d1 get_merged_func_map
+   20e5 sims_info_init
+   20f4 jsonw_array
+   2100 get_modems_info
+   2110 json_array_size
+   2120 json_array_get
+   212f jsonw_object
+   213c jsonw_array_append_new
+   2153 init_sims_info
+   2162 print_json_string
+   2174 sim_status_init
+   2184 sims_status_init
+   2195 get_sim_iccid_by_bus
+   21aa get_func_map_by_bus
+   21be get_func_map
+   21cb init_sims_status
+   21dc set_sim_default_config
+   21f3 jsonw_false
+   21ff jsonw_true
+   220a _sim_config_init
+   221b check_sim_configuration
+   2233 jsonw_dump_file
+   2243 usleep
+   224a init_sims_config
+   225b init_sim_config_by_bus
+   2272 init_sim
+   227b get_apns_form_database
+   2292 jsonw_array_size
+   22a3 jsonw_array_get
+   22b3 init_apn_table
+   22c2 parse_apn_database_file
+   22da find_apn_node
+   22e8 destroy_apn_table
+   22fa compare_strings_case_insensitive
+   231b _fill_sim_mgmt_info
+   232f strcasecmp
+   233a get_sim_info_by_slot
+   234f access
+   2356 update_sim_mgmt_info
+   236b notify_status_update
+   2380 init_sim_mgmt_info_by_bus
+   239a init_sim_mgmt_info_all_bus
+   23b5 sim_state_to_string
+   23c9 get_current_sim_slot
+   23de is_file_locked
+   23ed create_file_lock
+   23fe calloc
+   2405 remove_file_lock
+   2416 strncpy
+   241e pthread_attr_init
+   2430 pthread_attr_setdetachstate
+   244c pthread_attr_destroy
+   2461 pthread_create
+   2470 get_dial_state_by_bus
+   2486 bus_slot_to_interface_name
+   24a1 _get_protocol_by_bus
+   24b6 _get_iptype_by_bus
+   24c9 get_interface_up_status
+   24e1 ip_type_to_str
+   24f0 notify_dial_stop
+   2501 async_spawn
+   250d get_local_rpc_url
+   251f thread_safe_get_command_output
+   253e atoi
+   2543 simo_get_rsrp_level
+   2557 json_loads
+   2562 json_integer_value
+   2575 cellular_signal_led_tick
+   258e gl_get_model
+   259b get_device_buildin_modem_port
+   25b9 strstr
+   25c0 device_has_simo
+   25d0 check_interface_conn_status
+   25ec guci_init
+   25f6 guci_get
+   25ff guci_free
+   2609 get_cid_by_iccid
+   261a get_cid_by_plmn
+   262a save_cid_to_config
+   263d save_pin_code_to_config
+   2655 contains_cme_error_16
+   266b contains_cme_error_12
+   2681 set_sim_pincode_by_bus
+   2698 get_at_result
+   26a6 strchr
+   26ad notify_dial_start
+   26bf try_unlock_sim_pincode_by_bus
+   26dd _fill_sim_mgmt_status
+   26f3 bus_slot_to_config_name
+   270b operator_database_to_json
+   2725 find_operator_by_plmn
+   273b update_sim_mgmt_status
+   2752 init_sim_mgmt_status_by_bus
+   276e init_sim_mgmt_status_all_bus
+   278b get_active_sim_slot
+   279f get_modem_status_by_bus
+   27b7 fill_ubus_sim_info
+   27ca blobmsg_open_nested
+   27de blob_nest_end
+   27ec fill_ubus_sim_status
+   2801 _sim_handle_info
+   2812 _sim_handle_status
+   2825 get_sim_status_by_slot
+   283c process_ttl_config
+   284f guci_get_name
+   285d get_l3_device_for_ifname
+   2876 build_3g_ppp_ifname_from_section
+   2897 guci_set_name
+   28a5 guci_commit
+   28b1 guci_delete_name
+   28c2 write_file
+   28cd sync
+   28d2 process_mtu_config
+   28e5 rg650v_set_mtu
+   28f4 run_sim_config_process
+   290b blobmsg_format_json_with_cb
+   2927 jsonw_loads
+   2933 read_json_nolock
+   2944 jsonw_object_size
+   2956 unlock_file
+   2962 write_json_atomic_nolock
+   297b fix_ip_type_config
+   298e gl_ubus_add_object
+   29a1 ubus_strerror
+   29af deinit_sim_mgr_ubus_server
+   29ca gl_ubus_remove_object
+   29e0 remove_profile
+   29ef json_string_value
+   2a01 json_load_file
+   2a10 json_integer
+   2a1d api_error_to_string
+   2a31 json_array_remove
+   2a43 get_profile_list
+   2a54 get_modem_log_level
+   2a68 gl_log_level
+   2a75 json_array
+   2a80 _get_pid_vid_by_bus
+   2a94 json_array_append_new
+   2aaa json_deep_copy
+   2ab9 json_dumps
+   2ac4 set_profile
+   2ad0 _random_generate
+   2ae1 json_object
+   2aed json_object_del
+   2afd json_object_update
+   2b10 libjansson.so.4
+   2b20 libguci.so
+   2b2b libgl-utils.so
+   2b3a libgl_log.so
+   2b47 libubus.so.20251202
+   2b5b libubox.so.20260213
+   2b6f libblobmsg_json.so.20260213
+   2b8b libgcc_s.so.1
+   2b99 libc.so
+   2ba1 libcm_sim.so
+   2bae GLIBC_2.0
+   2bb8 JANSSON_4
+   3cf0 `"D9
+   474e @ys|@
+   6bb0 !H`8`
+   7965 #N9 
+   96ab 5`b@9
+   9a22 F)zn
+   9c4d 3B9 
+   a6fb Ta^@
+   e285 BE9p
+   e2b5 BE9p
+   e2ec /sys/class/leds/5G:signal:led%d/brightness
+   e317 __delete
+   e320 __replace
+   e32a apns
+   e32f auth
+   e334 username
+   e33d password
+   e346 service
+   e34e dial_number
+   e35a ip_type
+   e369 roaming
+   e371 manual
+   e378 test %s COMMAND
+   e389 gl-sdk4-cellular-26.163.12373~1111f6a/_sim/sim.c
+   e3ba /etc/config/cellular/sim_map.json
+   e3e2 error
+   e3ec supports_function_map
+   e402 supports_private_map
+   e417 iccid
+   e41d imsi
+   e42a modems
+   e431 sims
+   e436 register_status
+   e446 carrier
+   e44e strength
+   e457 rsrp
+   e45c rsrq
+   e461 rssi
+   e466 sinr
+   e46b rscp
+   e470 ecio
+   e479 network_type
+   e486 signal
+   e48d sims_status
+   e499 function_at_common
+   e4ac Retry get_sim_iccid for bus %s, attempt %d
+   e4d8 NONE
+   e4dd check_sim_configuration 1...
+   e4fb check_sim_configuration 2...
+   e521 standby_type
+   e52e init succeeded
+   e53d %s%s
+   e542 /var/run/modem/apn_database_for_mccmnc.json
+   e56e get apn database from %s
+   e588 mccmnc corresponding apn cache does not exist: %s
+   e5bb Failed to initialize APN hash table
+   e5e0 Initialize apn hash table successfully
+   e607 /var/run/modem/apns-full-conf.json
+   e62a  Failed to parse APN database
+   e649 APN database %s resolved successfully
+   e66f No APN node found for mcc:%s mnc:%s
+   e694 APN node found
+   e6a3 Failed to create JSON objects
+   e6c6 apn_node_s:%p apn_node_s->apn:%s
+   e6e7 Insert apn %s into array successfully
+   e70d apn traversal complete
+   e724 Find relevant apn
+   e736 Failed to write JSON to file
+   e754 No associated apn found
+   e770 SIM info use cache on bus %s slot %d
+   e796 no update SIM info for bus %s, slot %d,ret %d
+   e7c5 SIM_STATE_ABSENT
+   e7d6 SIM_STATE_PRESENT
+   e7e8 SIM_STATE_READY
+   e7f8 SIM_STATE_PIN_REQUIRED
+   e80f SIM_STATE_PUK_REQUIRED
+   e826 SIM_STATE_UNREGISTERED
+   e83d SIM_STATE_REGISTERED
+   e852 SIM_STATE_ROAMING
+   e864 SIM_STATE_REG_SEARCHING
+   e87c UNKNOWN_SIM_STATE
+   e88e Failed to get current sim slot
+   e8ae SIM state[%s], but slot[%d] is not current slot[%d], ignore
+   e8eb /tmp/lock_sim%d
+   e8fb pthread_attr_init failed
+   e915 pthread_attr_setdetachstate failed
+   e939 pthread_create failed
+   e950 ENABLE
+   e957 DISABLE
+   e95f bus[%s] slot[%d]network interface construction failed, exiting
+   e99f Protocol does not exist, may be first time inserting SIM card
+   e9de ip_type does not exist, may be first time inserting SIM card
+   ea28 %s_4
+   ea2d Derived v4 interface name too long for bus[%s] slot[%d]
+   ea66 %s_6
+   ea6b Derived v6 interface name too long for bus[%s] slot[%d]
+   eaa4 SIM event: bus[%s] slot[%d] interface[%s] proto[%s] ip_type[%d:%s] sim_status[%d:%s] dial_enable[%d:%s]
+   eb0d SIM absent but dial not enabled, ignore
+   eb36 SIM absent, interface[%s] is UP, stopping dial
+   eb66 SIM absent, interface[%s] already DOWN
+   eb8e SIM ready but dial not enabled, skip dialing
+   ebbc SIM ready, interface[%s] already UP, no action
+   ebec Derived interface for protocol[%s]: %s
+   ec14 SIM ready, derived interface[%s] already UP, no action
+   ec4c SIM ready, dial enabled, interface[%s] DOWN, trigger recovery dialing...
+   ec96 ubus -t 2 call cellular.cm cm_dial_restore '{"bus":"%s","slot":%d,"nw_st":%d}'
+   ece5 Started recovery dial because SIM card is present again
+   ed1e Failed to build ubus command
+   ed3c grep -E '    listen [0-9]+;' /etc/nginx/conf.d/gl.conf | grep -oE '[0-9]+' | head -1
+   ed91 http://127.0.0.1/rpc
+   eda6 http://127.0.0.1:%d/rpc
+   edbe curl --connect-timeout 5 --max-time 5 -H 'glinet: 1' -k %s -d '{"jsonrpc":"2.0","method":"call","params":["","mvas","get_connect_info",{}],"id":1}'
+   ee52 result
+   ee59 cells_info
+   ee64 rsrp_level
+   ee6f x2000
+   ee75 x3000
+   ee7b xe3000
+   ee82 bus %s not supported for LED display
+   eea8 get_device_buildin_modem_port failed
+   eece bus %s not support built-in module model
+   eef8 is_simo_modle:%d
+   ef0a simo
+   ef0f bus:%s Interface:%s
+   ef24 Failed to get the interface %s connection status
+   ef56 offline
+   ef5e Interface %s is offline,turnoff led
+   ef83 last_strength:%d strength:%d
+   efa1 Interface %s signal strength: %d
+   efc3 gl_led.global.led_enable
+   efdc true
+   efe1 Failed to load SIM config file
+   f001 Got CID %d by PLMN %s for ICCID: %s
+   f026 No CID found for ICCID: %s
+   f042 No existing config for ICCID: %s
+   f064 +CME ERROR: 16
+   f073 +CME ERROR: 12
+   f082 No modems information available
+   f0a2 No function map available
+   f0bc Failed to read ICCID from modem
+   f0dc The specified ICCID is match the ICCID of the SIM card in the current slot
+   f128 The specified ICCID does not match the ICCID of the SIM card in the current slot
+   f17a Failed to read ICCID from modem bus:%s,slot 1
+   f1a9 Failed to read ICCID from modem
+   f1ca The specified ICCID does not match the ICCID of the SIM card in both slots
+   f216 AT+CLCK="SC",2
+   f225 The PIN function is not enabled on the current card
+   f25a Set pincode successfully
+   f274 Failed to set pincode: %s
+   f28f The PIN code is incorrect, and there are %d attempts left
+   f2ca Failed to get PIN counter
+   f2e5 The PIN code is incorrect
+   f300 The SIM card needs to be unlocked with PUK code
+   f331 Function to set pincode is not supported
+   f35b Try to unlock SIM with ICCID: %s on bus: %s
+   f388 Pincode is empty for ICCID: %s
+   f3a8 /etc/config/cellular/slot_map.json
+   f3cb slot_feature
+   f3d8 operator
+   f3e1 long_opername
+   f3ef short_opername
+   f3fe plmn
+   f403 /var/run/modem/operator-config.json
+   f427 AT block,Failed to update SIM status for bus %s, slot %d
+   f461 pin_counter
+   f46d missing iccid/bus/pin_code
+   f488 phone_number
+   f495 apn_list
+   f49e technology
+   f4a9 slot
+   f4ae process_ttl_config,iccid=%s,ttl=%d,hl=%d
+   f4d8 network
+   f4e0 get_device_protocol,iccid not match,bus=%s,expected=%s,got=%s
+   f51f device
+   f526 proto
+   f52f rmnet
+   f535 rmnet_data
+   f540 iccid_to_netdev,protocol=rmnet,netdev=%s
+   f56a wdm0
+   f56f wwan0
+   f575 wdm1
+   f57a wwan1
+   f580 mhi_QMI0
+   f589 rmnet_mhi0
+   f594 /sbin/fw4
+   f59e forceTTL
+   f5a7 glmodem
+   f5b3 ttl_ipv6
+   f5bc include
+   f5c4 firewall
+   f5cd script
+   f5d4 /usr/bin/set_modem_ttl
+   f5eb path
+   f5f0 /usr/share/nftables.d/chain-pre/mangle_postrouting/01-modem-ttl-%s%d.nft
+   f639 oifname "%s%d" ip ttl set %d
+   f657 /usr/share/nftables.d/chain-pre/mangle_postrouting/01-modem-hoplimit-%s%d.nft
+   f6a5 oifname "%s%d" ip6 nexthdr != ipv6-icmp ip6 hoplimit != 255 ip6 hoplimit set %d
+   f6f6 /usr/share/nftables.d/chain-pre/mangle_postrouting/01-modem-ttl-%s.nft
+   f73d oifname "%s" ip ttl set %d
+   f759 /usr/share/nftables.d/chain-pre/mangle_postrouting/01-modem-hoplimit-%s.nft
+   f7a5 oifname "%s" ip6 nexthdr != ipv6-icmp ip6 hoplimit != 255 ip6 hoplimit set %d
+   f7f4 /etc/init.d/firewall reload
+   f810 Failed to reload firewall after updating ttl/hl config
+   f848 run_sim_config_process 
+   f861 run process_ttl_config,ttl=%d
+   f880 run process_hl_config,hl=%d
+   f89d run process_mtu_config,mtu=%d
+   f8bc invalid input
+   f8ca input too large
+   f8da payload must be object
+   f8f1 lock failed
+   f8fd missing iccid/data or updates
+   f91b write failed
+   f928 changed
+   f930 {"changed_objects":[]}
+   f947 fix_ip_type_config 
+   f95c Failed to add object: %s
+   f976 Failed to remove object: %s
+   f993 deinit sim mgr ubus server done
+   f9b4 /etc/config/cellular/apnprofile.json
+   f9d9 custom_profiles
+   f9e9 err_code
+   f9f2 err_msg
+   f9fa active_slots
+   fa07 iccid: %s, bus: %s, slot: %d
+   fa25 location_id: %s
+   fa36 merge dial_cfg
+   fa46 network_mode
+   fa53 band
+   fa58 dial_config
+   fa64 get_active_slots failed
+   fa7d APNPROFILE_PATH not exist
+   fa98 json_load_file failed
+   faaf root loaded: %s
+   fac0 get_profile_list done
+   fad7 action
+   fade description
+   faea protocol
+   faf3 LTE/UMTS/GPRS
+   fb01 CDMA/EVDO
+   fb0b band_enable
+   fb17 band_filter_mode
+   fb28 band_list
+   fb32 AUTO
+   fb37 NR5G
+   fb44 PAP/CHAP
+   fb4d cellular.sim
+   fb5a init
+   fb5f get_config
+   fb6a set_config
+   fb75 set_pincode
+   fb8d sim_handle_get_config
+   fba3 sim_handle_init
+   fbb3 sim_handle_set_pincode
+   fbca sim_handle_info
+   fbda sim_handle_status
+   fbec sim_handle_set_config

@@ -1,0 +1,575 @@
+    66b Qld.J0
+    67d  NVE
+    7a5 LAsws
+    7f0 _	JE
+   1899 _fini
+   189f __cxa_finalize
+   18ae __deregister_frame_info
+   18c6 __register_frame_info
+   18dc __stack_chk_guard
+   18ee snprintf
+   18f7 json_string
+   1903 jsonw_object_set_new
+   1918 __stack_chk_fail
+   1929 create_ubus_ctx
+   1939 uloop_init
+   1944 global_ubus_ctx
+   1954 malloc
+   195b __gl_log_level__
+   196c ___gl_log
+   1976 ubus_connect
+   1983 pthread_mutex_init
+   1996 uloop_fd_add
+   19a3 destroy_ubus_ctx
+   19b4 ubus_free
+   19be pthread_mutex_destroy
+   19d4 get_globle_status_manager
+   19ee pthread_rwlock_rdlock
+   1a04 st_mgr
+   1a0b pthread_rwlock_unlock
+   1a21 init_global_manager
+   1a35 pthread_rwlock_init
+   1a49 start_status_mgr
+   1a5a state_worker_thread
+   1a6e start_state_workers
+   1a82 stop_status_mgr
+   1a92 stop_state_workers
+   1aa5 deinit_status_mgr
+   1ab7 pthread_mutex_lock
+   1aca remove_network_info_by_bus
+   1ae5 remove_sim_info_by_bus
+   1afc pthread_mutex_unlock
+   1b11 cleanup_global_manager
+   1b28 pthread_rwlock_destroy
+   1b3f remove_cm_info_by_bus
+   1b55 state_manager_destroy
+   1b6b remove_modem_info_by_bus
+   1b84 add_status_mgr
+   1b93 del_status_mgr
+   1ba2 strcmp
+   1ba9 find_status_mgr_by_bus
+   1bc0 gl_timer_init
+   1bce deinit_timer_mgr
+   1bdf gl_timer_delete
+   1bef gl_timer_destroy
+   1c00 add_timer_mgr
+   1c0e _remove_timer_mgr_by_bus
+   1c27 find_timer_mgr_by_bus
+   1c3d deinit_event_mgr
+   1c4e event_router_destroy
+   1c63 add_event_mgr
+   1c71 del_event_mgr
+   1c7f find_event_instance_by_bus
+   1c9a status_type_to_str
+   1cad state_type_to_str
+   1cbf notify_status_update
+   1cd4 send_state_message
+   1ce7 get_all_modem_bus
+   1cf9 get_modems_info
+   1d09 json_array_size
+   1d19 json_array_get
+   1d28 jsonw_object_get
+   1d39 jsonw_string_value
+   1d4c strncpy
+   1d54 jsonw_decref
+   1d61 get_all_modem_status
+   1d76 jsonw_array
+   1d82 jsonw_object
+   1d8f jsonw_string
+   1d9c jsonw_integer
+   1daa atoi
+   1daf jsonw_array_append_new
+   1dc6 get_all_modem_info
+   1dd9 json_true
+   1de3 jsonw_object_size
+   1df5 jsonw_array_size
+   1e06 access
+   1e0d json_false
+   1e18 get_all_sim_status
+   1e2b get_all_sim_info
+   1e3c get_all_network_status
+   1e53 get_current_sim_slot
+   1e68 get_dial_state_by_bus
+   1e7e get_all_network_info
+   1e93 strstr
+   1e9a get_all_cm_status
+   1eac pipefd
+   1eb3 ev_mgr
+   1eba tr_mgr
+   1ec1 calloc
+   1ec8 free_sim_card_node
+   1edb free_network_node
+   1eed free_cm_node
+   1efa free_module_node
+   1f0b create_module_node
+   1f1e memset
+   1f25 create_sim_card_node
+   1f3a create_network_node
+   1f4e create_cm_node
+   1f5d find_module_by_bus
+   1f70 remove_module_by_bus
+   1f85 add_module
+   1f90 remove_modem
+   1f9d get_module_num
+   1fac get_sim_num_by_bus
+   1fbf get_network_num_by_bus
+   1fd6 find_sim_card_by_slot
+   1fec remove_sim_card
+   1ffc find_network_by_slot
+   2011 remove_network
+   2020 find_cm_by_slot
+   2030 remove_cm
+   203a pthread_cond_destroy
+   204f memcpy
+   2056 push_websocket_notification
+   2072 pthread_rwlock_wrlock
+   2088 send_event_to_main_thread
+   20a2 write
+   20a8 state_manager_init
+   20bb pthread_cond_init
+   20cd pthread_mutexattr_init
+   20e4 pthread_mutexattr_settype
+   20fe copy_state_update
+   2110 enqueue_state_update
+   2125 pthread_cond_signal
+   2139 dequeue_state_update
+   214e pthread_cond_wait
+   2160 pthread_create
+   216f pthread_cond_broadcast
+   2186 pthread_join
+   2193 get_modem_status_by_bus
+   21ab get_modem_info_by_bus
+   21c1 get_sim_status_by_slot
+   21d8 get_sim_info_by_slot
+   21ed get_network_status_by_slot
+   2208 get_network_info_by_slot
+   2221 get_cm_status_by_slot
+   2237 json_delete
+   2243 json_object
+   224f json_object_set_new
+   2263 jsonw_dumps
+   226f strlen
+   2276 async_spawn
+   2282 error_to_string
+   2292 print_custom_json
+   22a4 json_string_value
+   22b6 json_object_iter
+   22c7 json_object_iter_key
+   22dc json_object_key_to_iter
+   22f4 json_object_iter_at
+   2308 json_object_iter_next
+   231e json_object_iter_value
+   2335 json_integer_value
+   2348 wb_update_e_to_str
+   235b libjansson.so.4
+   236b libguci.so
+   2376 libgl-utils.so
+   2385 libgl_log.so
+   2392 libubus.so.20251202
+   23a6 libubox.so.20260213
+   23ba libblobmsg_json.so.20260213
+   23d6 libcmevent.so
+   23e4 libcmtimer.so
+   23f2 libgcc_s.so.1
+   2400 libc.so
+   2408 libcmstate_manager.so
+   241e GLIBC_2.0
+   2428 JANSSON_4
+   2d8f cc)Z
+   2dc0 `"@9
+   3cef Td:@
+   400b TD{v
+   5193 RaRE9
+   5d4c `2C9
+   6158 `rD9
+   61b4  #A9
+   61dc  'A9
+   65f4 `Rd9
+   65fb 4`R$
+   670c `fe9
+   6713 4`f%
+   6b44 `rc9
+   6b4b 4`r#
+   6be8 `RB9
+   6e00 `Ra9
+   6e07 4`R!
+   758c `"B9
+   8fa4 `&C9
+   8fc0 `BC9
+   8fdc `"A9
+   901c `rC9
+   9790 `b@9
+   984f 6`~@9
+   9855 ~@9?
+   9863 9`r@9
+   986b 6`n@9
+   9871 n@9?
+   98b7 9`z@9
+   98bf 6`v@9
+   98c5 v@9?
+   98d3 9`j@9
+   98db 6`f@9
+   98e1 f@9?
+   9fcb Tbj 
+   a159 "A9a"A9?
+   a16d &A9a&A9?
+   b648   @9` 
+   bb87 5`:@
+   bb8f 5`F@
+   bb97 4a:@
+   bba3 T`6@
+   bca3 Ta*@
+   bcf7 T`B@
+   bf1f <}r@
+   cc23 T`R@
+   d2a5 B@9 
+   d2cd b@9 
+   d5bd "C9 
+   d5e5 bC9 
+   d717 TAx`
+   d727 Taz 
+   da15 R@9 
+   dd29 B@9 
+   e131 &A9 
+   e236 @zM.
+   e40d B@9 
+   e4ed BV9 
+   e515 BX9 
+   e53d BZ9 
+   e565 B\9 
+   e58d B_9 
+   e729 "b9 
+   e9ed ~@9`~
+   e9fd n@9`n
+   ea15 v@9`v
+   ea1d f@9`f
+   fb18 !H`8`
+   fc45 bE9p
+   fc75 bE9p
+   fcaf malloc failed
+   fcbe gl-sdk4-cellular-26.163.12373~1111f6a/state_manager/cellular_management.c
+   fd08 Failed to connect to ubus
+   fd23 global_ubus_ctx:%p
+   fd37 ubus context destroyed
+   fd4f Invalid state object
+   fd65 Start status manager %s
+   fd7e Worker thread already running
+   fd9d Start status manager %s %p state->obj->running:%d compilet
+   fdd9 Stop status manager %s state->obj:%p
+   fdff Worker thread not running
+   fe1a Stop status manager %s compilet
+   fe3b Deinitialize status manager start num:%d
+   fe65 Deinitialize status manager bus:%s obj:%p obj->obj:%p start
+   fea2 Deinitialize status manager compilet
+   fec8 Deinitialize status manager end
+   fee9 Invalid arguments
+   fefb Added %s %p(Total: %d)
+   ff13 Invalid arguments
+   ff26 Remove status manager bus %s slot %d
+   ff4c Removed %s (Remaining: %d)
+   ff68 Find status manager bus %s
+   ff84 Status Object %s not found
+   ffa0 Failed to initialize timer
+   ffbc Timer manager initialized
+   ffd7 entry->timer_num:%d
+   ffec Deleted timer %d from %s
+  10006 Timer manager destroyed
+  1001f remove bus %s timer
+  10034 bus %s timer destory
+  1004a find bus %s timer
+  1005d find bus %s timer:%p
+  10073 Added %s (Total: %d)
+  10089 delete event bus %s start
+  100a4 delete event %p start
+  100bb delete event %p end
+  100d0 find bus %s event start
+  100e9 Found event obj:%p
+  100fd UPDATE_INFO
+  10109 UPDATE_STATUS
+  10117 UNKNOWN
+  1011f MODEM
+  10125 NETWORK
+  10134 INVALID
+  1013c Incoming status messages are invalid
+  10162 bus:%s [state_type:%s] [type:%s] is_cache:%d state_data:%p
+  1019e No corresponding bus-related state management object
+  101d4 obj:%p,sta_mgr:%p
+  101e7 Failed to get module information database
+  10216 bus:%s status:%d current_sim_slot:%s slot_switch_status:%d slot_switch_count:%d
+  10267 modems
+  1026e current_sim_slot
+  1027f slot_switch_status
+  10292 slot_switch_count
+  102a4 current_3gpp_rel
+  102b5 vendor
+  102bc name
+  102c1 sim_slot_num
+  102ce mtu_need_sync
+  102dc support_pin_count
+  102ee supports_rrc_seg
+  102ff standby_type
+  1030c version
+  10318 NR-NSA
+  1031f NR-SA
+  10325 at_port
+  1032d data_port
+  10337 devices
+  1033f protocols
+  10349 imei
+  1034e signal_up
+  1035c lock_tower
+  10367 lock_carrier
+  10374 network_type
+  10381 signal_support
+  10390 sms_support
+  1039c lock_tower_support
+  103af lock_carrier_support
+  103c4 network_type_support
+  103d9 supports_3gpp_rel
+  103eb IPv4&IPv6
+  103f5 label
+  103fb value
+  10401 IPv4
+  10406 supports_ip_type
+  10417 /www/offline_docs/Cellular Network Troubleshooting Guide.html.gz
+  10458 offline_doc
+  10464 slot_support_esim
+  10476 sims
+  1047f technology
+  1048a strength
+  10493 pin_counter
+  1049f iccid
+  104a5 get_all_sim_info start
+  104bd add_sim_info_to_json start
+  104d9 imsi
+  104de imsi:%s
+  104e7 iccid:%s
+  104f1 phone_number
+  104fe phone_number:%s
+  1050f is_certification
+  10520 is_special_operator
+  10534 apn_list
+  1053d add_sim_info_to_json end
+  10557 bus:%s slot:%d
+  10567 get_all_sim_info end
+  1057d get_all_network_status start
+  1059b add_network_status_to_json: bus=%s
+  105bf networks
+  105c8 protocol
+  105d1 %llu
+  105d6 traffic_total
+  105e4 callcode
+  105ed calltype
+  105f6 call_reason
+  10602 add_network_status_to_json end
+  10622 get_all_network_status end
+  1063e add_network_info_to_json: bus=%s
+  10660 new_sms_count
+  1066e mtu_sync
+  10677 network_mode
+  10684 AUTO
+  1068c netmask
+  10694 gateway
+  106a0 ipv4
+  106a5 ipv6
+  106aa NR5G
+  106af rsrp
+  106b4 rsrp_level
+  106bf rsrq
+  106c4 rsrq_level
+  106cf sinr
+  106d4 sinr_level
+  106df dl_bandwidth
+  106ec tx_channel
+  106f7 rssi
+  106fc rssi_level
+  10707 ul_bandwidth
+  10714 WCDMA
+  1071a TDSCDMA
+  10722 rscp
+  10727 rscp_level
+  10732 ecio
+  10737 ecio_level
+  10746 cell_info
+  10750 network_interface
+  10766 support_tower_func
+  10779 is_set_tower
+  10786 support_operator_func
+  1079c is_set_operator
+  107ac support_band_func
+  107be is_set_band
+  107ca is_restore_band
+  107da support_network_func
+  107ef is_set_network
+  107fe Initialize global module state manager start
+  1082c gl-sdk4-cellular-26.163.12373~1111f6a/state_manager/state_manager.c
+  10870 Initialization of global module state manager successful
+  108b0  SIM 
+  108be : %p
+  108d6 : %p
+  108ea : %p
+  10902 : %p
+  10908 %d-%s
+  1090f %d-%s slot:%d
+  1091e %d-%s bus:%s
+  1092c %d-%s module:%p
+  1093d %d-%s _slot_num:%d
+  10951 %d-%s _network_num:%d
+  10968 %d-%s sim:%p
+  10976 %d-%s 
+  1097e %d-%s network:%p
+  10990 %d-%s cm:%p
+  109a0 dst->current_sim_slot:%s
+  109ba gl-sdk4-cellular-26.163.12373~1111f6a/state_manager/state_update.c
+  109fd dst->bus:%s
+  10a0a dst->slot_switch_status:%d
+  10a26 dst->slot_switch_count:%d
+  10a41 dst->status:%d
+  10a51 dst->current_3gpp_rel:%s
+  10a6b %d-%s start
+  10a78 %d-%s end
+  10a83 [ERROR] Create module failed: %s
+  10aa5 [Modem] Auto-created new module :%p bus: %s
+  10ad2 [Modem] Auto-created new module: %s
+  10af7 %d-%s network_num:%d
+  10b0d [SIM] Auto-created new network: slot=%d
+  10b36 [SIM] Auto-created new SIM: slot=%d
+  10b5b send_event_to_main_thread: evt=%d
+  10b7e queue capacity must be > 0 (h:%d m:%d l:%d)
+  10bab Initializing state manager with %d high, %d medium, %d low priority queues
+  10bf7 init_queue: qm=%p
+  10c0a init_queue: qm->high_queue=%p qm->medium_queue=%p qm->low_queue=%p
+  10c4e init_queue OK: high=%d medium=%d low=%d, qm=%p
+  10c7e queues ptrs h=%p m=%p l=%p
+  10c9a state_manager_init OK, mgr=%p queue_mgr=%p
+  10cc6 state_manager_destroy: mgr=%p
+  10ce5 state_manager_destroy OK
+  10cff Status information enqueue started
+  10d23 Unknown priority!
+  10d36 Enqueue: priority=%d, queue=%p, head=%d, size=%d/%d
+  10d6b Queue is full!
+  10d7b Enqueue the first element, wake up the working thread
+  10db2 Status information enqueue end
+  10dd2 mgr=%p dequeue_state_update start
+  10df5 Received exit signal, exiting thread processing
+  10e26 Current queue is empty, sleep waiting queue...
+  10e56 Receive queue non-empty signal, wake up processing
+  10e8a dequeue_state_update end
+  10ea4 HIGH
+  10ea9 MEDIUM
+  10eb4 Invalid params
+  10ec4 g_state_mgr=%p state_data:%p
+  10ee2 [ERR]Unknown state type: %d
+  10eff %d-%s ret:%d
+  10f0d [INFO] Enqueued %s %s (prio:%s)
+  10f2e [ERR] Enqueue failed (code:%d)
+  10f4e [INFO] mgr->running:%d
+  10f66 [INFO] Worker thread exiting (stop requested)
+  10f95 [INFO] Waiting for state update...
+  10fb9 [INFO] Dequeue state update (ret:%d)
+  10fdf [INFO] Processing state update start...
+  11008 Global state management object does not exist
+  11037 [req->type:%s] [req->scope:%s] start
+  1105d [SIM] Auto-created new cm: slot=%d
+  11081 Unknown update status type
+  1109d [req->type:%s] ret:%d end
+  110b8 [INFO] Processing state update end
+  110dc [ERR] State manager not initialized
+  11101 [INFO] Starting state workers g_state_mgr:%p
+  1112f [INFO] Workers already running
+  1114f [INFO] set running flag :%d
+  1116c [ERR] Failed to create worker thread %d
+  11195 [INFO] worker thread id 0x%lx started
+  111bc [INFO] All %d worker(s) started
+  111dd [INFO] Stopping state workers g_state_mgr:%p
+  1120b [INFO] Workers already stopped
+  11255 [INFO] Waiting for workers to stop...
+  1127c [INFO] Waiting for worker thread id 0x%lx to stop...
+  112b2 [INFO] All workers stopped
+  112ce %d-%s mod:%p
+  112dc %d-%s  src->status:%d
+  112f3 %d-%s  src->carrier:%s
+  1130b data
+  11311 json_str: %s len:%lu
+  11327 gl-sdk4-cellular-26.163.12373~1111f6a/state_manager/state_websocket.c
+  1136d malloc ubus_cmd failed
+  11385 notify
+  1138c gl-session
+  11397 ubus -t 1 call %s %s '%s'
+  113b1 ubus_cmd too long(len = %d)
+  113ce async_spawn done,len=%d
+  113e7 Failed to retrieve all module status(%s)
+  11411 cellular.modems_status
+  11428 Failed to notify(%s)
+  1143e Push module websocket status successfully
+  11469 Failed to retrieve all module info(%s)
+  11491 cellular.modems_info
+  114a6 Push module websocket info successfully
+  114cf Failed to retrieve all sim status(%s)
+  114f6 cellular.sims_status
+  1150b Push sim websocket status successfully
+  11533 Failed to retrieve all sim info(%s)
+  11558 cellular.sims_info
+  1156b Push sim websocket info successfully
+  11591 Failed to retrieve all nw status(%s)
+  115b7 cellular.networks_status
+  115d0 Push network websocket status successfully
+  115fc Failed to retrieve all nw info(%s)
+  11620 cellular.networks_info
+  11637 Push network websocket info  successfully
+  11662 Failed to retrieve all cm status(%s)
+  11688 cellular.dial_status
+  1169d Push dial websocket status successfully
+  116c9 %*s"%s": 
+  116d5 %*s}
+  116e1 %*s]
+  116e6 "%s"
+  116eb %lld
+  116f0 true
+  116f5 false
+  116fb null
+  11702 WB_UPDATE_ALL
+  11710 WB_UPDATE_MODEM_STATUS
+  11727 WB_UPDATE_MODEM_INFO
+  1173c WB_UPDATE_SIM_STATUS
+  11751 WB_UPDATE_SIM_INFO
+  11764 WB_UPDATE_NETWORK_STATUS
+  1177d WB_UPDATE_NETWORK_INFO
+  11794 WB_UPDATE_DIAL_STATUS
+  117aa create_sim_card_node
+  117bf create_network_node
+  117d3 create_cm_node
+  117e2 find_module_by_bus
+  117f5 add_module
+  11800 get_sim_num_by_bus
+  11813 get_network_num_by_bus
+  1182a find_sim_card_by_slot
+  11840 find_network_by_slot
+  11855 find_cm_by_slot
+  11865 __update_sim_status
+  11879 __update_module_info
+  1188e __update_sim_info
+  118a0 update_modem_status
+  118b4 update_modem_info
+  118c6 update_net_status
+  118d8 update_net_info
+  118e8 update_sim_status
+  118fa update_sim_info
+  1190a enqueue_state_update
+  1191f send_state_message
+  11932 process_update_request
+  11949 update_cm_status
+  1195a get_modem_status_by_bus
+  11972 __get_module_status
+  11986 get_modem_info_by_bus
+  1199c __get_module_info
+  119ae get_sim_status_by_slot
+  119c5 __get_sim_status
+  119d6 get_sim_info_by_slot
+  119eb __get_sim_info
+  119fa get_network_status_by_slot
+  11a15 __get_network_status
+  11a2a get_network_info_by_slot
+  11a43 __get_network_info
+  11a56 get_cm_status_by_slot
+  11a6c __get_cm_status

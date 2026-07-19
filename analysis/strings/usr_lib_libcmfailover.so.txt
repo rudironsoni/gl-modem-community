@@ -1,0 +1,209 @@
+    591 -gKl
+   1031 _fini
+   1037 __cxa_finalize
+   1046 __deregister_frame_info
+   105e __register_frame_info
+   1074 blobmsg_add_field
+   1086 global_blob_b
+   1094 strlen
+   109b notify_dial_start
+   10ad _disconnect
+   10b9 strstr
+   10c0 notify_dial_stop
+   10d1 _check_sim_status
+   10e3 get_modem_by_bus
+   10f4 __gl_log_level__
+   1105 ___gl_log
+   110f jsonw_object_get
+   1120 jsonw_decref
+   112d get_func_map_by_bus
+   1141 get_func_map
+   114e jsonw_integer_value
+   1162 remove_slot_pri_by_id
+   1178 __stack_chk_guard
+   118a jsonw_load_file
+   119a snprintf
+   11a3 json_object_iter
+   11b4 json_object_iter_key
+   11c9 json_object_key_to_iter
+   11e1 json_object_iter_value
+   11f8 strcmp
+   11ff json_object_iter_next
+   1215 __stack_chk_fail
+   1226 json_false
+   1231 jsonw_object_set_new
+   1246 jsonw_dump_file
+   1256 add_slot_pri_by_id
+   1269 json_true
+   1273 get_sim_priority_list_count
+   128f set_modem_slot_and_switch_count
+   12af memset
+   12b6 get_modem_status_by_bus
+   12ce notify_status_update
+   12e3 get_modem_slot_switch_count
+   12ff get_high_pri_slot
+   1311 jsonw_object_size
+   1323 sscanf
+   132a get_next_enabled_slot
+   1340 get_next_slot
+   134e set_failover_current_sim
+   1367 get_pid_vid_by_bus
+   137a bus_to_config_name
+   138d jsonw_integer
+   139b _switch_sim_slot
+   13ac strcasecmp
+   13b7 perform_manual_switch
+   13cd get_current_sim_slot
+   13e2 get_dial_state_by_bus
+   13f8 schedule_timed_switch
+   140e disconnect_and_redial
+   1424 _switch_sim_slot_dial
+   143a handle_data_exhaustion
+   1451 handle_data_reset
+   1463 get_failover_interval
+   1479 is_failover_enable
+   148c bus_ctx_acquire
+   149c pthread_mutex_lock
+   14af pthread_mutex_unlock
+   14c4 bus_ctx_release
+   14d4 free
+   14d9 pthread_cond_destroy
+   14ee pthread_mutex_destroy
+   1504 handle_network_error
+   1519 clock_gettime
+   1527 pthread_cond_timedwait
+   153e get_network_status_by_slot
+   1559 handle_switch_event
+   156d pthread_cond_wait
+   157f nanosleep
+   1589 calloc
+   1590 slot_event_queue_init_for_bus
+   15ae strdup
+   15b5 pthread_mutex_init
+   15c8 pthread_condattr_init
+   15de pthread_condattr_setclock
+   15f8 pthread_cond_init
+   160a pthread_condattr_destroy
+   1623 slot_event_queue_push_for_bus
+   1641 pthread_cond_signal
+   1655 switch_slot_type_str
+   166a blob_buf_init
+   1678 blobmsg_parse
+   1686 ubus_send_reply
+   1696 slot_event_processor_start_for_bus
+   16b9 pthread_create
+   16c8 slot_event_processor_stop_for_bus
+   16ea pthread_cond_broadcast
+   1701 pthread_join
+   170e slot_event_processor_start_multi
+   172f strsep
+   1736 slot_event_processor_stop_all
+   1754 gl_ubus_add_object
+   1767 ubus_strerror
+   1775 deinit_failover_mgr_ubus_server
+   1795 gl_ubus_remove_object
+   17ab libgcc_s.so.1
+   17b9 libc.so
+   17c1 libcmfailover.so
+   17d2 GLIBC_2.0
+   1fb1 1"-\
+   324b T@x}
+   5daf TaN@
+   62f5 "G9p
+   6307 * |_
+   6325 "G9p
+   635c error_code
+   636b No modem found for bus: %s
+   6387 gl-sdk4-cellular-26.163.12373~1111f6a/function/failover/slot_failover.c
+   63cf standby_type
+   63dc function_at_common
+   63ef SIM in slot %d on bus %s is ready, status: %d
+   641e Removing SIM in slot %d on bus %s
+   6441 /etc/config/cellular/slot_map.json
+   6464 Failed to read config file: %s
+   6484 slot_multi_priority
+   6498 No 'slot_multi_priority' found in config
+   64c2 slot_%s
+   64ca No config found for bus: %s
+   64e7 slot%d
+   64ee enable
+   64f5 SIM in slot %d on bus %s disabled
+   6518 Adding SIM in slot %d on bus %s
+   6539 SIM in slot %d on bus %s enabled
+   655b enable SIM slot count %d 
+   6576 No slots configured for bus: %s
+   6597 No slot found with priority %d for bus %s
+   65c2 Current slot %d out of range (1..%d)
+   65e8 No entry for %s in bus %s
+   6603 Invalid slot config for %s
+   661f Invalid priority %d for %s
+   663b No slot found for bus %s
+   6655 slot_feature
+   6662 No 'slot_feature' found in config
+   6685 No '%s' found in slot_feature config
+   66ab No 'failover' found in %s config
+   66cd current_sim
+   66d9 Invalid manual switch param, bus[%s] slot[%d]
+   6708 Failed to get current slot on bus %s, ret=%d
+   6736 Manual switch skipped because current slot %d already matches target on bus %s
+   6786 Performing manual switch from slot %d to slot %d on bus %s, current dial_state %d
+   67d9 Switch SIM slot failed on bus %s, restoring dial on current slot %d
+   681e Failed to get current slot on bus %s
+   6844 Current slot %d on bus %s, highest priority slot %d, ret %d
+   6881 SIM in slot %d on bus %s is not ready, not switching
+   68b7 Scheduled switch to slot %d on bus %s
+   68de No next slot found for bus %s during disconnect and redial
+   691a failover handled on bus %s, current slot %d, switch count %d, high priority slot %d, next slot %d
+   697d all SIM slots disabled on bus %s, not switching
+   69ae no SIM priority config found on bus %s, not switching
+   69e5 failover_interval
+   69f7 No 'failover_interval' found in failover config
+   6a28 enable_switch
+   6a36 No 'enable_switch' found in failover config
+   6a63 Switch count %d reached limit on bus %s, not switching,sleep %d
+   6aa4 bus_ctx_acquire err
+   6ab8 handle_network_error sleep timed out on bus %s
+   6ae7 handle_network_error pthread_cond_timedwait error %d on bus %s
+   6b26 handle_network_error woken up by signal on bus %s
+   6b58 slot handle_network_error processor will exit
+   6b86 Current bus[%s] slot[%d] dial status is disabled during sleep, not switching
+   6bd4 Network reconnected on bus %s during sleep, not switching
+   6c0f Switch count %d reached limit on bus %s,sleep end,switching
+   6c4b [INFO] 
+   6c6c [INFO] 
+   6c8d [INFO] 
+   6cae [INFO] 
+   6ccf [INFO] 
+   6cf0 [INFO] 
+   6d11 [INFO] 
+   6d2a : %d
+   6d30 Event (type=%s, slot=%d) already in queue for bus %s, skipping enqueue
+   6d77 test %s COMMAND
+   6d88 event=%s,slot=%u,bus=%s
+   6da1 invalid event
+   6daf error
+   6db5 failed to push event
+   6dcd result
+   6dd4 invalid params
+   6de3 Failed to init queue for bus %s,queue exists
+   6e11 slot event processor already running
+   6e36 failed to start processor
+   6e50 failed to stop processor
+   6e69 Failed to start processor for bus '%s'
+   6e93 Failed to add object: %s
+   6ead Failed to remove object: %s
+   6eca deinit failover mgr ubus server done
+   6ef0 cellular.failover
+   6f02 switch_event
+   6f0f start
+   6f15 stop
+   6f1e slot
+   6f23 MANUAL_SWITCH
+   6f31 TIMED_SWITCH
+   6f3e DATA_EXHAUSTED
+   6f4d NETWORK_ERROR
+   6f5b DATA_RESET
+   6f66 SIGNAL_ERROR
+   6f73 ubus_switch_handler
+   6f87 ubus_failover_start_handler
+   6fa3 ubus_failover_stop_handler

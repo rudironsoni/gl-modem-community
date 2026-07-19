@@ -1,0 +1,693 @@
+    902 #m:\zeE
+    97a E3v:U
+   1da9 _fini
+   1daf __cxa_finalize
+   1dbe __deregister_frame_info
+   1dd6 __register_frame_info
+   1dec memset
+   1df3 __stack_chk_guard
+   1e05 strcmp
+   1e0c get_wan_dds_id
+   1e1b __gl_log_level__
+   1e2c ___gl_log
+   1e36 __stack_chk_fail
+   1e47 guci_init
+   1e51 bus_slot_to_interface_name
+   1e6c strstr
+   1e73 snprintf
+   1e7c guci_get
+   1e85 atoi
+   1e8a guci_free
+   1e94 pthread_mutex_unlock
+   1ea9 network_online_detector_tick
+   1ec6 pthread_mutex_lock
+   1ed9 jsonw_object
+   1ee6 jsonw_string
+   1ef3 jsonw_object_set_new
+   1f08 jsonw_integer
+   1f16 jsonw_dumps
+   1f22 jsonw_decref
+   1f2f gl_ubus_par_call
+   1f40 json_delete
+   1f4c thread_safe_get_command_output
+   1f6b json_loads
+   1f76 json_object_get
+   1f86 json_array_size
+   1f96 json_array_get
+   1fa5 json_string_value
+   1fb7 strncpy
+   1fbf bus_slot_to_ifname
+   1fd2 get_ifstats
+   1fde get_gateway_by_ifname
+   1ff4 get_dns_by_interface
+   2009 fopen
+   200f check_traffic_exceeds
+   2025 sleep
+   202b fscanf
+   2032 fclose
+   2039 get_func_map_by_bus
+   204d stat
+   2052 __errno_location
+   2063 fputs
+   2069 strcasecmp
+   2074 get_dial_state_by_bus
+   208a get_dial_progress_by_bus
+   20a3 get_cm_status_by_slot
+   20b9 get_wan_handle
+   20c8 get_dial_ip_type_by_bus
+   20e0 _get_protocol_by_bus
+   20f5 strncmp
+   20fd getShellCommandReturnDynamic
+   211a strlen
+   2121 gl_ubus_call
+   212e jsonw_integer_value
+   2142 global_blob_b
+   2150 blobmsg_open_nested
+   2164 blobmsg_add_field
+   2176 jsonw_dump_file
+   2186 unlink
+   218d fsync
+   2193 rename
+   219a get_vendor_by_bus
+   21ac blob_nest_end
+   21ba execute_at_command
+   21cd get_network_at_info_ubus
+   21e6 blobmsg_parse
+   21f4 blob_buf_init
+   2202 ubus_send_reply
+   2212 _get_function_map
+   2224 get_merged_func_map
+   2238 set_network_cell_tower_config
+   2256 _get_pid_vid_by_bus
+   226a bus_slot_to_config_name
+   2282 jsonw_load_file
+   2292 jsonw_object_get
+   22a3 json_object_del
+   22b3 json_true
+   22bd json_false
+   22c8 only_save_tower_config
+   22df get_network_cell_tower_config
+   22fd jsonw_string_value
+   2310 set_network_operator_config
+   232c jsonw_object_del
+   233d act_to_network_type
+   2351 get_network_operator_config
+   236d save_rrc_seg_config
+   2381 get_rrc_seg_config
+   2394 scan_network_cell_tower
+   23ac jsonw_array
+   23b8 qscan_tower_handle
+   23cb jsonw_array_append_new
+   23e2 sscanf
+   23e9 json_object
+   23f5 scan_network_operator_list
+   2410 strchr
+   2417 strndup
+   241f json_string
+   242b json_integer
+   2438 get_modem_ipv6_info
+   244c json_array
+   2457 get_gatewayv6_by_ifname
+   246f get_ipaddrv6_array_by_ifname
+   248c parse_v6_info
+   249a json_load_file
+   24a9 _get_iptype_by_bus
+   24bc common_get_newsms_count
+   24d4 _get_network_info
+   24e6 get_network_info_by_slot
+   24ff notify_status_update
+   2514 get_network_info_ubus
+   252a get_all_network_info
+   253f blobmsg_add_json_from_string
+   255c get_all_modem_bus
+   256e _get_network_status
+   2582 get_network_status_ubus
+   259a get_all_network_status
+   25b1 get_network_status_by_slot
+   25cc _get_network_diag_info
+   25e3 memcpy
+   25ea get_cid_by_plmn
+   25fa get_cid_ip_by_bus
+   260c get_network_diag_info_ubus
+   2627 update_network_status
+   263d update_network_status_ubus
+   2658 update_network_info
+   266c update_network_info_ubus
+   2685 init_network_all_info
+   269b get_modems_info
+   26ab init_network_all_status
+   26c3 network_get_online_check_period_sec
+   26e7 network_online_detector_get_check_period_sec
+   2714 network_status_monitor_callback
+   2734 network_online_check_monitor_callback
+   275a network_online_detector_reload_config
+   2780 time
+   2785 pthread_create
+   2794 pthread_detach
+   27a3 get_curr_nw_status
+   27b6 handle_network_event
+   27cb notify_dial_start
+   27dd gl_ubus_add_object
+   27f0 ubus_strerror
+   27fe network_online_detector_init
+   281b deinit_network_mgr_ubus_server
+   283a network_online_detector_deinit
+   2859 gl_ubus_remove_object
+   286f get_modem_log_level
+   2883 gl_log_level
+   2890 jsonw_loads
+   289c jsonw_object_update
+   28b0 api_error_to_string
+   28c4 set_cell_tower
+   28d3 json_integer_value
+   28e6 _get_current_sim_slot
+   28fc get_cell_tower
+   290b scan_cell_tower
+   291b scan_operator_list
+   292e set_operator_config
+   2942 get_operator_config
+   2956 send_at_command
+   2966 is_valid_at_command
+   297a get_nitz_info
+   2988 strrchr
+   2990 set_apn_db_update
+   29a2 system
+   29ad timer_obj
+   29b7 async_spawn
+   29c3 pthread_cond_signal
+   29d7 pthread_cond_broadcast
+   29ee pthread_join
+   29fb strtok_r
+   2a04 thread_safe_get_command_output_dynamic
+   2a2b get_sim_status_by_slot
+   2a42 get_network_current_sim_iccid_by_bus
+   2a67 check_interface_conn_status
+   2a83 pthread_cond_wait
+   2a95 network_online_detector_on_if_event
+   2ab9 network_online_detector_get_state
+   2adb network_online_detector_clear_slot
+   2afe start_nod_clear_async
+   2b14 calloc
+   2b1b pthread_attr_init
+   2b2d pthread_attr_setdetachstate
+   2b49 pthread_attr_destroy
+   2b5e pthread_mutex_init
+   2b71 pthread_mutex_destroy
+   2b87 ubus_register_event_handler
+   2ba3 libjansson.so.4
+   2bb3 libguci.so
+   2bbe libgl-utils.so
+   2bcd libgl_log.so
+   2bda libubus.so.20251202
+   2bee libubox.so.20260213
+   2c02 libblobmsg_json.so.20260213
+   2c1e libcmcollect.so
+   2c2e libgcc_s.so.1
+   2c3c libc.so
+   2c44 libcm_network.so
+   2c55 GLIBC_2.0
+   2c5f JANSSON_4
+   5295 Hf8a
+   5576 A9@=
+   5a30 ?h 8
+   5bec ?h 8
+   e544 `b@9
+   e8ba @9@C
+   eb7e @9@C
+   ee42 @9@C
+   f511 S@9S
+  1082d o@9#
+  10c75 3A9@
+  1183b 6`N@
+  11ee0 `bA9 
+  12060 `&B9 
+  126e0 bja8_|
+  12705 j!8B
+  12809  A9 
+  12aa9 _A9Y
+  12d0d cC9`
+  134b0 y^E)
+  13577 TeO@
+  135cb R`?@
+  13731 oC9#
+  13bdb T%L@
+  13bfb T%L@
+  13dd0 aj`8"$
+  13f08 aj`8"$
+  143a0 `"B9
+  143a7 6xZ@
+  143d0 `ZW)
+  143ef 7`f@
+  14783 Qsb	
+  14c3c `bA9u
+  14e87 R`j;8
+  14f2b qAh 
+  15bc0 `&B9!
+  16140 Current slot %d dds_id:%d is not enabled for dialing
+  16176 gl-sdk4-cellular-26.163.12373~1111f6a/_network/network.c
+  161af network.%s.allow_dial
+  161c5 network.%s.disabled
+  161dd slot
+  161e2 source
+  161e9 cm_start_dial
+  161f7 get_dns_from_ifstatus for %s
+  16215 ifstatus %s
+  16221 thread_safe_get_command_output failed %s
+  1624b json_loads failed
+  1625e dns-server
+  16269 dns-server not found
+  1627f dns[%zu]: %s
+  1628d Failed to get ifname
+  162a3 %s%s
+  162a8 Failed to get DNS address, try to get DNS address from interface:%s
+  162ed Failed to get DNS address, try to get DNS address from ifstatus %s
+  16331 Failed to get DNS address
+  1634c Successfully obtained v4 information
+  16371 Failed to get ipv4 information
+  16391 eSIM
+  16396 Invalid parameter
+  163a9 Failed to get slot type form module (retry %d/%d)
+  163dc Failed to get sim type ret[%d]
+  163fc Current card slot type[%s]
+  16418 /etc/gl_modem_traffic/%s/total_sim%d
+  1643d /tmp/gl_modem_traffic/%s/total_sim%d
+  16462 /etc/gl_modem_traffic/%s/total_esim%d
+  16488 /tmp/gl_modem_traffic/%s/total_esim%d
+  164ae Tmp traffic cache file not found: %s, try fallback to %s
+  164e8 Traffic cache file not found: %s
+  1650a %llu
+  1650f Failed to read traffic from file (bus=%s slot=%d)
+  16542 Traffic read: bus=%s slot=%d total=%lluB
+  1656c Traffic quota exceeded, setting network state to disconnected
+  165ab bus=%s,%s
+  165b6 Current module does not support slot acquisition, returning default slot %d.
+  16604 /etc/config/cellular/slot_map.json
+  16627 File %s not found, creating empty JSON {}
+  16654 Failed to create %s: %s
+  16670 Created empty JSON file: %s
+  1668d IDLE
+  16692 CONNECTING
+  1669d SUCCESS
+  166a5 FORBIDDEN
+  166af ENABLED
+  166b7 DISABLED
+  166c0 ALLOW
+  166c6 DISCONNECTED
+  166d3 UNKNOWN
+  166db Failed to get sim status to module (retry %d/%d)
+  1670d SIM not ready or dial state is disabled
+  16736 Current bus[%s] slot[%d] cm status[%d:%s]
+  16761 connected
+  1676b QMAP wan network status wan_v4[%s] wan_v6[%s]
+  1679a network.%s.ip_type
+  167b0 IPV4V6
+  167b7 network.interface.%s
+  167cc ubus -t 2 call %s status
+  167e5 ipv4-address
+  167f2 network.interface.%s_6
+  16809 ipv6-address
+  16816 IPV6
+  1681b network.interface.%s_4
+  16832 get_modem_info
+  16841 modems
+  16848 sim_slot_num
+  16855 slotnum:%d
+  16861 _get_slot_num_by_bus failed
+  1687e cellular.modem
+  1688d protocol
+  16896 traffic_total
+  168a4 iccid
+  168aa call_reason
+  168b6 callcode
+  168bf call_type
+  168c9 dial_status
+  168d5 %s.tmp
+  168dc Failed to dump json to tmp file %s
+  16900 rename %s -> %s failed: %s
+  1691c common
+  16923 get vendor failed, fallback to common AT
+  1694d Use AT set: vendor=%s, cmd_num=%d
+  16970 msgs
+  16979 result
+  16980 AT blocked, stop collecting
+  169a1 resp
+  169a6 modem_info:%s
+  169b5 supports_function_map
+  169cb supports_private_map
+  169e0 get_function_map_by_bus failed
+  16a00 get_func_map failed
+  16a15 Failed to get func map
+  16a2d set_tower_info failed, bus=%s slot=%d
+  16a54 pid vid not found for %s
+  16a6e get_pid_vid_by_bus success pid:%s,vid:%s
+  16a98 bus_slot_to_config_name failed!
+  16ab9 bus_slot_to_config_name success config_name:%s
+  16ae9 Failed to ensure slot feature file exists %s
+  16b17 slot_map.json not found, creating new one
+  16b42 slot_map.json load success
+  16b5e slot_feature
+  16b6b slot_feature not found,creating new one
+  16b94 slot_feature found
+  16ba8 %s object not found ,create new one
+  16bcd %s object found
+  16bde unlock tower,delete tower config for %s
+  16c07 tower
+  16c0d lock
+  16c12 network_type
+  16c23 freq
+  16c28 band
+  16c39 srxlev
+  16c40 squal
+  16c46 cellid
+  16c51 carrier
+  16c59 start save config to %s
+  16c72 save config to %s success
+  16c8d slot_map.json not found
+  16ca6 slot_feature not found in slot_map.json
+  16ccf config_name=%s not found
+  16ce9 tower not found for %s
+  16d01 tower object found
+  16d15 tower config get success
+  16d2f set_operator_info failed, bus=%s slot=%d ret:%d
+  16d60 config->mode:[%d] Need to manually unlock the carrier
+  16d97 set_operator_info failed ret:%d
+  16db8 Failed to load slot_map.json
+  16dd6 start unlock operator mode:%d
+  16df5 slot_feature not exist, nothing to delete
+  16e20 slot_obj(%s) not exist, nothing to delete
+  16e4b operator
+  16e54 Deleted operator config for %s
+  16e74 operator config not exist for %s, nothing to delete
+  16ea9 config operator config mode:%d
+  16ec9 long_opername
+  16ed7 short_opername
+  16ee6 plmn
+  16eef manual_unlock_needed
+  16f04 format
+  16f0b get_network_operator_config for %s slot:%d
+  16f37 get_network_operator pid:%s vid:%s
+  16f5b operator not found for %s
+  16f76 operator object found
+  16f8d get operator config success
+  16faa Invalid lte_segallowed value: %d
+  16fcc Invalid nr5g_segallowed value: %d
+  16fef lte_segallowed
+  16ffe nr5g_segallowed
+  1700e save rrc_seg config success: %s lte=%d nr5g=%d
+  1703e save_rrc_seg_config failed, bus=%s slot=%d ret=%d
+  17071 set_rrc_seg failed, bus=%s slot=%d ret=%d
+  1709c set_rrc_seg success: bus=%s slot=%d lte=%d nr5g=%d
+  170d0 rrc_seg not found for %s, use default
+  170f7 get rrc_seg config success: %s lte=%d nr5g=%d
+  17126 get_rrc_seg_config failed, bus=%s slot=%d ret=%d
+  17158 scan_network_cell_tower bus:%s
+  17178 Failed to scan tower ret:%d
+  17195 scan_tower ret:%d
+  171a8 +QSCAN:
+  171b0 %1000[^]%*[^
+  171c0 towers
+  171c7 scan tower success
+  171db scan_network_operator_list bus:%s
+  171fe Failed to scan operator ret:%d result:%s
+  17228 scan operator ret:%d
+  1723e (%d,"%128[^"]","%128[^"]","%128[^"]",%d)
+  17267 mode:%d act:%d long_opername:%s short_opername:%s plmn:%s network_type:%s
+  172b2 operators
+  172bc Failed to scan the operators list
+  172df scan operator sucess
+  172f5 glipv6.globals.enabled
+  1730c Global V6 switch is not turned on, stop V6 address acquisition
+  1734c ipv6
+  17354 gateway
+  17360 v6_interface:%s ifname:%s
+  1737b IPV6 or IPV4V6 dial-up mode
+  17398 Disabled V6 dialing
+  173ad get_cell_info failed, bus=%s slot=%d
+  173d3 get pid vid failed
+  173e7 JSON parse error: %s (line %d)
+  17407 network_mode
+  17414 AUTO
+  17419 load slot map feature failed
+  17437 _get_network_type_by_bus failed, bus=%s slot=%d
+  17468 get_iptype_by_bus failed, bus=%s 
+  1748b get_v4_info failed, bus=%s slot=%d
+  174af get_v6_info failed, bus=%s slot=%d
+  174d3 _get_new_sms_count_by_bus failed, bus=%s 
+  174fe get_network_info success: bus=%s slot=%d
+  17528 get slot failed
+  17539 Use cached network info: bus=%s slot=%d 
+  17563 get network info failed
+  1757c new_sms_count
+  1758a network_interface
+  1759c ipv4
+  175a1 netmask
+  175a9 cell_info
+  175b3 NR5G
+  175b8 rsrp
+  175bd rsrp_level
+  175c8 rsrq
+  175cd rsrq_level
+  175d8 sinr
+  175dd sinr_level
+  175e8 dl_bandwidth
+  175f5 tx_channel
+  17604 ul_bandwidth
+  17611 WCDMA
+  17617 TDSCDMA
+  1761f rscp
+  17624 rscp_level
+  1762f ecio
+  17634 ecio_level
+  1763f rssi
+  17644 rssi_level
+  17653 networks
+  1765c invalid slot parameter
+  17674 DISABLE
+  1767c ENABLE
+  17683 CONNECTING_FAILED
+  17695 ONLINE
+  1769c OFFLINE
+  176a4 get iccid failed, bus=%s slot=%d
+  176c6 get_traffic_total failed, bus=%s slot=%d ret:%d
+  176f7 get_protocol_by_bus failed bus:%s slot:%d
+  17722 get_interface_dial_status failed, bus=%s slot=%d ret:%d
+  1775b get_network_connect_status failed, bus=%s slot=%d ret:%d
+  17795 get_network_status success bus[%s] slot[%d] dial_status[%s] nw_status[%s]
+  177e0 Use cached network status: bus=%s slot=%d 
+  1780c Get status failed for %s: %s
+  1782a get imsi func not found
+  17843 get imsi failed
+  17854 get mnc len func not found
+  17870 network_diag_info
+  17882 get_network_status failed, bus=%s slot=%d
+  178ac Current AT channel is blocked, network status not updated
+  178e7 update_network_status_ubus start
+  17909 update_network_status_ubus bus[%s]
+  1792d update_network_status_ubus slot[%d]
+  17952 Failed to get slot for bus=%s
+  17971 invalid slot parameter slot[%d]
+  17992 update_network_status_ubus dial_progress[%d]
+  179c0 update_network_status_ubus interface_status[%s]
+  179f1 bus[%s] slot[%d] dial_progress[%d] dial_status[%s]
+  17a25 bus[%s] slot[%d]
+  17a37 get_network_info failed, bus=%s slot=%d
+  17a5f Current AT channel is blocked, network info not updated
+  17a98 get_modems_info failed
+  17ab0 standby_type
+  17abd network_status_monitor_callback
+  17ade network_online_check_monitor_callback time: now=%ld last=%ld delta=%ld period=%d reload_ret=%d
+  17b3e network_online_check_monitor_callback skip: now=%ld last=%ld period=%d reload_ret=%d
+  17b94 network_online_check_monitor_callback run: period=%d reload_ret=%d
+  17bd8 NOD: create async tick worker failed, skip this round ret=%d
+  17c16 get_network_info failed, bus=%s slot=%d
+  17c3f get_network_status failed, bus=%s slot=%d
+  17c6a Network connection event
+  17c84 Network disconnect or init event
+  17ca6 Current dialing deactivated, not detecting.
+  17cd3 Current dialing enabled or first SIM insertion, attempting to notify dialing.
+  17d22 Unknown network event type: %d, bus=%s slot=%d
+  17d52 Failed to publish object '%s': %s
+  17d75 Deinit network manager ubus server
+  17d99 err_code
+  17da2 err_msg
+  17daa daig_info
+  17db4 Failed to obtain the current modem function mapping table
+  17def Failed to get the current card slot
+  17e14 curr_slot[%d] config_slot[%d] bus mismatch, only save tower configuration
+  17e5f Failed to save tower configuration ret[%d]
+  17e8b Base station locked successfully, executing dialing action
+  17ec7 Base station locked failed,err_code:%d
+  17eef Get the number of mod card slots identified, default set to 1
+  17f2e slot%d
+  17f35 curr_slot[%d] config_slot[%d] bus mismatch, only save operator configuration
+  17f83 Failed to save operator configuration ret[%d]
+  17fb2 execute_redial_action:%d err_code:%d need_redial:%d
+  17fe7 Operator settings successful
+  18005 executing redial action...
+  18021 Operator settings failed,err_code:%d
+  18047 command
+  1804f response
+  18058 AT+QCFG="ims",1
+  18068 AT+QCFG="ims",2
+  18078 AT+QEFSSYNC=0
+  18086 Failed to get modem bus, ret=%d
+  180a7 No modules detected, skipping configuration generation
+  180df AT+QLTS=2
+  180ec +QLTS:
+  180f3 datetime=%s, tz_str=%s
+  1810b /usr/bin/apn_db_update.sh
+  18125 APN database update succeeded.
+  18145 APN database update failed: Network fail.
+  18170 APN database update failed: No new APN database available.
+  181ac APN database update failed: Unknown error occurred.
+  181e1 cellular.network
+  181f2 update_info
+  181fe update_status
+  1820c debug_at_info
+  1821a set_rrc_seg
+  18226 get_rrc_seg
+  18232 huawei
+  18239 quectel
+  18245 AT+GMI
+  1824c AT+CIMI
+  18254 AT+CPIN?
+  1825d AT+CEREG?
+  18267 AT+CSQ
+  1826e AT+GSN
+  18275 AT+COPS?
+  1827e AT+CGACT?
+  18288 AT+CGATT?
+  18292 AT+CGPADDR
+  1829d AT+CGDCONT?
+  182a9 AT+C5GREG?
+  182b4 AT+QGMR
+  182bc AT+CSUB
+  182c4 AT+QNWPREFCFG="lte_band"
+  182dd AT+QNWPREFCFG="nsa_nr5g_band"
+  182fb AT+QNWPREFCFG="nr5g_band"
+  18315 AT+QNWPREFCFG="mode_pref"
+  1832f AT+QNWPREFCFG="nr5g_disable_mode"
+  18351 AT+QNWPREFCFG="policy_band"
+  1836d AT+QCAINFO
+  18378 AT+QMBNCFG="list"
+  1838a AT+QMBNCFG="AutoSel"
+  1839f AT+QENG="servingcell"
+  183b5 AT+QENG="neighbourcell"
+  183cd AT+QCFG="usbnet"
+  183de AT+QCFG="pcie/mode"
+  183f2 AT+QCFG="data_interface"
+  1840b AT+QNETRC?
+  18416 AT+QIMSCFG="IMS_STATUS"
+  1842e AT^ICCID?
+  18438 dial_progress
+  18446 modem_
+  1844d ubus -t 5 call cellular.cm cm_dial_restore '{"bus":"%s","slot":%d,"nw_st":4}'
+  1849b NOD: build restore cmd failed bus=%s slot=%d
+  184c9 gl-sdk4-cellular-26.163.12373~1111f6a/_network/network_online_detector.c
+  18512 NOD: async_spawn restore failed bus=%s slot=%d
+  18542 NOD: restore cmd=%s
+  18557 NOD: trigger cm_dial_restore bus=%s slot=%d
+  18584 NOD: restore blocked bus=%s slot=%d trigger_cnt=%d block_until=%ld
+  185c8 NOD: restore trigger guard bus=%s slot=%d trigger_cnt=%d/%d
+  18605 NOD: create slot runtime bus=%s slot=%d if=%s idx=%d
+  1863b NOD: event queue full, drop event if=%s src=%s
+  1866b NOD: build slots bus=%s cur=%d sim_slot_num=%d standby=%d cnt=1
+  186ac NOD: build slots bus=%s cur=%d sim_slot_num=%d standby=%d cnt=%d
+  186ee kmwan.%s.track_mode
+  18702 passive
+  1870a NOD: load track_mode if=%s mode=%s passive=%d
+  18739 kmwan.%s.tracks
+  18749 NOD: no kmwan tracks if=%s
+  18767 NOD: parse track ip if=%s idx=%d raw=%s ip=%s
+  18796 NOD: load track ips if=%s count=%d
+  187ba NOD: normalize ifname %s -> %s
+  187da unknown
+  187e2 8.8.8.8
+  187ea NOD: no track ip, use default probe ip=%s if=%s
+  1881b NOD: resolve l3_device failed, empty ifstatus if=%s
+  18850 NOD: resolve l3_device failed, json parse error if=%s
+  18887 l3_device
+  18891 NOD: resolve l3_device if=%s -> %s
+  188b5 NOD: resolve l3_device not found if=%s
+  188dd NOD: no l3_device, skip active probe if=%s
+  18909 ping -I %s -c %d -W 1 %s >/dev/null 2>&1
+  18932 ping6 -I %s -c %d -W 1 %s >/dev/null 2>&1
+  1895c NOD: ping probe if=%s ip=%s count=%d ret=%d
+  18989 https://%s
+  18994 https://[%s]
+  189a1 which curl >/dev/null 2>&1
+  189bc curl --interface %s --connect-timeout 2 -m 3 -k -sS -o /dev/null %s >/dev/null 2>&1
+  18a10 NOD: https probe(curl) if=%s url=%s ret=%d
+  18a3c NOD: https probe skipped, curl missing if=%s
+  18a6a NOD: active probe online if=%s l3=%s ip=%s track_mode=%s ping_count=%d ping=%d https=%d
+  18ac3 NOD: active probe offline if=%s l3=%s track_mode=%s ping_count=%d
+  18b06 NOD: ubus network.interface action=%s if=%s
+  18b33 ifup
+  18b38 NOD: ignore ifup as online sample, wait for kmwan online/tick if=%s
+  18b7d ifdown
+  18b84 ubus:network.interface
+  18b9b /etc/config/cellular/sim_map.json
+  18bbd pincode
+  18bc5 tick
+  18bca NOD: apply sample bus=%s slot=%d online=%d src=%s dial=%d streak=%d state=%d win_start=%ld last=%ld thr=%d win=%d cooldown=%ld now=%ld
+  18c52 NOD: skip detect bus=%s slot=%d dial disabled
+  18c81 NOD: skip detect bus=%s slot=%d sim gate blocked sim_st=%d pin_cfg=%d
+  18cc8 ubus:
+  18cce NOD: offline source evaluate src=%s force_restore=%d
+  18d04 NOD: clear restore trigger guard bus=%s slot=%d cnt=%d
+  18d3c NOD: online stable bus=%s slot=%d src=%s
+  18d66 NOD: drop offline sample by min-interval bus=%s slot=%d src=%s
+  18da6 NOD: offline window reset bus=%s slot=%d elapsed=%ld win=%d
+  18de3 NOD: offline sample bus=%s slot=%d streak=%d src=%s
+  18e18 NOD: force restore by ubus event bus=%s slot=%d src=%s
+  18e50 NOD: restore blocked by trigger guard bus=%s slot=%d until=%ld
+  18e90 NOD: force_restore bypassed trigger guard bus=%s slot=%d block_until=%ld
+  18eda NOD: cooling prevents restore even for force event bus=%s slot=%d until=%ld
+  18f27 NOD: cooling bus=%s slot=%d until=%ld
+  18f4e NOD: restore trigger failed bus=%s slot=%d
+  18f7a offline
+  18f82 fail
+  18f87 online
+  18f8e NOD: ubus kmwan.status if=%s status=%s
+  18fb6 ubus:kmwan.status
+  18fc8 NOD: before check_interface_conn_status if=%s track_mode=%s, passive mode may report offline inaccurately
+  19033 NOD: before check_interface_conn_status if=%s track_mode=%s
+  19070 /etc/config/cellular/network_check.json
+  19098 NOD: config file missing/invalid, use default period=%d threshold=%d trigger_win=%d trigger_max=%d block=%d path=%s
+  1910d check_period_sec
+  1911e offline_threshold
+  19130 restore_trigger_window_sec
+  1914b restore_trigger_max_cnt
+  19163 restore_block_sec
+  19175 check_count
+  19181 restore_fail_window_sec
+  19199 restore_fail_max_cnt
+  191ae NOD: config loaded period=%d threshold=%d trigger_win=%d trigger_max=%d block=%d path=%s
+  19208 NOD: if_event src=%s if=%s norm_if=%s online=%d
+  19239 NOD: if_event match slot failed if=%s
+  19260 NOD: tick start
+  19271 NOD: tick task buffer full, truncate to %d
+  1929d NOD: tick sample bus=%s slot=%d if=%s status=%s ret=%d passive=%d active=%d final=%d
+  192f3 NOD: tick end
+  19302 NOD: clear slot runtime bus=%s slot=%d if=%s queue_keep=%d
+  1933e NOD: clear slot no runtime bus=%s slot=%d if=%s queue_keep=%d
+  1937d NOD clear failed: bus=%s slot=%d ret=%d
+  193a6 NOD worker start: bus=%s slot_num=%d
+  193cc NOD worker exit: bus=%s
+  193e5 NULL
+  193ea Invalid params: bus=%s slot_num=%d
+  1940e No bus state slot available for %s
+  19432 NOD clear already running for bus=%s
+  19458 NOD async clear start: bus=%s slot_num=%d
+  19483 calloc failed, fallback to sync clear
+  194aa pthread_create failed, fallback to sync clear
+  194d9 NOD: start tick worker pool failed, fallback sequential tick
+  19517 NOD: start event worker failed rc=%d
+  1953d NOD: init failed err=%d(%s)
+  1955a NOD: register network.interface failed: %s
+  19586 NOD: register kmwan.status failed: %s
+  195ad NOD: init done
+  195bd failover_chg
+  195ca action
+  195d4 $t\_behkncellular.cm
+  195fd cellular.network

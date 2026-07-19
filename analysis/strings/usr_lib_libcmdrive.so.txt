@@ -1,0 +1,50 @@
+    7b1 _init
+    7b7 _fini
+    7bd __cxa_finalize
+    7cc __deregister_frame_info
+    7e4 __register_frame_info
+    7fa MypcieRxExpires
+    80a tcdrain
+    812 read
+    817 pcieAttrSet
+    823 __stack_chk_guard
+    835 tcgetattr
+    83f tcsetattr
+    849 __stack_chk_fail
+    85a cfsetospeed
+    866 cfsetispeed
+    872 pcieOpen
+    87b open
+    880 fcntl
+    886 close
+    88c stderr
+    893 __errno_location
+    8a4 strerror
+    8ad fprintf
+    8b5 uartOpen
+    8be ioctl
+    8c4 cfsetspeed
+    8cf cfmakeraw
+    8d9 MyuartClose
+    8e5 tcflush
+    8ed uartRxNonBlocking
+    8ff MyflushIoBuffer
+    90f uartRx
+    916 MyuartRxExpires
+    926 uartRxPeek
+    931 uartTx
+    938 write
+    93e MyuartTxNonBlocking
+    952 libgcc_s.so.1
+    960 libc.so
+    968 libcmdrive.so
+    976 GLIBC_2.0
+    c58 `B@9
+   1aa8 Error opening serial port - %s(%d).
+   1acd Baud rate not supported %s - %s(%d).
+   1af3 Error opening serial port %s - %s(%d).
+   1b1b Error setting TIOCEXCL on %s - %s(%d).
+   1b43 Error getting tty attributes %s - %s(%d).
+   1b6e Error clearing O_NONBLOCK %s - %s(%d).
+   1b96 Error setting baud rate %s - %s(%d).
+   1bbc Error setting tty attributes %s - %s(%d).

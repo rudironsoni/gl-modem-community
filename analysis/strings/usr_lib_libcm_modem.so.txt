@@ -1,0 +1,1032 @@
+    b95  LT(f
+    de7 Rm'E(
+    e0e ]B._
+    f01 kXTu/
+    f25 ~6BM
+    f3a ,,std
+    f59 `?WG
+    f67 ~@,D
+    f7e [$g<xk++
+    fbc ,BGz
+    fe8 bON?
+    fee U#\_
+   1059 ;[O.
+   10b0 	K;S
+   3171 _fini
+   3177 __cxa_finalize
+   3186 __deregister_frame_info
+   319e __register_frame_info
+   31b4 strchr
+   31bb memcpy
+   31c2 strtol
+   31c9 memset
+   31d0 get_at_result
+   31de usleep
+   31e5 strlen
+   31ec __stack_chk_guard
+   31fe strncpy
+   3206 strcmp
+   320d __stack_chk_fail
+   321e common_get_modem_name
+   3234 common_get_modem_version
+   324d common_get_modem_imei
+   3263 common_get_sim_imsi
+   3277 common_get_sim_iccid
+   328c isxdigit
+   3295 common_get_sim_carrier
+   32ac common_get_sim_number
+   32c2 strstr
+   32c9 common_get_sim_status
+   32df __gl_log_level__
+   32f0 ___gl_log
+   32fa common_get_register_status
+   3315 strrchr
+   331d atoi
+   3322 snprintf
+   332b common_get_signal
+   333d common_reboot_modem
+   3351 common_get_mnc_len
+   3364 sscanf
+   336b parse_cgpaddr
+   3379 common_get_cid_ip
+   338b common_set_apn
+   339a common_get_pdp_definitions
+   33b5 toupper
+   33bd common_get_pdp
+   33cc common_get_runtime_apn
+   33e3 common_set_ps_attach
+   33f8 common_get_ps_attach
+   340d common_set_pdp_state
+   3422 parse_cgact_status
+   3435 common_get_pdp_activations
+   3450 common_get_pdp_state
+   3465 common_set_sim_pin
+   3478 common_set_airplane_mode
+   3491 common_turn_on_airplane_mode
+   34ae common_turn_off_airplane_mode
+   34cc func_map_list
+   34da quectel_turn_on_airplane_mode
+   34f8 rg650v_slot_set_esim
+   350d rg650v_slot_is_esim
+   3521 quectel_set_dds_id
+   3534 quectel_get_dds_id
+   3547 quectel_set_slot_sub_id
+   355f quectel_get_slot_sub_id
+   3577 quectel_set_roaming
+   358b quectel_get_signal
+   359e quectel_get_modem_version
+   35b8 malloc
+   35bf strdup
+   35c6 func_map_rwlock
+   35d6 pthread_rwlock_unlock
+   35ec huawei_get_sim_iccid
+   3601 rg650v_set_roaming
+   3614 quectel_set_roaming_by_qcfg_roamservice
+   363c get_func_map
+   3649 pthread_rwlock_rdlock
+   365f pthread_rwlock_wrlock
+   3675 unregister_func_map
+   3689 init_func_map_by_name
+   369f get_merged_func_map
+   36b3 quectel_get_active_mbn
+   36ca quectel_get_sim_pin_counter
+   36e6 quectel_get_band_info
+   36fc quectel_set_band_info
+   3712 quectel_scan_tower
+   3725 quectel_set_tower
+   3737 quectel_get_tower
+   3749 quectel_scan_operator
+   375f quectel_set_operator
+   3774 quectel_get_operator
+   3789 quectel_get_cells_info
+   37a0 quectel_get_cells_state
+   37b8 quectel_get_slot
+   37c9 quectel_set_slot
+   37da quectel_get_network_priority
+   37f7 quectel_set_network_priority
+   3814 quectel_set_sim_auth
+   3829 quectel_get_3gpp_rel
+   383e quectel_set_3gpp_rel
+   3853 quectel_set_rrc_seg
+   3867 quectel_get_rrc_seg
+   387b priority_cmp
+   3888 gl_ubus_call
+   3895 jsonw_loads
+   38a1 jsonw_object_get
+   38b2 jsonw_decref
+   38bf json_array_size
+   38cf jsonw_string_value
+   38e2 json_array_get
+   38f1 json_object_iter
+   3902 json_object_iter_key
+   3917 json_object_iter_value
+   392e json_object_iter_next
+   3944 json_object_get
+   3954 json_deep_copy
+   3963 json_equal
+   396e jsonw_object_set_new
+   3983 json_integer_value
+   3996 blob_buf_init
+   39a4 global_blob_b
+   39b2 blobmsg_parse
+   39c0 blobmsg_add_json_from_file
+   39db ubus_send_reply
+   39eb jsonw_object_size
+   39fd calloc
+   3a04 json_object_key_to_iter
+   3a1c jsonw_object_del
+   3a2d jsonw_array_size
+   3a3e jsonw_array_get
+   3a4e global_modems_info
+   3a61 jsonw_integer_value
+   3a75 async_spawn_pid
+   3a85 jsonw_deep_copy
+   3a95 jsonw_integer
+   3aa3 blobmsg_open_nested
+   3ab7 blobmsg_add_field
+   3ac9 jsonw_load_file
+   3ad9 blobmsg_add_json_from_string
+   3af6 strncmp
+   3afe qsort
+   3b04 blob_nest_end
+   3b12 get_modem_status_by_bus
+   3b2a notify_status_update
+   3b3f write_json_atomic_nolock
+   3b58 unlock_file
+   3b64 print_json_string
+   3b76 jsonw_dumps
+   3b82 get_json_string
+   3b92 get_device_pcie_bus
+   3ba6 read_file_oneline
+   3bb8 get_modem_bus_cpu
+   3bca get_modem_cpu_pid
+   3bdc get_modem_cpu_vid
+   3bee get_modem_cpu_obj
+   3c00 jsonw_object
+   3c0d jsonw_string
+   3c1a jsonw_array_append_new
+   3c31 get_modem_pcie_obj
+   3c44 strtok_r
+   3c4d memmove
+   3c55 get_modem_usb_obj_by_bus
+   3c6e get_device_buildin_modem_port
+   3c8c get_modem_usb_obj
+   3c9e get_device_usb_port
+   3cb2 is_match
+   3cbb jsonw_equal
+   3cc7 merge_objects
+   3cd5 find_usb_ports
+   3ce4 opendir
+   3cec readdir
+   3cf4 stat
+   3cf9 usb_port_count
+   3d08 closedir
+   3d11 handle_usb_port_offset
+   3d28 handle_modem_type
+   3d3a gl_get_model
+   3d47 jsonw_array
+   3d53 json_true
+   3d5d process_json
+   3d6a generate_modems_info
+   3d7f modem_initialized
+   3d91 modem_init_by_bus
+   3da3 jsonw_array_remove
+   3db6 start_at_process
+   3dc7 start_at_process_by_bus
+   3ddf init_modems_info
+   3df0 stop_at_process
+   3e00 terminate_process_tree
+   3e17 stop_at_process_by_bus
+   3e2e init_fun_map_by_bus
+   3e42 get_func_map_by_bus
+   3e56 init_modem_config_by_id
+   3e6e jsonw_false
+   3e7a set_modem_kmwan
+   3e8a bus_slot_to_interface_name
+   3ea5 strcat
+   3eac guci_init
+   3eb6 guci_get_name
+   3ec4 guci_set_name
+   3ed2 read_gl_country_code
+   3ee7 guci_add_list
+   3ef5 strncat
+   3efd guci_commit
+   3f09 async_spawn
+   3f15 guci_free
+   3f1f init_modem_kmwan
+   3f30 init_slot_pri_config_by_id
+   3f4b jsonw_true
+   3f56 init_slot_pri_config
+   3f6b load_modem_num
+   3f7a get_ip_type_support_by_bus
+   3f95 is_duplicate_buildin_usb_bus
+   3fb2 modem_is_build_in
+   3fc4 deduplicate_modems_by_imei
+   3fdf compare_strings_case_insensitive
+   4000 disable_usb_autosuspend
+   4018 init_fun_map
+   4025 switch_sim_slot
+   4035 strcasecmp
+   4040 get_sim_slot_by_bus
+   4054 bus_slot_to_config_name
+   406c get_bustype_by_bus
+   407f get_vendor_by_bus
+   4091 modem_bus_need_subscribe
+   40aa error_to_string
+   40ba modem_set_subscribe_id
+   40d1 update_modem_mgmt_info
+   40e8 slot_is_esim_for_bus
+   40fd is_support_protocol_and_port
+   411a slot_set_esim_for_bus
+   4130 init_slot_failover_config_by_id
+   4150 check_failove_configuration
+   416c init_modem_config
+   417e bus_to_config_name
+   4191 init_modem_config_by_bus
+   41aa access
+   41b1 init_modems_config_file
+   41c9 check_slot_configuration
+   41e2 init_modems_config
+   41f5 jsonw_dump_file
+   4205 init_modem
+   4210 get_config_current_sim
+   4227 set_config_current_sim
+   423e set_config_enable_esim
+   4255 json_false
+   4260 init_modem_mgmt_status
+   4277 get_wan_dds_id
+   4286 set_wan_dds_id
+   4295 init_modem_mgmt_info_by_bus
+   42b1 update_modem_mgmt_info_imei
+   42cd get_modem_info_by_bus
+   42e3 update_modem_mgmt_status_mode
+   4301 update_modem_mgmt_info_imei_by_bus
+   4324 init_modem_mgmt_status_by_bus
+   4342 init_modem_mgmt_info_all_bus
+   435f init_modem_mgmt_status_all_bus
+   437e fill_ubus_modem_info
+   4393 fill_ubus_modem_status
+   43aa stop_time_switch_slot
+   43c0 set_modem_switch_count
+   43d7 set_slot_and_type
+   43e9 slot_event_queue_push_for_bus
+   4407 perform_manual_switch
+   441d set_modem_kmwan_mode
+   4432 process_failover_config
+   444a slot_event_processor_stop_for_bus
+   446c slot_event_processor_start_for_bus
+   448f write_file
+   449a process_band_config
+   44ae set_band_config_to_module
+   44c8 gl_ubus_add_object
+   44db ubus_strerror
+   44e9 deinit_modem_mgr_ubus_server
+   4506 gl_ubus_remove_object
+   451c get_cellular_info
+   452e jsonw_object_update
+   4542 get_modem_current_interface
+   455e get_cellular_status
+   4572 _get_function_map
+   4584 gl_ubus_par_call
+   4595 popen
+   459b fgets
+   45a1 pclose
+   45a8 fork_exec
+   45b2 get_sim_info
+   45bf get_interface_proto
+   45d3 set_interface_device_proto
+   45ee process_dial_config
+   4602 run_config_process
+   4615 blobmsg_format_json_with_cb
+   4631 read_json_nolock
+   4642 _get_modems_info
+   4653 ext_get_default_device_protocol_by_bus
+   467a _get_modem_by_bus
+   468c _get_current_sim_slot
+   46a2 _get_pid_vid_by_bus
+   46b6 _get_default_sim_config
+   46ce get_sim_config
+   46dd jsonw_object_update_recursive
+   46fb json_integer
+   4708 set_sim_config
+   4717 jsonw_object_set
+   4728 json_object_set_new
+   473c get_slot_failover_config
+   4755 set_slot_failover_config
+   476e set_sim_pin_code
+   477f get_debug_msg
+   478d modems_status
+   479b strpbrk
+   47a3 qscan_tower_handle
+   47b6 operator_database_to_json
+   47d0 find_operator_by_mccmnc
+   47e8 str_to_lower
+   47f5 strcpy
+   47fc build_qnwprefcfg_cmd
+   4811 act_to_network_type
+   4825 rg650v_mtu_is_sync
+   4838 rg650v_set_mtu
+   4847 parse_qnwprefcfg_response
+   4861 is_process_running
+   4874 kill
+   4879 __errno_location
+   488a wait_process
+   4897 waitpid
+   489f nanosleep
+   48a9 execute_command
+   48b9 fread
+   48bf remove_completely_empty_lines
+   48dd at_parse
+   48e6 memcmp
+   48ed execute_at_command
+   4900 libjansson.so.4
+   4910 libguci.so
+   491b libgl-utils.so
+   492a libgl_log.so
+   4937 libubus.so.20251202
+   494b libubox.so.20260213
+   495f libblobmsg_json.so.20260213
+   497b libcmfailover.so
+   498c libcm_network.so
+   499d libgcc_s.so.1
+   49ab libc.so
+   49b3 libcm_modem.so
+   49c2 GLIBC_2.0
+   49cc JANSSON_4
+   5c2c ffff
+   5ca0 `BM9
+   5fe8 cjb8
+   611f Rdhb8
+   6509 j:8 
+   6b4c bh`8A
+   6da4 bh`8A
+   6e08 !H`8`
+   70a7 Ts~@
+   70f1 j38`
+   751b Qs~@
+   7e19 CA9@
+   81ac `k38s
+   826d j68@
+   82ef Qs~@
+   a120 `ja8
+   cee9 ja8?
+   cf8f R T 
+   cfcb R T 
+   d063 R T 
+   d127 RF/A
+   f3b5 cA9`
+   f625 cB9`
+   f7d5 cA9`
+  10c24 cj"8
+  10c48 `j`8
+  10c6c `j`8 
+  10cb1 j 8{
+  10d2c ajv8
+  15f50 aRD9
+  15f83 R@8<
+  15fa4 `"C9
+  15fe0 `"C9
+  15ff4 `bC9
+  162db T`jD
+  162e7 T`nE
+  18519 j48`
+  195a6 @9"$
+  1b3d1 cA9`
+  1dc3b Ks~@
+  1dd0c !H`8`
+  1e765 C@9U
+  1eb35 C@9U
+  1eb41 c@9 
+  1ede1 #B9`
+  1fde3 *@O5
+  1fe2b *@O5
+  1fea3 *@[5
+  201fc bj`8
+  203c0 bj`8
+  22693 4`F@
+  226af 4fF@
+  22777 4fF@
+  22797 RfF@
+  22c5d #@9!
+  232b5 #@9`
+  2340b 4az5
+  234ef 4`z5
+  23593 4az5
+  235e7 4az5
+  23633 *az5
+  24246 @9?4
+  243bb Ts~@
+  243ed j38s
+  244b5 j78O
+  245c5 bP9p
+  245fc 0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0
+  2461c AT+CGMM
+  24624 AT+CGMR
+  2462c AT+CGSN
+  24634 AT+CIMI
+  2463c AT+ICCID
+  24645 AT+COPS?
+  2464e AT+CNUM
+  24656 +CNUM:
+  2465d AT+CPIN?
+  24666 READY
+  2466c  PIN
+  24671  PUK
+  24676 CME ERROR: 14
+  24684 common_get_sim_status: retry %d
+  246a4 gl-sdk4-cellular-26.163.12373~1111f6a/_modem/common_at.c
+  246dd +COPS:
+  246e4 AT+CGREG?
+  246ee AT+CEREG?
+  246f8 AT+C5GREG?
+  24706 AT+CSQ
+  2470d +CSQ: 
+  24714 AT+CFUN=1,1
+  24720 AT+CRSM=176,28589,0,0,4
+  24740 parse_cgpaddr: line is NULL
+  2475d parse_cgpaddr: invalid ipv4 buffer
+  24781 parse_cgpaddr: invalid ipv6 buffer
+  247a5 parse_cgpaddr: resp:[%s], type:%d
+  247c8 parse_cgpaddr: no quotes found
+  247e8 parse_cgpaddr: cannot find closing quote
+  24812 parse_cgpaddr: extracted content: [%s]
+  2483a parse_cgpaddr: part1=[%s], part2=[%s]
+  24861 parse_cgpaddr: IPv4 = %s
+  2487b parse_cgpaddr: IPv4 is all zeros, skipping
+  248a7 parse_cgpaddr: part1 has %d dots, not valid IPv4
+  248d9 parse_cgpaddr: IPv6 = %s
+  248f3 parse_cgpaddr: IPv6 is all zeros, skipping
+  2491f parse_cgpaddr: part2 has %d dots, not valid IPv6
+  24951 parse_cgpaddr: second part is not valid IPv6 (dots: %d)
+  2498a parse_cgpaddr: empty address field
+  249ae parse_cgpaddr: invalid address format (dots: %d)
+  249e0 AT+CGPADDR=%d
+  249ee +CGPADDR:
+  249f8 response not prex
+  24a0b get cid ip error ret:%d
+  24a24 AT+CGDCONT=%d,"%s","%s"
+  24a3c AT+CGDCONT?
+  24a48 IPV4V6
+  24a4f IPV6
+  24a57 skip duplicate +CGDCONT cid[%d]
+  24a78 skip invalid +CGDCONT record
+  24a96 +CGDCONT:
+  24aa0 common_get_pdp: cid %d not found
+  24ac2 AT+CGCONTRDP=%d
+  24ad2 common_get_runtime_apn query failed cmd[%s] ret[%d]
+  24b07 common_get_runtime_apn cid[%d] apn[%s]
+  24b2f +CGCONTRDP:
+  24b3b common_get_runtime_apn cid[%d] not found in response
+  24b71 AT+CGATT=%d
+  24b7d AT+CGATT?
+  24b87 +CGATT: 
+  24b90 AT+CGACT=%d,%d
+  24b9f +CGACT: %d,
+  24bab AT+CGACT?
+  24bb5 skip duplicate +CGACT cid[%d]
+  24bd4 skip unknown +CGACT state record
+  24bf6 skip invalid +CGACT record
+  24c12 +CGACT:
+  24c1a AT+CPIN=%s
+  24c25 AT+CFUN=%d
+  24c30 AT+CFUN=0
+  24c3a AT+CFUN=1
+  24c44 function_at_common
+  24c57 function_at_quectel
+  24c6b function_at_huawei
+  24c7e function_private_rg650v
+  24c96 function_private_em160r
+  24cae function_private_rm520n
+  24cc6 function_private_em05g
+  24cdd function_private_em060k
+  24cf5 function_private_ep06
+  24d0b function_private_ec25
+  24d21 function_private_ec20
+  24d37 Failed to acquire read lock in get_func_map
+  24d64 gl-sdk4-cellular-26.163.12373~1111f6a/_modem/func_maps.c
+  24d9d Failed to acquire write lock in register_func_map
+  24dd0 Failed to acquire write lock in unregister_func_map
+  24e05 Failed to acquire write lock in init_func_map_by_name
+  24e3c %s+%s
+  24e42 AT^ICCID?
+  24e4c cellular.modem
+  24e5b modems
+  24e62 current_sim_slot
+  24e73 __delete
+  24e7c __replace
+  24e86 hour
+  24e8f network_mode
+  24e9c protocol
+  24ea5 band_enable
+  24eb1 enable_switch
+  24ebf enable_timing
+  24ecd esim2_enable
+  24eda lte_segallowed
+  24ee9 nr5g_segallowed
+  24ef9 band_filter_mode
+  24f0a failover_interval
+  24f1c current_sim
+  24f28 slot_type
+  24f32 NR-NSA
+  24f39 NAR-SA
+  24f40 test %s COMMAND
+  24f51 gl-sdk4-cellular-26.163.12373~1111f6a/_modem/modem.c
+  24f86 /etc/config/cellular/slot_map.json
+  24fa9 username
+  24fb6 PCIE
+  24fbf killall -9 modem_AT
+  24fd3 supports_port
+  24fe1 port_at
+  24fe9 at_offset
+  24ff3 /usr/bin/modem_AT -B %s -P %s -O%d
+  25016 spawn failed
+  25024 spawned process with PID %d
+  25041 at_process_pid
+  25050 start_at_process_by_bus unlocked modems_info_lock
+  25082 modem AT process on bus %s is ready %d
+  250aa modem AT process on bus %s is not ready
+  250d6 slot_%s
+  250e1 get_modem_status_by_bus failed
+  25100 err_msg
+  25108 missing bus or rel_version
+  25123 MODEM_CONFIG_FILE error
+  2513b missing slot_multi_priority
+  25157 missing slot_busx
+  25169 slot%d
+  25170 missing slotx
+  2517e lock failed
+  2518a write failed
+  25197 missing bus slot_priority
+  251b1 /proc/gl-hw-info/pcie-bus
+  251cb /proc/gl-hw-info/modem-cpu
+  251e6 /proc/gl-hw-info/modem-pid
+  25201 /proc/gl-hw-info/modem-vid
+  2521c bus_type
+  25225 /sys/bus/pci/devices/
+  2523b %s/%s/device
+  2524b %s/%s/vendor
+  25258 /sys/bus/usb/devices/
+  2526e %s/%s/idProduct
+  2527e %s/%s/idVendor
+  2528d skip build-in USB bus %s, PCIe counterpart in build-in list
+  252cd %s/%s
+  252d3 /dev/%s
+  252db port_type
+  252e5 port_name
+  252ef port_offset_dm
+  252fe port_offset_gps
+  2530e port_offset_at
+  2531d port_offset_ppp
+  2532d port_offset_dm: %d, port_offset_gps: %d port_offset_at:%d port_offset_ppp:%d
+  2537b valid port count:%d
+  25390 usb ports: invalid parameters
+  253af === USB Ports List ===
+  253c7 [%d]port_name:%s port_offset:%d
+  253e8 ======================
+  25400 port_dm
+  25408 port_gps
+  25411 port_ppp
+  2541e port_qmi
+  25427 sim_slot_num
+  25434 standby_type
+  25441 supports_feature
+  25452 lock_carrier
+  2545f signal_up
+  25469 External modem: remove unsupported feature %s
+  25498 supports_band
+  254a6 /lib/modem_data/product_baseline.json
+  254cc product_baseline.json not found or parse error
+  254fc support_lock_tower
+  2550f support_lock_operator
+  25525 support_historical_signal
+  2553f Removed feature %s for model %s
+  25560 support_pin_count
+  25572 /lib/modem_data/modem_list.json
+  25592 JSON parse error at line %d, column %d: %s
+  255be modem_init_by_bus bus:%s action:%d
+  255e2 start_at_process
+  255f4 start_at_process_by_bus
+  2560d stopped process with PID %d
+  2562a No modems found in modems_info.
+  2564b supports_function_map
+  25661 supports_private_map
+  25676 Function Map: vendor=%s private=%s
+  2569a modem info is empty, check modem status and reinitialize
+  256d3 bus info is null
+  256e4 band_list
+  256ee Start setting modem kmwan configuration...
+  2571a kmwan
+  25720 member
+  25727 interface
+  25731 disabled
+  2573a addr_type
+  25744 weight
+  2574b passive
+  25753 track_mode
+  2575e check
+  25764 kmwan.%s.tracks
+  25774 metric
+  2577e ping,223.5.5.5
+  2578d ping,223.6.6.6
+  2579c ping,119.29.29.29
+  257ae ping,182.254.118.118
+  257c3 track_ip
+  257cc general
+  257d4 glconfig
+  257dd ping,1.1.1.1
+  257ea ping,8.8.8.8
+  257f7 ping,208.67.222.222
+  2580b ping,208.67.220.220
+  2581f track_ipv6
+  2582a ping,2001:4860:4860::8844
+  25844 ping,2001:4860:4860::8888
+  2585e ping,2620:0:ccd::2
+  25871 ping,2620:0:ccc::2
+  25884 /etc/init.d/kmwan restart
+  2589e load_modem_num start
+  258b4 load_modem_num end ,modem_num:%ld
+  258d7 supports_proto
+  258f1 supports_ip_type
+  25902 skip duplicate build-in USB bus %s, PCIe bus %s already managed
+  25943 Error: global_modems_info is NULL
+  25966 Error: No modems array found
+  25984 Error: Memory allocation failed
+  259a5 bus =%s,bus_type =%s
+  259bb Warning: Modem at index %zu missing bus or bus_type
+  259f0 IMEI unavailable and bus %s is duplicate built-in USB, removing
+  25a31 Failed to get IMEI for bus %s, keeping without dedup
+  25a67 Error: Failed to create new array
+  25a8a No modem found for bus: %s
+  25aa6 Set DDS ID ret=%d
+  25ab9 Set SIM Slot ret=%d
+  25ace slot_feature
+  25adb No 'slot_feature' found in config %s
+  25b01 set_slot_sub_id failed, bus=%s, id=%d
+  25b28 supports_3gpp_rel
+  25b3a supports_esim
+  25b48 supports_rrc_seg
+  25b59 lte_band
+  25b62 nsa_band
+  25b6b rmnet
+  25b71 failover
+  25b7a Modem config file %s exists.
+  25b98 Modem config file %s does not exist.
+  25bbe load config success
+  25bd3 load config success by bus
+  25bef is_single_dial
+  25bfe Modem config file %s does not exist. It will be created.
+  25c38 load config failed
+  25c4c remove
+  25c57 bus init succeeded
+  25c6a Failed to read config file: %s
+  25c8a No 'slot_feature' found in config
+  25cad No '%s' found in slot_feature config
+  25cd3 No 'failover' found in %s config
+  25cf5 No 'current_sim' found in failover config
+  25d20 esim%d_enable
+  25d2e modem bus=%s, current_3gpp_rel=%s
+  25d51 modem bus=%s, dds_id=%d, %s,ret=%d
+  25d75 modem bus=%s, set dds_id=1
+  25d91 modem bus=%s, switch 1->2 set dds_id=2
+  25db9 modem bus=%s, switch switch 2->1 set dds_id=1
+  25de8 modem bus=%s, set dds_id=2
+  25e04 modem bus=%s, set dds_id=%d, %s,ret=%d
+  25e2c modem bus=%s, airplane mode enabled
+  25e51 modem bus=%s, set airplane mode, %s,ret=%d
+  25e7d modem bus=%s, at_block
+  25e95 get_modem_info_by_bus failed, bus=%s, %s
+  25ebf mtu_need_sync
+  25ecd /www/offline_docs/Cellular Network Troubleshooting Guide.html.gz
+  25f0e offline_doc
+  25f1a at_port
+  25f22 data_port
+  25f2c devices
+  25f34 protocols
+  25f3e imei
+  25f47 IPv4
+  25f4c label
+  25f52 value
+  25f58 IPv4&IPv6
+  25f62 slot_support_esim
+  25f78 network_type
+  25f85 NR-SA
+  25f8b signal_support
+  25f9a sms_support
+  25fa6 lock_tower_support
+  25fb9 lock_carrier_support
+  25fce network_type_support
+  25fe3 modem_handle_info bus=%s, ret=%d
+  26005 slot_switch_status
+  26018 slot_switch_count
+  2602a current_3gpp_rel
+  2603b /etc/gl_crontabs/crontabs.d/%s_switch-main
+  26066 /etc/init.d/gl_timer restart
+  26083 Failover timing cron job removed for bus %s
+  260b0 Error deleting file %s
+  260c8 Retry get_current_sim_slot for bus %s, attempt %d
+  260fb get_modem_status_by_bus failed,ret:%d
+  26122 OPTION_BUS not found
+  26138 Current slot on bus %s is %d, requested slot is %d
+  2616c Manual switch to slot %d on bus %s
+  26190 Set slot %d is_esim %d for bus %s
+  261b3 Invalid bus
+  261c0 Failed to init uci context
+  261dc Failed to build kmwan section for bus %s slot %d
+  2620e force
+  26214 %s_6
+  26219 Set kmwan mode %d for bus %s
+  26237 Processing failover config for %s
+  2625a No bus field found in location_id: %s
+  26281 Slot event processor started for bus %s, ret=%d
+  262b2 Failover timing set to %s:%s
+  262d0 %s %s * * 0,1,2,3,4,5,6 ubus call  cellular.failover switch_event '{"event":"TIMED_SWITCH","slot":0,"bus":"%s"}'
+  26342 Failover timing is disabled
+  2635f Slot event processor stopped for bus %s, ret=%d
+  26390 Failover is disabled
+  263a6 true
+  263ab false
+  263b1 Invalid location_id or band
+  263ce Processing band config for %s
+  263ed Band enable: %s
+  263fe Band filter mode: %d
+  26414 Band list:
+  26420   LTE Bands: 
+  26432   NR-SA Bands: 
+  26442   NR-NSA Bands: 
+  26456 Extracted bus: %s, slot: %d
+  26473 No valid bus field found in location_id: %s
+  264a0 Setting band config to module for bus: %s, slot: %d
+  264d5  ubus -t 3 call modem.CPU.AT get_result_AT '{"cmd":"AT+CFUN=0","timeout":3,"source_flag":1}'
+  26532  ubus -t 3 call modem.CPU.AT get_result_AT '{"cmd":"AT+CFUN=1","timeout":3,"source_flag":1}'
+  2658f Set airplane mode command executed: %s
+  265b7 missing airplane_mode
+  265cd Failed to add object: %s
+  265e7 Failed to remove object: %s
+  26604 modem ubus server deinit
+  2661e err_code
+  26627 interfaces
+  2663e Failed to obtain the current modem function mapping table
+  26679 set_3gpp_rel failed: bus=%s, rel_version=%s, ret=%d
+  266ae set_3gpp_rel not supported: bus=%s
+  266d2 {"bus":"%s","rel_version":"%s"}
+  266f2 set_3gpp_rel_status
+  26706 ubus call set_3gpp_rel_status failed: bus=%s, ret=%d
+  2673c /proc/gl-hw-info/screen
+  26754 /etc/gl_screen/scripts/gl_screen_event.lua
+  2677f lua /etc/gl_screen/scripts/gl_screen_event.lua get_screen_poweroff_anim_time
+  267cc {"method":"poweroff anim start"}
+  267ed gl_screen
+  267f7 ubus call set failed: ret=%d, try %d times
+  26823 sleep %d;/sbin/reboot
+  26839 cellular.sim
+  26846 Invalid device or protocol
+  26862 run_config_process 
+  26877 run_config_process:%s 
+  2688f run config process_failover_config end
+  268b7 dial_config
+  268c3 run config process_dial_config end
+  268e7 invalid input
+  268f5 payload must be object
+  2690c location_id
+  26918 jobj=%p,jdata=%p
+  2692a k=%s,dst=%p
+  26937 set new dst=%p
+  26947 changed=%d
+  26953 missing location_id/data
+  2696c changed
+  26974 {"changed_objects":[]}
+  2698b get_modem_info
+  2699a get_wan_dds_id invalid for bus %s ret %d slot %d, fallback to modem status ubus
+  269eb roaming
+  269f3 iccid
+  269f9 get_config
+  26a04 get_feature_config
+  26a17 get_sim_config bus=%s,pid=%s,vid=%s,slot=%d,rett=%d,%s
+  26a4f manual
+  26a5a apns
+  26a5f auth
+  26a64 NONE
+  26a69 password
+  26a7d service
+  26a85 dial_number
+  26a91 set_config
+  26a9c set_sim_config: %s
+  26ab0 set_sim_config: ubus_ret_str is NULL
+  26ad6 supports_rrc_seg: %s
+  26aec set_feature_config
+  26aff set_feature_config: %s
+  26b17 source
+  26b1e cm_start_dial
+  26b2c cm_start_dial: %s
+  26b3f cellular.cm
+  26b4b get_slot_priority_config
+  26b64 set_slot_priority_config
+  26b7d set_slot_priority_config: %s
+  26b9b pin_code
+  26ba4 set_pincode
+  26bb0 pin_counter
+  26bbc PIN code is incorrect
+  26bd2 Failed to unlock PIN code
+  26bec set_pincode: %s
+  26bfd set_pincode: ubus_ret_str is NULL
+  26c20 modem_config_file
+  26c32 /etc/config/cellular/sim_map.json
+  26c54 sim_config_file
+  26c64 modem_status
+  26c71 sim_info
+  26c7a sim_status
+  26c85 cellular.network
+  26c96 network_info
+  26ca3 network_status
+  26cb2 debug_info
+  26cbd network_debug
+  26ccb debug_at_info
+  26cd9 at_debug_msgs
+  26ce7 update_modem_info
+  26cf9 clean_switch_count
+  26d0c get_all_config
+  26d1b set_airplane_mode
+  26d2d action
+  26d34 rsrp
+  26d39 sinr
+  26d3e rsrq
+  26d43 WCDMA
+  26d49 rscp
+  26d4e ecio
+  26d53 TDSCDMA
+  26d5b rssi
+  26d60 EVDO
+  26d6d +QNWPREFCFG:
+  26d81 +COPS: %d,%d,"%32[^"]",%d
+  26d9b +COPS: %d
+  26da5 AT+QNWLOCK="%s"
+  26db5 +QNWLOCK:
+  26dbf error: len:%d > result_len:%d,%s-%d
+  26de4 80MHz
+  26dea 90MHz
+  26df0 100MHz
+  26df7 200MHz
+  26dfe 400MHz
+  26e05 10MHz
+  26e0d 70MHz
+  26e13 60MHz
+  26e19 50MHz
+  26e1f 40MHz
+  26e25 30MHz
+  26e2b 25MHz
+  26e31 20MHz
+  26e37 15MHz
+  26e3d 1.4MHz
+  26e44 3MHz
+  26e49 quectel_get_active_mbn query failed ret[%d] retry[%d]
+  26e80 gl-sdk4-cellular-26.163.12373~1111f6a/_modem/quectel.c
+  26eb7 AT+QMBNCFG="list"
+  26ec9 +QMBNCFG: "List",%d,%d,%d,"%63[^"]",%31[^,],%15[^,
+  26eff quectel_get_active_mbn item index[%d] selected[%d] activated[%d] name[%s] version[%s] release[%s]
+  26f62 quectel_get_active_mbn select activated mbn[%s], stop parsing remaining list
+  26fb0 quectel_get_active_mbn skip invalid list line[%s]
+  26fe3 +QMBNCFG: "List",
+  26ff5 quectel_get_active_mbn no activated mbn found
+  27024 AT+QGMR
+  27034 /var/run/modem/operator-config.json
+  27058 freq
+  27061 srxlev
+  2706c cellid
+  27077 bandwidth
+  27084 NR5G-SA
+  2708c strength
+  27095 squal
+  2709b -100
+  270a0 AT+QENG="servingcell"
+  270b6 +QENG:
+  270bd %1000[^]%*[^
+  270cd servingcell
+  270d9 NOCONN
+  270e0 NR5G-NSA
+  270ed AT+QCAINFO
+  270f8 nr5g
+  2710d LTE %s
+  27114 NR5G-SA %s
+  2711f servingcell value: [%s]
+  27138 CONNECT
+  27140 SEARCH
+  27147 LIMSRV
+  2714e AT+QUIMSLOT?
+  2715b +QUIMSLOT: 
+  27167 AT+QUIMSLOT=%d
+  27176 AT+QUIMSUB?
+  27182 +QUIMSUB: 
+  2718d AT+QUIMSUB=%d
+  2719b AT+QNWPREFCFG="roam_pref",255
+  271b9 AT+QNWPREFCFG="roam_pref",1
+  271d5 AT+QNWCFG="data_roaming",0
+  271f0 AT+QNWCFG="data_roaming",1
+  2720b AT+QCFG="roamservice",2,1
+  27225 AT+QCFG="roamservice",1,1
+  2723f AT+QNWCFG="3gpp_rel",%s,%s
+  2725a AT+QEFSSYNC=0
+  27268 AT+QNWCFG="3gpp_rel"
+  2727d +QNWCFG:
+  27286 +QNWCFG: "3gpp_rel",%15[^,]
+  272a2 AT+QPINC?
+  272ac +QPINC: "%31[^"]",%d
+  272c4 +QPINC:
+  272cc AT+QNWPREFCFG="lte_band"
+  272e5 AT+QNWPREFCFG="nsa_nr5g_band"
+  27303 AT+QNWPREFCFG="nr5g_band"
+  2731d nsa_nr5g_band
+  2732f AT+QNWPREFCFG="%s",
+  27343 AT+QNWPREFCFG="mode_pref",AUTO
+  27362 set mode_pref AUTO
+  27375 %s: %s failed, ret=%d
+  2738c AT+QNWPREFCFG="nr5g_disable_mode",0
+  273b0 set nr5g_disable_mode 0
+  273c8 AT+QNWPREFCFG="mode_pref",NR5G
+  273e7 set mode_pref NR5G
+  273fa AT+QNWPREFCFG="nr5g_disable_mode",2
+  2741e set nr5g_disable_mode 2
+  27436 AT+QNWPREFCFG="nr5g_disable_mode",1
+  2745a set nr5g_disable_mode 1
+  27472 AT+QNWPREFCFG="mode_pref",LTE:NR5G
+  27495 set mode_pref LTE:NR5G
+  274ac AT+QNWPREFCFG="mode_pref",LTE
+  274ca set mode_pref LTE
+  274dc set LTE band list
+  274ee build LTE band command
+  27505 set NSA band list
+  27517 build NSA band command
+  2752e set SA band list
+  2753f build SA band command
+  27555 AT+QSCAN=3,1
+  27562 AT+QNWLOCK="common/5g",%d,%d,%d,%d
+  27585 failed to save modem 5g tower config to efs!
+  275b3 failed to sync modem config to efs!
+  275d8 AT+QNWLOCK="common/4g",1,%d,%d
+  275f7 failed to save modem 4g tower config to efs!
+  27625 common/5g
+  2762f failed to get 5g lock state!
+  2764d 5g is not locked, no need to unlock!
+  27673 5g is locked, try to unlock it!
+  27694 failed to unlock 5g tower!
+  276b0 failed to delete modem 5g tower config from efs!
+  276e2 common/4g
+  276ec failed to get 4g lock state!
+  2770a 4g is not locked, no need to unlock!
+  27730 4g is locked, try to unlock it!
+  27751 failed to unlock 4g tower!
+  2776d failed to delete modem 4g tower config from efs!
+  2779f AT+QNWLOCK="common/4g",0
+  277b8 AT+QNWLOCK="common/5g",0
+  277d1 AT+QNWLOCK="save_ctrl",1,1
+  277ec AT+QNWLOCK="save_ctrl",0,0
+  27807 AT+COPS=?
+  27811 AT+COPS=%d,%d,"%s",%d
+  2782a Unknown network type, attempting to convert via ACT[%d]
+  27863 Failed to convert ACT to network %s mode
+  27890 AT+COPS=0,0
+  2789c AT+QSIMTYPE="slot2"
+  278b0 QSIMTYPE: "slot2",
+  278c3 QSIMTYPE: "slot2",%d
+  278d8 AT+QSIMTYPE="slot2",%d
+  278ef AT+qnvfr="/nv/item_files/data/3gpp/ds_3gpp_mtu"
+  2791f %s get ds_3gpp_mtu failed
+  2793a %02X%02X
+  27943 %s parsed nv value: %s
+  2795b %s mtu already set to %d
+  27975 AT+qnvfw="/nv/item_files/modem/data/3gpp/ps/disable_mtu_request",01
+  279b9 %s set disable_mtu_request failed
+  279dc AT+qnvfw="/nv/item_files/data/3gpp/ds_3gpp_mtu",%s
+  27a0f %s set ds_3gpp_mtu failed
+  27a2a %s set QEFSSYNC succeeded
+  27a45 %s set QEFSSYNC failed
+  27a5d AT+QNWPREFCFG="mode_pref"
+  27a77 AT+QNWPREFCFG="mode_pref",%s
+  27a94 AT+CFUN=4
+  27a9e AT+QICSGP=%d,%d,"%s","%s","%s",%d
+  27ac0 AT+QNWCFG="rrc_seg",%d,%d
+  27ada quectel_set_rrc_seg failed: bus=%s cmd=%s ret=%d
+  27b0c AT+QMBNCFG="refresh_only"
+  27b26 quectel_set_rrc_seg refresh_only failed: bus=%s ret=%d
+  27b5e AT+QNWCFG="rrc_seg"
+  27b72 +QNWCFG: "rrc_seg",%d,%d
+  27b8b +CME ERROR
+  27b96 +CMS ERROR
+  27ba8 ''')))+--+AT+CEREG?
+  27bc2 AT+CGACT?
+  27bd2 modem_handle_config_get_all
+  27bee modem_handle_config_get_slot_priority
+  27c14 modem_handle_set_3gpp_rel_status
+  27c35 modem_handle_config_set_slot_priority
+  27c5b modem_handle_get_modem_info
+  27c77 modem_handle_config_get_feature
+  27c97 modem_handle_update_modem_info
+  27cb6 init_modem_mgmt_status
+  27ccd modem_handle_info
+  27cdf modem_handle_status
+  27cf3 modem_handle_clean_switch_count
+  27d13 modem_handle_set_airplane_mode
+  27d32 modem_handle_config_set_feature
+  27d5e get_cell_param_v1
+  27d7e quectel_set_band_info
+  27d94 rg650v_mtu_is_sync
+  27da7 rg650v_set_mtu

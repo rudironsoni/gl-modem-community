@@ -1,0 +1,721 @@
+    8b9 bPM%
+    ab7 &}&.
+    b2a J[;*
+    beb .H*B
+    c0a =-aE
+    c18 -0pE
+    c30 K]^)
+    c50 @ElD
+   23e9 _fini
+   23ef __cxa_finalize
+   23fe __deregister_frame_info
+   2416 __register_frame_info
+   242c api_error_to_string
+   2440 err_code_to_msg
+   2450 is_bus_blocked
+   245f __stack_chk_guard
+   2471 snprintf
+   247a access
+   2481 __stack_chk_fail
+   2492 send_socket_at_command_with_timeout
+   24b6 __gl_log_level__
+   24c7 ___gl_log
+   24d1 memset
+   24d8 socket
+   24df setsockopt
+   24ea fcntl
+   24f0 strncpy
+   24f8 __errno_location
+   2509 poll
+   250e strerror
+   2517 getsockopt
+   2522 strlen
+   2529 send
+   252e recv
+   2533 execute_at_command
+   2546 escape_log_string
+   2558 at_channel_block
+   2569 is_file_locked
+   2578 strstr
+   257f toupper
+   2587 strcat
+   258e jsonw_integer
+   259c jsonw_object
+   25a9 jsonw_string
+   25b6 jsonw_object_set_new
+   25cb jsonw_dumps
+   25d7 jsonw_decref
+   25e4 is_substring_case_insensitive
+   2602 read_file_oneline
+   2614 atoi
+   2619 AT_CLASS
+   2622 jsonw_loads
+   262e jsonw_object_get
+   263f jsonw_string_value
+   2652 json_delete
+   265e pipe
+   2663 posix_spawn_file_actions_init
+   2681 posix_spawn_file_actions_addclose
+   26a3 posix_spawn_file_actions_adddup2
+   26c4 posix_spawnp
+   26d1 posix_spawn_file_actions_destroy
+   26f2 malloc
+   26f9 waitpid
+   2701 realloc
+   2709 memcpy
+   2710 blobmsg_format_json_with_cb
+   272c get_signal_level
+   273d signals_value
+   274b strcmp
+   2752 modem_is_build_in
+   2764 get_device_buildin_modem_port
+   2782 strtok_r
+   278b get_usbnode_from_config
+   27a3 guci_init
+   27ad guci_get
+   27b6 guci_free
+   27c0 get_bus_list
+   27cd check_file_is_exist
+   27e1 get_device_usb_port
+   27f5 common_quectel_2_bw
+   2809 common_quectel_5_dl_bw
+   2820 find_modem_device
+   2832 opendir
+   283a readdir
+   2842 closedir
+   284b find_device_by_port
+   285f charset_convert
+   286f iconv_open
+   287a iconv
+   2880 iconv_close
+   288c has_keystr
+   2897 strncmp
+   289f is_ok
+   28a5 bus_to_uci_section
+   28b8 bus_to_interface_v4
+   28cc strncat
+   28d4 bus_to_interface_v6
+   28e8 bus_to_device
+   28f6 read_file
+   2900 get_ipaddrv6_array_by_ifname
+   291d fopen
+   2923 json_string
+   292f fscanf
+   2936 fclose
+   293d json_array
+   2948 json_object
+   2954 inet_pton
+   295e inet_ntop
+   2968 jsonw_array_append_new
+   297f json_array_size
+   298f number_to_ipv4mask
+   29a2 get_curr_timestamp
+   29b5 time
+   29ba gl_strcasecmp
+   29c8 tolower
+   29d0 to_lowercase
+   29dd to_uppercase
+   29ea compare_strings_case_insensitive
+   2a0b set_filelock
+   2a18 read_json_file
+   2a27 fdopen
+   2a2e json_loadf
+   2a39 write_json_file
+   2a49 json_dumpf
+   2a54 open_file
+   2a5e remove_file
+   2a6a unlink
+   2a71 gl_strncasecmp
+   2a80 is_numeric_or_space
+   2a94 split_at_string
+   2aa4 strchr
+   2aab modem_escape_single_quote
+   2ac5 get_modem_log_level
+   2ad9 map_input_level
+   2ae9 network_mode_to_str
+   2afd bus_slot_to_interface_name
+   2b18 build_3g_ppp_ifname_from_section
+   2b39 bus_slot_to_config_name
+   2b51 bus_to_config_name
+   2b64 gl_ubus_lookup_id
+   2b76 pthread_mutex_lock
+   2b89 pthread_mutex_unlock
+   2b9e gl_ubus_invoke_async
+   2bb3 ubus_invoke_async_fd
+   2bc8 _random_generate
+   2bd9 gl_ubus_send_reply
+   2bec gl_ubus_add_object
+   2bff gl_ubus_remove_object
+   2c15 gl_ubus_free
+   2c22 flock
+   2c28 unlock_file
+   2c34 read_json_nolock
+   2c45 jsonw_load_file
+   2c55 write_json_atomic_nolock
+   2c6e write
+   2c74 fsync
+   2c7a rename
+   2c81 find_operator_by_mccmnc
+   2c99 operator_db
+   2ca5 json_object_get
+   2cb5 json_string_value
+   2cc7 json_array_get
+   2cd6 json_dumps
+   2ce1 find_operator_by_plmn
+   2cf7 operator_database_to_json
+   2d11 lseek
+   2d17 json_loads
+   2d22 act_to_network_type
+   2d36 is_valid_at_command
+   2d4a remove_end_enter
+   2d5b parse_bus_from_sms_file
+   2d73 fgets
+   2d79 strcspn
+   2d81 convert_to_utf8
+   2d91 decode_sms_from_file
+   2da6 getline
+   2dae sscanf
+   2db5 json_integer
+   2dc2 fread
+   2dc8 ftell
+   2dce fseek
+   2dd4 basename
+   2ddd convertToIPv6
+   2deb strtok
+   2df2 sprintf
+   2dfa is_valid_ip_addr
+   2e0b get_network_protocol_and_port_by_bus
+   2e30 set_network_protocol_and_port_to_default_by_bus
+   2e60 guci_set
+   2e69 guci_commit
+   2e75 get_network_current_sim_iccid_by_bus
+   2e9a set_network_current_sim_iccid_by_bus
+   2ebf get_dial_state_by_bus
+   2ed5 set_dial_state_by_bus
+   2eeb guci_set_name
+   2ef9 get_dial_ip_type_by_bus
+   2f11 get_dial_progress_by_bus
+   2f2a set_dial_progress_by_bus
+   2f43 ubus_connect
+   2f50 deinit_ubus_call_ctx
+   2f65 gl_ubus_call_v1
+   2f75 pthread_rwlock_rdlock
+   2f8b pthread_rwlock_unlock
+   2fa1 blob_buf_init
+   2faf ubus_invoke_fd
+   2fbe gl_ubus_par_call_v1
+   2fd2 blobmsg_add_json_from_string
+   2fef create_file_lock
+   3000 remove_file_lock
+   3011 async_spawn_pid
+   3021 posix_spawnattr_init
+   3036 posix_spawnattr_setflags
+   304f posix_spawnattr_setpgroup
+   3069 signal
+   3070 async_spawn
+   307c posix_spawnattr_destroy
+   3094 common_get_newsms_count
+   30ac thread_safe_get_command_output
+   30cb posix_spawnattr_getflags
+   30e4 check_interface_conn_status
+   3100 thread_safe_get_command_output_dynamic
+   3127 get_ifstats
+   3133 get_ifstats_by_ifname
+   3149 get_wan_dds_id
+   3158 guci_get_name
+   3166 set_wan_dds_id
+   3175 get_interface_up_status
+   318d _get_protocol_by_bus
+   31a2 ip_type_str2int
+   31b2 _get_iptype_by_bus
+   31c5 disable_usb_autosuspend
+   31dd get_l3_device_for_ifname
+   31f6 bus_slot_to_ifname
+   3209 apn_db
+   3210 global_blob_b
+   321e ___environ
+   3229 libgcc_s.so.1
+   3237 libc.so
+   323f libcmutils.so
+   324d GLIBC_2.0
+   41b1 *333333gff@UUUU
+   41c8 UUUUUUUU
+   41d8 UUUUU
+   41fa PUUUUU
+   4230 `"N9
+   482f RB|@
+   56d5 j387
+   5aa8 aj`8?(
+   5ab5 j 8`
+   5bf0 !H`8`
+   61e2 @9?,
+   61ee @9?4
+   6227 Td|"
+   6287 R?h#8
+   62a8 $h#8c
+   62e3 T"|"
+   63a8 bj!8!
+   63e3 T"|"
+   64a8 bj!8!
+   6995 jt8y
+   70ed js8 
+   70fd js8 
+   72a5 jb8d
+   72b7 9fj$8d
+   72c7 9aj$8
+   72dc aj#8
+   74eb Tu|@
+   7577 T@|"
+   75bd ju8`
+   77f0 @kv8`
+   7950 @kv8`
+   7bd9 j!8!
+   841c ?k48
+   8674 `ja8
+   87fd j 8C
+   881d k68A
+   8882 87"h&8c
+   889f 2%h&8B`
+   9385 c@9`
+   94ed c@9@
+   b6b3 T?k 8
+   b9c4 ?h 8
+   ca54 ?h 8
+   ccb5 bQ9p
+   ccec Unknown error
+   ccfa Parameter not found
+   cd0e Modem does not exist
+   cd23 Parameter invalid
+   cd35 Command is too long
+   cd49 Command execution failed
+   cd62 Port does not exist
+   cd76 Bus does not exist
+   cd89 File io failed
+   cd98 SIM failed
+   cda3 Failed to register for the network
+   cdc6 Process exists
+   cdd5 Failed to get card slot
+   cded File not found
+   cdfc Operation timed out
+   ce10 UCI context initialization failed
+   ce32 UCI configuration file does not exist
+   ce58 UCI configuration data does not exist
+   ce7e UCI configuration section does not exist
+   cea7 Network registration failed
+   cec3 SMS decoding failed
+   ced7 APN match failed
+   cee8 PIN code is incorrect
+   cefe Failed to get the number of card unlocks
+   cf27 SIM PIN function is not enabled
+   cf47 Failed to send AT
+   cf59 AT response was unsuccessful
+   cf76 Failed to get card ICCID
+   cf8f Failed to get card IMSI
+   cfa7 Failed to get the card mnc length
+   cfc9 APN database initialization failed
+   cfec APN database parse failed
+   d006 Failed to create JSON
+   d01c Failed to write json to file
+   d039 Failed to read json form file
+   d057 Reboot module failed
+   d06c Failed to get cells information
+   d08c Device does not exist
+   d0a2 Failed to send SMS
+   d0b5 Send sms timeout
+   d0c6 SMS is not supported
+   d0db SMS messages cannot be sent temporarily
+   d103 Failed to lock operator
+   d11b Failed to lock tower
+   d130 Out memory
+   d13b Failed get operator config
+   d156 Failed get tower config
+   d16e Failed get NITZ info
+   d183 Failed to unlock operator
+   d19d Failed to unlock tower
+   d1b4 Failed to save operator config
+   d1d3 Failed to save tower config
+   d1ef Network connection failed
+   d209 APN database update failed
+   d224 No new APN database available
+   d242 /tmp/at_flags
+   d250 %s/%s.flag
+   d25b [send_socket_at_command_with_timeout] Invalid parameter
+   d294 gl-sdk4-cellular-26.163.12373~1111f6a/utils/at_utils.c
+   d2cb /tmp/%s.sock
+   d2d8 [send_socket_at_command_with_timeout] socket create failed
+   d314 [send_socket_at_command_with_timeout] connect in progress...
+   d352 [send_socket_at_command_with_timeout] connect poll timeout errno=%d (%s)
+   d39c [send_socket_at_command_with_timeout] connect failed err=%d (%s)
+   d3de [send_socket_at_command_with_timeout] connect success
+   d415 [send_socket_at_command_with_timeout] connect failed errno=%d (%s)
+   d459 [send_socket_at_command_with_timeout] Signal interruption send retry
+   d49f [send_socket_at_command_with_timeout] send failed errno=%d (%s)
+   d4e0 [send_socket_at_command_with_timeout] Signal interruption recv retry
+   d526 [send_socket_at_command_with_timeout] recv timeout
+   d55a [send_socket_at_command_with_timeout] recv failed errno=%d (%s)
+   d59b Invalid arguments
+   d5ad AT channel blocked
+   d5c2 ERROR
+   d5ca /tmp/cfun_lock
+   d5d9 AT+CFUN=
+   d5e2 AT blocked by CFUN lock: %s
+   d5fe Invalid source_flag
+   d612 modem.
+   d61d bus to ubus object failed
+   d637 AT+CMGS=
+   d640 /tmp/sms_max_retry_time
+   d658 bus[%s]modem send SMS max timeout is:%s
+   d681 bus:%s atcmd:%s timeout:%ds
+   d6a2 sub_id
+   d6a9 data
+   d6ae Failed to parse JSON from ubus response: %.256s
+   d6de at response[cmd:%.512s resp:%.1024s]
+   d703 AT response gets an exception ret:%d
+   d72b /bin/sh
+   d735 glmodem.global.usbnode
+   d74c /var/run/modem/extern_modem_bus
+   d76c Get the modem bus list is [%s]
+   d78c gl-sdk4-cellular-26.163.12373~1111f6a/utils/common.c
+   d7c1 Failed to get modem bus list
+   d7df 1.4M
+   d815 100M
+   d81a 200M
+   d81f 400M
+   d827 ttyUSB
+   d82e /dev/%s
+   d836 ttyACM
+   d83d cdc-wdm
+   d845 %s/%s
+   d84b /sys/bus/usb/devices/%s/%s:1.%d
+   d86b /sys/bus/pci/devices/%s
+   d883 mhi_DUN
+   d88b mhi_QMI
+   d893 iconv(): %s
+   d89f modem_
+   d8ac /proc/gl-hw-info/pcie-bus
+   d8c6 /dev/mhi_QMI0
+   d8d4 /dev/cdc-wdm0
+   d8e2 /proc/net/if_inet6
+   d8f5 %s/%u
+   d8fe gateway
+   d90a %32s %x %x %x %x %32s
+   d921 %d.%d.%d.%d
+   d92d The cache file %s does not exist!
+   d952 Failed to open lock file: %s
+   d970 Failed to remove lock file: %s
+   d990 glmodem.global.log_level
+   d9a9 UNKNOWN
+   d9b1 modem_cpu
+   d9bb _s%d
+   d9c0 3g-m_%s
+   d9c8 3g-%s
+   d9ce s%d_b
+   d9d4 _p%s_v%s
+   d9dd /dev/urandom
+   d9ea %s.tmp
+   d9f9 Brand
+   d9ff Operator
+   da08 carrier
+   da10 PLMN
+   da15 /var/run/modem/operator-config.json
+   da45 UNKONW
+   da4c fopen failed
+   da5a Bus:
+   da5f Failed to parse bus from file %s
+   da81 Bus %s does not match the bus %s in the file %s
+   dab2 Start decoding SMS from file %s
+   dad3 Slot: 
+   dada Slot: %u
+   dae3 From: 
+   daea phone_number
+   daf7 To: 
+   dafc Sender: 
+   db05 sender
+   db0c Sent: 
+   db13 date
+   db18 From_TOA: 
+   db23 international
+   db31 Alphabet: 
+   db3c UCS2
+   db41 UTF-8
+   db4b Length: 
+   db54 Length: %u
+   db5f Conversion from ucs2 to utf8 encoding
+   db86 body
+   db8b utf8 format without conversion
+   dbab Conversion from iso to utf8 encoding
+   dbd1 ISO-8859-7
+   dbdc Convert other formats to utf8
+   dbfb name
+   dc00 %04X:%04X:%04X:%04X:%04X:%04X:%04X:%04X
+   dc2b ::/0
+   dc34 0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0
+   dc54 network.%s.proto
+   dc65 network.%s.device
+   dc77 get network protocol %s and port %s on bus %s
+   dca6 Set network protocol %s and port %s on bus %s
+   dcd5 network.%s.iccid
+   dce6 get current iccid %s on bus %s
+   dd06 Failed to set current iccid %s on bus %s slot %d, ret=%d
+   dd40 Set current iccid %s on bus %s slot %d
+   dd68 DISABLE
+   dd70 ENABLE
+   dd77 network.%s.allow_dial
+   dd8d network.%s.disabled
+   dda1 get dial status %s on bus %s, ret %d
+   ddc7 network.%s
+   ddd2 interface
+   dddc Failed to set dial state on bus %s slot %d, ret=%d
+   de10 Set dial state %s on bus %s slot %d
+   de35 network.%s.ip_type
+   de48 IPV4V6
+   de4f IPV6
+   de54 get ip type %s on bus %s, ret %d
+   de76 PROGRESS CONNECTING
+   de8a PROGRESS COMPLETED
+   de9d PROGRESS TRYING
+   dead UNKNOWN PROGRESS
+   debe network.%s.dial_progress
+   ded7 get dial progress %s on bus %s, ret %d
+   deff dial progress unchanged (%s), skip set on bus %s
+   df31 set dial progress from %s to %s on bus %s, ret %d
+   df64 Failed to connect to ubus
+   df7f Ubus context is not initialized
+   dfa0 Failed to acquire ubus call rwlock read lock
+   dfce ubus_lookup_id failed for path: %s
+   dff2 ubus_invoke failed for path: %s, method: %s, ret: %d
+   e028 %s_%s
+   e02e posix_spawnattr_init  err
+   e049 async_spawn %s err
+   e05d sync_spawn end %d
+   e070 /dev/null
+   e07a open /dev/null failed, fallback to async_spawn %s
+   e0ad /etc/spool/sms/incoming/
+   e0c6 sleep 1;/etc/init.d/smstools3 start
+   e0ee Number of new messages:%d
+   e109 Invalid parameters for thread_safe_get_command_output
+   e140 Failed to create pipe
+   e157 Failed to initialize posix_spawn_file_actions
+   e186 Failed to initialize posix_spawnattr
+   e1ac Failed to spawn process for command: %s
+   e1d5 lua -e "local kmwan = require 'gl.kmwan' local s = kmwan.get_ifstatus('%s') print(s)"
+   e22b thread_safe_get_command_output failed %s,%d
+   e258 ubus -t 1 call %s status
+   e271 ipv4-address
+   e27e route
+   e284 nexthop
+   e28c network.interface.
+   e29f Failed to init uci context
+   e2bb dds_id
+   e2c2 Update wan_handle from %s to %d
+   e2e3 ifstatus %s
+   e2ef thread_safe_get_command_output failed: %s
+   e31a json_loads failed: %s (line %d)
+   e33e ifstatus[%s]: 'up' not found or not boolean
+   e36b ifstatus[%s] up=%d
+   e37f Disabling USB autosuspend for bus:%s
+   e3a5 echo -1 > /sys/module/usbcore/parameters/autosuspend
+   e3da echo on > /sys/bus/usb/devices/%s/power/control
+   e40a resolve l3_device failed, empty ifstatus if=%s
+   e43a resolve l3_device failed, json parse error if=%s
+   e46c l3_device
+   e476 resolve l3_device if=%s -> %s
+   e495 resolve l3_device not found if=%s
+   e4b8 bus_slot_to_ifname: bus=%s, slot=%d, section=%s
+   e4e9 uci_init() failed
+   e4fb interface=%s
+   e509 proto=%s device=%s
+   e51d rmnet
+   e523 proto=%s, device=%s
+   e538 path=%s
+   e544 fallback 3g ifname for section[%s]: %s
+   e56c wwan
+   e571 rmnet_mhi0
+   e580 wwan0
+   e58a 5G NSA
+   e591 NR5G-SA
+   e599 rsrp
+   e59e rsrq
+   e5a3 sinr
+   e5a8 NR5G-NSA
+   e5b5 rssi
+   e5ba WCDMA
+   e5c0 rscp
+   e5c5 ecio
+   e5ca TDSCDMA
+   e5d6 EVDO
+   e5df Success
+   e5e7 General failure
+   e5f7 Invalid parameter
+   e609 Null pointer
+   e616 Out of memory
+   e624 Resource busy
+   e632 Resource full
+   e640 Invalid state
+   e64e Operation timeout
+   e660 Communication failure
+   e676 Invalid configuration
+   e68c Permission denied
+   e69e Resource not found
+   e6b1 Resource already exists
+   e6c9 Function not implemented
+   e6e2 Parameter missing
+   e6f4 UBUS call failed
+   e705 AT channel block
+   e716 Event subscription failed
+   e730 Invalid state transition
+   e749 Unknown state
+   e757 State wait timeout
+   e76a State initialization failed
+   e786 State deinitialization failed
+   e7a4 Modem state object not found
+   e7c1 SIM state object not found
+   e7dc Network state manager not found
+   e7fc Global state manager not found
+   e81b CM state object not found
+   e835 Module initialization failed
+   e852 Module not ready
+   e863 Module busy
+   e86f Module not found
+   e880 Module version mismatch
+   e898 Module function mapping table not found
+   e8c0 Module function not found
+   e8da Module function execution failed
+   e8fb Module is in airplane mode
+   e916 Network disconnected
+   e92b No network signal
+   e93d Network authentication failed
+   e95b Invalid network configuration
+   e979 DNS resolution failed
+   e98f Failed to get network status
+   e9ac Failed to get network info
+   e9c7 Failed to get diag info
+   e9df Set Band failed
+   e9ef Set Tower failed
+   ea00 Set Operator failed
+   ea14 Failed to obtain v4 information
+   ea34 Failed to obtain v6 information
+   ea54 Failed to obtain tower information
+   ea77 Failed to obtain operator information
+   ea9d Failed to set network type
+   eab8 Failed to get cell info
+   ead0 Get Band failed
+   eae0 Get Tower failed
+   eaf1 Get Operator failed
+   eb05 Failed to get network type
+   eb20 NOD ifstatus output empty
+   eb3a NOD ifstatus parse failed
+   eb54 NOD l3_device not found
+   eb6c NOD restore command build failed
+   eb8d NOD restore trigger failed
+   eba8 NOD event worker start failed
+   ebc6 SIM card not present
+   ebdb SIM PIN required
+   ebec SIM PUK required
+   ebfd SIM card locked
+   ec0d Invalid SIM card
+   ec1e SIM card operation failed
+   ec38 Incorrect PIN code
+   ec4b  SIM get pin counter failed
+   ec67 SIM get ICCID failed
+   ec7c SIM get IMSI failed
+   ec90 SIM get sim status failed
+   ecaa Configuration read failed
+   ecc4 Configuration write failed
+   ecdf Invalid configuration key
+   ecf9 Invalid configuration type
+   ed14 Configuration CRC mismatch
+   ed2f Configuration version mismatch
+   ed4e State manager initialization failed
+   ed72 State manager deinitialization failed
+   ed98 State manager not found
+   edb0 State manager already exists
+   edcd Invalid state in manager
+   ede6 State transition failed
+   edfe State update failed
+   ee12 State query failed
+   ee25 State manager lock failed
+   ee3f State manager unlock failed
+   ee5b State manager timeout
+   ee71 State manager busy
+   ee84 Invalid state manager parameter
+   eea4 State timer creation failed
+   eec0 Event manager object creation failed
+   eee5 State manager object creation failed
+   ef0a UBUS creation failed
+   ef1f Object not found
+   ef30 Required dialing parameter is missing
+   ef56 Duplicate dialing attempt detected
+   ef79 Dialing operation already in progress
+   ef9f Modem is currently busy with another operation
+   efce Modem in wrong state for dialing operation
+   eff9 Dialing operation timed out
+   f015 Dialing operation failed
+   f02e Failed to load configuration
+   f04b Failed to get PID and VID
+   f065 Failed to set APN info
+   f07c Failed to get context IP
+   f095 APN auto match failure
+   f0ac Failed to get MNC length
+   f0c5 Failed to init APN database
+   f0e1 Failed to parse APN database
+   f0fe Failed to get default device protocol
+   f124 Failed to set context status
+   f141 Failed to set roaming
+   f157 Cell network is out of service
+   f176 Configuration file does not exist
+   f198 Failed to get context status
+   f1b5 Failed to set module minimum function
+   f1db Failed to set module full function
+   f1fe Failed to get APN info
+   f215 Manual dial disconnection
+   f22f Failed to set sim authentication info
+   f255 Dialing is forbidden due to data quota exceeded
+   f285 Failed to set RRC segmentation config
+   f2ab Failed to refresh MBN config
+   f2c8 AT+CGACT=
+   f2ec AT+CIMI
+   f310 AT+GSN
+   f334 AT+CREG
+   f358 AT+CEREG
+   f37c AT+C5GREG
+   f3c4 AT+CPMS
+   f3e8 AT+GSN
+   f40c AT+QGMR
+   f430 AT+CMGS=
+   f454 AT+CPIN
+   f478 AT+QUIMSLOT
+   f49c AT+CSQ
+   f4c0 AT+QGDNRCNT
+   f4e4 AT+QGDCNT
+   f508 AT+QGDNRCNT
+   f52c AT+QGDCNT
+   f550 AT+QAUGDCNT
+   f574 AT+CNUM
+   f598 AT+CSIM=
+   f5bc AT+ICCID
+   f5e0 AT+QCCID
+   f604 AT+QPINC
+   f628 AT+GMI
+   f64c AT+QMBNCFG="list"
+   f670 AT+QENG="servingcell"
+   f694 AT+QENG="neighbourcell"
+   f6b8 AT+QSCAN=
+   f6dc AT+COPS=
+   f700 AT+QCFG="usbnet"
+   f724 AT+QNWPREFCFG="mode_pref"
+   f748 AT+QNWPREFCFG="nsa_nr5g_band"
+   f76c AT+QCFG="pcie/mode"
+   f790 AT+QCFG="data_interface"
+   f7b4 AT^NDISSTATQRY
+   f7d8 AT$QCPBMPREF=1
+   f7fc AT+QPOWD
+   f820 AT+QCAINFO
+   f844 AT+CGDCONT
+   f868 AT+QICSGP
+   f88c AT+CGPADDR
+   f8b0 AT+QCFG
+   f8d4 AT+QNWPREFCFG
+   f8f8 AT+QCSQ
+   f91c UNKONW
+   f94c !$'0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ

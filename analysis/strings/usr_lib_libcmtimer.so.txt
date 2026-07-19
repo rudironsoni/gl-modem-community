@@ -1,0 +1,72 @@
+    6d1 _fini
+    6d7 __cxa_finalize
+    6e6 __deregister_frame_info
+    6fe __register_frame_info
+    714 __gl_log_level__
+    725 ___gl_log
+    72f pthread_mutex_lock
+    742 pthread_mutex_unlock
+    757 pthread_cond_broadcast
+    76e pthread_join
+    77b free
+    780 epoll_wait
+    78b __errno_location
+    79c read
+    7a1 close
+    7a7 perror
+    7ae malloc
+    7b5 pthread_cond_signal
+    7c9 pthread_cond_wait
+    7db pthread_self
+    7e8 pthread_exit
+    7f5 gl_timer_create
+    805 timerfd_create
+    814 timerfd_settime
+    824 epoll_ctl
+    82e gl_timer_delete
+    83e gl_timer_modify
+    84e gl_timer_init
+    85c calloc
+    863 pthread_mutex_init
+    876 pthread_cond_init
+    888 pthread_create
+    897 pthread_cond_destroy
+    8ac pthread_mutex_destroy
+    8c2 epoll_create1
+    8d0 gl_timer_destroy
+    8e1 libjansson.so.4
+    8f1 libguci.so
+    8fc libgl-utils.so
+    90b libgl_log.so
+    918 libubus.so.20251202
+    92c libubox.so.20260213
+    940 libblobmsg_json.so.20260213
+    95c libgcc_s.so.1
+    96a libc.so
+    972 libcmtimer.so
+    980 GLIBC_2.0
+    d10 `"@9
+   1ce7 * |_
+   1d10 Shutting down thread pool start...
+   1d34 gl-sdk4-cellular-26.163.12373~1111f6a/lib/timer/timer.c
+   1d6c thread_pool_shutdown: already shutdown or invalid pool
+   1da4 Send thread pool cond broadcast...
+   1dc8 release thread id 0x%lx
+   1de1 pthread_join success
+   1df7 Shutting down thread pool end...
+   1e19 epoll_wait
+   1e24 Waiting for timer task...
+   1e3f Wake up from timer task...
+   1e5b Shutting down timer thread id:%lx
+   1e7e Start Timer task id:%d is_loop:%d
+   1ea1 End Timer task id
+   1eb4 timer delete start
+   1ec8 delete timer_id %d
+   1edc timer_id %d deleted
+   1ef1 timer delete end
+   1f03 Initializing timer subsystem
+   1f21 create thread id 0x%lx
+   1f39 Timer subsystem initialized
+   1f56 shutdown work thread start
+   1f72 shutdown work thread end
+   1f8c Timer destroyed end
