@@ -21,7 +21,7 @@ Component contract:
 - `gl_modem_community` starts at priority 22, before stock `gl_cellular_manager` at 23.
 - `merge-models` validates stock and extension JSON with `jq`, deduplicates by `bus_type:vid:pid`, and writes `/var/run/gl-modem-community/modem_list.json` atomically.
 - The service bind-mounts the runtime file over `/lib/modem_data/modem_list.json`. Stop/uninstall unmounts it, restoring the immutable SquashFS file.
-- `fm350.json` adds `0e8d:7126` and `0e8d:7127`, `function_at_common`, protocol `xmm`, and no unsupported advanced capability flags.
+- `fm350.json` adds `0e8d:7126` and `0e8d:7127`, `function_at_common`, protocol `xmm`, and no unsupported advanced capability flags. Product `7126` maps USB interface `04` to `ttyUSB` AT offset `2`; product `7127` maps USB interface `06` to `ttyUSB` AT offset `3`.
 - `/lib/netifd/proto/xmm.sh` implements discovery and connection using `comgt`. Its UCI inputs are `device`, `apn`, `pdp`, `delay`, `pincode`, `username`, `password`, `auth`, `profile`, `maxfail`, and explicit address/interface overrides.
 - GCOM scripts issue the public `CGAUTH`, `CGDCONT`, `CGACT`, `CGPADDR`, and `GTDNS` contract and fail on AT errors.
 - The extensionless Lua `modem` RPC file preserves the confirmed stock method names. A community method handler may answer only for a matched community VID/PID; all other calls execute the stock `.so` path.
@@ -40,6 +40,6 @@ Security: RPC authentication remains in GL.iNet's existing dispatcher. The proxy
 
 Upgrade behavior: the package must be rebuilt and revalidated for each stock firmware because private `.so` schemas can change. The additive model fragment and public `xmm` protocol are independent of proprietary code, but boot order and dispatcher semantics must be rechecked.
 
-[INFERENCE] `ttyACM` offset `0`, `supports_ip_type: 1`, and the default direct-IP addressing are starting values derived from public source shape. Hardware validation is mandatory before release.
+[CONFIRMED] The initial `ttyACM` definition was wrong. A GL-MT3000 boot capture showed FM350 interfaces `02`, `03`, `04`, `06`, `07`, `08`, and `09` bound as `ttyUSB0` through `ttyUSB6`; stock `modem_AT` consequently reported `at_offset:-1`. Version `0.1.1` uses modemfeed's product-specific interface mapping. [INFERENCE] `supports_ip_type: 1` and default direct-IP addressing still require runtime validation.
 
-Build status: [CONFIRMED] OpenWrt SDK `25.12.5` produced `gl-modem-community-0.1.0-r1.apk` as `noarch`. SHA-256 is `35834a7e6e356c1f90e80662980268bba5cf88ea04d7704ef0dec34009c5e87d`. APK v3 metadata and dependency inspection are recorded in `analysis/reports/package-inspection.txt`. Installation and runtime were not performed.
+Build status: [CONFIRMED] OpenWrt SDK `25.12.5` produced `gl-modem-community-0.1.1-r1.apk` as `noarch`. SHA-256 is `85e8107318b0f922953e07d0ec4d8a0b166ebb1a84409639fe18942b1a9140e1`. APK v3 metadata and dependency inspection are recorded in `analysis/reports/package-inspection.txt`. Installation of `0.1.1` and its runtime behavior have not yet been verified.

@@ -4,7 +4,8 @@
 - [UNVERIFIED] Exact stdout, stderr, exit codes, signals, concurrency, and timeout behavior for every `gl_modem` command.
 - [UNVERIFIED] Proprietary `/tmp/<bus>.sock` framing.
 - [UNVERIFIED] Whether FM350 `CGMI`/`CGMM` response formatting passes the stock common parser.
-- [UNVERIFIED] Correct `ttyACM` offset, data interface name, `supports_ip_type`, direct-IP prefix, gateway, MTU, and MAC behavior on this router/firmware.
+- [CONFIRMED] FM350 uses `ttyUSB`, not `ttyACM`, in the observed RNDIS composition. Product-specific AT offsets are `2` for `7126`/USB interface `04` and `3` for `7127`/USB interface `06`.
+- [UNVERIFIED] Correct data interface addressing, `supports_ip_type`, direct-IP prefix, gateway, MTU, and MAC behavior on this router/firmware.
 - [UNVERIFIED] Whether a later binary allowlist exists after hotplug admission.
 - [UNVERIFIED] Mobile-app transport and tolerance of partial capabilities.
 - [UNVERIFIED] Runtime behavior of the Lua `.so` fallback and exact GL error propagation.

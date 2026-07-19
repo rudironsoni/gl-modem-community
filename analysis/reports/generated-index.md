@@ -1,6 +1,6 @@
 # Generated evidence index
 
-Generated UTC: 2026-07-19T19:20:20Z
+Generated UTC: 2026-07-19T21:04:17Z
 
 - ``analysis/callgraphs/.gitkeep
 - ``analysis/configs/.gitkeep
@@ -159,6 +159,7 @@ Generated UTC: 2026-07-19T19:20:20Z
 - ``analysis/reports/firmware-retrieved-utc.txt
 - ``analysis/reports/firmware-url.txt
 - ``analysis/reports/fit-list.txt
+- ``analysis/reports/hardware-observation-2026-07-19.md
 - ``analysis/reports/kernel-image-source.txt
 - ``analysis/reports/outer-tar-list.txt
 - ``analysis/reports/package-artifact-path.txt

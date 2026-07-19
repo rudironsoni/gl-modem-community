@@ -8,6 +8,9 @@ SDK_SHA256='ff4a38a397caa2cfe1c39e18f84ddede14878221b3593c3f2c4cfe24e3ec4c25'
 SDK_ARCHIVE="$REPO_DIR/tool-cache/$SDK_NAME"
 SDK_DIR="$REPO_DIR/tool-cache/sdk-25.12.5-mediatek-filogic"
 BUILD_IMAGE='mt3000-openwrt-sdk:25.12.5'
+PACKAGE_VERSION=$(sed -n 's/^PKG_VERSION:=//p' "$REPO_DIR/package/gl-modem-community/Makefile")
+PACKAGE_RELEASE=$(sed -n 's/^PKG_RELEASE:=//p' "$REPO_DIR/package/gl-modem-community/Makefile")
+PACKAGE_ARTIFACT="gl-modem-community-${PACKAGE_VERSION}-r${PACKAGE_RELEASE}.apk"
 
 mkdir -p "$REPO_DIR/tool-cache" "$REPO_DIR/artifacts" "$ANALYSIS_DIR/reports"
 if ! test -f "$SDK_ARCHIVE"; then
@@ -23,6 +26,8 @@ fi
 
 mkdir -p "$SDK_DIR/package/gl-modem-community"
 rsync -a --delete "$REPO_DIR/package/gl-modem-community/" "$SDK_DIR/package/gl-modem-community/"
+find "$SDK_DIR/bin/packages" -type f -name 'gl-modem-community*.apk' -delete 2>/dev/null || true
+find "$REPO_DIR/artifacts" -type f -name 'gl-modem-community*.apk' -delete 2>/dev/null || true
 
 docker build --platform linux/amd64 -t "$BUILD_IMAGE" "$REPO_DIR/tools/sdk-container"
 docker run --rm --platform linux/amd64 \
@@ -34,7 +39,7 @@ make defconfig
 make package/gl-modem-community/compile V=s
 ' > "$ANALYSIS_DIR/reports/package-build.txt" 2>&1
 
-artifact=$(find "$SDK_DIR/bin/packages" -type f -name 'gl-modem-community*.apk' -print | head -n 1)
+artifact=$(find "$SDK_DIR/bin/packages" -type f -name "$PACKAGE_ARTIFACT" -print | head -n 1)
 test -n "$artifact"
 cp "$artifact" "$REPO_DIR/artifacts/"
 shasum -a 256 "$artifact" | sed "s#  $REPO_DIR/#  #" > "$ANALYSIS_DIR/hashes/gl-modem-community.apk.sha256"

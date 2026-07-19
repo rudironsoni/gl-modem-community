@@ -115,6 +115,7 @@ proto_xmm_setup() {
 	read_usb_id "$DEVICE" || { proto_notify_error "$interface" NO_DEVICE_FOUND; return 1; }
 	case "$VID:$PID" in 0e8d:7126|0e8d:7127) ;; *) proto_notify_error "$interface" NO_DEVICE_SUPPORT; return 1 ;; esac
 	ifname=$(discover_data_iface) || { proto_notify_error "$interface" NO_IFACE; return 1; }
+	logger -t gl-modem-community "FM350 setup bus=${bus:-unknown} at=$DEVICE data=$ifname"
 
 	attempt=1
 	while [ "$attempt" -le "$maxfail" ]; do
@@ -166,7 +167,7 @@ proto_xmm_teardown() {
 	json_get_vars device profile
 	DEVICE=$device
 	profile=${profile:-1}
-	[ -n "$DEVICE" ] && run_gcom fm350-disconnect.gcom CID="$profile" >/dev/null || true
+	[ -n "$DEVICE" ] && env CID="$profile" gcom -d "$DEVICE" -s /etc/gcom/fm350-disconnect.gcom >/dev/null 2>&1 || true
 	proto_init_update "*" 0
 	proto_send_update "$interface"
 }

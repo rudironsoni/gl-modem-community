@@ -24,6 +24,9 @@ printf '%s\n' '{"modems":[{"bus_type":"USB","vid":"2c7c","pid":"0801","name":"st
 	"$tmp/base.json" "$PACKAGE/files/usr/share/gl-modem-community/drivers.d" "$tmp/merged.json"
 jq -e '.modems | length == 3' "$tmp/merged.json" >/dev/null
 jq -e '.modems[] | select(.vid == "0e8d" and .pid == "7126") | .supports_proto == ["xmm"]' "$tmp/merged.json" >/dev/null
+jq -e '.modems[] | select(.vid == "0e8d" and .pid == "7126") | .supports_port == [{"port_type":"USB","port_name":"ttyUSB","port_offset_at":2}]' "$tmp/merged.json" >/dev/null
+jq -e '.modems[] | select(.vid == "0e8d" and .pid == "7127") | .supports_port == [{"port_type":"USB","port_name":"ttyUSB","port_offset_at":3}]' "$tmp/merged.json" >/dev/null
+! grep -R "ttyACM" "$PACKAGE/files/usr/share/gl-modem-community/drivers.d"
 jq -e '.modems[] | select(.vid == "2c7c" and .pid == "0801") | .name == "stock"' "$tmp/merged.json" >/dev/null
 
 printf '%s\n' 'All offline tests passed.'

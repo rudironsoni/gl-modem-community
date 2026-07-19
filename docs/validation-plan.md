@@ -27,7 +27,7 @@ Install the locally built APK, verify its checksum, enable `gl_modem_community`,
 - an official modem follows the same stock path and responses as baseline;
 - attach/remove emits one correct `cellular.status` lifecycle per device;
 - `/rpc` authentication, error codes, stdout/stderr behavior, and websocket topics are unchanged;
-- FM350 uses the expected ACM interface and data interface;
+- FM350 uses the expected product-specific `ttyUSB` AT interface and RNDIS data interface;
 - stopping/removing the package restores stock behavior without reboot where safe.
 
 ## Test matrix

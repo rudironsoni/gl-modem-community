@@ -11,8 +11,8 @@
       "supports_port": [
         {
           "port_type": "USB",
-          "port_name": "ttyACM",
-          "port_offset_at": 0
+          "port_name": "ttyUSB",
+          "port_offset_at": 2
         }
       ],
       "sim_slot_num": 1,
@@ -32,8 +32,8 @@
       "supports_port": [
         {
           "port_type": "USB",
-          "port_name": "ttyACM",
-          "port_offset_at": 0
+          "port_name": "ttyUSB",
+          "port_offset_at": 3
         }
       ],
       "sim_slot_num": 1,
