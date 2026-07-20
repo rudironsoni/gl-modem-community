@@ -32,6 +32,9 @@ make analyze
 make report
 make test
 make package
+make package-opkg
 ```
 
-The original firmware, extracted filesystem, SDK cache, APK artifacts, and proprietary binaries are ignored. Git contains only scripts, public clean-room source, metadata, hashes, string catalogs, and reports.
+`make package` builds the OpenWrt 25 APK. `make package-opkg` builds the OpenWrt 24.10 IPK with the pinned official `24.10.7` MediaTek Filogic SDK. The OPKG package targets GL.iNet firmware that retains the stock cellular backend; it does not add that proprietary backend to vanilla OpenWrt.
+
+The original firmware, extracted filesystem, SDK cache, package artifacts, and proprietary binaries are ignored. Git contains only scripts, public clean-room source, metadata, hashes, string catalogs, and reports.

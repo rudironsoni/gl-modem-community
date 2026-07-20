@@ -1,6 +1,6 @@
 SHELL := /bin/sh
 
-.PHONY: tools download verify identify extract inventory analyze report test package clean-work
+.PHONY: tools download verify identify extract inventory analyze report test package package-opkg clean-work
 
 tools:
 	docker build -t mt3000-modem-analysis:2026-07-19 tools/analysis-container
@@ -36,6 +36,8 @@ test:
 package:
 	./scripts/build-package.sh
 
+package-opkg:
+	./scripts/build-package-opkg.sh
+
 clean-work:
 	@echo "Remove ignored work directories manually after reviewing their paths."
-

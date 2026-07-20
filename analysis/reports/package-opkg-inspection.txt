@@ -1,0 +1,23 @@
+Artifact: artifacts/gl-modem-community_0.1.2-r1_aarch64_cortex-a53.ipk
+Format: gzip-compressed OpenWrt IPK containing debian-binary, control.tar.gz, and data.tar.gz
+Size: 8780 bytes
+Mode: 0644
+SHA-256: 55dfd5a47a2e065c6151c8c366ce57c58e787056a3e899e82a1854db1051eea0
+
+SDK: OpenWrt 24.10.7 MediaTek Filogic
+SDK archive: openwrt-sdk-24.10.7-mediatek-filogic_gcc-13.3.0_musl.Linux-x86_64.tar.zst
+SDK SHA-256: 8d8fd6dd96458f6f397b069e3212c6dc365c306b0be32c95c9497b52d80b13df
+
+Control metadata:
+Package: gl-modem-community
+Version: 0.1.2-r1
+Architecture: aarch64_cortex-a53
+Depends: comgt, jq, kmod-usb-acm, kmod-usb-serial-option, kmod-usb-net-rndis, libc
+License: GPL-3.0-only
+
+Embedded compatibility library:
+Path: usr/lib/gl-modem-community/fm350-at-compat.so
+File: ELF 64-bit LSB shared object, ARM aarch64, dynamically linked
+Exported symbols confirmed with the SDK cross-nm: fm350_rewrite_tx, write
+
+Runtime installation and FM350 behavior on OpenWrt 24.10 hardware: [UNVERIFIED]

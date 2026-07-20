@@ -20,7 +20,7 @@ Do not run this plan as part of offline analysis. Every modification is reversib
 
 ## Stage 3: reversible package tests
 
-Install the locally built APK, verify its checksum, enable `gl_modem_community`, reboot, and confirm:
+Install the locally built APK or IPK appropriate for the firmware package manager, verify its checksum, enable `gl_modem_community`, reboot, and confirm:
 
 - original SquashFS model table is unchanged when the service is stopped;
 - runtime merged table contains the stock 16 entries plus both FM350 IDs;
@@ -51,6 +51,18 @@ apk add --allow-untrusted /tmp/gl-modem-community-0.1.2-r1.apk
 ```
 
 The expected package SHA-256 is `58eabf76096e9f6778268f4f53a791c4313c0c049aa60833e776339a21e7269a`.
+
+For an OpenWrt 24.10-based GL.iNet image using OPKG, substitute:
+
+```sh
+sha256sum /tmp/gl-modem-community_0.1.2-r1_aarch64_cortex-a53.ipk
+opkg install /tmp/gl-modem-community_0.1.2-r1_aarch64_cortex-a53.ipk
+/etc/init.d/gl_modem_community enable
+/etc/init.d/gl_modem_community restart
+/etc/init.d/gl_cellular_manager restart
+```
+
+The expected IPK SHA-256 is `55dfd5a47a2e065c6151c8c366ce57c58e787056a3e899e82a1854db1051eea0`. [UNVERIFIED] These commands require an image that provides the stock GL.iNet cellular services and package dependencies; vanilla OpenWrt does not provide the proprietary backend this extension wraps.
 
 Before pressing Connect, capture:
 
