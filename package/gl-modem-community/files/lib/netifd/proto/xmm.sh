@@ -107,7 +107,7 @@ run_stock_at() {
 proto_xmm_setup() {
 	local interface=$1 device bus apn pdp pincode username password auth profile delay maxfail
 	local ip4prefix gateway disable_arp metric defaultroute peerdns DEVICE VID PID USB_PATH ifname
-	local attempt auth_num data dns ip4addr nameserver network
+	local attempt address_attempt auth_num data dns ip4addr nameserver network
 	json_get_vars device bus apn pdp pincode username password auth profile delay maxfail ip4prefix gateway disable_arp metric defaultroute peerdns
 
 	profile=${profile:-1}
@@ -146,14 +146,23 @@ proto_xmm_setup() {
 	fi
 
 	run_stock_at "$bus" cmee 'AT+CMEE=2' >/dev/null || { proto_notify_error "$interface" CONNECT_FAILED; return 1; }
-	run_stock_at "$bus" operator 'AT+COPS=0' >/dev/null || { proto_notify_error "$interface" CONNECT_FAILED; return 1; }
 	run_stock_at "$bus" ipv6-format 'AT+CGPIAF=1,0,0,0' >/dev/null || { proto_notify_error "$interface" CONNECT_FAILED; return 1; }
 	run_stock_at "$bus" context "AT+CGDCONT=$profile,\"$pdp\",\"${apn:-}\"" >/dev/null || { proto_notify_error "$interface" CONNECT_FAILED; return 1; }
-	run_stock_at "$bus" activate "AT+CGACT=1,$profile" >/dev/null || { proto_notify_error "$interface" CONNECT_FAILED; return 1; }
-	data=$(run_stock_at "$bus" address "AT+CGPADDR=$profile") || { proto_notify_error "$interface" CONFIGURE_FAILED; return 1; }
+	run_stock_at "$bus" activate "AT+CGACT=1,$profile" >/dev/null || {
+		proto_notify_error "$interface" CONNECT_FAILED
+		return 1
+	}
+	address_attempt=1
+	while [ "$address_attempt" -le "$maxfail" ]; do
+		data=$(run_stock_at "$bus" address "AT+CGPADDR=$profile" || true)
+		ip4addr=$(printf '%s\n' "$data" | awk -F'[:,]' '/^\+CGPADDR:/{gsub(/["\r ]/,"",$3); print $3; exit}')
+		[ -n "$ip4addr" ] && break
+		address_attempt=$((address_attempt + 1))
+		sleep 3
+	done
+	[ -n "$ip4addr" ] || { proto_notify_error "$interface" CONFIGURE_FAILED; return 1; }
 	dns=$(run_stock_at "$bus" dns "AT+GTDNS=$profile") || { proto_notify_error "$interface" CONFIGURE_FAILED; return 1; }
 	data=$(printf '%s\n%s\n' "$data" "$dns")
-	ip4addr=$(printf '%s\n' "$data" | awk -F'[:,]' '/^\+CGPADDR:/{gsub(/["\r ]/,"",$3); print $3; exit}')
 	nameserver=$(printf '%s\n' "$data" | awk -F'[:,]' '/^\+GTDNS:/{for(i=3;i<=NF;i++){gsub(/["\r ]/,"",$i); if($i!="" && $i!="0.0.0.0") print $i}}')
 
 	proto_init_update "$ifname" 1

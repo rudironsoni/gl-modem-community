@@ -6,6 +6,8 @@
 
 int fm350_rewrite_tx(unsigned char *buffer, size_t length);
 int fm350_rewrite_rx(unsigned char *buffer, size_t length);
+int fm350_command_needs_synthetic_ok(const unsigned char *buffer,
+				     size_t length);
 
 static void expect_rewrite(const char *input, const char *expected, int changed)
 {
@@ -32,6 +34,19 @@ static void expect_rx_rewrite(const char *input, const char *expected,
 
 int main(void)
 {
+	assert(fm350_command_needs_synthetic_ok(
+		       (const unsigned char *)"AT+CGACT=1,5\r",
+		       strlen("AT+CGACT=1,5\r")));
+	assert(fm350_command_needs_synthetic_ok(
+		       (const unsigned char *)"AT+CGACT=0,1\r\n",
+		       strlen("AT+CGACT=0,1\r\n")));
+	assert(!fm350_command_needs_synthetic_ok(
+			(const unsigned char *)"AT+CGACT?\r",
+			strlen("AT+CGACT?\r")));
+	assert(!fm350_command_needs_synthetic_ok(
+			(const unsigned char *)"AT+CGACT=1,50\r",
+			strlen("AT+CGACT=1,50\r")));
+
 	expect_rewrite("AT+CFUN=0\r", "AT+CFUN=4\r", 1);
 	expect_rewrite("AT+CFUN=1\r", "AT+CFUN=1\r", 0);
 	expect_rewrite("AT+CGDCONT=1,\"IP\",\"orangeworld\"\r",
