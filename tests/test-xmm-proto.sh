@@ -12,6 +12,14 @@ grep -F 'GL_MODEM_BIN=${GL_MODEM_BIN:-gl_modem}' "$handler" >/dev/null
 grep -F '"$GL_MODEM_BIN" -B "$bus" -U 1 AT "$command"' "$handler" >/dev/null
 test "$(grep -F -c '[ "$profile" -eq 5 ] && profile=1' "$handler")" -eq 0
 
+if grep -E 'run_stock_at .*AT\+COPS=' "$handler" >/dev/null; then
+	echo "xmm handler must not change operator selection during setup" >&2
+	exit 1
+fi
+grep -F 'run_stock_at "$bus" activate "AT+CGACT=1,$profile"' "$handler" >/dev/null
+grep -F 'run_stock_at "$bus" deactivate "AT+CGACT=0,$profile"' "$handler" >/dev/null
+grep -F 'while [ "$address_attempt" -le "$maxfail" ]; do' "$handler" >/dev/null
+
 if grep -E 'gcom|DEVPORT=' "$handler" >/dev/null; then
 	echo "xmm handler must not open the stock-owned AT port directly" >&2
 	exit 1
