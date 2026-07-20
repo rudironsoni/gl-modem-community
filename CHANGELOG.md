@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.7](https://github.com/rudironsoni/gl-modem-community/compare/v0.1.6...v0.1.7) (2026-07-20)
+
+
+### Bug Fixes
+
+* repair FM350 interface after stock discovery ([fa564ca](https://github.com/rudironsoni/gl-modem-community/commit/fa564cae037598f6bd2d22177fcaa3656e56e778))
+
 ## [0.1.6](https://github.com/rudironsoni/gl-modem-community/compare/v0.1.5...v0.1.6) (2026-07-20)
 
 
