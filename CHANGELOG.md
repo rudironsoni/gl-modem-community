@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.4](https://github.com/rudironsoni/gl-modem-community/compare/v0.1.3...v0.1.4) (2026-07-20)
+
+
+### Bug Fixes
+
+* keep FM350 netifd session active ([d65dd98](https://github.com/rudironsoni/gl-modem-community/commit/d65dd9823d82815fb284088ac5d4bbad3099bcd5))
+
 ## [0.1.3](https://github.com/rudironsoni/gl-modem-community/compare/v0.1.2...v0.1.3) (2026-07-20)
 
 
