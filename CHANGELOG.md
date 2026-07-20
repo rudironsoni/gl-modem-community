@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.5](https://github.com/rudironsoni/gl-modem-community/compare/v0.1.4...v0.1.5) (2026-07-20)
+
+
+### Bug Fixes
+
+* bridge FM350 CID into stock modem lifecycle ([2d3ba9d](https://github.com/rudironsoni/gl-modem-community/commit/2d3ba9d80a1e60f768580c12811988ff46ce3309))
+
 ## [0.1.4](https://github.com/rudironsoni/gl-modem-community/compare/v0.1.3...v0.1.4) (2026-07-20)
 
 
