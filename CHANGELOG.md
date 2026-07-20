@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.1.10](https://github.com/rudironsoni/gl-modem-community/compare/v0.1.9...v0.1.10) (2026-07-20)
+
+
+### Bug Fixes
+
+* expose Linux preload interfaces ([8e4806d](https://github.com/rudironsoni/gl-modem-community/commit/8e4806d0645ad3018ed6b3c6d47caa4c74a3eebf))
+* expose Linux preload interfaces ([98552a6](https://github.com/rudironsoni/gl-modem-community/commit/98552a6f4095b99bd5eb6fd56d544e33d86320a0))
+
 ## [0.1.9](https://github.com/rudironsoni/gl-modem-community/compare/v0.1.8...v0.1.9) (2026-07-20)
 
 
