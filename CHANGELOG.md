@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.8](https://github.com/rudironsoni/gl-modem-community/compare/v0.1.7...v0.1.8) (2026-07-20)
+
+
+### Bug Fixes
+
+* route FM350 setup through stock modem transport ([4d11d73](https://github.com/rudironsoni/gl-modem-community/commit/4d11d73c78c9c475a245c460daa9bff05ca21507))
+
 ## [0.1.7](https://github.com/rudironsoni/gl-modem-community/compare/v0.1.6...v0.1.7) (2026-07-20)
 
 
