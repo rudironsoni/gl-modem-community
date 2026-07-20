@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.1.3](https://github.com/rudironsoni/gl-modem-community/compare/v0.1.2...v0.1.3) (2026-07-20)
+
+
+### Bug Fixes
+
+* **ci:** allow manual release recovery ([67b78d8](https://github.com/rudironsoni/gl-modem-community/commit/67b78d80ea56de42c28aaf4c259467844d97c259))
+* **ci:** validate released manifest state ([67ddfa5](https://github.com/rudironsoni/gl-modem-community/commit/67ddfa53c3958e4f34c56bc8e42529591a265243))
+
 ## 0.1.2 (2026-07-20)
 
 
