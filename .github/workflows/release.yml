@@ -44,11 +44,13 @@ jobs:
             } >> "$GITHUB_OUTPUT"
           }
 
-          if ! git cat-file -e 'HEAD^:.release-please-manifest.json' 2>/dev/null; then
+          if [[ "$GITHUB_EVENT_NAME" != "workflow_dispatch" ]] &&
+            ! git cat-file -e 'HEAD^:.release-please-manifest.json' 2>/dev/null; then
             write_outputs
             exit 0
           fi
-          if git diff --quiet HEAD^ HEAD -- .release-please-manifest.json; then
+          if [[ "$GITHUB_EVENT_NAME" != "workflow_dispatch" ]] &&
+            git diff --quiet HEAD^ HEAD -- .release-please-manifest.json; then
             write_outputs
             exit 0
           fi
