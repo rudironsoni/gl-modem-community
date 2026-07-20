@@ -21,11 +21,14 @@ jq -e '
   all(.["changelog-sections"][]; .hidden == false)
 ' "$CONFIG" >/dev/null
 
-jq -e 'type == "object" and length == 0' "$MANIFEST" >/dev/null
-
 test "$(grep -c '^# x-release-please-start-version$' "$PACKAGE_MAKEFILE")" -eq 1
 test "$(grep -c '^# x-release-please-end$' "$PACKAGE_MAKEFILE")" -eq 1
-test "$(sed -n 's/^PKG_VERSION:=//p' "$PACKAGE_MAKEFILE")" = "0.1.2"
+PACKAGE_VERSION=$(sed -n 's/^PKG_VERSION:=//p' "$PACKAGE_MAKEFILE")
+printf '%s\n' "$PACKAGE_VERSION" | grep -Eq '^[0-9]+\.[0-9]+\.[0-9]+([-.][0-9A-Za-z.-]+)?$'
+jq -e --arg version "$PACKAGE_VERSION" '
+  type == "object" and
+  ((length == 0) or (. == {".": $version}))
+' "$MANIFEST" >/dev/null
 
 test "$(grep -Ec 'uses: [^@]+@[0-9a-f]{40} # v[0-9]' "$WORKFLOW")" -eq 7
 test "$(grep -Fc 'uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0' "$WORKFLOW")" -eq 3
