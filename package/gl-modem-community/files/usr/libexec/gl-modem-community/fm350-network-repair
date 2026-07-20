@@ -5,7 +5,25 @@ USB_DEVICES_ROOT=${USB_DEVICES_ROOT:-/sys/bus/usb/devices}
 UCI_BIN=${UCI_BIN:-uci}
 UBUS_BIN=${UBUS_BIN:-ubus}
 LOGGER_BIN=${LOGGER_BIN:-logger}
+GL_MODEM_BIN=${GL_MODEM_BIN:-gl_modem}
 REPAIR_INTERVAL=${REPAIR_INTERVAL:-2}
+
+read_fm350_context() {
+	local bus=$1 output context
+	output=$("$GL_MODEM_BIN" -B "$bus" -U 1 AT 'AT+CGDCONT?' 2>/dev/null) || return 1
+	context=$(printf '%s\n' "$output" | awk -F, '
+		/^\+CGDCONT: 5,/ {
+			gsub(/["\r ]/, "", $2)
+			gsub(/["\r ]/, "", $3)
+			print $2 ":" $3
+			exit
+		}')
+	[ -n "$context" ] || return 1
+	FM350_PDP=${context%%:*}
+	FM350_APN=${context#*:}
+	case "$FM350_PDP" in IP|IPV6|IPV4V6) ;; *) return 1 ;; esac
+	[ -n "$FM350_APN" ]
+}
 
 set_network_option() {
 	local section=$1 option=$2 value=$3 current
@@ -24,9 +42,15 @@ repair_fm350_network() {
 
 		bus=${path##*/}
 		section=modem_$(printf '%s' "$bus" | tr '.:-' '___')_s1
-		"$UCI_BIN" -q get "network.$section" >/dev/null 2>&1 || continue
-
 		section_changed=0
+		if ! "$UCI_BIN" -q get "network.$section" >/dev/null 2>&1; then
+			read_fm350_context "$bus" || continue
+			"$UCI_BIN" set "network.$section=interface" || continue
+			"$UCI_BIN" set "network.$section.apn_use=5"
+			"$UCI_BIN" set "network.$section.apn=$FM350_APN"
+			"$UCI_BIN" set "network.$section.ip_type=$FM350_PDP"
+			section_changed=1
+		fi
 		set_network_option "$section" proto xmm && section_changed=1
 		set_network_option "$section" bus "$bus" && section_changed=1
 		set_network_option "$section" profile 5 && section_changed=1

@@ -49,6 +49,15 @@ case "$*" in
 	'-q get network.modem_2_1_s1.pdp')
 		[ -s "$pdp_state" ] && cat "$pdp_state"
 		;;
+	'set network.modem_2_1_s1=interface')
+		printf '%s\n' present >"$section_state"
+		printf '%s\n' "$*" >>"$log"
+		;;
+	'set network.modem_2_1_s1.apn_use=5'|\
+	'set network.modem_2_1_s1.apn=orangeworld'|\
+	'set network.modem_2_1_s1.ip_type=IP')
+		printf '%s\n' "$*" >>"$log"
+		;;
 	'set network.modem_2_1_s1.proto=xmm')
 		printf '%s\n' xmm >"$proto_state"
 		printf '%s\n' "$*" >>"$log"
@@ -85,11 +94,19 @@ cat >"$tmp/bin/logger" <<'EOF'
 exit 0
 EOF
 
-chmod +x "$tmp/bin/uci" "$tmp/bin/ubus" "$tmp/bin/logger"
+cat >"$tmp/bin/gl_modem" <<'EOF'
+#!/bin/sh
+set -eu
+[ "$*" = "-B 2-1 -U 1 AT AT+CGDCONT?" ]
+printf '%s\n' '+CGDCONT: 5,"IP","orangeworld","0.0.0.0",0,0' 'OK'
+EOF
+
+chmod +x "$tmp/bin/uci" "$tmp/bin/ubus" "$tmp/bin/logger" "$tmp/bin/gl_modem"
 export USB_DEVICES_ROOT="$tmp/sys"
 export UCI_BIN="$tmp/bin/uci"
 export UBUS_BIN="$tmp/bin/ubus"
 export LOGGER_BIN="$tmp/bin/logger"
+export GL_MODEM_BIN="$tmp/bin/gl_modem"
 export UCI_TEST_LOG="$tmp/uci.log"
 export UBUS_TEST_LOG="$tmp/ubus.log"
 export UCI_SECTION_STATE="$tmp/section-state"
@@ -102,9 +119,6 @@ export REPAIR_INTERVAL=0.05
 "$repo_dir/package/gl-modem-community/files/usr/libexec/gl-modem-community/fm350-network-repair" --watch &
 watch_pid=$!
 
-sleep 0.1
-printf '%s\n' present >"$tmp/section-state"
-
 attempt=0
 while [ "$attempt" -lt 40 ]; do
 	[ -s "$tmp/ubus.log" ] && break
@@ -112,6 +126,10 @@ while [ "$attempt" -lt 40 ]; do
 	sleep 0.05
 done
 
+grep -Fx 'set network.modem_2_1_s1=interface' "$tmp/uci.log" >/dev/null
+grep -Fx 'set network.modem_2_1_s1.apn_use=5' "$tmp/uci.log" >/dev/null
+grep -Fx 'set network.modem_2_1_s1.apn=orangeworld' "$tmp/uci.log" >/dev/null
+grep -Fx 'set network.modem_2_1_s1.ip_type=IP' "$tmp/uci.log" >/dev/null
 grep -Fx 'set network.modem_2_1_s1.proto=xmm' "$tmp/uci.log" >/dev/null
 grep -Fx 'set network.modem_2_1_s1.bus=2-1' "$tmp/uci.log" >/dev/null
 grep -Fx 'set network.modem_2_1_s1.profile=5' "$tmp/uci.log" >/dev/null

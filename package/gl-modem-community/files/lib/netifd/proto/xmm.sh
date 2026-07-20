@@ -6,6 +6,8 @@
 
 . /lib/functions.sh
 . ../netifd-proto.sh
+
+GL_MODEM_BIN=${GL_MODEM_BIN:-gl_modem}
 init_proto "$@"
 
 proto_xmm_init_config() {
@@ -82,15 +84,22 @@ discover_data_iface() {
 	return 1
 }
 
-run_gcom() {
-	local script=$1 output
-	shift
-	output=$(env "$@" gcom -d "$DEVICE" -s "/etc/gcom/$script" 2>&1) || {
-		logger -t gl-modem-community "FM350 command script $script failed"
+run_stock_at() {
+	local bus=$1 stage=$2 command=$3 output
+	output=$("$GL_MODEM_BIN" -B "$bus" -U 1 AT "$command" 2>&1) || {
+		logger -t gl-modem-community "FM350 stock AT transport failed stage=$stage bus=$bus"
 		return 1
 	}
 	case "$output" in
-		*ERROR*) logger -t gl-modem-community "FM350 command script $script returned ERROR"; return 1 ;;
+		*ERROR*|'')
+			logger -t gl-modem-community "FM350 stock AT command failed stage=$stage bus=$bus"
+			return 1
+			;;
+		*OK*) ;;
+		*)
+			logger -t gl-modem-community "FM350 stock AT response incomplete stage=$stage bus=$bus"
+			return 1
+			;;
 	esac
 	printf '%s\n' "$output"
 }
@@ -98,13 +107,12 @@ run_gcom() {
 proto_xmm_setup() {
 	local interface=$1 device bus apn pdp pincode username password auth profile delay maxfail
 	local ip4prefix gateway disable_arp metric defaultroute peerdns DEVICE VID PID USB_PATH ifname
-	local attempt auth_num data ip4addr nameserver network
+	local attempt auth_num data dns ip4addr nameserver network
 	json_get_vars device bus apn pdp pincode username password auth profile delay maxfail ip4prefix gateway disable_arp metric defaultroute peerdns
 
 	profile=${profile:-1}
-	# GL.iNet polls this modem's status as logical CID 5. FM350 exposes the
-	# selected data context as CID 1, so keep that translation in this driver.
-	[ "$profile" -eq 5 ] && profile=1
+	# Keep GL.iNet's logical CID 5. The stock modem_AT compatibility wrapper
+	# translates it to the FM350 data context CID 1 on the shared AT socket.
 	delay=${delay:-5}
 	maxfail=${maxfail:-5}
 	ip4prefix=${ip4prefix:-24}
@@ -123,22 +131,28 @@ proto_xmm_setup() {
 
 	attempt=1
 	while [ "$attempt" -le "$maxfail" ]; do
-		DEVPORT=$DEVICE gcom -s /etc/gcom/fm350-probe.gcom >/dev/null 2>&1 && break
+		run_stock_at "$bus" probe AT >/dev/null && break
 		[ "$attempt" -eq "$maxfail" ] && { proto_notify_error "$interface" NO_PORT_ANSWER; return 1; }
 		attempt=$((attempt + 1))
 		sleep 3
 	done
 
 	if [ -n "$pincode" ]; then
-		run_gcom fm350-auth.gcom PINCODE="$pincode" MODE=pin >/dev/null || { proto_notify_error "$interface" PIN_FAILED; return 1; }
+		run_stock_at "$bus" pin "AT+CPIN=\"$pincode\"" >/dev/null || { proto_notify_error "$interface" PIN_FAILED; return 1; }
 	fi
 	if [ -n "$username" ] && [ -n "$password" ]; then
 		case "$auth" in pap) auth_num=1 ;; chap) auth_num=2 ;; *) auth_num=0 ;; esac
-		run_gcom fm350-auth.gcom MODE=auth CID="$profile" AUTH="$auth_num" USER="$username" PASS="$password" >/dev/null || { proto_notify_error "$interface" AUTH_FAILED; return 1; }
+		run_stock_at "$bus" auth "AT+CGAUTH=$profile,$auth_num,\"$username\",\"$password\"" >/dev/null || { proto_notify_error "$interface" AUTH_FAILED; return 1; }
 	fi
 
-	run_gcom fm350-connect.gcom CID="$profile" PDP="$pdp" APN="${apn:-}" >/dev/null || { proto_notify_error "$interface" CONNECT_FAILED; return 1; }
-	data=$(run_gcom fm350-query.gcom CID="$profile") || { proto_notify_error "$interface" CONFIGURE_FAILED; return 1; }
+	run_stock_at "$bus" cmee 'AT+CMEE=2' >/dev/null || { proto_notify_error "$interface" CONNECT_FAILED; return 1; }
+	run_stock_at "$bus" operator 'AT+COPS=0' >/dev/null || { proto_notify_error "$interface" CONNECT_FAILED; return 1; }
+	run_stock_at "$bus" ipv6-format 'AT+CGPIAF=1,0,0,0' >/dev/null || { proto_notify_error "$interface" CONNECT_FAILED; return 1; }
+	run_stock_at "$bus" context "AT+CGDCONT=$profile,\"$pdp\",\"${apn:-}\"" >/dev/null || { proto_notify_error "$interface" CONNECT_FAILED; return 1; }
+	run_stock_at "$bus" activate "AT+CGACT=1,$profile" >/dev/null || { proto_notify_error "$interface" CONNECT_FAILED; return 1; }
+	data=$(run_stock_at "$bus" address "AT+CGPADDR=$profile") || { proto_notify_error "$interface" CONFIGURE_FAILED; return 1; }
+	dns=$(run_stock_at "$bus" dns "AT+GTDNS=$profile") || { proto_notify_error "$interface" CONFIGURE_FAILED; return 1; }
+	data=$(printf '%s\n%s\n' "$data" "$dns")
 	ip4addr=$(printf '%s\n' "$data" | awk -F'[:,]' '/^\+CGPADDR:/{gsub(/["\r ]/,"",$3); print $3; exit}')
 	nameserver=$(printf '%s\n' "$data" | awk -F'[:,]' '/^\+GTDNS:/{for(i=3;i<=NF;i++){gsub(/["\r ]/,"",$i); if($i!="" && $i!="0.0.0.0") print $i}}')
 
@@ -167,12 +181,10 @@ proto_xmm_setup() {
 }
 
 proto_xmm_teardown() {
-	local interface=$1 device profile DEVICE
-	json_get_vars device profile
-	DEVICE=$device
+	local interface=$1 bus profile
+	json_get_vars bus profile
 	profile=${profile:-1}
-	[ "$profile" -eq 5 ] && profile=1
-	[ -n "$DEVICE" ] && env CID="$profile" gcom -d "$DEVICE" -s /etc/gcom/fm350-disconnect.gcom >/dev/null 2>&1 || true
+	[ -n "$bus" ] && run_stock_at "$bus" deactivate "AT+CGACT=0,$profile" >/dev/null 2>&1 || true
 }
 
 add_protocol xmm
