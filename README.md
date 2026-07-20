@@ -44,3 +44,5 @@ The original firmware, extracted filesystem, SDK cache, package artifacts, and p
 Release Please maintains a SemVer release PR from Conventional Commits. `fix:` increments the patch version, `feat:` increments the minor version, and a `!` or `BREAKING CHANGE` increments the major version. Other conventional types are included in the next changelog without independently creating a release.
 
 Merging the release PR updates `PKG_VERSION` and `CHANGELOG.md`. GitHub Actions then validates and builds both package formats before creating `vX.Y.Z` and attaching the APK, IPK, and `SHA256SUMS`. The release workflow is idempotent, so a failed asset upload can be rerun safely.
+
+The community workflow comparison and credential-hardening options are documented in [OpenWrt community CI/CD patterns](docs/openwrt-community-cicd.md).
