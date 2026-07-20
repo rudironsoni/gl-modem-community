@@ -1,0 +1,31 @@
+{
+  "$schema": "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json",
+  "release-type": "simple",
+  "include-component-in-tag": false,
+  "include-v-in-tag": true,
+  "include-v-in-release-name": true,
+  "changelog-sections": [
+    { "type": "feat", "section": "Features", "hidden": false },
+    { "type": "fix", "section": "Bug Fixes", "hidden": false },
+    { "type": "perf", "section": "Performance Improvements", "hidden": false },
+    { "type": "refactor", "section": "Code Refactoring", "hidden": false },
+    { "type": "docs", "section": "Documentation", "hidden": false },
+    { "type": "build", "section": "Build System", "hidden": false },
+    { "type": "ci", "section": "Continuous Integration", "hidden": false },
+    { "type": "test", "section": "Tests", "hidden": false },
+    { "type": "chore", "section": "Miscellaneous Chores", "hidden": false },
+    { "type": "style", "section": "Styles", "hidden": false },
+    { "type": "revert", "section": "Reverts", "hidden": false }
+  ],
+  "packages": {
+    ".": {
+      "package-name": "gl-modem-community",
+      "extra-files": [
+        {
+          "type": "generic",
+          "path": "package/gl-modem-community/Makefile"
+        }
+      ]
+    }
+  }
+}

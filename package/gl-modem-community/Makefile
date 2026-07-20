@@ -1,7 +1,9 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=gl-modem-community
+# x-release-please-start-version
 PKG_VERSION:=0.1.2
+# x-release-please-end
 PKG_RELEASE:=1
 PKG_LICENSE:=GPL-3.0-only
 PKG_MAINTAINER:=Rudimar Ronsoni <rudironsoni@users.noreply.github.com>

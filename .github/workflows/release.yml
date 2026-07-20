@@ -1,0 +1,226 @@
+name: Release
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions: {}
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  detect-release:
+    name: Detect release commit
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+    outputs:
+      release_commit: ${{ steps.version.outputs.release_commit }}
+      version: ${{ steps.version.outputs.version }}
+      tag: ${{ steps.version.outputs.tag }}
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+        with:
+          fetch-depth: 2
+
+      - name: Detect manifest version change
+        id: version
+        shell: bash
+        run: |
+          set -euo pipefail
+          release_commit=false
+          version=
+          tag=
+          write_outputs() {
+            {
+              echo "release_commit=$release_commit"
+              echo "version=$version"
+              echo "tag=$tag"
+            } >> "$GITHUB_OUTPUT"
+          }
+
+          if ! git cat-file -e 'HEAD^:.release-please-manifest.json' 2>/dev/null; then
+            write_outputs
+            exit 0
+          fi
+          if git diff --quiet HEAD^ HEAD -- .release-please-manifest.json; then
+            write_outputs
+            exit 0
+          fi
+
+          version="$(jq -er '.["."] | select(type == "string")' .release-please-manifest.json)"
+          if ! printf '%s\n' "$version" | grep -Eq '^[0-9]+\.[0-9]+\.[0-9]+$'; then
+            echo "Unsupported release version: $version" >&2
+            exit 1
+          fi
+
+          package_version="$(sed -n 's/^PKG_VERSION:=\([^[:space:]#]*\).*/\1/p' package/gl-modem-community/Makefile)"
+          if test "$package_version" != "$version"; then
+            echo "Manifest version $version does not match PKG_VERSION $package_version" >&2
+            exit 1
+          fi
+
+          release_commit=true
+          tag="v$version"
+          write_outputs
+
+  verify:
+    name: Verify release source
+    needs: detect-release
+    if: needs.detect-release.outputs.release_commit == 'true'
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+
+      - name: Build analysis test image
+        run: make tools
+
+      - name: Run offline tests
+        run: make test
+
+  build-packages:
+    name: Build ${{ matrix.kind }} package
+    needs:
+      - detect-release
+      - verify
+    if: needs.detect-release.outputs.release_commit == 'true' && needs.verify.result == 'success'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    permissions:
+      contents: read
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - kind: apk
+            target: package
+            sdk_archive: tool-cache/openwrt-sdk-25.12.5-mediatek-filogic_gcc-14.3.0_musl.Linux-x86_64.tar.zst
+            sdk_cache_key: openwrt-sdk-25.12.5-mediatek-filogic-ff4a38a397caa2cfe1c39e18f84ddede14878221b3593c3f2c4cfe24e3ec4c25
+            artifact_glob: artifacts/*.apk
+          - kind: ipk
+            target: package-opkg
+            sdk_archive: tool-cache/openwrt-sdk-24.10.7-mediatek-filogic_gcc-13.3.0_musl.Linux-x86_64.tar.zst
+            sdk_cache_key: openwrt-sdk-24.10.7-mediatek-filogic-8d8fd6dd96458f6f397b069e3212c6dc365c306b0be32c95c9497b52d80b13df
+            artifact_glob: artifacts/*.ipk
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+
+      - name: Restore pinned SDK archive
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
+        with:
+          path: ${{ matrix.sdk_archive }}
+          key: ${{ matrix.sdk_cache_key }}
+
+      - name: Build package
+        run: make "${{ matrix.target }}"
+
+      - name: Validate package artifact
+        env:
+          PACKAGE_KIND: ${{ matrix.kind }}
+          RELEASE_VERSION: ${{ needs.detect-release.outputs.version }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          case "$PACKAGE_KIND" in
+            apk)
+              asset="artifacts/gl-modem-community-${RELEASE_VERSION}-r1.apk"
+              test -s "$asset"
+              tool-cache/sdk-25.12.5-mediatek-filogic/staging_dir/host/bin/apk adbdump "$asset" >/dev/null
+              ;;
+            ipk)
+              asset="artifacts/gl-modem-community_${RELEASE_VERSION}-r1_aarch64_cortex-a53.ipk"
+              test -s "$asset"
+              tar -tzf "$asset" >/dev/null
+              ;;
+            *)
+              echo "Unsupported package kind: $PACKAGE_KIND" >&2
+              exit 1
+              ;;
+          esac
+          file "$asset"
+          sha256sum "$asset"
+
+      - name: Store package artifact
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: release-${{ matrix.kind }}
+          path: ${{ matrix.artifact_glob }}
+          if-no-files-found: error
+          retention-days: 7
+
+  release-please:
+    name: Update or publish release
+    needs:
+      - detect-release
+      - build-packages
+    if: >-
+      always() &&
+      needs.detect-release.result == 'success' &&
+      (needs.detect-release.outputs.release_commit != 'true' || needs.build-packages.result == 'success')
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+      issues: write
+      pull-requests: write
+    steps:
+      - name: Run Release Please
+        uses: googleapis/release-please-action@5c625bfb5d1ff62eadeeb3772007f7f66fdcf071 # v4.4.1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          config-file: release-please-config.json
+          manifest-file: .release-please-manifest.json
+
+  publish-assets:
+    name: Publish release assets
+    needs:
+      - detect-release
+      - build-packages
+      - release-please
+    if: always() && needs.detect-release.outputs.release_commit == 'true' && needs.build-packages.result == 'success' && needs.release-please.result == 'success'
+    runs-on: ubuntu-24.04
+    permissions:
+      actions: read
+      contents: write
+    steps:
+      - name: Download package artifacts
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with:
+          pattern: release-*
+          path: release-assets
+          merge-multiple: true
+
+      - name: Validate and checksum release assets
+        env:
+          RELEASE_VERSION: ${{ needs.detect-release.outputs.version }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          apk="release-assets/gl-modem-community-${RELEASE_VERSION}-r1.apk"
+          ipk="release-assets/gl-modem-community_${RELEASE_VERSION}-r1_aarch64_cortex-a53.ipk"
+          test -s "$apk"
+          test -s "$ipk"
+          test "$(find release-assets -maxdepth 1 -type f | wc -l)" -eq 2
+          (
+            cd release-assets
+            sha256sum "${apk##*/}" "${ipk##*/}" | sort -k2 > SHA256SUMS
+          )
+          cat release-assets/SHA256SUMS
+
+      - name: Upload assets to GitHub release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RELEASE_TAG: ${{ needs.detect-release.outputs.tag }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          gh release view "$RELEASE_TAG" --repo "$GITHUB_REPOSITORY" >/dev/null
+          gh release upload "$RELEASE_TAG" release-assets/* --clobber --repo "$GITHUB_REPOSITORY"

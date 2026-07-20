@@ -38,3 +38,9 @@ make package-opkg
 `make package` builds the OpenWrt 25 APK. `make package-opkg` builds the OpenWrt 24.10 IPK with the pinned official `24.10.7` MediaTek Filogic SDK. The OPKG package targets GL.iNet firmware that retains the stock cellular backend; it does not add that proprietary backend to vanilla OpenWrt.
 
 The original firmware, extracted filesystem, SDK cache, package artifacts, and proprietary binaries are ignored. Git contains only scripts, public clean-room source, metadata, hashes, string catalogs, and reports.
+
+## Releases
+
+Release Please maintains a SemVer release PR from Conventional Commits. `fix:` increments the patch version, `feat:` increments the minor version, and a `!` or `BREAKING CHANGE` increments the major version. Other conventional types are included in the next changelog without independently creating a release.
+
+Merging the release PR updates `PKG_VERSION` and `CHANGELOG.md`. GitHub Actions then validates and builds both package formats before creating `vX.Y.Z` and attaching the APK, IPK, and `SHA256SUMS`. The release workflow is idempotent, so a failed asset upload can be rerun safely.

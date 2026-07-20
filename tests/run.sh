@@ -19,6 +19,7 @@ jq -e ".modems | length == 2" /repo/package/gl-modem-community/files/usr/share/g
 '
 
 "$REPO_DIR/tests/test-fm350-at-compat.sh"
+"$REPO_DIR/tests/test-release-config.sh"
 
 tmp=$(mktemp -d "${TMPDIR:-/tmp}/gl-modem-community-test.XXXXXX")
 trap 'rm -rf "$tmp"' EXIT INT TERM
