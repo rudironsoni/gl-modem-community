@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.1.9](https://github.com/rudironsoni/gl-modem-community/compare/v0.1.8...v0.1.9) (2026-07-20)
+
+
+### Bug Fixes
+
+* recover FM350 cold activation ([81b9a20](https://github.com/rudironsoni/gl-modem-community/commit/81b9a20ba2a30248412125631b55e35de6b89423))
+* recover FM350 cold activation ([a82fbbc](https://github.com/rudironsoni/gl-modem-community/commit/a82fbbcd62036a96f5ab10045479b5bdc31e7822))
+
 ## [0.1.8](https://github.com/rudironsoni/gl-modem-community/compare/v0.1.7...v0.1.8) (2026-07-20)
 
 
