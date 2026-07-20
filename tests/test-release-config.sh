@@ -28,6 +28,7 @@ test "$(grep -c '^# x-release-please-end$' "$PACKAGE_MAKEFILE")" -eq 1
 test "$(sed -n 's/^PKG_VERSION:=//p' "$PACKAGE_MAKEFILE")" = "0.1.2"
 
 test "$(grep -Ec 'uses: [^@]+@[0-9a-f]{40} # v[0-9]' "$WORKFLOW")" -eq 5
+grep -Fq 'uses: googleapis/release-please-action@45996ed1f6d02564a971a2fa1b5860e934307cf7 # v5.0.0' "$WORKFLOW"
 if grep -Eq 'uses: [^@]+@v[0-9]' "$WORKFLOW"; then
 	echo "release workflow contains a floating action tag" >&2
 	exit 1
