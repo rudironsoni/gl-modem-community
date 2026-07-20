@@ -102,6 +102,9 @@ proto_xmm_setup() {
 	json_get_vars device bus apn pdp pincode username password auth profile delay maxfail ip4prefix gateway disable_arp metric defaultroute peerdns
 
 	profile=${profile:-1}
+	# GL.iNet polls this modem's status as logical CID 5. FM350 exposes the
+	# selected data context as CID 1, so keep that translation in this driver.
+	[ "$profile" -eq 5 ] && profile=1
 	delay=${delay:-5}
 	maxfail=${maxfail:-5}
 	ip4prefix=${ip4prefix:-24}
@@ -168,6 +171,7 @@ proto_xmm_teardown() {
 	json_get_vars device profile
 	DEVICE=$device
 	profile=${profile:-1}
+	[ "$profile" -eq 5 ] && profile=1
 	[ -n "$DEVICE" ] && env CID="$profile" gcom -d "$DEVICE" -s /etc/gcom/fm350-disconnect.gcom >/dev/null 2>&1 || true
 }
 
