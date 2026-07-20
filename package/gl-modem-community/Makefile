@@ -53,6 +53,7 @@ define Package/gl-modem-community/install
 	$(INSTALL_DIR) $(1)/usr/libexec/gl-modem-community
 	$(INSTALL_BIN) ./files/usr/libexec/gl-modem-community/merge-models $(1)/usr/libexec/gl-modem-community/merge-models
 	$(INSTALL_BIN) ./files/usr/libexec/gl-modem-community/modem_AT-wrapper $(1)/usr/libexec/gl-modem-community/modem_AT-wrapper
+	$(INSTALL_BIN) ./files/usr/libexec/gl-modem-community/fm350-network-repair $(1)/usr/libexec/gl-modem-community/fm350-network-repair
 	$(INSTALL_DIR) $(1)/usr/lib/gl-modem-community
 	$(INSTALL_DATA) $(PKG_BUILD_DIR)/fm350-at-compat.so $(1)/usr/lib/gl-modem-community/fm350-at-compat.so
 	$(INSTALL_DIR) $(1)/usr/share/gl-modem-community/drivers.d

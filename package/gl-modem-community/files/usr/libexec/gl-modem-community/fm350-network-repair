@@ -1,0 +1,60 @@
+#!/bin/sh
+# SPDX-License-Identifier: GPL-3.0-only
+
+USB_DEVICES_ROOT=${USB_DEVICES_ROOT:-/sys/bus/usb/devices}
+UCI_BIN=${UCI_BIN:-uci}
+UBUS_BIN=${UBUS_BIN:-ubus}
+LOGGER_BIN=${LOGGER_BIN:-logger}
+REPAIR_INTERVAL=${REPAIR_INTERVAL:-2}
+
+set_network_option() {
+	local section=$1 option=$2 value=$3 current
+	current=$("$UCI_BIN" -q get "network.$section.$option" 2>/dev/null || true)
+	[ "$current" = "$value" ] && return 1
+	"$UCI_BIN" set "network.$section.$option=$value"
+}
+
+repair_fm350_network() {
+	local path bus pid section ip_type changed=0 section_changed
+
+	for path in "$USB_DEVICES_ROOT"/*; do
+		[ -r "$path/idVendor" ] && [ "$(cat "$path/idVendor")" = 0e8d ] || continue
+		pid=$(cat "$path/idProduct" 2>/dev/null || true)
+		case "$pid" in 7126|7127) ;; *) continue ;; esac
+
+		bus=${path##*/}
+		section=modem_$(printf '%s' "$bus" | tr '.:-' '___')_s1
+		"$UCI_BIN" -q get "network.$section" >/dev/null 2>&1 || continue
+
+		section_changed=0
+		set_network_option "$section" proto xmm && section_changed=1
+		set_network_option "$section" bus "$bus" && section_changed=1
+		set_network_option "$section" profile 5 && section_changed=1
+		ip_type=$("$UCI_BIN" -q get "network.$section.ip_type" 2>/dev/null || true)
+		case "$ip_type" in
+			IP|IPV6|IPV4V6) set_network_option "$section" pdp "$ip_type" && section_changed=1 ;;
+		esac
+
+		[ "$section_changed" -eq 0 ] || {
+			"$UCI_BIN" commit network
+			"$LOGGER_BIN" -t gl-modem-community "repaired stock FM350 interface $section bus=$bus proto=xmm profile=5"
+			changed=1
+		}
+	done
+
+	[ "$changed" -eq 1 ]
+}
+
+watch_fm350_network() {
+	while :; do
+		if repair_fm350_network; then
+			"$UBUS_BIN" call network reload >/dev/null 2>&1 || true
+		fi
+		sleep "$REPAIR_INTERVAL"
+	done
+}
+
+case "${1:-}" in
+	--watch) watch_fm350_network ;;
+	*) repair_fm350_network ;;
+esac

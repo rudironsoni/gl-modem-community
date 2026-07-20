@@ -11,46 +11,7 @@ MERGED_LIST=$RUNTIME_DIR/modem_list.json
 MODEM_AT=/usr/bin/modem_AT
 STOCK_MODEM_AT=$RUNTIME_DIR/modem_AT.stock
 MODEM_AT_WRAPPER=/usr/libexec/gl-modem-community/modem_AT-wrapper
-USB_DEVICES_ROOT=${USB_DEVICES_ROOT:-/sys/bus/usb/devices}
-UCI_BIN=${UCI_BIN:-uci}
-
-set_network_option() {
-	local section=$1 option=$2 value=$3 current
-	current=$("$UCI_BIN" -q get "network.$section.$option" 2>/dev/null || true)
-	[ "$current" = "$value" ] && return 1
-	"$UCI_BIN" set "network.$section.$option=$value"
-}
-
-repair_fm350_network() {
-	local path bus pid section ip_type changed=0 section_changed
-
-	for path in "$USB_DEVICES_ROOT"/*; do
-		[ -r "$path/idVendor" ] && [ "$(cat "$path/idVendor")" = 0e8d ] || continue
-		pid=$(cat "$path/idProduct" 2>/dev/null || true)
-		case "$pid" in 7126|7127) ;; *) continue ;; esac
-
-		bus=${path##*/}
-		section=modem_$(printf '%s' "$bus" | tr '.:-' '___')_s1
-		"$UCI_BIN" -q get "network.$section" >/dev/null 2>&1 || continue
-
-		section_changed=0
-		set_network_option "$section" proto xmm && section_changed=1
-		set_network_option "$section" bus "$bus" && section_changed=1
-		set_network_option "$section" profile 5 && section_changed=1
-		ip_type=$("$UCI_BIN" -q get "network.$section.ip_type" 2>/dev/null || true)
-		case "$ip_type" in
-			IP|IPV6|IPV4V6) set_network_option "$section" pdp "$ip_type" && section_changed=1 ;;
-		esac
-		[ "$section_changed" -eq 0 ] || {
-			changed=1
-			logger -t gl-modem-community "repaired stock FM350 interface $section bus=$bus proto=xmm profile=5"
-		}
-	done
-
-	[ "$changed" -eq 0 ] || {
-		"$UCI_BIN" commit network
-	}
-}
+NETWORK_REPAIR=/usr/libexec/gl-modem-community/fm350-network-repair
 
 is_mounted() {
 	grep -F " $STOCK_LIST " /proc/mounts >/dev/null 2>&1
@@ -78,7 +39,12 @@ start_service() {
 		"$STOCK_LIST" /usr/share/gl-modem-community/drivers.d "$MERGED_LIST" || return 1
 
 	is_mounted || mount -o bind "$MERGED_LIST" "$STOCK_LIST" || return 1
-	repair_fm350_network
+	"$NETWORK_REPAIR" || true
+
+	procd_open_instance fm350-network-repair
+	procd_set_param command "$NETWORK_REPAIR" --watch
+	procd_set_param respawn 3600 5 5
+	procd_close_instance
 }
 
 stop_service() {
