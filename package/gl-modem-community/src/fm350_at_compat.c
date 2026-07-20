@@ -1,5 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
+#define _GNU_SOURCE
+
 #include <stddef.h>
 #include <string.h>
 
