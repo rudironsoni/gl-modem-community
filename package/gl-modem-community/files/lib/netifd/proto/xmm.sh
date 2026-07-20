@@ -10,6 +10,7 @@ init_proto "$@"
 
 proto_xmm_init_config() {
 	no_device=1
+	no_proto_task=1
 	available=1
 	proto_config_add_string "device:device"
 	proto_config_add_string "bus"
@@ -168,8 +169,6 @@ proto_xmm_teardown() {
 	DEVICE=$device
 	profile=${profile:-1}
 	[ -n "$DEVICE" ] && env CID="$profile" gcom -d "$DEVICE" -s /etc/gcom/fm350-disconnect.gcom >/dev/null 2>&1 || true
-	proto_init_update "*" 0
-	proto_send_update "$interface"
 }
 
 add_protocol xmm
