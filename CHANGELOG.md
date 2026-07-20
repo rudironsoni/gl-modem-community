@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.6](https://github.com/rudironsoni/gl-modem-community/compare/v0.1.5...v0.1.6) (2026-07-20)
+
+
+### Bug Fixes
+
+* restore stock FM350 network interface ([e08c5a0](https://github.com/rudironsoni/gl-modem-community/commit/e08c5a09113dcdaa8dc19992cc1e3b94f950dc21))
+
 ## [0.1.5](https://github.com/rudironsoni/gl-modem-community/compare/v0.1.4...v0.1.5) (2026-07-20)
 
 
