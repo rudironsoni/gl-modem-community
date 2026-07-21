@@ -38,31 +38,31 @@ For every test record request, response, ubus event, AT transcript with identifi
 
 Success requires basic identity, SIM state, registration, APN connect/disconnect, route/DNS, reconnect, and UI/app status to be reproduced. Advanced signal, cell, band, lock, temperature, and reset remain separate gates. Offline analysis alone cannot pass any runtime gate.
 
-### FM350 `0.1.2-r1` focused loop
+### FM350 focused loop
+
+Use the current signed APK and install the public key as documented in the README.
 
 Install and restart both layers so an already-running stock `modem_AT` process cannot survive the bind-mount change:
 
 ```sh
-sha256sum /tmp/gl-modem-community-0.1.2-r1.apk
-apk add --allow-untrusted /tmp/gl-modem-community-0.1.2-r1.apk
+sha256sum /tmp/gl-modem-community-VERSION-r1.apk
+apk add /tmp/gl-modem-community-VERSION-r1.apk
 /etc/init.d/gl_modem_community enable
 /etc/init.d/gl_modem_community restart
 /etc/init.d/gl_cellular_manager restart
 ```
-
-The expected package SHA-256 is `58eabf76096e9f6778268f4f53a791c4313c0c049aa60833e776339a21e7269a`.
 
 For an OpenWrt 24.10-based GL.iNet image using OPKG, substitute:
 
 ```sh
-sha256sum /tmp/gl-modem-community_0.1.2-r1_aarch64_cortex-a53.ipk
-opkg install /tmp/gl-modem-community_0.1.2-r1_aarch64_cortex-a53.ipk
+sha256sum /tmp/gl-modem-community_VERSION-r1_aarch64_cortex-a53.ipk
+opkg install /tmp/gl-modem-community_VERSION-r1_aarch64_cortex-a53.ipk
 /etc/init.d/gl_modem_community enable
 /etc/init.d/gl_modem_community restart
 /etc/init.d/gl_cellular_manager restart
 ```
 
-The expected IPK SHA-256 is `55dfd5a47a2e065c6151c8c366ce57c58e787056a3e899e82a1854db1051eea0`. [UNVERIFIED] These commands require an image that provides the stock GL.iNet cellular services and package dependencies; vanilla OpenWrt does not provide the proprietary backend this extension wraps.
+[UNVERIFIED] These commands require an image that provides the stock GL.iNet cellular services and package dependencies; vanilla OpenWrt does not provide the proprietary backend this extension wraps.
 
 Before pressing Connect, capture:
 
