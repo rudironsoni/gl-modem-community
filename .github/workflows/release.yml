@@ -5,221 +5,276 @@ on:
     branches:
       - main
   workflow_dispatch:
+    inputs:
+      tag:
+        description: Existing release tag to rebuild and republish
+        required: true
+        type: string
 
 permissions: {}
 
 concurrency:
-  group: release-${{ github.ref }}
+  group: release-main
   cancel-in-progress: false
 
 jobs:
   detect-release:
-    name: Detect release commit
+    name: Resolve release source
     runs-on: ubuntu-24.04
+    timeout-minutes: 10
     permissions:
       contents: read
     outputs:
-      release_commit: ${{ steps.version.outputs.release_commit }}
-      version: ${{ steps.version.outputs.version }}
-      tag: ${{ steps.version.outputs.tag }}
+      release_commit: ${{ steps.release.outputs.release_commit }}
+      source_ref: ${{ steps.release.outputs.source_ref }}
+      tag: ${{ steps.release.outputs.tag }}
+      version: ${{ steps.release.outputs.version }}
     steps:
-      - name: Check out repository
+      - name: Check out release source
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
+          ref: ${{ inputs.tag || github.sha }}
           fetch-depth: 2
+          persist-credentials: false
 
-      - name: Detect manifest version change
-        id: version
+      - name: Resolve manifest version and tag
+        id: release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REQUESTED_TAG: ${{ inputs.tag }}
         shell: bash
         run: |
           set -euo pipefail
+
           release_commit=false
           version=
           tag=
+          source_ref="$GITHUB_SHA"
+
           write_outputs() {
             {
               echo "release_commit=$release_commit"
               echo "version=$version"
               echo "tag=$tag"
+              echo "source_ref=$source_ref"
             } >> "$GITHUB_OUTPUT"
           }
 
-          if [[ "$GITHUB_EVENT_NAME" != "workflow_dispatch" ]] &&
-            ! git cat-file -e 'HEAD^:.release-please-manifest.json' 2>/dev/null; then
-            write_outputs
-            exit 0
-          fi
-          if [[ "$GITHUB_EVENT_NAME" != "workflow_dispatch" ]] &&
-            git diff --quiet HEAD^ HEAD -- .release-please-manifest.json; then
-            write_outputs
-            exit 0
+          if [[ "$GITHUB_EVENT_NAME" == workflow_dispatch ]]; then
+            tag="$REQUESTED_TAG"
+            if ! [[ "$tag" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+              echo "Unsupported release tag: $tag" >&2
+              exit 1
+            fi
+            test "$(git describe --tags --exact-match HEAD)" = "$tag"
+            gh release view "$tag" --repo "$GITHUB_REPOSITORY" >/dev/null
+            version="${tag#v}"
+            source_ref="$tag"
+          else
+            if ! git cat-file -e 'HEAD^:.release-please-manifest.json' 2>/dev/null; then
+              write_outputs
+              exit 0
+            fi
+            if git diff --quiet HEAD^ HEAD -- .release-please-manifest.json; then
+              write_outputs
+              exit 0
+            fi
+            version="$(jq -er '.["."] | select(type == "string")' .release-please-manifest.json)"
+            tag="v$version"
           fi
 
-          version="$(jq -er '.["."] | select(type == "string")' .release-please-manifest.json)"
-          if ! printf '%s\n' "$version" | grep -Eq '^[0-9]+\.[0-9]+\.[0-9]+$'; then
+          if ! [[ "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
             echo "Unsupported release version: $version" >&2
             exit 1
           fi
-
           package_version="$(sed -n 's/^PKG_VERSION:=\([^[:space:]#]*\).*/\1/p' package/gl-modem-community/Makefile)"
-          if test "$package_version" != "$version"; then
+          if [[ "$package_version" != "$version" ]]; then
             echo "Manifest version $version does not match PKG_VERSION $package_version" >&2
             exit 1
           fi
 
           release_commit=true
-          tag="v$version"
           write_outputs
 
-  verify:
-    name: Verify release source
+  release-ci:
+    name: Build release source
     needs: detect-release
     if: needs.detect-release.outputs.release_commit == 'true'
-    runs-on: ubuntu-24.04
+    uses: ./.github/workflows/ci.yml
     permissions:
       contents: read
-    steps:
-      - name: Check out repository
-        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+    with:
+      source_ref: ${{ needs.detect-release.outputs.source_ref }}
+      upload_packages: true
 
-      - name: Build analysis test image
-        run: make tools
-
-      - name: Run offline tests
-        run: make test
-
-  build-packages:
-    name: Build ${{ matrix.kind }} package
+  sign-release:
+    name: Sign and prepare release
     needs:
       - detect-release
-      - verify
-    if: needs.detect-release.outputs.release_commit == 'true' && needs.verify.result == 'success'
+      - release-ci
+    if: needs.release-ci.result == 'success'
     runs-on: ubuntu-24.04
-    timeout-minutes: 60
-    permissions:
-      contents: read
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - kind: apk
-            target: package
-            sdk_archive: tool-cache/openwrt-sdk-25.12.5-mediatek-filogic_gcc-14.3.0_musl.Linux-x86_64.tar.zst
-            sdk_cache_key: openwrt-sdk-25.12.5-mediatek-filogic-ff4a38a397caa2cfe1c39e18f84ddede14878221b3593c3f2c4cfe24e3ec4c25
-            artifact_glob: artifacts/*.apk
-          - kind: ipk
-            target: package-opkg
-            sdk_archive: tool-cache/openwrt-sdk-24.10.7-mediatek-filogic_gcc-13.3.0_musl.Linux-x86_64.tar.zst
-            sdk_cache_key: openwrt-sdk-24.10.7-mediatek-filogic-8d8fd6dd96458f6f397b069e3212c6dc365c306b0be32c95c9497b52d80b13df
-            artifact_glob: artifacts/*.ipk
-    steps:
-      - name: Check out repository
-        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
-
-      - name: Restore pinned SDK archive
-        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
-        with:
-          path: ${{ matrix.sdk_archive }}
-          key: ${{ matrix.sdk_cache_key }}
-
-      - name: Build package
-        run: make "${{ matrix.target }}"
-
-      - name: Validate package artifact
-        env:
-          PACKAGE_KIND: ${{ matrix.kind }}
-          RELEASE_VERSION: ${{ needs.detect-release.outputs.version }}
-        shell: bash
-        run: |
-          set -euo pipefail
-          case "$PACKAGE_KIND" in
-            apk)
-              asset="artifacts/gl-modem-community-${RELEASE_VERSION}-r1.apk"
-              test -s "$asset"
-              tool-cache/sdk-25.12.5-mediatek-filogic/staging_dir/host/bin/apk adbdump "$asset" >/dev/null
-              ;;
-            ipk)
-              asset="artifacts/gl-modem-community_${RELEASE_VERSION}-r1_aarch64_cortex-a53.ipk"
-              test -s "$asset"
-              tar -tzf "$asset" >/dev/null
-              ;;
-            *)
-              echo "Unsupported package kind: $PACKAGE_KIND" >&2
-              exit 1
-              ;;
-          esac
-          file "$asset"
-          sha256sum "$asset"
-
-      - name: Store package artifact
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
-        with:
-          name: release-${{ matrix.kind }}
-          path: ${{ matrix.artifact_glob }}
-          if-no-files-found: error
-          retention-days: 7
-
-  release-please:
-    name: Update or publish release
-    needs:
-      - detect-release
-      - build-packages
-    if: >-
-      always() &&
-      needs.detect-release.result == 'success' &&
-      (needs.detect-release.outputs.release_commit != 'true' || needs.build-packages.result == 'success')
-    runs-on: ubuntu-24.04
-    permissions:
-      contents: write
-      issues: write
-      pull-requests: write
-    steps:
-      - name: Run Release Please
-        uses: googleapis/release-please-action@45996ed1f6d02564a971a2fa1b5860e934307cf7 # v5.0.0
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          config-file: release-please-config.json
-          manifest-file: .release-please-manifest.json
-
-  publish-assets:
-    name: Publish release assets
-    needs:
-      - detect-release
-      - build-packages
-      - release-please
-    if: always() && needs.detect-release.outputs.release_commit == 'true' && needs.build-packages.result == 'success' && needs.release-please.result == 'success'
-    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    environment: release-signing
     permissions:
       actions: read
-      contents: write
+      attestations: write
+      contents: read
+      id-token: write
     steps:
-      - name: Download package artifacts
+      - name: Check out release source
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          ref: ${{ needs.detect-release.outputs.source_ref }}
+          persist-credentials: false
+
+      - name: Restore APK SDK
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: |
+            tool-cache/openwrt-sdk-25.12.5-mediatek-filogic_gcc-14.3.0_musl.Linux-x86_64.tar.zst
+            tool-cache/sdk-25.12.5-mediatek-filogic
+          key: openwrt-sdk-25.12.5-mediatek-filogic-ff4a38a397caa2cfe1c39e18f84ddede14878221b3593c3f2c4cfe24e3ec4c25
+          fail-on-cache-miss: true
+
+      - name: Download unsigned packages
         uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
           pattern: release-*
           path: release-assets
           merge-multiple: true
 
-      - name: Validate and checksum release assets
+      - name: Build SDK utility image
+        run: docker build --platform linux/amd64 -t mt3000-openwrt-sdk:25.12.5 tools/sdk-container
+
+      - name: Sign APK and repository index
         env:
+          APK_SIGNING_PRIVATE_KEY: ${{ secrets.APK_SIGNING_PRIVATE_KEY }}
           RELEASE_VERSION: ${{ needs.detect-release.outputs.version }}
         shell: bash
         run: |
           set -euo pipefail
+          signing_dir="$RUNNER_TEMP/gl-modem-signing"
+          install -d -m 0700 "$signing_dir"
+          install -m 0600 /dev/null "$signing_dir/private-key.pem"
+          printf '%s\n' "$APK_SIGNING_PRIVATE_KEY" > "$signing_dir/private-key.pem"
+          unset APK_SIGNING_PRIVATE_KEY
+
           apk="release-assets/gl-modem-community-${RELEASE_VERSION}-r1.apk"
           ipk="release-assets/gl-modem-community_${RELEASE_VERSION}-r1_aarch64_cortex-a53.ipk"
           test -s "$apk"
           test -s "$ipk"
           test "$(find release-assets -maxdepth 1 -type f | wc -l)" -eq 2
+
+          docker run --rm --platform linux/amd64 \
+            --mount "type=bind,src=$GITHUB_WORKSPACE,dst=/repo" \
+            --mount "type=bind,src=$signing_dir,dst=/signing,readonly" \
+            mt3000-openwrt-sdk:25.12.5 \
+            /repo/scripts/sign-apk-release.sh \
+              /repo/tool-cache/sdk-25.12.5-mediatek-filogic \
+              /signing/private-key.pem \
+              /repo/keys/gl-modem-community-2026.pem \
+              "/repo/$apk" \
+              /repo/release-assets/packages.adb \
+              /repo/release-assets/apk-metadata.json
+
+          ./scripts/generate-sbom.sh apk "$apk" release-assets/gl-modem-community.apk.cdx.json release-assets/apk-metadata.json
+          ./scripts/generate-sbom.sh ipk "$ipk" release-assets/gl-modem-community.ipk.cdx.json
+          ./scripts/validate-sbom.sh release-assets/gl-modem-community.apk.cdx.json
+          ./scripts/validate-sbom.sh release-assets/gl-modem-community.ipk.cdx.json
+          docker run --rm --platform linux/amd64 \
+            --mount "type=bind,src=$GITHUB_WORKSPACE,dst=/repo,readonly" \
+            mt3000-openwrt-sdk:25.12.5 \
+            cyclonedx validate --input-file /repo/release-assets/gl-modem-community.apk.cdx.json
+          docker run --rm --platform linux/amd64 \
+            --mount "type=bind,src=$GITHUB_WORKSPACE,dst=/repo,readonly" \
+            mt3000-openwrt-sdk:25.12.5 \
+            cyclonedx validate --input-file /repo/release-assets/gl-modem-community.ipk.cdx.json
+          rm release-assets/apk-metadata.json
+
+          cp keys/gl-modem-community-2026.pem release-assets/
+          cp keys/gl-modem-community-2026.pem.sha256 release-assets/
           (
             cd release-assets
-            sha256sum "${apk##*/}" "${ipk##*/}" | sort -k2 > SHA256SUMS
+            sha256sum -- * | sort -k2 > SHA256SUMS
           )
-          cat release-assets/SHA256SUMS
 
-      - name: Upload assets to GitHub release
+      - name: Upload prepared release assets
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: prepared-release-assets
+          path: release-assets/*
+          if-no-files-found: error
+          retention-days: 7
+
+      - name: Attest release assets
+        uses: actions/attest@f7c74d28b9d84cb8768d0b8ca14a4bac6ef463e6 # v4.2.0
+        with:
+          subject-path: release-assets/*
+
+  release-please:
+    name: Maintain release
+    needs:
+      - detect-release
+      - release-ci
+      - sign-release
+    if: >-
+      always() &&
+      github.event_name == 'push' &&
+      (needs.detect-release.outputs.release_commit != 'true' ||
+      (needs.release-ci.result == 'success' && needs.sign-release.result == 'success'))
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      actions: write
+      contents: write
+      pull-requests: write
+    steps:
+      - name: Create or update release
+        id: release
+        uses: googleapis/release-please-action@45996ed1f6d02564a971a2fa1b5860e934307cf7 # v5.0.0
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          config-file: release-please-config.json
+          manifest-file: .release-please-manifest.json
+
+      - name: Dispatch CI for Release Please pull requests
+        if: steps.release.outputs.prs_created == 'true'
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_PRS: ${{ steps.release.outputs.prs }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          jq -er '.[].headBranchName' <<< "$RELEASE_PRS" | while IFS= read -r branch; do
+            gh workflow run ci.yml --repo "$GITHUB_REPOSITORY" --ref "$branch" -f "source_ref=$branch"
+          done
+
+  publish-release:
+    name: Publish release assets
+    needs:
+      - detect-release
+      - sign-release
+      - release-please
+    if: >-
+      always() &&
+      needs.sign-release.result == 'success' &&
+      (github.event_name == 'workflow_dispatch' || needs.release-please.result == 'success')
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      actions: read
+      contents: write
+    steps:
+      - name: Download prepared release assets
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: prepared-release-assets
+          path: release-assets
+
+      - name: Upload assets to exact release tag
+        env:
+          GH_TOKEN: ${{ github.token }}
           RELEASE_TAG: ${{ needs.detect-release.outputs.tag }}
         shell: bash
         run: |

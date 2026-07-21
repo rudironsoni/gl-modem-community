@@ -2,6 +2,7 @@
 
 [![Latest release](https://img.shields.io/github/v/release/rudironsoni/gl-modem-community)](https://github.com/rudironsoni/gl-modem-community/releases/latest)
 [![Release](https://github.com/rudironsoni/gl-modem-community/actions/workflows/release.yml/badge.svg)](https://github.com/rudironsoni/gl-modem-community/actions/workflows/release.yml)
+[![CI](https://github.com/rudironsoni/gl-modem-community/actions/workflows/ci.yml/badge.svg)](https://github.com/rudironsoni/gl-modem-community/actions/workflows/ci.yml)
 
 Community modem definitions and compatibility drivers for GL.iNet's stock cellular stack.
 
@@ -99,13 +100,32 @@ sha256sum gl-modem-community*VERSION*
 cat SHA256SUMS
 ```
 
-For GL.iNet firmware using APK:
+For GL.iNet firmware using APK, trust the project's public key once and add the stable feed:
 
 ```sh
-apk add --allow-untrusted /tmp/gl-modem-community-VERSION-r1.apk
+cd /tmp
+wget -O gl-modem-community-2026.pem \
+  https://github.com/rudironsoni/gl-modem-community/releases/latest/download/gl-modem-community-2026.pem
+wget -O gl-modem-community-2026.pem.sha256 \
+  https://github.com/rudironsoni/gl-modem-community/releases/latest/download/gl-modem-community-2026.pem.sha256
+sha256sum -c gl-modem-community-2026.pem.sha256
+cp gl-modem-community-2026.pem /etc/apk/keys/
+chmod 0644 /etc/apk/keys/gl-modem-community-2026.pem
+
+feed='https://github.com/rudironsoni/gl-modem-community/releases/latest/download/packages.adb'
+grep -Fqx "$feed" /etc/apk/repositories.d/customfeeds.list || \
+  printf '%s\n' "$feed" >> /etc/apk/repositories.d/customfeeds.list
+apk update
+apk add gl-modem-community
 /etc/init.d/gl_modem_community enable
 /etc/init.d/gl_modem_community restart
 /etc/init.d/gl_cellular_manager restart
+```
+
+The release APK carries the same signature, so a direct local install also verifies normally after the key is installed:
+
+```sh
+apk add /tmp/gl-modem-community-VERSION-r1.apk
 ```
 
 For GL.iNet firmware using OPKG:
@@ -178,4 +198,6 @@ The [modem architecture](docs/modem-architecture.md), [package design](docs/pack
 
 ## Releases
 
-[Release Please](https://github.com/googleapis/release-please) manages versions from Conventional Commits. Each GitHub release includes APK and IPK packages plus `SHA256SUMS`. GitHub Actions runs the offline test suite and builds both package formats before publishing them.
+Every pull request runs the offline test suite and builds both package formats. Releases add a signed APK and repository index, CycloneDX SBOMs, the public key, checksums, and GitHub build-provenance attestations.
+
+[Release Please](https://github.com/googleapis/release-please) manages versions from Conventional Commits after release artifacts pass CI and signing.

@@ -1,0 +1,138 @@
+name: CI
+
+on:
+  pull_request:
+  workflow_call:
+    inputs:
+      source_ref:
+        description: Commit, branch, or tag to build
+        required: false
+        type: string
+        default: ""
+      upload_packages:
+        description: Upload packages for the calling release workflow
+        required: false
+        type: boolean
+        default: false
+  workflow_dispatch:
+    inputs:
+      source_ref:
+        description: Commit, branch, or tag to build
+        required: false
+        type: string
+        default: ""
+
+permissions: {}
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.event.pull_request.number || inputs.source_ref || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    name: Offline tests
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    permissions:
+      contents: read
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          ref: ${{ inputs.source_ref || github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+
+      - name: Build analysis test image
+        run: make tools
+
+      - name: Run offline tests
+        run: make test
+
+  build-packages:
+    name: Build ${{ matrix.kind }} package
+    needs: validate
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    permissions:
+      contents: read
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - kind: apk
+            target: package
+            sdk_archive: tool-cache/openwrt-sdk-25.12.5-mediatek-filogic_gcc-14.3.0_musl.Linux-x86_64.tar.zst
+            sdk_cache_key: openwrt-sdk-25.12.5-mediatek-filogic-ff4a38a397caa2cfe1c39e18f84ddede14878221b3593c3f2c4cfe24e3ec4c25
+            artifact_glob: artifacts/*.apk
+          - kind: ipk
+            target: package-opkg
+            sdk_archive: tool-cache/openwrt-sdk-24.10.7-mediatek-filogic_gcc-13.3.0_musl.Linux-x86_64.tar.zst
+            sdk_cache_key: openwrt-sdk-24.10.7-mediatek-filogic-8d8fd6dd96458f6f397b069e3212c6dc365c306b0be32c95c9497b52d80b13df
+            artifact_glob: artifacts/*.ipk
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          ref: ${{ inputs.source_ref || github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+
+      - name: Restore SDK
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: |
+            ${{ matrix.sdk_archive }}
+            tool-cache/sdk-*
+          key: ${{ matrix.sdk_cache_key }}
+
+      - name: Build package
+        run: make "${{ matrix.target }}"
+
+      - name: Inspect package
+        env:
+          PACKAGE_KIND: ${{ matrix.kind }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          version="$(sed -n 's/^PKG_VERSION:=\([^[:space:]#]*\).*/\1/p' package/gl-modem-community/Makefile)"
+          case "$PACKAGE_KIND" in
+            apk)
+              asset="artifacts/gl-modem-community-${version}-r1.apk"
+              test -s "$asset"
+              ;;
+            ipk)
+              asset="artifacts/gl-modem-community_${version}-r1_aarch64_cortex-a53.ipk"
+              test -s "$asset"
+              tar -tzf "$asset" >/dev/null
+              ;;
+            *)
+              echo "Unsupported package kind: $PACKAGE_KIND" >&2
+              exit 1
+              ;;
+          esac
+
+      - name: Upload release package
+        if: inputs.upload_packages
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: release-${{ matrix.kind }}
+          path: ${{ matrix.artifact_glob }}
+          if-no-files-found: error
+          retention-days: 7
+
+  required:
+    name: CI required
+    if: always()
+    needs:
+      - validate
+      - build-packages
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    permissions: {}
+    steps:
+      - name: Require every CI job
+        env:
+          BUILD_RESULT: ${{ needs.build-packages.result }}
+          VALIDATE_RESULT: ${{ needs.validate.result }}
+        run: |
+          test "$VALIDATE_RESULT" = success
+          test "$BUILD_RESULT" = success

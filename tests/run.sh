@@ -16,7 +16,10 @@ shellcheck -S warning -e SC1091,SC2034,SC3043 /repo/scripts/*.sh /repo/tests/*.s
 		/repo/package/gl-modem-community/files/usr/libexec/gl-modem-community/modem_AT-wrapper \
 		/repo/package/gl-modem-community/files/usr/libexec/gl-modem-community/fm350-network-repair \
 		/repo/package/gl-modem-community/files/lib/netifd/proto/xmm.sh
-jq -e ".modems | length == 2" /repo/package/gl-modem-community/files/usr/share/gl-modem-community/drivers.d/fm350.json >/dev/null
+    actionlint /repo/.github/workflows/*.yml
+    jq -e ".modems | length == 2" /repo/package/gl-modem-community/files/usr/share/gl-modem-community/drivers.d/fm350.json >/dev/null
+    /repo/tests/test-sbom.sh
+    /repo/tests/test-signing-key.sh
 '
 
 "$REPO_DIR/tests/test-fm350-at-compat.sh"
