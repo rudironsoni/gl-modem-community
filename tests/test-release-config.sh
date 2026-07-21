@@ -57,6 +57,11 @@ grep -Fq 'name: CI required' "$CI_WORKFLOW"
 grep -Fq 'target: package' "$CI_WORKFLOW"
 grep -Fq 'target: package-opkg' "$CI_WORKFLOW"
 grep -Fq 'if: inputs.upload_packages' "$CI_WORKFLOW"
+grep -Fq 'path: ${{ matrix.sdk_archive }}' "$CI_WORKFLOW"
+if grep -Fq 'tool-cache/sdk-*' "$CI_WORKFLOW"; then
+    echo 'CI must not cache root-owned extracted SDK files' >&2
+    exit 1
+fi
 
 grep -Fq 'description: Existing release tag to rebuild and republish' "$RELEASE_WORKFLOW"
 grep -Fq 'test "$(git describe --tags --exact-match HEAD)" = "$tag"' "$RELEASE_WORKFLOW"
@@ -65,6 +70,7 @@ grep -Fq 'source_ref="$tag"' "$RELEASE_WORKFLOW"
 grep -Fq 'environment: release-signing' "$RELEASE_WORKFLOW"
 grep -Fq 'APK_SIGNING_PRIVATE_KEY: ${{ secrets.APK_SIGNING_PRIVATE_KEY }}' "$RELEASE_WORKFLOW"
 grep -Fq 'fail-on-cache-miss: true' "$RELEASE_WORKFLOW"
+grep -Fq 'name: Extract APK SDK' "$RELEASE_WORKFLOW"
 grep -Fq '/repo/scripts/sign-apk-release.sh' "$RELEASE_WORKFLOW"
 grep -Fq 'actions/attest@' "$RELEASE_WORKFLOW"
 grep -Fq 'gh workflow run ci.yml' "$RELEASE_WORKFLOW"

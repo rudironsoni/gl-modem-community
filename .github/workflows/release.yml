@@ -131,11 +131,18 @@ jobs:
       - name: Restore APK SDK
         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
-          path: |
-            tool-cache/openwrt-sdk-25.12.5-mediatek-filogic_gcc-14.3.0_musl.Linux-x86_64.tar.zst
-            tool-cache/sdk-25.12.5-mediatek-filogic
+          path: tool-cache/openwrt-sdk-25.12.5-mediatek-filogic_gcc-14.3.0_musl.Linux-x86_64.tar.zst
           key: openwrt-sdk-25.12.5-mediatek-filogic-ff4a38a397caa2cfe1c39e18f84ddede14878221b3593c3f2c4cfe24e3ec4c25
           fail-on-cache-miss: true
+
+      - name: Extract APK SDK
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p tool-cache/sdk-25.12.5-mediatek-filogic
+          tar --zstd --strip-components=1 \
+            -xf tool-cache/openwrt-sdk-25.12.5-mediatek-filogic_gcc-14.3.0_musl.Linux-x86_64.tar.zst \
+            -C tool-cache/sdk-25.12.5-mediatek-filogic
 
       - name: Download unsigned packages
         uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
