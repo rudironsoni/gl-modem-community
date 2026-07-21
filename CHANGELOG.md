@@ -1,5 +1,25 @@
 # Changelog
 
+## [0.1.11](https://github.com/rudironsoni/gl-modem-community/compare/v0.1.10...v0.1.11) (2026-07-21)
+
+
+### Bug Fixes
+
+* **ci:** cache readable SDK archives ([456d4e9](https://github.com/rudironsoni/gl-modem-community/commit/456d4e98bae9eb886db5beff57d4b18f9f5f1aaf))
+* **ci:** cache readable SDK archives ([6bcce98](https://github.com/rudironsoni/gl-modem-community/commit/6bcce98898a2af5c853edd1ea9797e8944d1e07b))
+
+
+### Documentation
+
+* reframe project for community modem support ([28a69dc](https://github.com/rudironsoni/gl-modem-community/commit/28a69dcd12fcd821954cd11b0269d8f9757c3da1))
+* rewrite project README ([bee2915](https://github.com/rudironsoni/gl-modem-community/commit/bee2915d79860801c1da69451c26637ee7410b9b))
+
+
+### Continuous Integration
+
+* harden package builds and signed releases ([ac9b38c](https://github.com/rudironsoni/gl-modem-community/commit/ac9b38c7c3c501aa98969df8c2f7f293e14975a8))
+* harden package builds and signed releases ([c9366b7](https://github.com/rudironsoni/gl-modem-community/commit/c9366b79438362e702e1359e91e0200c6e4f00ab))
+
 ## [0.1.10](https://github.com/rudironsoni/gl-modem-community/compare/v0.1.9...v0.1.10) (2026-07-20)
 
 
