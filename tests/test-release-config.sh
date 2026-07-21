@@ -9,7 +9,7 @@ PACKAGE_MAKEFILE="$REPO_DIR/package/gl-modem-community/Makefile"
 CI_WORKFLOW="$REPO_DIR/.github/workflows/ci.yml"
 RELEASE_WORKFLOW="$REPO_DIR/.github/workflows/release.yml"
 SIGNING_SCRIPT="$REPO_DIR/scripts/sign-apk-release.sh"
-PUBLIC_KEY="$REPO_DIR/keys/gl-modem-community-2026.pem"
+PUBLIC_KEY="$REPO_DIR/keys/gl-modem-community.pem"
 PUBLIC_KEY_CHECKSUM="$PUBLIC_KEY.sha256"
 
 jq -e '

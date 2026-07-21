@@ -42,6 +42,14 @@ The FM350 work has produced the following hardware evidence:
 
 See [hardware validation](docs/validation-plan.md) for the remaining test cases and the evidence required to mark them complete.
 
+## Hardware evidence
+
+The reference GL-MT3000 setup recognizes the Fibocom FM350-GL in both GL.iNet interfaces. These screenshots confirm UI detection and cellular controls, not the complete data-session test matrix. IMEI and SIM details are redacted.
+
+| GL.iNet admin panel | GL.iNet mobile app |
+| --- | --- |
+| ![GL-MT3000 admin panel showing an FM350-GL cellular connection](docs/images/gl-mt3000-fm350-admin-panel.png) | ![GL.iNet mobile app showing cellular enabled with an FM350-GL modem](docs/images/gl-mt3000-fm350-mobile-app.png) |
+
 ## Extension points
 
 | Path | Purpose |
@@ -100,19 +108,45 @@ sha256sum gl-modem-community*VERSION*
 cat SHA256SUMS
 ```
 
-For GL.iNet firmware using APK, trust the project's public key once and add the stable feed:
+For GL.iNet firmware using APK, trust the project's public key once. LuCI can manage the feed after this bootstrap, but it cannot import third-party APK signing keys.
 
 ```sh
 cd /tmp
-wget -O gl-modem-community-2026.pem \
-  https://github.com/rudironsoni/gl-modem-community/releases/latest/download/gl-modem-community-2026.pem
-wget -O gl-modem-community-2026.pem.sha256 \
-  https://github.com/rudironsoni/gl-modem-community/releases/latest/download/gl-modem-community-2026.pem.sha256
-sha256sum -c gl-modem-community-2026.pem.sha256
-cp gl-modem-community-2026.pem /etc/apk/keys/
-chmod 0644 /etc/apk/keys/gl-modem-community-2026.pem
+wget -O gl-modem-community.pem \
+  https://github.com/rudironsoni/gl-modem-community/releases/latest/download/gl-modem-community.pem
+wget -O gl-modem-community.pem.sha256 \
+  https://github.com/rudironsoni/gl-modem-community/releases/latest/download/gl-modem-community.pem.sha256
+sha256sum -c gl-modem-community.pem.sha256
+cp gl-modem-community.pem /etc/apk/keys/
+chmod 0644 /etc/apk/keys/gl-modem-community.pem
 
+```
+
+### Install from the feed with LuCI
+
+After the public key is installed, LuCI is the normal installation path:
+
+1. Open the GL.iNet admin panel, then go to **Advanced Settings** to enter LuCI.
+2. Go to **System → Software**.
+3. Click **Configure apk**.
+4. Add this line to `/etc/apk/repositories.d/customfeeds.list`:
+
+   ```text
+   https://github.com/rudironsoni/gl-modem-community/releases/latest/download/packages.adb
+   ```
+
+5. Save the configuration, then click **Update lists…**.
+6. Search for `gl-modem-community` and click **Install**.
+7. Go to **System → Startup**, enable and restart `gl_modem_community`, then restart `gl_cellular_manager`.
+
+LuCI's package manager reads and writes `customfeeds.list` and exposes the **Configure apk**, **Update lists…**, and **Install** actions. If the configuration button says **Configure opkg**, the firmware cannot consume this APK feed; use the OPKG package below instead.
+
+To register and install from the same feed without LuCI:
+
+```sh
 feed='https://github.com/rudironsoni/gl-modem-community/releases/latest/download/packages.adb'
+mkdir -p /etc/apk/repositories.d
+touch /etc/apk/repositories.d/customfeeds.list
 grep -Fqx "$feed" /etc/apk/repositories.d/customfeeds.list || \
   printf '%s\n' "$feed" >> /etc/apk/repositories.d/customfeeds.list
 apk update
