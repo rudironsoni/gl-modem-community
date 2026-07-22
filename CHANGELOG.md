@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.12](https://github.com/rudironsoni/gl-modem-community/compare/v0.1.11...v0.1.12) (2026-07-22)
+
+
+### Bug Fixes
+
+* **release:** stabilize LuCI APK feed ([344d19a](https://github.com/rudironsoni/gl-modem-community/commit/344d19ac0c5f921fd15ad9614317c8da9dcc9f43))
+
 ## [0.1.11](https://github.com/rudironsoni/gl-modem-community/compare/v0.1.10...v0.1.11) (2026-07-21)
 
 
