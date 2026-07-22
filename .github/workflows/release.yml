@@ -180,7 +180,7 @@ jobs:
             /repo/scripts/sign-apk-release.sh \
               /repo/tool-cache/sdk-25.12.5-mediatek-filogic \
               /signing/private-key.pem \
-              /repo/keys/gl-modem-community-2026.pem \
+              /repo/keys/gl-modem-community.pem \
               "/repo/$apk" \
               /repo/release-assets/packages.adb \
               /repo/release-assets/apk-metadata.json
@@ -199,8 +199,8 @@ jobs:
             cyclonedx validate --input-file /repo/release-assets/gl-modem-community.ipk.cdx.json
           rm release-assets/apk-metadata.json
 
-          cp keys/gl-modem-community-2026.pem release-assets/
-          cp keys/gl-modem-community-2026.pem.sha256 release-assets/
+          cp keys/gl-modem-community.pem release-assets/
+          cp keys/gl-modem-community.pem.sha256 release-assets/
           (
             cd release-assets
             sha256sum -- * | sort -k2 > SHA256SUMS
