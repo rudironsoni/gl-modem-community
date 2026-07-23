@@ -14,15 +14,15 @@ define Package/gl-modem-community
   SECTION:=net
   CATEGORY:=Network
   SUBMENU:=WWAN
-  TITLE:=Community modem drivers for the stock GL.iNet UI
+  TITLE:=Community modem drivers for GL.iNet firmware
   # Runtime-only dependencies. EXTRA_DEPENDS keeps this architecture-independent
   # package from rebuilding the SDK's complete kernel package set.
   EXTRA_DEPENDS:=comgt (>=0), jq (>=0), kmod-usb-acm (>=0), kmod-usb-serial-option (>=0), kmod-usb-net-rndis (>=0)
 endef
 
 define Package/gl-modem-community/description
-Adds community modem definitions and netifd drivers while preserving the stock
-GL.iNet JSON-RPC, ubus, web UI, mobile app, and vendor-modem fallback paths.
+Adds community modem definitions and netifd drivers while preserving GL.iNet's
+stock JSON-RPC, ubus, web UI, mobile app, and vendor-modem fallback paths.
 endef
 
 define Package/gl-modem-community/conffiles
