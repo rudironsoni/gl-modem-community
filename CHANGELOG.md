@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.1.13](https://github.com/rudironsoni/gl-modem-community/compare/v0.1.12...v0.1.13) (2026-07-23)
+
+
+### Bug Fixes
+
+* make runtime lifecycle reversible ([9c3f228](https://github.com/rudironsoni/gl-modem-community/commit/9c3f2285045f53b65416dd0c0b8fb29157fc0f96))
+* make runtime lifecycle reversible ([a4d3ce7](https://github.com/rudironsoni/gl-modem-community/commit/a4d3ce74804dcd2593aa4336f98e5da2213ae25c))
+
+
+### Documentation
+
+* clarify firmware compatibility status ([2dd9eb1](https://github.com/rudironsoni/gl-modem-community/commit/2dd9eb1b3bd10cc7a7b0740522179d1722cd5da5))
+* clarify firmware compatibility status ([0961b63](https://github.com/rudironsoni/gl-modem-community/commit/0961b639c653d6df18c08b71070d03fe7091f9ac))
+
 ## [0.1.12](https://github.com/rudironsoni/gl-modem-community/compare/v0.1.11...v0.1.12) (2026-07-22)
 
 
