@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.2.0](https://github.com/rudironsoni/gl-modem-community/compare/v0.1.13...v0.2.0) (2026-07-23)
+
+
+### Features
+
+* support all GL-MT3000 firmware channels ([2da6b00](https://github.com/rudironsoni/gl-modem-community/commit/2da6b0030df616a8accf06ea0d35f41cd279819e))
+* support all GL-MT3000 firmware channels ([4342515](https://github.com/rudironsoni/gl-modem-community/commit/43425152f9bd94adead0217209458f0b236b1d95))
+
+
+### Documentation
+
+* refresh firmware compatibility evidence ([0276a0f](https://github.com/rudironsoni/gl-modem-community/commit/0276a0fc4575bbfac49a769b6e5260e3721020d3))
+* refresh firmware compatibility evidence ([3b658f9](https://github.com/rudironsoni/gl-modem-community/commit/3b658f9e2f4afc38293f9addd64cc8ba48ce1a91))
+
 ## [0.1.13](https://github.com/rudironsoni/gl-modem-community/compare/v0.1.12...v0.1.13) (2026-07-23)
 
 
