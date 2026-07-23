@@ -23,9 +23,7 @@ flowchart LR
 
 - `gl_modem_community` starts at priority 22, before the stock `gl_cellular_manager` service at priority 23.
 - `merge-models` validates the stock and extension JSON with `jq`, deduplicates entries by `bus_type:vid:pid`, and writes `/var/run/gl-modem-community/modem_list.json` atomically.
-- The service validates the merged model table before mounting it. If the second runtime mount fails, it rolls back the first mount before returning an error.
-- The service bind-mounts the generated model table over `/lib/modem_data/modem_list.json`. Stopping or removing the service unmounts it and exposes the original SquashFS file.
-- The FM350 network repair records both the original value and the value applied by the package for every managed UCI option. Stop and uninstall restore an option only when it still contains the package-applied value.
+- The service bind-mounts the generated file over `/lib/modem_data/modem_list.json`. Stopping or removing the service unmounts it and exposes the original SquashFS file.
 - The service copies the stock `/usr/bin/modem_AT` binary into tmpfs and bind-mounts a shell dispatcher over the original path. Non-FM350 calls execute the copied stock binary without modification.
 - FM350 calls preload a write filter that changes only the exact serial command `AT+CFUN=0` to the same-length command `AT+CFUN=4`.
 - `fm350.json` adds USB IDs `0e8d:7126` and `0e8d:7127` with `function_at_common` and protocol `xmm`. Product `7126` maps USB interface `04` to `ttyUSB` AT offset `2`; product `7127` maps interface `06` to offset `3`.
@@ -41,8 +39,6 @@ flowchart LR
 - Non-FM350 AT calls execute the stock binary.
 - GCOM failures propagate to netifd.
 - Per-interface state remains under `/var/run`.
-- Partial activation rolls back either runtime mount before returning an error.
-- Removal restores plugin-owned UCI state, unmounts both runtime overlays, deletes the package files, and leaves the original firmware unchanged.
 - The copied `modem_AT` binary exists only in tmpfs while the service is active. It is never stored in the package or repository.
 
 ## Security boundary
@@ -63,7 +59,7 @@ Version `0.1.1` adopted the product-specific interface mapping from modemfeed. D
 
 ## Build evidence
 
-The root `Makefile` builds the APK with the pinned OpenWrt 25.12.5 MediaTek Filogic SDK, the openwrt24 IPK with the exact OpenWrt 24.10.4 Filogic SDK, and the stable/beta userspace IPK with the OpenWrt 21.02.7 MediaTek ABI surrogate. CI verifies the current package version and all three artifact names on every pull request.
+The repository builds the APK with the pinned OpenWrt 25.12.5 MediaTek Filogic SDK and the IPK with the pinned OpenWrt 24.10.7 MediaTek Filogic SDK. CI verifies the current package version and artifact names on every pull request.
 
 The files under `analysis/reports/` record individual local analysis runs. They are snapshots, not statements about the latest release.
 
