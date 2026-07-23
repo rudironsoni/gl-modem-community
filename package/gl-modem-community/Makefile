@@ -29,6 +29,26 @@ define Package/gl-modem-community/conffiles
 /etc/config/gl_modem_community
 endef
 
+define Package/gl-modem-community/postinst
+#!/bin/sh
+[ -n "$${IPKG_INSTROOT:-}" ] && exit 0
+initd_root=$${GL_MODEM_COMMUNITY_INITD_ROOT:-/etc/init.d}
+"$$initd_root/gl_modem_community" enable
+"$$initd_root/gl_modem_community" restart
+[ ! -x "$$initd_root/gl_cellular_manager" ] || \
+	"$$initd_root/gl_cellular_manager" restart
+endef
+
+define Package/gl-modem-community/prerm
+#!/bin/sh
+[ -n "$${IPKG_INSTROOT:-}" ] && exit 0
+initd_root=$${GL_MODEM_COMMUNITY_INITD_ROOT:-/etc/init.d}
+"$$initd_root/gl_modem_community" stop
+"$$initd_root/gl_modem_community" disable
+[ ! -x "$$initd_root/gl_cellular_manager" ] || \
+	"$$initd_root/gl_cellular_manager" restart
+endef
+
 define Build/Compile
 	$(TARGET_CC) $(TARGET_CFLAGS) -fPIC -shared \
 		-o $(PKG_BUILD_DIR)/fm350-at-compat.so \

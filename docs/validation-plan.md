@@ -20,7 +20,7 @@ Do not run this plan as part of offline analysis. Every modification is reversib
 
 ## Stage 3: reversible package tests
 
-Install the locally built APK or IPK appropriate for the firmware package manager, verify its checksum, enable `gl_modem_community`, reboot, and confirm:
+Install the locally built APK or IPK appropriate for the firmware package manager, verify its checksum, confirm the package hook activated `gl_modem_community`, reboot, and confirm:
 
 - original SquashFS model table is unchanged when the service is stopped;
 - runtime merged table contains the stock 16 entries plus both FM350 IDs;
@@ -42,14 +42,11 @@ Success requires basic identity, SIM state, registration, APN connect/disconnect
 
 Use the current signed APK and install the public key as documented in the README.
 
-Install and restart both layers so an already-running stock `modem_AT` process cannot survive the bind-mount change:
+Install the package. Its lifecycle hook enables and restarts `gl_modem_community`, then restarts the stock cellular manager so an already-running stock `modem_AT` process cannot survive the bind-mount change:
 
 ```sh
 sha256sum /tmp/gl-modem-community-VERSION-r1.apk
 apk add /tmp/gl-modem-community-VERSION-r1.apk
-/etc/init.d/gl_modem_community enable
-/etc/init.d/gl_modem_community restart
-/etc/init.d/gl_cellular_manager restart
 ```
 
 For an OpenWrt 24.10-based GL.iNet image using OPKG, substitute:
@@ -57,9 +54,6 @@ For an OpenWrt 24.10-based GL.iNet image using OPKG, substitute:
 ```sh
 sha256sum /tmp/gl-modem-community_VERSION-r1_aarch64_cortex-a53.ipk
 opkg install /tmp/gl-modem-community_VERSION-r1_aarch64_cortex-a53.ipk
-/etc/init.d/gl_modem_community enable
-/etc/init.d/gl_modem_community restart
-/etc/init.d/gl_cellular_manager restart
 ```
 
 [UNVERIFIED] These commands require an image that provides the stock GL.iNet cellular services and package dependencies; vanilla OpenWrt does not provide the proprietary backend this extension wraps.
@@ -77,11 +71,11 @@ Pass for the primary hypothesis requires `FM350 modem_AT compatibility active bu
 
 If `common_get_pdp: cid ... not found` continues, capture raw `AT+CGDCONT?` through the stock authenticated AT method before changing anything else. If PDP activation succeeds but netifd fails, the remaining defect is the `xmm` handoff, not SIM detection or APN parsing.
 
-Revert with:
+Revert with the package manager. The removal hook restores plugin-owned UCI values and both stock bind-mount targets before restarting the stock cellular manager:
 
 ```sh
-/etc/init.d/gl_modem_community stop
 apk del gl-modem-community
-/etc/init.d/gl_cellular_manager restart
 mount | grep -E '(/usr/bin/modem_AT|/lib/modem_data/modem_list.json)' || true
 ```
+
+Use `tests/hardware/client-connectivity-monitor.sh` and `tests/hardware/router-sampler.sh` for synchronized evidence, then evaluate the selected expectation with `tests/hardware/analyze-run.sh`. Store local captures under the ignored `tests/hardware/results/` directory and redact them before attaching a compatibility report.

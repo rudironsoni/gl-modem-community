@@ -1,0 +1,97 @@
+name: Modem compatibility report
+description: Report reproducible GL.iNet router and community modem test results
+labels: [compatibility]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Report only behavior observed on hardware. Redact SIM identifiers, credentials, public addresses, and private network details before attaching evidence.
+
+  - type: input
+    id: router-model
+    attributes:
+      label: Router model
+      description: Exact GL.iNet model, for example GL-MT3000.
+    validations:
+      required: true
+
+  - type: input
+    id: firmware-version
+    attributes:
+      label: GL.iNet firmware version
+      description: Include the underlying OpenWrt version when available.
+    validations:
+      required: true
+
+  - type: dropdown
+    id: package-manager
+    attributes:
+      label: Package manager
+      options:
+        - apk
+        - opkg
+    validations:
+      required: true
+
+  - type: input
+    id: package-version
+    attributes:
+      label: gl-modem-community version
+      placeholder: 0.1.12-r1
+    validations:
+      required: true
+
+  - type: input
+    id: modem-model
+    attributes:
+      label: Modem model
+      placeholder: Fibocom FM350-GL
+    validations:
+      required: true
+
+  - type: input
+    id: modem-firmware
+    attributes:
+      label: Modem firmware
+      description: Redact serial numbers and subscriber identifiers.
+
+  - type: input
+    id: usb-ids
+    attributes:
+      label: USB IDs
+      description: Literal VID:PID values, for example 0e8d:7127.
+    validations:
+      required: true
+
+  - type: textarea
+    id: usb-composition
+    attributes:
+      label: USB composition and ports
+      description: Include USB interface numbers, tty mapping, and selected AT offset.
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: tests
+    attributes:
+      label: Behaviors verified
+      options:
+        - label: Package installation and service activation
+        - label: Package stop and removal restore stock behavior
+        - label: Stock-supported modem fallback remains functional
+        - label: Modem detection and USB re-enumeration
+        - label: SIM state and registration
+        - label: APN and PDP activation
+        - label: Interface address, default route, and DNS
+        - label: Disconnect and reconnect
+        - label: Stock RPC, web UI, and mobile app behavior
+        - label: Package upgrade or reinstall
+        - label: Router reboot recovery
+
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Redacted evidence
+      description: Attach the hardware harness summary and relevant redacted logs. Mark partial checks explicitly.
+    validations:
+      required: true

@@ -24,6 +24,8 @@ Component contract:
 - `gl_modem_community` starts at priority 22, before stock `gl_cellular_manager` at 23.
 - `merge-models` validates stock and extension JSON with `jq`, deduplicates by `bus_type:vid:pid`, and writes `/var/run/gl-modem-community/modem_list.json` atomically.
 - The service bind-mounts the runtime file over `/lib/modem_data/modem_list.json`. Stop/uninstall unmounts it, restoring the immutable SquashFS file.
+- Activation validates the merged model table before either bind mount. If the second mount fails, the first mount is rolled back.
+- FM350 network repair records the original value and plugin-applied value for every managed UCI option. Stop/uninstall restores only values still owned by the plugin and preserves later user or stock changes.
 - The service also copies stock `/usr/bin/modem_AT` into tmpfs and bind-mounts a shell dispatcher over its original path. Non-FM350 invocations execute the stock binary unchanged. FM350 invocations preload a clean-room write filter that changes only the exact serial command `AT+CFUN=0` to same-length `AT+CFUN=4`.
 - `fm350.json` adds `0e8d:7126` and `0e8d:7127`, `function_at_common`, protocol `xmm`, and no unsupported advanced capability flags. Product `7126` maps USB interface `04` to `ttyUSB` AT offset `2`; product `7127` maps USB interface `06` to `ttyUSB` AT offset `3`.
 - `/lib/netifd/proto/xmm.sh` implements discovery and connection using `comgt`. Its UCI inputs are `device`, `apn`, `pdp`, `delay`, `pincode`, `username`, `password`, `auth`, `profile`, `maxfail`, and explicit address/interface overrides.
@@ -38,7 +40,8 @@ Failure and fallback:
 - Non-FM350 devices always fall through.
 - No logging of AT commands or identifiers occurs by default.
 - Per-interface netifd state and service serialization provide concurrency boundaries; hardware tests must verify simultaneous polling and reconnect.
-- Removal stops the service, unmounts the runtime table, deletes package files, and leaves the original firmware unchanged.
+- Package hooks enable and restart the service on installation, stop and disable it on removal, and restart the stock cellular manager after either transition.
+- Removal restores plugin-owned UCI state, unmounts both runtime overlays, deletes package files, and leaves the original firmware unchanged.
 - The proprietary `modem_AT` copy exists only under `/var/run` while the service is active and is never stored in the package or repository.
 
 Security: RPC authentication remains in GL.iNet's existing dispatcher. The proxy does not create a new listener, bypass a session, or permit arbitrary commands beyond the stock `send_at_command` surface. Shell inputs are quoted and GCOM failures are propagated.

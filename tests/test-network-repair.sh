@@ -2,119 +2,52 @@
 set -eu
 
 unset CDPATH
+
 repo_dir=$(cd -- "$(dirname -- "$0")/.." && pwd)
 tmp=$(mktemp -d "${TMPDIR:-/tmp}/gl-modem-network-repair.XXXXXX")
 watch_pid=
+
 cleanup() {
 	[ -z "$watch_pid" ] || kill "$watch_pid" 2>/dev/null || true
 	rm -rf "$tmp"
 }
 trap cleanup EXIT HUP INT TERM
 
-mkdir -p "$tmp/sys/2-1" "$tmp/bin"
+mkdir -p "$tmp/sys/2-1" "$tmp/bin" "$tmp/uci-store"
 printf '%s\n' 0e8d >"$tmp/sys/2-1/idVendor"
 printf '%s\n' 7127 >"$tmp/sys/2-1/idProduct"
-printf '%s\n' absent >"$tmp/section-state"
-printf '%s\n' none >"$tmp/proto-state"
-: >"$tmp/bus-state"
-: >"$tmp/profile-state"
-: >"$tmp/pdp-state"
+: >"$tmp/uci.log"
+: >"$tmp/ubus.log"
 
-cat >"$tmp/bin/uci" <<'EOF'
-#!/bin/sh
-set -eu
-log=${UCI_TEST_LOG:?}
-section_state=${UCI_SECTION_STATE:?}
-proto_state=${UCI_PROTO_STATE:?}
-bus_state=${UCI_BUS_STATE:?}
-profile_state=${UCI_PROFILE_STATE:?}
-pdp_state=${UCI_PDP_STATE:?}
-
-case "$*" in
-	'-q get network.modem_2_1_s1')
-		[ "$(cat "$section_state")" = present ]
-		;;
-	'-q get network.modem_2_1_s1.proto')
-		cat "$proto_state"
-		;;
-	'-q get network.modem_2_1_s1.ip_type')
-		printf '%s\n' IP
-		;;
-	'-q get network.modem_2_1_s1.bus')
-		[ -s "$bus_state" ] && cat "$bus_state"
-		;;
-	'-q get network.modem_2_1_s1.profile')
-		[ -s "$profile_state" ] && cat "$profile_state"
-		;;
-	'-q get network.modem_2_1_s1.pdp')
-		[ -s "$pdp_state" ] && cat "$pdp_state"
-		;;
-	'set network.modem_2_1_s1=interface')
-		printf '%s\n' present >"$section_state"
-		printf '%s\n' "$*" >>"$log"
-		;;
-	'set network.modem_2_1_s1.apn_use=5'|\
-	'set network.modem_2_1_s1.apn=orangeworld'|\
-	'set network.modem_2_1_s1.ip_type=IP')
-		printf '%s\n' "$*" >>"$log"
-		;;
-	'set network.modem_2_1_s1.proto=xmm')
-		printf '%s\n' xmm >"$proto_state"
-		printf '%s\n' "$*" >>"$log"
-		;;
-	'set network.modem_2_1_s1.bus=2-1')
-		printf '%s\n' 2-1 >"$bus_state"
-		printf '%s\n' "$*" >>"$log"
-		;;
-	'set network.modem_2_1_s1.profile=5')
-		printf '%s\n' 5 >"$profile_state"
-		printf '%s\n' "$*" >>"$log"
-		;;
-	'set network.modem_2_1_s1.pdp=IP')
-		printf '%s\n' IP >"$pdp_state"
-		printf '%s\n' "$*" >>"$log"
-		;;
-	set*|commit*)
-		printf '%s\n' "$*" >>"$log"
-		;;
-	*)
-		exit 1
-		;;
-esac
-EOF
-
+cp "$repo_dir/tests/lib/mock-uci.sh" "$tmp/bin/uci"
 cat >"$tmp/bin/ubus" <<'EOF'
 #!/bin/sh
-set -eu
 printf '%s\n' "$*" >>"${UBUS_TEST_LOG:?}"
 EOF
-
 cat >"$tmp/bin/logger" <<'EOF'
 #!/bin/sh
 exit 0
 EOF
-
 cat >"$tmp/bin/gl_modem" <<'EOF'
 #!/bin/sh
 set -eu
 [ "$*" = "-B 2-1 -U 1 AT AT+CGDCONT?" ]
 printf '%s\n' '+CGDCONT: 5,"IP","orangeworld","0.0.0.0",0,0' 'OK'
 EOF
+chmod +x "$tmp/bin/"*
 
-chmod +x "$tmp/bin/uci" "$tmp/bin/ubus" "$tmp/bin/logger" "$tmp/bin/gl_modem"
 export USB_DEVICES_ROOT="$tmp/sys"
 export UCI_BIN="$tmp/bin/uci"
 export UBUS_BIN="$tmp/bin/ubus"
 export LOGGER_BIN="$tmp/bin/logger"
 export GL_MODEM_BIN="$tmp/bin/gl_modem"
+export FLOCK_BIN=true
+export NETWORK_STATE_CONFIG=gl_modem_community
+export REPAIR_LOCK="$tmp/repair.lock"
+export REPAIR_INTERVAL=0.05
+export UCI_TEST_STORE="$tmp/uci-store"
 export UCI_TEST_LOG="$tmp/uci.log"
 export UBUS_TEST_LOG="$tmp/ubus.log"
-export UCI_SECTION_STATE="$tmp/section-state"
-export UCI_PROTO_STATE="$tmp/proto-state"
-export UCI_BUS_STATE="$tmp/bus-state"
-export UCI_PROFILE_STATE="$tmp/profile-state"
-export UCI_PDP_STATE="$tmp/pdp-state"
-export REPAIR_INTERVAL=0.05
 
 "$repo_dir/package/gl-modem-community/files/usr/libexec/gl-modem-community/fm350-network-repair" --watch &
 watch_pid=$!
@@ -125,14 +58,23 @@ while [ "$attempt" -lt 40 ]; do
 	attempt=$((attempt + 1))
 	sleep 0.05
 done
+sleep 0.15
+kill "$watch_pid" 2>/dev/null || true
+wait "$watch_pid" 2>/dev/null || true
+watch_pid=
 
-grep -Fx 'set network.modem_2_1_s1=interface' "$tmp/uci.log" >/dev/null
-grep -Fx 'set network.modem_2_1_s1.apn_use=5' "$tmp/uci.log" >/dev/null
-grep -Fx 'set network.modem_2_1_s1.apn=orangeworld' "$tmp/uci.log" >/dev/null
-grep -Fx 'set network.modem_2_1_s1.ip_type=IP' "$tmp/uci.log" >/dev/null
-grep -Fx 'set network.modem_2_1_s1.proto=xmm' "$tmp/uci.log" >/dev/null
-grep -Fx 'set network.modem_2_1_s1.bus=2-1' "$tmp/uci.log" >/dev/null
-grep -Fx 'set network.modem_2_1_s1.profile=5' "$tmp/uci.log" >/dev/null
-grep -Fx 'set network.modem_2_1_s1.pdp=IP' "$tmp/uci.log" >/dev/null
-[ "$(grep -Fxc 'commit network' "$tmp/uci.log")" -eq 1 ]
-[ "$(grep -Fxc 'call network reload' "$tmp/ubus.log")" -eq 1 ]
+uci_get() {
+	"$tmp/bin/uci" -q get "$1"
+}
+
+test "$(uci_get network.modem_2_1_s1)" = interface
+test "$(uci_get network.modem_2_1_s1.apn_use)" = 5
+test "$(uci_get network.modem_2_1_s1.apn)" = orangeworld
+test "$(uci_get network.modem_2_1_s1.ip_type)" = IP
+test "$(uci_get network.modem_2_1_s1.proto)" = xmm
+test "$(uci_get network.modem_2_1_s1.bus)" = 2-1
+test "$(uci_get network.modem_2_1_s1.profile)" = 5
+test "$(uci_get network.modem_2_1_s1.pdp)" = IP
+test "$(grep -Fxc 'commit gl_modem_community' "$tmp/uci.log")" -eq 1
+test "$(grep -Fxc 'commit network' "$tmp/uci.log")" -eq 1
+test "$(grep -Fxc 'call network reload' "$tmp/ubus.log")" -eq 1

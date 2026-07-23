@@ -23,8 +23,12 @@ shellcheck -S warning -e SC1091,SC2034,SC3043 /repo/scripts/*.sh /repo/tests/*.s
 '
 
 "$REPO_DIR/tests/test-fm350-at-compat.sh"
+"$REPO_DIR/tests/test-hardware-evidence.sh"
 "$REPO_DIR/tests/test-xmm-proto.sh"
 "$REPO_DIR/tests/test-network-repair.sh"
+"$REPO_DIR/tests/test-network-ownership.sh"
+"$REPO_DIR/tests/test-package-lifecycle.sh"
+"$REPO_DIR/tests/test-service-lifecycle.sh"
 "$REPO_DIR/tests/test-release-config.sh"
 
 tmp=$(mktemp -d "${TMPDIR:-/tmp}/gl-modem-community-test.XXXXXX")
