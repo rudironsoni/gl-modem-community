@@ -151,10 +151,9 @@ grep -Fqx "$feed" /etc/apk/repositories.d/customfeeds.list || \
   printf '%s\n' "$feed" >> /etc/apk/repositories.d/customfeeds.list
 apk update
 apk add gl-modem-community
-/etc/init.d/gl_modem_community enable
-/etc/init.d/gl_modem_community restart
-/etc/init.d/gl_cellular_manager restart
 ```
+
+Installation enables and starts `gl_modem_community`, then restarts the stock cellular manager so the runtime overlays take effect immediately.
 
 The release APK carries the same signature, so a direct local install also verifies normally after the key is installed:
 
@@ -166,9 +165,6 @@ For GL.iNet firmware using OPKG:
 
 ```sh
 opkg install /tmp/gl-modem-community_VERSION-r1_aarch64_cortex-a53.ipk
-/etc/init.d/gl_modem_community enable
-/etc/init.d/gl_modem_community restart
-/etc/init.d/gl_cellular_manager restart
 ```
 
 The OPKG package targets OpenWrt 24.10 on `aarch64_cortex-a53`, but it still requires GL.iNet's proprietary cellular services. Its runtime behavior has not been verified on hardware.
@@ -198,18 +194,16 @@ A detected SIM does not prove that the data session is working. Confirm that the
 For APK:
 
 ```sh
-/etc/init.d/gl_modem_community stop
 apk del gl-modem-community
-/etc/init.d/gl_cellular_manager restart
 ```
 
 For OPKG:
 
 ```sh
-/etc/init.d/gl_modem_community stop
 opkg remove gl-modem-community
-/etc/init.d/gl_cellular_manager restart
 ```
+
+Removal stops and disables `gl_modem_community`, restores plugin-owned network values and stock bind-mount targets, then restarts the stock cellular manager. Values changed by the user or stock software after the plugin applied them are preserved.
 
 ## Build and research
 

@@ -5,6 +5,7 @@
 /analysis/raw/
 /analysis/frontend/original/
 /analysis/frontend/beautified/
+/tests/hardware/results/
 *.bin
 *.elf
 *.so
