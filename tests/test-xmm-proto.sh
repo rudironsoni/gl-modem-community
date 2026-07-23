@@ -38,11 +38,27 @@ chmod +x "$tmp/gl_modem"
 
 . "$tmp/run-stock-at.sh"
 GL_MODEM_BIN="$tmp/gl_modem"
+LEGACY_AT_BIN="$tmp/legacy-at"
+RUNTIME_STACK_FILE="$tmp/stack"
 GL_MODEM_TEST_LOG="$tmp/gl-modem.log"
 export GL_MODEM_TEST_LOG
 output=$(run_stock_at 2-1 address 'AT+CGPADDR=5')
 [ "$(cat "$tmp/gl-modem.log")" = '-B 2-1 -U 1 AT AT+CGPADDR=5' ]
 printf '%s\n' "$output" | grep -F '+CGPADDR: 5,"10.21.90.110",""' >/dev/null
+
+cat >"$tmp/legacy-at" <<'EOF'
+#!/bin/sh
+set -eu
+printf '%s\n' "$*" >"${LEGACY_AT_TEST_LOG:?}"
+printf '%s\n' 'AT+CGPADDR=1' '+CGPADDR: 1,"10.21.90.111",""' 'OK'
+EOF
+chmod +x "$tmp/legacy-at"
+printf '%s\n' legacy >"$RUNTIME_STACK_FILE"
+LEGACY_AT_TEST_LOG="$tmp/legacy-at.log"
+export LEGACY_AT_TEST_LOG
+output=$(run_stock_at 2-1 address 'AT+CGPADDR=1')
+[ "$(cat "$tmp/legacy-at.log")" = '2-1 AT+CGPADDR=1' ]
+printf '%s\n' "$output" | grep -F '+CGPADDR: 1,"10.21.90.111",""' >/dev/null
 
 teardown=$(sed -n '/^proto_xmm_teardown()/,/^}/p' "$handler")
 if printf '%s\n' "$teardown" | grep -q 'proto_send_update'; then

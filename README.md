@@ -24,14 +24,16 @@ A package build proves that the pinned SDK produced an artifact. It does not pro
 
 | Firmware scope | Package format | Build status | Hardware status |
 | --- | --- | --- | --- |
-| GL.iNet OpenWrt 25 on GL-MT3000 | APK | Builds with the pinned OpenWrt 25.12.5 MediaTek Filogic SDK | FM350-GL partially tested |
-| GL.iNet OEM or OpenWrt 24 on GL-MT3000 | IPK | Builds with the pinned OpenWrt 24.10.7 MediaTek Filogic SDK | Not tested |
+| GL.iNet stable 4.8.1 on GL-MT3000 | IPK | Builds with an OpenWrt 21.02.7 userspace ABI surrogate | Not tested |
+| GL.iNet beta 4.9.0 beta6 on GL-MT3000 | IPK | Builds with an OpenWrt 21.02.7 userspace ABI surrogate | Not tested |
+| GL.iNet openwrt24 4.9.0 op24 beta1 on GL-MT3000 | IPK | Builds with the exact OpenWrt 24.10.4 MediaTek Filogic SDK | Not tested |
+| GL.iNet openwrt25 4.9.1 op25 beta3 on GL-MT3000 | APK | Builds with the exact OpenWrt 25.12.5 MediaTek Filogic SDK | FM350-GL partially tested |
 | Other GL.iNet routers | Target-specific package required | Not built | Not tested |
 | Vanilla OpenWrt | Not applicable | GL.iNet cellular services are absent | Unsupported |
 
 The OpenWrt 25 hardware work has confirmed FM350-GL USB detection, `ttyUSB` enumeration in observed RNDIS compositions, product-specific AT offsets, SIM identity reads through the stock common driver, and modem visibility in the GL.iNet web UI and mobile app.
 
-PDP activation, sustained data connectivity, interface addressing, routes, DNS, USB re-enumeration, and GL.iNet OEM/OpenWrt 24 behavior still need hardware validation. Follow the [hardware validation plan](docs/validation-plan.md) before treating a data session as verified.
+PDP activation, sustained data connectivity, interface addressing, routes, DNS, USB re-enumeration, and stable/beta/openwrt24 behavior still need hardware validation. See the [firmware channel matrix](docs/firmware-channel-matrix.md) and [hardware validation plan](docs/validation-plan.md) before treating a data session as verified.
 
 ## Hardware evidence
 
@@ -104,23 +106,44 @@ apk add /tmp/gl-modem-community-VERSION-r1.apk
 
 ### IPK firmware
 
-> [!CAUTION]
-> The IPK builds with the OpenWrt 24.10 SDK, but it has not been tested on GL.iNet OEM or OpenWrt 24 firmware.
+Stable and beta use the GL.iNet 21.02 userspace package:
+
+```sh
+opkg install /tmp/gl-modem-community_VERSION-1_glinet-21.02_aarch64_cortex-a53.ipk
+```
+
+The openwrt24 channel uses the exact 24.10.4 package:
 
 ```sh
 opkg install /tmp/gl-modem-community_VERSION-r1_aarch64_cortex-a53.ipk
 ```
 
-The IPK still requires GL.iNet's `cellular_manager`, `modem_AT`, model-table, and RPC stack.
+The package selects GL.iNet's legacy or modern cellular adapter from runtime
+capabilities. Stable does not require `gl_cellular_manager` or the modern model
+table.
 
 ## Verify an FM350-GL setup
 
-First confirm that the runtime model table and FM350 compatibility wrapper are mounted:
+First confirm which GL.iNet cellular stack the package selected:
+
+```sh
+cat /var/run/gl-modem-community/stack
+```
+
+On `modern`, confirm the runtime model table and FM350 compatibility wrapper
+are mounted:
 
 ```sh
 mount | grep -E '(/usr/bin/modem_AT|/lib/modem_data/modem_list.json)'
 jq -e '.modems[] | select(.vid == "0e8d" and (.pid == "7126" or .pid == "7127"))' \
   /lib/modem_data/modem_list.json
+```
+
+On `legacy`, confirm the package registered the FM350 USB bus with the stock
+modem service:
+
+```sh
+cat /var/run/modem/extern_modem_bus
 ```
 
 Attach the modem and inspect the stock service path:
@@ -147,7 +170,10 @@ For IPK firmware:
 opkg remove gl-modem-community
 ```
 
-Removal stops and disables `gl_modem_community`, removes its runtime mounts, restores package-owned network values when they still contain the package-applied value, and restarts the stock cellular manager. Values later changed by the user or stock firmware are preserved.
+Removal stops and disables `gl_modem_community`, removes package-owned runtime
+state, restores package-owned network values that still contain the
+package-applied value, and restarts the detected stock cellular service. Values
+later changed by the user or stock firmware are preserved.
 
 ## How it works
 
@@ -165,13 +191,16 @@ The FM350 implementation keeps its AT compatibility and network-repair behavior 
 
 ## Build and extend
 
-Docker is required. The repository scripts use checksum-pinned SDKs and keep generated build artifacts out of Git.
+Docker and GNU Make 3.82 or newer are required. On macOS, use Homebrew
+`gmake` because `/usr/bin/make` is GNU Make 3.81. The root `Makefile` uses
+checksum-pinned SDKs and keeps generated build artifacts out of Git.
 
 ```sh
 make tools
 make test
 make package
 make package-opkg
+make package-glinet21
 git diff --check
 ```
 
@@ -187,6 +216,6 @@ Read [CONTRIBUTING.md](CONTRIBUTING.md) for compatibility-claim rules and pull-r
 
 ## Releases
 
-Every pull request runs the offline test suite and builds both package formats. Releases publish a signed APK repository index, an IPK, CycloneDX SBOMs, the public key and checksum, checksums for release artifacts, and GitHub build-provenance attestations.
+Every pull request runs the offline test suite and builds the APK, openwrt24 IPK, and GL.iNet 21.02 IPK. Releases publish a signed APK repository index, both IPKs, one CycloneDX SBOM per package, the public key and checksum, checksums for release artifacts, and GitHub build-provenance attestations.
 
 [Release Please](https://github.com/googleapis/release-please) manages versions from Conventional Commits after the required build and signing work succeeds.

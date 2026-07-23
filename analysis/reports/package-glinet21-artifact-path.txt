@@ -1,0 +1,1 @@
+artifacts/gl-modem-community_0.1.13-1_glinet-21.02_aarch64_cortex-a53.ipk

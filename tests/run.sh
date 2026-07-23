@@ -8,13 +8,17 @@ PACKAGE="$REPO_DIR/package/gl-modem-community"
 
 docker run --rm --mount "type=bind,src=$REPO_DIR,dst=/repo" "$IMAGE" sh -c '
 set -eu
-find /repo/scripts /repo/tests /repo/package/gl-modem-community/files -type f -perm /111 -exec sh -n {} \;
+find /repo/tests /repo/package/gl-modem-community/files -type f -perm /111 -exec sh -n {} \;
 find /repo/package/gl-modem-community/files -type f -name "*.lua" -exec luac5.1 -p {} \;
-shellcheck -S warning -e SC1091,SC2034,SC3043 /repo/scripts/*.sh /repo/tests/*.sh \
+shellcheck -S warning -e SC1091,SC2034,SC3043 /repo/tests/*.sh \
 		/repo/package/gl-modem-community/files/etc/init.d/gl_modem_community \
 		/repo/package/gl-modem-community/files/usr/libexec/gl-modem-community/merge-models \
 		/repo/package/gl-modem-community/files/usr/libexec/gl-modem-community/modem_AT-wrapper \
 		/repo/package/gl-modem-community/files/usr/libexec/gl-modem-community/fm350-network-repair \
+		/repo/package/gl-modem-community/files/usr/libexec/gl-modem-community/runtime-stack \
+		/repo/package/gl-modem-community/files/usr/libexec/gl-modem-community/legacy-bus \
+		/repo/package/gl-modem-community/files/usr/libexec/gl-modem-community/fm350-at \
+		/repo/package/gl-modem-community/files/etc/hotplug.d/usb/99-gl-modem-community \
 		/repo/package/gl-modem-community/files/lib/netifd/proto/xmm.sh
     actionlint /repo/.github/workflows/*.yml
     jq -e ".modems | length == 2" /repo/package/gl-modem-community/files/usr/share/gl-modem-community/drivers.d/fm350.json >/dev/null
@@ -30,6 +34,10 @@ shellcheck -S warning -e SC1091,SC2034,SC3043 /repo/scripts/*.sh /repo/tests/*.s
 "$REPO_DIR/tests/test-package-lifecycle.sh"
 "$REPO_DIR/tests/test-service-lifecycle.sh"
 "$REPO_DIR/tests/test-release-config.sh"
+"$REPO_DIR/tests/test-firmware-channels.sh"
+"$REPO_DIR/tests/test-runtime-stack.sh"
+"$REPO_DIR/tests/test-legacy-bus.sh"
+"$REPO_DIR/tests/test-fm350-at.sh"
 
 tmp=$(mktemp -d "${TMPDIR:-/tmp}/gl-modem-community-test.XXXXXX")
 trap 'rm -rf "$tmp"' EXIT INT TERM

@@ -66,8 +66,13 @@ jobs:
             artifact_glob: artifacts/*.apk
           - kind: ipk
             target: package-opkg
-            sdk_archive: tool-cache/openwrt-sdk-24.10.7-mediatek-filogic_gcc-13.3.0_musl.Linux-x86_64.tar.zst
-            sdk_cache_key: openwrt-sdk-24.10.7-mediatek-filogic-8d8fd6dd96458f6f397b069e3212c6dc365c306b0be32c95c9497b52d80b13df
+            sdk_archive: tool-cache/openwrt-sdk-24.10.4-mediatek-filogic_gcc-13.3.0_musl.Linux-x86_64.tar.zst
+            sdk_cache_key: openwrt-sdk-24.10.4-mediatek-filogic-b9762b8e1c8e114b0e6a252b98e94e6e4a1d2496beb9f6044c26227a8d78dee0
+            artifact_glob: artifacts/*.ipk
+          - kind: ipk-glinet21
+            target: package-glinet21
+            sdk_archive: tool-cache/openwrt-sdk-21.02.7-mediatek-mt7622_gcc-8.4.0_musl.Linux-x86_64.tar.xz
+            sdk_cache_key: openwrt-sdk-21.02.7-mediatek-mt7622-723b08a90778779cbc20da03a36fa0e213b22dd63ce601803f0eae44f303681d
             artifact_glob: artifacts/*.ipk
     steps:
       - name: Check out repository
@@ -99,6 +104,11 @@ jobs:
               ;;
             ipk)
               asset="artifacts/gl-modem-community_${version}-r1_aarch64_cortex-a53.ipk"
+              test -s "$asset"
+              tar -tzf "$asset" >/dev/null
+              ;;
+            ipk-glinet21)
+              asset="artifacts/gl-modem-community_${version}-1_glinet-21.02_aarch64_cortex-a53.ipk"
               test -s "$asset"
               tar -tzf "$asset" >/dev/null
               ;;

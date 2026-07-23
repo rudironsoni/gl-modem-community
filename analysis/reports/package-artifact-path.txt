@@ -1,1 +1,1 @@
-tool-cache/sdk-25.12.5-mediatek-filogic/bin/packages/aarch64_cortex-a53/base/gl-modem-community-0.1.13-r1.apk
+artifacts/gl-modem-community-0.1.13-r1.apk

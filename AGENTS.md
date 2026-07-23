@@ -14,7 +14,7 @@ The package must remain additive. Preserve GL.iNet's stock JSON-RPC, ubus, web U
 - `package/gl-modem-community/files/usr/share/gl-modem-community/rpc-drivers/`: USB-ID-specific RPC handlers.
 - `package/gl-modem-community/files/usr/libexec/gl-modem-community/`: narrow compatibility helpers.
 - `package/gl-modem-community/src/`: compiled compatibility code.
-- `scripts/`: analysis, build, signing, and SBOM automation.
+- `Makefile`: the single entry point for analysis, builds, signing, SBOMs, and channel verification.
 - `tests/`: deterministic regression and release-contract tests.
 - `tools/`: pinned Docker build environments.
 - `keys/`: public APK signing material only.
@@ -25,16 +25,18 @@ Firmware images, extracted proprietary files, SDK caches, build work, private ke
 
 ## Build and Validation
 
-Docker is required. Use the repository-owned commands:
+Docker and GNU Make 3.82 or newer are required. On macOS, use `gmake`.
+Use the repository-owned commands:
 
 - `make tools`: build the pinned analysis container.
 - `make test`: run shell syntax checks, ShellCheck, Lua parsing, JSON assertions, signing checks, SBOM validation, and focused regressions.
 - `make package`: build the APK with the pinned OpenWrt 25.12.5 MediaTek Filogic SDK.
-- `make package-opkg`: build the IPK with the pinned OpenWrt 24.10.7 MediaTek Filogic SDK.
+- `make package-opkg`: build the IPK with the pinned OpenWrt 24.10.4 MediaTek Filogic SDK.
+- `make package-glinet21`: build the userspace-only IPK for current GL.iNet stable and beta firmware.
 - `make download verify extract inventory analyze report`: reproduce the firmware-analysis pipeline in order.
 - `git diff --check`: reject whitespace errors.
 
-Run `make test` for every change. Run both package builds when package contents, metadata, install behavior, signing, feeds, or release automation changes. Do not substitute unpinned SDKs or silently update firmware checksums.
+Run `make test` for every change. Run all three package builds when package contents, metadata, install behavior, signing, feeds, or release automation changes. Do not substitute unpinned SDKs or silently update firmware checksums.
 
 ## Coding and Extension Rules
 
@@ -76,4 +78,3 @@ Keep the repository clean-room. Never commit GL.iNet firmware, proprietary binar
 Use Conventional Commits and repository branch conventions. Keep each commit to one reviewed logical change. Before publishing, inspect the worktree, staged diff, remotes, current branch, and nested repositories; preserve unrelated user changes.
 
 Pull requests must explain the affected modem IDs and firmware scope, the user-visible behavior, the implementation boundary, exact validation commands, and any remaining hardware uncertainty. UI-visible changes should include screenshots when practical.
-

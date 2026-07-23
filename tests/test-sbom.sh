@@ -31,8 +31,12 @@ cat > "$tmp/apk-metadata.json" <<'JSON'
 }
 JSON
 
-"$REPO_DIR/scripts/generate-sbom.sh" apk "$tmp/package.apk" "$tmp/apk.cdx.json" "$tmp/apk-metadata.json"
-"$REPO_DIR/scripts/validate-sbom.sh" "$tmp/apk.cdx.json"
+make -C "$REPO_DIR" --no-print-directory generate-sbom \
+	SBOM_FORMAT=apk \
+	SBOM_ARTIFACT="$tmp/package.apk" \
+	SBOM_OUTPUT="$tmp/apk.cdx.json" \
+	APK_METADATA="$tmp/apk-metadata.json"
+make -C "$REPO_DIR" --no-print-directory validate-sbom SBOM="$tmp/apk.cdx.json"
 jq -e '
     .metadata.component.name == "gl-modem-community" and
     .metadata.component.version == "1.2.3-r1" and
@@ -55,9 +59,15 @@ tar -czf "$tmp/ipk/outer/data.tar.gz" -C "$tmp/ipk/data" .
 printf '2.0\n' > "$tmp/ipk/outer/debian-binary"
 tar -czf "$tmp/package.ipk" -C "$tmp/ipk/outer" control.tar.gz data.tar.gz debian-binary
 
-"$REPO_DIR/scripts/generate-sbom.sh" ipk "$tmp/package.ipk" "$tmp/ipk.cdx.json"
-"$REPO_DIR/scripts/validate-sbom.sh" "$tmp/ipk.cdx.json"
-"$REPO_DIR/scripts/generate-sbom.sh" ipk "$tmp/package.ipk" "$tmp/ipk-second.cdx.json"
+make -C "$REPO_DIR" --no-print-directory generate-sbom \
+	SBOM_FORMAT=ipk \
+	SBOM_ARTIFACT="$tmp/package.ipk" \
+	SBOM_OUTPUT="$tmp/ipk.cdx.json"
+make -C "$REPO_DIR" --no-print-directory validate-sbom SBOM="$tmp/ipk.cdx.json"
+make -C "$REPO_DIR" --no-print-directory generate-sbom \
+	SBOM_FORMAT=ipk \
+	SBOM_ARTIFACT="$tmp/package.ipk" \
+	SBOM_OUTPUT="$tmp/ipk-second.cdx.json"
 cmp "$tmp/ipk.cdx.json" "$tmp/ipk-second.cdx.json"
 jq -e '.metadata.component.name == "gl-modem-community" and .metadata.component.version == "1.2.3-r1"' \
     "$tmp/ipk.cdx.json" >/dev/null

@@ -52,6 +52,16 @@ cat >"$tmp/bin/network-repair" <<'EOF'
 printf '%s\n' "$*" >>"${REPAIR_TEST_LOG:?}"
 EOF
 
+cat >"$tmp/bin/runtime-stack" <<'EOF'
+#!/bin/sh
+printf '%s\n' "${STACK_TEST_VALUE:-modern}"
+EOF
+
+cat >"$tmp/bin/legacy-bus" <<'EOF'
+#!/bin/sh
+printf '%s\n' "$*" >>"${LEGACY_BUS_TEST_LOG:?}"
+EOF
+
 chmod +x "$tmp/bin/"*
 
 config_load() { :; }
@@ -61,6 +71,9 @@ procd_set_param() { :; }
 procd_close_instance() { :; }
 
 RUNTIME_DIR="$tmp/runtime"
+STACK_FILE="$tmp/runtime/stack"
+RUNTIME_STACK="$tmp/bin/runtime-stack"
+LEGACY_BUS="$tmp/bin/legacy-bus"
 STOCK_LIST="$tmp/modem-list.json"
 MERGED_LIST="$tmp/runtime/modem-list.json"
 MODEM_AT="$tmp/modem_AT"
@@ -75,10 +88,13 @@ UMOUNT_BIN="$tmp/bin/umount"
 MOUNT_TEST_LOG="$tmp/mount.log"
 MERGE_TEST_LOG="$tmp/merge.log"
 REPAIR_TEST_LOG="$tmp/repair.log"
+LEGACY_BUS_TEST_LOG="$tmp/legacy-bus.log"
 MERGE_SHOULD_FAIL=1
-export RUNTIME_DIR STOCK_LIST MERGED_LIST MODEM_AT STOCK_MODEM_AT
+export RUNTIME_DIR STACK_FILE RUNTIME_STACK LEGACY_BUS
+export STOCK_LIST MERGED_LIST MODEM_AT STOCK_MODEM_AT
 export MODEM_AT_WRAPPER NETWORK_REPAIR MERGE_MODELS PROC_MOUNTS
 export CP_BIN MOUNT_BIN UMOUNT_BIN MOUNT_TEST_LOG MERGE_TEST_LOG REPAIR_TEST_LOG
+export LEGACY_BUS_TEST_LOG
 export MERGE_SHOULD_FAIL
 
 # shellcheck disable=SC1090

@@ -1,0 +1,115 @@
+{
+  "schema_version": 1,
+  "device": "GL.iNet GL-MT3000",
+  "support_policy": "current-channel-heads",
+  "channels": [
+    {
+      "channel": "stable",
+      "api_model": "mt3000",
+      "glinet_version": "4.8.1",
+      "stage": "RELEASE",
+      "release_time": "2025-08-19 22:39:41",
+      "artifact": {
+        "name": "mt3000-4.8.1-0819-1755615825.tar",
+        "url": "https://fw.gl-inet.com/firmware/mt3000/release/mt3000-4.8.1-0819-1755615825.tar",
+        "sha256": "ee038ee0f399c1454cc660dd47811b44697f5304e0f61af145c7dca6817d0e5c",
+        "size": 60929070
+      },
+      "firmware": {
+        "openwrt_release": "21.02-SNAPSHOT",
+        "target": "mediatek/mt7981",
+        "architecture": "aarch64_cortex-a53",
+        "kernel": "5.4.211",
+        "package_manager": "opkg",
+        "cellular_stack": "legacy"
+      },
+      "package_profile": "glinet21"
+    },
+    {
+      "channel": "beta",
+      "api_model": "mt3000",
+      "glinet_version": "4.9.0",
+      "stage": "TESTING",
+      "release_time": "2026-07-03 17:52:16",
+      "artifact": {
+        "name": "mt3000-4.9.0_beta6-1047-0703-1783066682.tar",
+        "url": "https://fw.gl-inet.com/firmware/mt3000/testing/mt3000-4.9.0_beta6-1047-0703-1783066682.tar",
+        "sha256": "03a9ed1d99ca9728eca6042f06c56cea5df299cd1e168b5f9fb51663bda24a32",
+        "size": 73223281
+      },
+      "firmware": {
+        "openwrt_release": "21.02-SNAPSHOT",
+        "target": "mediatek/mt7981",
+        "architecture": "aarch64_cortex-a53",
+        "kernel": "5.4.211",
+        "package_manager": "opkg",
+        "cellular_stack": "modern"
+      },
+      "package_profile": "glinet21"
+    },
+    {
+      "channel": "openwrt24",
+      "api_model": "mt3000-open",
+      "glinet_version": "4.9.0",
+      "stage": "TESTING",
+      "release_time": "2026-05-28 19:45:25",
+      "artifact": {
+        "name": "mt3000-op-4.9.0-op24_beta1-1015-0528-1779955715.bin",
+        "url": "https://fw.gl-inet.com/firmware/mt3000-open/testing/mt3000-op-4.9.0-op24_beta1-1015-0528-1779955715.bin",
+        "sha256": "320902010e976ce82843b121569913c4b1b2727df3a6ffbd0b2390a828c1e750",
+        "size": 75607989
+      },
+      "firmware": {
+        "openwrt_release": "24.10.4 r28959-29397011cc",
+        "target": "mediatek/filogic",
+        "architecture": "aarch64_cortex-a53",
+        "kernel": "6.6.110",
+        "package_manager": "opkg",
+        "cellular_stack": "modern"
+      },
+      "package_profile": "openwrt24"
+    },
+    {
+      "channel": "openwrt25",
+      "api_model": "mt3000-open",
+      "glinet_version": "4.9.1",
+      "stage": "TESTING",
+      "release_time": "2026-07-22 10:23:33",
+      "artifact": {
+        "name": "mt3000-op-4.9.1-op25_beta3-1035-0721-1784638698.bin",
+        "url": "https://fw.gl-inet.com/firmware/mt3000-open/testing/mt3000-op-4.9.1-op25_beta3-1035-0721-1784638698.bin",
+        "sha256": "5c15e3a5492c5ad5cb6015b200d18799b0d942ab7915e00eeeb60709495ab353",
+        "size": 76643576
+      },
+      "firmware": {
+        "openwrt_release": "25.12.5 r33051-f5dae5ece4",
+        "target": "mediatek/filogic",
+        "architecture": "aarch64_cortex-a53",
+        "kernel": "6.12.94",
+        "package_manager": "apk",
+        "cellular_stack": "modern"
+      },
+      "package_profile": "openwrt25"
+    }
+  ],
+  "sdk_profiles": {
+    "glinet21": {
+      "name": "openwrt-sdk-21.02.7-mediatek-mt7622_gcc-8.4.0_musl.Linux-x86_64.tar.xz",
+      "url": "https://downloads.openwrt.org/releases/21.02.7/targets/mediatek/mt7622/openwrt-sdk-21.02.7-mediatek-mt7622_gcc-8.4.0_musl.Linux-x86_64.tar.xz",
+      "sha256": "723b08a90778779cbc20da03a36fa0e213b22dd63ce601803f0eae44f303681d",
+      "userspace_surrogate": true
+    },
+    "openwrt24": {
+      "name": "openwrt-sdk-24.10.4-mediatek-filogic_gcc-13.3.0_musl.Linux-x86_64.tar.zst",
+      "url": "https://downloads.openwrt.org/releases/24.10.4/targets/mediatek/filogic/openwrt-sdk-24.10.4-mediatek-filogic_gcc-13.3.0_musl.Linux-x86_64.tar.zst",
+      "sha256": "b9762b8e1c8e114b0e6a252b98e94e6e4a1d2496beb9f6044c26227a8d78dee0",
+      "userspace_surrogate": false
+    },
+    "openwrt25": {
+      "name": "openwrt-sdk-25.12.5-mediatek-filogic_gcc-14.3.0_musl.Linux-x86_64.tar.zst",
+      "url": "https://downloads.openwrt.org/releases/25.12.5/targets/mediatek/filogic/openwrt-sdk-25.12.5-mediatek-filogic_gcc-14.3.0_musl.Linux-x86_64.tar.zst",
+      "sha256": "ff4a38a397caa2cfe1c39e18f84ddede14878221b3593c3f2c4cfe24e3ec4c25",
+      "userspace_surrogate": false
+    }
+  }
+}
