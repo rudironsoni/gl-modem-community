@@ -8,6 +8,8 @@ UCI_BIN=${UCI_BIN:-uci}
 UBUS_BIN=${UBUS_BIN:-ubus}
 LOGGER_BIN=${LOGGER_BIN:-logger}
 GL_MODEM_BIN=${GL_MODEM_BIN:-gl_modem}
+LEGACY_AT_BIN=${LEGACY_AT_BIN:-/usr/libexec/gl-modem-community/fm350-at}
+RUNTIME_STACK_FILE=${RUNTIME_STACK_FILE:-/var/run/gl-modem-community/stack}
 FLOCK_BIN=${FLOCK_BIN:-flock}
 NETWORK_STATE_CONFIG=${NETWORK_STATE_CONFIG:-gl_modem_community}
 REPAIR_LOCK=${REPAIR_LOCK:-/var/lock/gl-modem-community-network.lock}
@@ -53,10 +55,18 @@ record_original_option() {
 }
 
 read_fm350_context() {
-	local bus=$1 output context
-	output=$("$GL_MODEM_BIN" -B "$bus" -U 1 AT 'AT+CGDCONT?' 2>/dev/null) || return 1
-	context=$(printf '%s\n' "$output" | awk -F, '
-		/^\+CGDCONT: 5,/ {
+	local bus=$1 output context profile
+	profile=5
+	if [ "$(cat "$RUNTIME_STACK_FILE" 2>/dev/null || true)" = legacy ]; then
+		profile=1
+		output=$("$LEGACY_AT_BIN" "$bus" 'AT+CGDCONT?' 2>/dev/null) ||
+			return 1
+	else
+		output=$("$GL_MODEM_BIN" -B "$bus" -U 1 AT 'AT+CGDCONT?' 2>/dev/null) ||
+			return 1
+	fi
+	context=$(printf '%s\n' "$output" | awk -F, -v profile="$profile" '
+		$1 == "+CGDCONT: " profile {
 			gsub(/["\r ]/, "", $2)
 			gsub(/["\r ]/, "", $3)
 			print $2 ":" $3
@@ -91,9 +101,12 @@ ensure_network_section() {
 }
 
 repair_fm350_network() {
-	local path bus pid section ip_type changed=0 section_changed
+	local path bus pid section ip_type profile changed=0 section_changed
 	NETWORK_CHANGED=0
 	STATE_CHANGED=0
+	profile=5
+	[ "$(cat "$RUNTIME_STACK_FILE" 2>/dev/null || true)" != legacy ] ||
+		profile=1
 
 	for path in "$USB_DEVICES_ROOT"/*; do
 		[ -r "$path/idVendor" ] && [ "$(cat "$path/idVendor")" = 0e8d ] || continue
@@ -112,7 +125,7 @@ repair_fm350_network() {
 		fi
 		if set_network_option "$section" proto xmm; then section_changed=1; fi
 		if set_network_option "$section" bus "$bus"; then section_changed=1; fi
-		if set_network_option "$section" profile 5; then section_changed=1; fi
+		if set_network_option "$section" profile "$profile"; then section_changed=1; fi
 		ip_type=$(uci_get "network.$section.ip_type" || true)
 		case "$ip_type" in
 			IP|IPV6|IPV4V6)
@@ -121,7 +134,7 @@ repair_fm350_network() {
 		esac
 
 		[ "$section_changed" -eq 0 ] || {
-			"$LOGGER_BIN" -t gl-modem-community "repaired stock FM350 interface $section bus=$bus proto=xmm profile=5"
+			"$LOGGER_BIN" -t gl-modem-community "repaired stock FM350 interface $section bus=$bus proto=xmm profile=$profile"
 			changed=1
 		}
 	done

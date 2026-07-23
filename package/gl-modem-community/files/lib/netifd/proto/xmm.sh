@@ -8,6 +8,8 @@
 . ../netifd-proto.sh
 
 GL_MODEM_BIN=${GL_MODEM_BIN:-gl_modem}
+LEGACY_AT_BIN=${LEGACY_AT_BIN:-/usr/libexec/gl-modem-community/fm350-at}
+RUNTIME_STACK_FILE=${RUNTIME_STACK_FILE:-/var/run/gl-modem-community/stack}
 init_proto "$@"
 
 proto_xmm_init_config() {
@@ -86,8 +88,12 @@ discover_data_iface() {
 
 run_stock_at() {
 	local bus=$1 stage=$2 command=$3 output
-	output=$("$GL_MODEM_BIN" -B "$bus" -U 1 AT "$command" 2>&1) || {
-		logger -t gl-modem-community "FM350 stock AT transport failed stage=$stage bus=$bus"
+	if [ "$(cat "$RUNTIME_STACK_FILE" 2>/dev/null || true)" = legacy ]; then
+		output=$("$LEGACY_AT_BIN" "$bus" "$command" 2>&1)
+	else
+		output=$("$GL_MODEM_BIN" -B "$bus" -U 1 AT "$command" 2>&1)
+	fi || {
+		logger -t gl-modem-community "FM350 AT transport failed stage=$stage bus=$bus"
 		return 1
 	}
 	case "$output" in

@@ -21,7 +21,7 @@ Do not describe a package as supported merely because it builds. Do not use stat
 
 Write user-facing documentation in complete sentences. Prefer direct statements about observed behavior:
 
-> The IPK builds with the OpenWrt 24.10.7 SDK, but it has not been installed on GL.iNet OEM or OpenWrt 24 firmware.
+> The current stable/beta and openwrt24 IPKs build with their pinned SDK profiles, but they remain unverified on hardware.
 
 Avoid replacing test evidence with a statement about the writer's intentions.
 
@@ -46,9 +46,10 @@ make test
 git diff --check
 ```
 
-Build both package formats when package contents, metadata, installation behavior, signing, feeds, or release automation changes:
+Build all package profiles when package contents, metadata, installation behavior, signing, feeds, or release automation changes:
 
 ```sh
 make package
 make package-opkg
+make package-glinet21
 ```

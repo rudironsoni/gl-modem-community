@@ -2,7 +2,7 @@
 
 Conclusion: [CONFIRMED] Nineteen modem-relevant ELF files were analyzed without executing extracted code. Per-file reports record path, SHA-256, architecture, ABI, interpreter, stripping, build ID, sections, imports, exports, dynamic dependencies, and disassembly metadata.
 
-Evidence: `analysis/elf/index.tsv`, individual files under `analysis/elf/`, `scripts/analyze-elf.sh`, and `scripts/extract-strings.sh`.
+Evidence: `analysis/elf/index.tsv`, individual files under `analysis/elf/`, and `make analyze`.
 
 Confidence: confirmed.
 

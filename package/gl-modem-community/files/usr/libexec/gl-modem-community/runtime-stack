@@ -1,0 +1,17 @@
+#!/bin/sh
+# SPDX-License-Identifier: GPL-3.0-only
+set -eu
+
+MODERN_LIST=${MODERN_LIST:-/lib/modem_data/modem_list.json}
+MODERN_INIT=${MODERN_INIT:-/etc/init.d/gl_cellular_manager}
+LEGACY_FUNCTIONS=${LEGACY_FUNCTIONS:-/lib/functions/modem.sh}
+LEGACY_INIT=${LEGACY_INIT:-/etc/init.d/modem}
+
+if [ -r "$MODERN_LIST" ] && [ -x "$MODERN_INIT" ]; then
+	printf '%s\n' modern
+elif [ -r "$LEGACY_FUNCTIONS" ] && [ -x "$LEGACY_INIT" ]; then
+	printf '%s\n' legacy
+else
+	printf '%s\n' unsupported
+	exit 1
+fi

@@ -1,0 +1,9 @@
+opengt
+set com 115200n81
+set comecho off
+set senddelay 0.02
+waitquiet 0.2 0.2
+send $env("AT_COMMAND")
+send "^m"
+get 5 "" $s
+print $s

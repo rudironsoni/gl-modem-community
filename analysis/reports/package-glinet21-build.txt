@@ -1,0 +1,313 @@
+Checking 'working-make'... ok.
+Checking 'case-sensitive-fs'... ok.
+Checking 'proper-umask'... ok.
+Checking 'gcc'... ok.
+Checking 'working-gcc'... ok.
+Checking 'g++'... ok.
+Checking 'working-g++'... ok.
+Checking 'ncurses'... ok.
+Checking 'perl-data-dumper'... ok.
+Checking 'perl-findbin'... ok.
+Checking 'perl-file-copy'... ok.
+Checking 'perl-file-compare'... ok.
+Checking 'perl-thread-queue'... ok.
+Checking 'tar'... ok.
+Checking 'find'... ok.
+Checking 'bash'... ok.
+Checking 'xargs'... ok.
+Checking 'patch'... ok.
+Checking 'diff'... ok.
+Checking 'cp'... ok.
+Checking 'seq'... ok.
+Checking 'awk'... ok.
+Checking 'grep'... ok.
+Checking 'egrep'... ok.
+Checking 'getopt'... ok.
+Checking 'stat'... ok.
+Checking 'unzip'... ok.
+Checking 'bzip2'... ok.
+Checking 'wget'... ok.
+Checking 'perl'... ok.
+Checking 'python2-cleanup'... ok.
+Checking 'python'... ok.
+Checking 'python3'... ok.
+Checking 'python3-distutils'... ok.
+Checking 'git'... ok.
+Checking 'file'... ok.
+Checking 'rsync'... ok.
+Checking 'which'... ok.
+Checking 'ldconfig-stub'... ok.
+
+
+WARNING: Makefile 'package/kernel/linux/Makefile' has a dependency on 'eip197-mini-firmware', which does not exist
+WARNING: Makefile 'package/kernel/linux/Makefile' has a dependency on 'r8169-firmware', which does not exist
+WARNING: Makefile 'package/kernel/linux/Makefile' has a dependency on 'e100-firmware', which does not exist
+WARNING: Makefile 'package/kernel/linux/Makefile' has a dependency on 'bnx2-firmware', which does not exist
+WARNING: Makefile 'package/kernel/linux/Makefile' has a dependency on 'bnx2x-firmware', which does not exist
+WARNING: Makefile 'package/kernel/linux/Makefile' has a dependency on 'ar3k-firmware', which does not exist
+WARNING: Makefile 'package/kernel/linux/Makefile' has a dependency on 'mwifiex-sdio-firmware', which does not exist
+WARNING: Makefile 'package/kernel/linux/Makefile' has a dependency on 'kmod-phy-bcm-ns-usb2', which does not exist
+WARNING: Makefile 'package/kernel/linux/Makefile' has a dependency on 'edgeport-firmware', which does not exist
+WARNING: Makefile 'package/kernel/linux/Makefile' has a dependency on 'kmod-phy-bcm-ns-usb3', which does not exist
+WARNING: Makefile 'package/kernel/linux/Makefile' has a dependency on 'amdgpu-firmware', which does not exist
+WARNING: Makefile 'package/kernel/linux/Makefile' has a dependency on 'radeon-firmware', which does not exist
+WARNING: Makefile 'package/kernel/linux/Makefile' has a dependency on 'prism54-firmware', which does not exist
+WARNING: Makefile 'package/kernel/linux/Makefile' has a dependency on 'rtl8192su-firmware', which does not exist
+WARNING: Makefile 'package/kernel/linux/Makefile' has a dependency on 'mt7622bt-firmware', which does not exist
+tmp/.config-package.in:72:warning: ignoring type redefinition of 'PACKAGE_libc' from 'bool' to 'tristate'
+tmp/.config-package.in:100:warning: ignoring type redefinition of 'PACKAGE_libgcc' from 'bool' to 'tristate'
+tmp/.config-package.in:221:warning: ignoring type redefinition of 'PACKAGE_libpthread' from 'bool' to 'tristate'
+Config-build.in:1075:warning: defaults for choice values not supported
+Config-build.in:1079:warning: defaults for choice values not supported
+Config-build.in:1083:warning: defaults for choice values not supported
+#
+# configuration written to .config
+#
+WARNING: Makefile 'package/kernel/linux/Makefile' has a dependency on 'eip197-mini-firmware', which does not exist
+WARNING: Makefile 'package/kernel/linux/Makefile' has a dependency on 'r8169-firmware', which does not exist
+WARNING: Makefile 'package/kernel/linux/Makefile' has a dependency on 'e100-firmware', which does not exist
+WARNING: Makefile 'package/kernel/linux/Makefile' has a dependency on 'bnx2-firmware', which does not exist
+WARNING: Makefile 'package/kernel/linux/Makefile' has a dependency on 'bnx2x-firmware', which does not exist
+WARNING: Makefile 'package/kernel/linux/Makefile' has a dependency on 'ar3k-firmware', which does not exist
+WARNING: Makefile 'package/kernel/linux/Makefile' has a dependency on 'mwifiex-sdio-firmware', which does not exist
+WARNING: Makefile 'package/kernel/linux/Makefile' has a dependency on 'kmod-phy-bcm-ns-usb2', which does not exist
+WARNING: Makefile 'package/kernel/linux/Makefile' has a dependency on 'edgeport-firmware', which does not exist
+WARNING: Makefile 'package/kernel/linux/Makefile' has a dependency on 'kmod-phy-bcm-ns-usb3', which does not exist
+WARNING: Makefile 'package/kernel/linux/Makefile' has a dependency on 'amdgpu-firmware', which does not exist
+WARNING: Makefile 'package/kernel/linux/Makefile' has a dependency on 'radeon-firmware', which does not exist
+WARNING: Makefile 'package/kernel/linux/Makefile' has a dependency on 'prism54-firmware', which does not exist
+WARNING: Makefile 'package/kernel/linux/Makefile' has a dependency on 'rtl8192su-firmware', which does not exist
+WARNING: Makefile 'package/kernel/linux/Makefile' has a dependency on 'mt7622bt-firmware', which does not exist
+tmp/.config-package.in:72:warning: ignoring type redefinition of 'PACKAGE_libc' from 'bool' to 'tristate'
+tmp/.config-package.in:100:warning: ignoring type redefinition of 'PACKAGE_libgcc' from 'bool' to 'tristate'
+tmp/.config-package.in:221:warning: ignoring type redefinition of 'PACKAGE_libpthread' from 'bool' to 'tristate'
+Config-build.in:1075:warning: defaults for choice values not supported
+Config-build.in:1079:warning: defaults for choice values not supported
+Config-build.in:1083:warning: defaults for choice values not supported
+#
+# No change to .config
+#
+make[1]: Entering directory '/tmp/gl-modem-community-sdk.JpPaTI'
+make[2]: Entering directory '/tmp/gl-modem-community-sdk.JpPaTI/package/toolchain'
+Makefile:737: WARNING: skipping libgomp -- package has no install section
+touch /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/toolchain/.prepared_b19ebd9bcfc8344d63844ed7b7ac0bd3_18f1e190c5d53547fed41a3eaa76e9e9_check
+mkdir -p /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/toolchain
+touch /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/toolchain/.prepared_b19ebd9bcfc8344d63844ed7b7ac0bd3_18f1e190c5d53547fed41a3eaa76e9e9
+rm -f /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/toolchain/.configured_*
+rm -f /tmp/gl-modem-community-sdk.JpPaTI/staging_dir/target-aarch64_cortex-a53_musl/stamp/.toolchain_installed
+(cd /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/toolchain/./; if [ -x ./configure ]; then find /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/toolchain/ -name config.guess | xargs -r chmod u+w; find /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/toolchain/ -name config.guess | xargs -r -n1 cp --remove-destination /tmp/gl-modem-community-sdk.JpPaTI/scripts/config.guess; find /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/toolchain/ -name config.sub | xargs -r chmod u+w; find /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/toolchain/ -name config.sub | xargs -r -n1 cp --remove-destination /tmp/gl-modem-community-sdk.JpPaTI/scripts/config.sub; AR="aarch64-openwrt-linux-musl-gcc-ar" AS="aarch64-openwrt-linux-musl-gcc -c -Os -pipe -mcpu=cortex-a53 -fno-caller-saves -fno-plt -fhonour-copts -Wno-error=unused-but-set-variable -Wno-error=unused-result -ffile-prefix-map=/tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/toolchain=toolchain -Wformat -Werror=format-security -fstack-protector -D_FORTIFY_SOURCE=1 -Wl,-z,now -Wl,-z,relro" LD=aarch64-openwrt-linux-musl-ld NM="aarch64-openwrt-linux-musl-gcc-nm" CC="aarch64-openwrt-linux-musl-gcc" GCC="aarch64-openwrt-linux-musl-gcc" CXX="aarch64-openwrt-linux-musl-g++" RANLIB="aarch64-openwrt-linux-musl-gcc-ranlib" STRIP=aarch64-openwrt-linux-musl-strip OBJCOPY=aarch64-openwrt-linux-musl-objcopy OBJDUMP=aarch64-openwrt-linux-musl-objdump SIZE=aarch64-openwrt-linux-musl-size CFLAGS="-Os -pipe -mcpu=cortex-a53 -fno-caller-saves -fno-plt -fhonour-copts -Wno-error=unused-but-set-variable -Wno-error=unused-result -ffile-prefix-map=/tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/toolchain=toolchain -Wformat -Werror=format-security -fstack-protector -D_FORTIFY_SOURCE=1 -Wl,-z,now -Wl,-z,relro " CXXFLAGS="-Os -pipe -mcpu=cortex-a53 -fno-caller-saves -fno-plt -fhonour-copts -Wno-error=unused-but-set-variable -Wno-error=unused-result -ffile-prefix-map=/tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/toolchain=toolchain -Wformat -Werror=format-security -fstack-protector -D_FORTIFY_SOURCE=1 -Wl,-z,now -Wl,-z,relro " CPPFLAGS="-I/tmp/gl-modem-community-sdk.JpPaTI/staging_dir/toolchain-aarch64_cortex-a53_gcc-8.4.0_musl/usr/include -I/tmp/gl-modem-community-sdk.JpPaTI/staging_dir/toolchain-aarch64_cortex-a53_gcc-8.4.0_musl/include/fortify -I/tmp/gl-modem-community-sdk.JpPaTI/staging_dir/toolchain-aarch64_cortex-a53_gcc-8.4.0_musl/include " LDFLAGS="-L/tmp/gl-modem-community-sdk.JpPaTI/staging_dir/toolchain-aarch64_cortex-a53_gcc-8.4.0_musl/usr/lib -L/tmp/gl-modem-community-sdk.JpPaTI/staging_dir/toolchain-aarch64_cortex-a53_gcc-8.4.0_musl/lib -znow -zrelro "   ./configure --target=aarch64-openwrt-linux --host=aarch64-openwrt-linux --build=x86_64-pc-linux-gnu --program-prefix="" --program-suffix="" --prefix=/usr --exec-prefix=/usr --bindir=/usr/bin --sbindir=/usr/sbin --libexecdir=/usr/lib --sysconfdir=/etc --datadir=/usr/share --localstatedir=/var --mandir=/usr/man --infodir=/usr/info --disable-nls  ; fi; )
+touch /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/toolchain/.configured_68b329da9893e34099c7d8ad5cb9c940
+rm -f /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/toolchain/.built
+touch /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/toolchain/.built_check
+cp -fpR /tmp/gl-modem-community-sdk.JpPaTI/staging_dir/toolchain-aarch64_cortex-a53_gcc-8.4.0_musl/lib/libgcc_s.so.1 /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/toolchain/
+touch /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/toolchain/.built
+rm -rf /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/toolchain/.pkgdir/libc.installed /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/toolchain/.pkgdir/libc
+mkdir -p /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/toolchain/.pkgdir/libc
+install -d -m0755 /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/toolchain/.pkgdir/libc/lib /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/toolchain/.pkgdir/libc/usr/bin
+cp -fpR /tmp/gl-modem-community-sdk.JpPaTI/staging_dir/toolchain-aarch64_cortex-a53_gcc-8.4.0_musl/lib/ld-musl-*.so* /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/toolchain/.pkgdir/libc/lib/
+cp -fpR /tmp/gl-modem-community-sdk.JpPaTI/staging_dir/toolchain-aarch64_cortex-a53_gcc-8.4.0_musl/lib/libc.so* /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/toolchain/.pkgdir/libc/lib/
+ln -sf ../../lib/libc.so /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/toolchain/.pkgdir/libc/usr/bin/ldd
+cp -fpR /tmp/gl-modem-community-sdk.JpPaTI/staging_dir/toolchain-aarch64_cortex-a53_gcc-8.4.0_musl/lib/libatomic.a /tmp/gl-modem-community-sdk.JpPaTI/staging_dir/toolchain-aarch64_cortex-a53_gcc-8.4.0_musl/lib/libc.a /tmp/gl-modem-community-sdk.JpPaTI/staging_dir/toolchain-aarch64_cortex-a53_gcc-8.4.0_musl/lib/libcrypt.a /tmp/gl-modem-community-sdk.JpPaTI/staging_dir/toolchain-aarch64_cortex-a53_gcc-8.4.0_musl/lib/libdl.a /tmp/gl-modem-community-sdk.JpPaTI/staging_dir/toolchain-aarch64_cortex-a53_gcc-8.4.0_musl/lib/libitm.a /tmp/gl-modem-community-sdk.JpPaTI/staging_dir/toolchain-aarch64_cortex-a53_gcc-8.4.0_musl/lib/libm.a /tmp/gl-modem-community-sdk.JpPaTI/staging_dir/toolchain-aarch64_cortex-a53_gcc-8.4.0_musl/lib/libpthread.a /tmp/gl-modem-community-sdk.JpPaTI/staging_dir/toolchain-aarch64_cortex-a53_gcc-8.4.0_musl/lib/libresolv.a /tmp/gl-modem-community-sdk.JpPaTI/staging_dir/toolchain-aarch64_cortex-a53_gcc-8.4.0_musl/lib/librt.a /tmp/gl-modem-community-sdk.JpPaTI/staging_dir/toolchain-aarch64_cortex-a53_gcc-8.4.0_musl/lib/libssp_nonshared.a /tmp/gl-modem-community-sdk.JpPaTI/staging_dir/toolchain-aarch64_cortex-a53_gcc-8.4.0_musl/lib/libstdc++.a /tmp/gl-modem-community-sdk.JpPaTI/staging_dir/toolchain-aarch64_cortex-a53_gcc-8.4.0_musl/lib/libstdc++fs.a /tmp/gl-modem-community-sdk.JpPaTI/staging_dir/toolchain-aarch64_cortex-a53_gcc-8.4.0_musl/lib/libsupc++.a /tmp/gl-modem-community-sdk.JpPaTI/staging_dir/toolchain-aarch64_cortex-a53_gcc-8.4.0_musl/lib/libutil.a /tmp/gl-modem-community-sdk.JpPaTI/staging_dir/toolchain-aarch64_cortex-a53_gcc-8.4.0_musl/lib/libxnet.a /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/toolchain/.pkgdir/libc/lib/
+cp -fpR /tmp/gl-modem-community-sdk.JpPaTI/staging_dir/toolchain-aarch64_cortex-a53_gcc-8.4.0_musl/lib/gcc/aarch64-openwrt-linux-musl/8.4.0/libgcc_pic.a /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/toolchain/.pkgdir/libc/lib/libgcc_s_pic.a; cp -fpR /tmp/gl-modem-community-sdk.JpPaTI/staging_dir/toolchain-aarch64_cortex-a53_gcc-8.4.0_musl/lib/gcc/aarch64-openwrt-linux-musl/8.4.0/libgcc.map /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/toolchain/.pkgdir/libc/lib/libgcc_s_pic.map
+touch /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/toolchain/.pkgdir/libc.installed
+mkdir -p /tmp/gl-modem-community-sdk.JpPaTI/staging_dir/target-aarch64_cortex-a53_musl/root-mediatek/stamp
+SHELL= flock /tmp/gl-modem-community-sdk.JpPaTI/tmp/.root-copy.flock -c 'cp -fpR /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/toolchain/.pkgdir/libc/. /tmp/gl-modem-community-sdk.JpPaTI/staging_dir/target-aarch64_cortex-a53_musl/root-mediatek/'
+touch /tmp/gl-modem-community-sdk.JpPaTI/staging_dir/target-aarch64_cortex-a53_musl/root-mediatek/stamp/.libc_installed
+mkdir -p /tmp/gl-modem-community-sdk.JpPaTI/bin/targets/mediatek/mt7622/packages /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/toolchain/ipkg-aarch64_cortex-a53/libgcc/CONTROL /tmp/gl-modem-community-sdk.JpPaTI/staging_dir/target-aarch64_cortex-a53_musl/pkginfo
+install -d -m0755 /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/toolchain/ipkg-aarch64_cortex-a53/libgcc/lib
+cp -fpR /tmp/gl-modem-community-sdk.JpPaTI/staging_dir/toolchain-aarch64_cortex-a53_gcc-8.4.0_musl/lib/libgcc_s.so.* /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/toolchain/ipkg-aarch64_cortex-a53/libgcc/lib/
+find /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/toolchain/ipkg-aarch64_cortex-a53/libgcc -name 'CVS' -o -name '.svn' -o -name '.#*' -o -name '*~'| xargs -r rm -rf
+export CROSS="aarch64-openwrt-linux-musl-"   ; NM="aarch64-openwrt-linux-musl-nm" STRIP="/tmp/gl-modem-community-sdk.JpPaTI/staging_dir/host/bin/sstrip -z" STRIP_KMOD="/tmp/gl-modem-community-sdk.JpPaTI/scripts/strip-kmod.sh" PATCHELF="/tmp/gl-modem-community-sdk.JpPaTI/staging_dir/host/bin/patchelf" /tmp/gl-modem-community-sdk.JpPaTI/scripts/rstrip.sh /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/toolchain/ipkg-aarch64_cortex-a53/libgcc
+rstrip.sh: /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/toolchain/ipkg-aarch64_cortex-a53/libgcc/lib/libgcc_s.so.1: shared object
+(cd /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/toolchain/ipkg-aarch64_cortex-a53/libgcc/CONTROL; ( echo "$CONTROL"; printf "Description: "; echo "$DESCRIPTION" | sed -e 's,^[[:space:]]*, ,g'; ) > control; chmod 644 control; ( echo "#!/bin/sh"; echo "[ \"\${IPKG_NO_SCRIPT}\" = \"1\" ] && exit 0"; echo "[ -s "\${IPKG_INSTROOT}/lib/functions.sh" ] || exit 0"; echo ". \${IPKG_INSTROOT}/lib/functions.sh"; echo "default_postinst \$0 \$@"; ) > postinst; ( echo "#!/bin/sh"; echo "[ -s "\${IPKG_INSTROOT}/lib/functions.sh" ] || exit 0"; echo ". \${IPKG_INSTROOT}/lib/functions.sh"; echo "default_prerm \$0 \$@"; ) > prerm; chmod 0755 postinst prerm;  )
+install -d -m0755 /tmp/gl-modem-community-sdk.JpPaTI/bin/targets/mediatek/mt7622/packages
+/tmp/gl-modem-community-sdk.JpPaTI/staging_dir/host/bin/fakeroot /tmp/gl-modem-community-sdk.JpPaTI/scripts/ipkg-build -m "" /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/toolchain/ipkg-aarch64_cortex-a53/libgcc /tmp/gl-modem-community-sdk.JpPaTI/bin/targets/mediatek/mt7622/packages
+Packaged contents of /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/toolchain/ipkg-aarch64_cortex-a53/libgcc into /tmp/gl-modem-community-sdk.JpPaTI/bin/targets/mediatek/mt7622/packages/libgcc1_8.4.0-3_aarch64_cortex-a53.ipk
+mkdir -p /tmp/gl-modem-community-sdk.JpPaTI/bin/targets/mediatek/mt7622/packages /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/toolchain/ipkg-aarch64_cortex-a53/libc/CONTROL /tmp/gl-modem-community-sdk.JpPaTI/staging_dir/target-aarch64_cortex-a53_musl/pkginfo
+install -d -m0755 /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/toolchain/ipkg-aarch64_cortex-a53/libc/lib /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/toolchain/ipkg-aarch64_cortex-a53/libc/usr/bin
+cp -fpR /tmp/gl-modem-community-sdk.JpPaTI/staging_dir/toolchain-aarch64_cortex-a53_gcc-8.4.0_musl/lib/ld-musl-*.so* /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/toolchain/ipkg-aarch64_cortex-a53/libc/lib/
+cp -fpR /tmp/gl-modem-community-sdk.JpPaTI/staging_dir/toolchain-aarch64_cortex-a53_gcc-8.4.0_musl/lib/libc.so* /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/toolchain/ipkg-aarch64_cortex-a53/libc/lib/
+ln -sf ../../lib/libc.so /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/toolchain/ipkg-aarch64_cortex-a53/libc/usr/bin/ldd
+find /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/toolchain/ipkg-aarch64_cortex-a53/libc -name 'CVS' -o -name '.svn' -o -name '.#*' -o -name '*~'| xargs -r rm -rf
+export CROSS="aarch64-openwrt-linux-musl-"   ; NM="aarch64-openwrt-linux-musl-nm" STRIP="/tmp/gl-modem-community-sdk.JpPaTI/staging_dir/host/bin/sstrip -z" STRIP_KMOD="/tmp/gl-modem-community-sdk.JpPaTI/scripts/strip-kmod.sh" PATCHELF="/tmp/gl-modem-community-sdk.JpPaTI/staging_dir/host/bin/patchelf" /tmp/gl-modem-community-sdk.JpPaTI/scripts/rstrip.sh /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/toolchain/ipkg-aarch64_cortex-a53/libc
+rstrip.sh: /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/toolchain/ipkg-aarch64_cortex-a53/libc/lib/libc.so: shared object
+(cd /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/toolchain/ipkg-aarch64_cortex-a53/libc/CONTROL; ( echo "$CONTROL"; printf "Description: "; echo "$DESCRIPTION" | sed -e 's,^[[:space:]]*, ,g'; ) > control; chmod 644 control; ( echo "#!/bin/sh"; echo "[ \"\${IPKG_NO_SCRIPT}\" = \"1\" ] && exit 0"; echo "[ -s "\${IPKG_INSTROOT}/lib/functions.sh" ] || exit 0"; echo ". \${IPKG_INSTROOT}/lib/functions.sh"; echo "default_postinst \$0 \$@"; ) > postinst; ( echo "#!/bin/sh"; echo "[ -s "\${IPKG_INSTROOT}/lib/functions.sh" ] || exit 0"; echo ". \${IPKG_INSTROOT}/lib/functions.sh"; echo "default_prerm \$0 \$@"; ) > prerm; chmod 0755 postinst prerm;  )
+install -d -m0755 /tmp/gl-modem-community-sdk.JpPaTI/bin/targets/mediatek/mt7622/packages
+/tmp/gl-modem-community-sdk.JpPaTI/staging_dir/host/bin/fakeroot /tmp/gl-modem-community-sdk.JpPaTI/scripts/ipkg-build -m "" /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/toolchain/ipkg-aarch64_cortex-a53/libc /tmp/gl-modem-community-sdk.JpPaTI/bin/targets/mediatek/mt7622/packages
+Packaged contents of /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/toolchain/ipkg-aarch64_cortex-a53/libc into /tmp/gl-modem-community-sdk.JpPaTI/bin/targets/mediatek/mt7622/packages/libc_1.1.24-3_aarch64_cortex-a53.ipk
+mkdir -p /tmp/gl-modem-community-sdk.JpPaTI/bin/targets/mediatek/mt7622/packages /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/toolchain/ipkg-aarch64_cortex-a53/libatomic/CONTROL /tmp/gl-modem-community-sdk.JpPaTI/staging_dir/target-aarch64_cortex-a53_musl/pkginfo
+install -d -m0755 /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/toolchain/ipkg-aarch64_cortex-a53/libatomic/lib
+cp -fpR /tmp/gl-modem-community-sdk.JpPaTI/staging_dir/toolchain-aarch64_cortex-a53_gcc-8.4.0_musl/lib/libatomic.so.* /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/toolchain/ipkg-aarch64_cortex-a53/libatomic/lib/
+find /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/toolchain/ipkg-aarch64_cortex-a53/libatomic -name 'CVS' -o -name '.svn' -o -name '.#*' -o -name '*~'| xargs -r rm -rf
+export CROSS="aarch64-openwrt-linux-musl-"   ; NM="aarch64-openwrt-linux-musl-nm" STRIP="/tmp/gl-modem-community-sdk.JpPaTI/staging_dir/host/bin/sstrip -z" STRIP_KMOD="/tmp/gl-modem-community-sdk.JpPaTI/scripts/strip-kmod.sh" PATCHELF="/tmp/gl-modem-community-sdk.JpPaTI/staging_dir/host/bin/patchelf" /tmp/gl-modem-community-sdk.JpPaTI/scripts/rstrip.sh /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/toolchain/ipkg-aarch64_cortex-a53/libatomic
+rstrip.sh: /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/toolchain/ipkg-aarch64_cortex-a53/libatomic/lib/libatomic.so.1.2.0: shared object
+(cd /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/toolchain/ipkg-aarch64_cortex-a53/libatomic/CONTROL; ( echo "$CONTROL"; printf "Description: "; echo "$DESCRIPTION" | sed -e 's,^[[:space:]]*, ,g'; ) > control; chmod 644 control; ( echo "#!/bin/sh"; echo "[ \"\${IPKG_NO_SCRIPT}\" = \"1\" ] && exit 0"; echo "[ -s "\${IPKG_INSTROOT}/lib/functions.sh" ] || exit 0"; echo ". \${IPKG_INSTROOT}/lib/functions.sh"; echo "default_postinst \$0 \$@"; ) > postinst; ( echo "#!/bin/sh"; echo "[ -s "\${IPKG_INSTROOT}/lib/functions.sh" ] || exit 0"; echo ". \${IPKG_INSTROOT}/lib/functions.sh"; echo "default_prerm \$0 \$@"; ) > prerm; chmod 0755 postinst prerm;  )
+install -d -m0755 /tmp/gl-modem-community-sdk.JpPaTI/bin/targets/mediatek/mt7622/packages
+/tmp/gl-modem-community-sdk.JpPaTI/staging_dir/host/bin/fakeroot /tmp/gl-modem-community-sdk.JpPaTI/scripts/ipkg-build -m "" /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/toolchain/ipkg-aarch64_cortex-a53/libatomic /tmp/gl-modem-community-sdk.JpPaTI/bin/targets/mediatek/mt7622/packages
+Packaged contents of /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/toolchain/ipkg-aarch64_cortex-a53/libatomic into /tmp/gl-modem-community-sdk.JpPaTI/bin/targets/mediatek/mt7622/packages/libatomic1_8.4.0-3_aarch64_cortex-a53.ipk
+mkdir -p /tmp/gl-modem-community-sdk.JpPaTI/bin/targets/mediatek/mt7622/packages /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/toolchain/ipkg-aarch64_cortex-a53/libstdcpp/CONTROL /tmp/gl-modem-community-sdk.JpPaTI/staging_dir/target-aarch64_cortex-a53_musl/pkginfo
+install -d -m0755 /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/toolchain/ipkg-aarch64_cortex-a53/libstdcpp/usr/lib
+cp -fpR /tmp/gl-modem-community-sdk.JpPaTI/staging_dir/toolchain-aarch64_cortex-a53_gcc-8.4.0_musl/lib/libstdc++.so.* /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/toolchain/ipkg-aarch64_cortex-a53/libstdcpp/usr/lib/
+find /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/toolchain/ipkg-aarch64_cortex-a53/libstdcpp -name 'CVS' -o -name '.svn' -o -name '.#*' -o -name '*~'| xargs -r rm -rf
+export CROSS="aarch64-openwrt-linux-musl-"   ; NM="aarch64-openwrt-linux-musl-nm" STRIP="/tmp/gl-modem-community-sdk.JpPaTI/staging_dir/host/bin/sstrip -z" STRIP_KMOD="/tmp/gl-modem-community-sdk.JpPaTI/scripts/strip-kmod.sh" PATCHELF="/tmp/gl-modem-community-sdk.JpPaTI/staging_dir/host/bin/patchelf" /tmp/gl-modem-community-sdk.JpPaTI/scripts/rstrip.sh /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/toolchain/ipkg-aarch64_cortex-a53/libstdcpp
+rstrip.sh: /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/toolchain/ipkg-aarch64_cortex-a53/libstdcpp/usr/lib/libstdc++.so.6.0.25: shared object
+(cd /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/toolchain/ipkg-aarch64_cortex-a53/libstdcpp/CONTROL; ( echo "$CONTROL"; printf "Description: "; echo "$DESCRIPTION" | sed -e 's,^[[:space:]]*, ,g'; ) > control; chmod 644 control; ( echo "#!/bin/sh"; echo "[ \"\${IPKG_NO_SCRIPT}\" = \"1\" ] && exit 0"; echo "[ -s "\${IPKG_INSTROOT}/lib/functions.sh" ] || exit 0"; echo ". \${IPKG_INSTROOT}/lib/functions.sh"; echo "default_postinst \$0 \$@"; ) > postinst; ( echo "#!/bin/sh"; echo "[ -s "\${IPKG_INSTROOT}/lib/functions.sh" ] || exit 0"; echo ". \${IPKG_INSTROOT}/lib/functions.sh"; echo "default_prerm \$0 \$@"; ) > prerm; chmod 0755 postinst prerm;  )
+install -d -m0755 /tmp/gl-modem-community-sdk.JpPaTI/bin/targets/mediatek/mt7622/packages
+/tmp/gl-modem-community-sdk.JpPaTI/staging_dir/host/bin/fakeroot /tmp/gl-modem-community-sdk.JpPaTI/scripts/ipkg-build -m "" /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/toolchain/ipkg-aarch64_cortex-a53/libstdcpp /tmp/gl-modem-community-sdk.JpPaTI/bin/targets/mediatek/mt7622/packages
+Packaged contents of /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/toolchain/ipkg-aarch64_cortex-a53/libstdcpp into /tmp/gl-modem-community-sdk.JpPaTI/bin/targets/mediatek/mt7622/packages/libstdcpp6_8.4.0-3_aarch64_cortex-a53.ipk
+mkdir -p /tmp/gl-modem-community-sdk.JpPaTI/bin/targets/mediatek/mt7622/packages /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/toolchain/ipkg-aarch64_cortex-a53/libpthread/CONTROL /tmp/gl-modem-community-sdk.JpPaTI/staging_dir/target-aarch64_cortex-a53_musl/pkginfo
+install -d -m0755 /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/toolchain/ipkg-aarch64_cortex-a53/libpthread/lib
+find /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/toolchain/ipkg-aarch64_cortex-a53/libpthread -name 'CVS' -o -name '.svn' -o -name '.#*' -o -name '*~'| xargs -r rm -rf
+export CROSS="aarch64-openwrt-linux-musl-"   ; NM="aarch64-openwrt-linux-musl-nm" STRIP="/tmp/gl-modem-community-sdk.JpPaTI/staging_dir/host/bin/sstrip -z" STRIP_KMOD="/tmp/gl-modem-community-sdk.JpPaTI/scripts/strip-kmod.sh" PATCHELF="/tmp/gl-modem-community-sdk.JpPaTI/staging_dir/host/bin/patchelf" /tmp/gl-modem-community-sdk.JpPaTI/scripts/rstrip.sh /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/toolchain/ipkg-aarch64_cortex-a53/libpthread
+(cd /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/toolchain/ipkg-aarch64_cortex-a53/libpthread/CONTROL; ( echo "$CONTROL"; printf "Description: "; echo "$DESCRIPTION" | sed -e 's,^[[:space:]]*, ,g'; ) > control; chmod 644 control; ( echo "#!/bin/sh"; echo "[ \"\${IPKG_NO_SCRIPT}\" = \"1\" ] && exit 0"; echo "[ -s "\${IPKG_INSTROOT}/lib/functions.sh" ] || exit 0"; echo ". \${IPKG_INSTROOT}/lib/functions.sh"; echo "default_postinst \$0 \$@"; ) > postinst; ( echo "#!/bin/sh"; echo "[ -s "\${IPKG_INSTROOT}/lib/functions.sh" ] || exit 0"; echo ". \${IPKG_INSTROOT}/lib/functions.sh"; echo "default_prerm \$0 \$@"; ) > prerm; chmod 0755 postinst prerm;  )
+install -d -m0755 /tmp/gl-modem-community-sdk.JpPaTI/bin/targets/mediatek/mt7622/packages
+/tmp/gl-modem-community-sdk.JpPaTI/staging_dir/host/bin/fakeroot /tmp/gl-modem-community-sdk.JpPaTI/scripts/ipkg-build -m "" /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/toolchain/ipkg-aarch64_cortex-a53/libpthread /tmp/gl-modem-community-sdk.JpPaTI/bin/targets/mediatek/mt7622/packages
+Packaged contents of /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/toolchain/ipkg-aarch64_cortex-a53/libpthread into /tmp/gl-modem-community-sdk.JpPaTI/bin/targets/mediatek/mt7622/packages/libpthread_1.1.24-3_aarch64_cortex-a53.ipk
+mkdir -p /tmp/gl-modem-community-sdk.JpPaTI/bin/targets/mediatek/mt7622/packages /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/toolchain/ipkg-aarch64_cortex-a53/librt/CONTROL /tmp/gl-modem-community-sdk.JpPaTI/staging_dir/target-aarch64_cortex-a53_musl/pkginfo
+install -d -m0755 /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/toolchain/ipkg-aarch64_cortex-a53/librt/lib
+find /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/toolchain/ipkg-aarch64_cortex-a53/librt -name 'CVS' -o -name '.svn' -o -name '.#*' -o -name '*~'| xargs -r rm -rf
+export CROSS="aarch64-openwrt-linux-musl-"   ; NM="aarch64-openwrt-linux-musl-nm" STRIP="/tmp/gl-modem-community-sdk.JpPaTI/staging_dir/host/bin/sstrip -z" STRIP_KMOD="/tmp/gl-modem-community-sdk.JpPaTI/scripts/strip-kmod.sh" PATCHELF="/tmp/gl-modem-community-sdk.JpPaTI/staging_dir/host/bin/patchelf" /tmp/gl-modem-community-sdk.JpPaTI/scripts/rstrip.sh /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/toolchain/ipkg-aarch64_cortex-a53/librt
+(cd /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/toolchain/ipkg-aarch64_cortex-a53/librt/CONTROL; ( echo "$CONTROL"; printf "Description: "; echo "$DESCRIPTION" | sed -e 's,^[[:space:]]*, ,g'; ) > control; chmod 644 control; ( echo "#!/bin/sh"; echo "[ \"\${IPKG_NO_SCRIPT}\" = \"1\" ] && exit 0"; echo "[ -s "\${IPKG_INSTROOT}/lib/functions.sh" ] || exit 0"; echo ". \${IPKG_INSTROOT}/lib/functions.sh"; echo "default_postinst \$0 \$@"; ) > postinst; ( echo "#!/bin/sh"; echo "[ -s "\${IPKG_INSTROOT}/lib/functions.sh" ] || exit 0"; echo ". \${IPKG_INSTROOT}/lib/functions.sh"; echo "default_prerm \$0 \$@"; ) > prerm; chmod 0755 postinst prerm;  )
+install -d -m0755 /tmp/gl-modem-community-sdk.JpPaTI/bin/targets/mediatek/mt7622/packages
+/tmp/gl-modem-community-sdk.JpPaTI/staging_dir/host/bin/fakeroot /tmp/gl-modem-community-sdk.JpPaTI/scripts/ipkg-build -m "" /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/toolchain/ipkg-aarch64_cortex-a53/librt /tmp/gl-modem-community-sdk.JpPaTI/bin/targets/mediatek/mt7622/packages
+Packaged contents of /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/toolchain/ipkg-aarch64_cortex-a53/librt into /tmp/gl-modem-community-sdk.JpPaTI/bin/targets/mediatek/mt7622/packages/librt_1.1.24-3_aarch64_cortex-a53.ipk
+echo "libc" >> /tmp/gl-modem-community-sdk.JpPaTI/staging_dir/target-aarch64_cortex-a53_musl/pkginfo/toolchain.default.install
+rm -rf /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/toolchain/.pkgdir/libgcc.installed /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/toolchain/.pkgdir/libgcc
+mkdir -p /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/toolchain/.pkgdir/libgcc
+install -d -m0755 /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/toolchain/.pkgdir/libgcc/lib
+cp -fpR /tmp/gl-modem-community-sdk.JpPaTI/staging_dir/toolchain-aarch64_cortex-a53_gcc-8.4.0_musl/lib/libgcc_s.so.* /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/toolchain/.pkgdir/libgcc/lib/
+touch /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/toolchain/.pkgdir/libgcc.installed
+rm -rf /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/toolchain/.pkgdir/libatomic.installed /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/toolchain/.pkgdir/libatomic
+mkdir -p /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/toolchain/.pkgdir/libatomic
+install -d -m0755 /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/toolchain/.pkgdir/libatomic/lib
+cp -fpR /tmp/gl-modem-community-sdk.JpPaTI/staging_dir/toolchain-aarch64_cortex-a53_gcc-8.4.0_musl/lib/libatomic.so.* /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/toolchain/.pkgdir/libatomic/lib/
+touch /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/toolchain/.pkgdir/libatomic.installed
+rm -rf /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/toolchain/.pkgdir/libstdcpp.installed /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/toolchain/.pkgdir/libstdcpp
+mkdir -p /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/toolchain/.pkgdir/libstdcpp
+install -d -m0755 /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/toolchain/.pkgdir/libstdcpp/usr/lib
+cp -fpR /tmp/gl-modem-community-sdk.JpPaTI/staging_dir/toolchain-aarch64_cortex-a53_gcc-8.4.0_musl/lib/libstdc++.so.* /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/toolchain/.pkgdir/libstdcpp/usr/lib/
+touch /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/toolchain/.pkgdir/libstdcpp.installed
+rm -rf /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/toolchain/.pkgdir/libpthread.installed /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/toolchain/.pkgdir/libpthread
+mkdir -p /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/toolchain/.pkgdir/libpthread
+install -d -m0755 /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/toolchain/.pkgdir/libpthread/lib
+touch /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/toolchain/.pkgdir/libpthread.installed
+rm -rf /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/toolchain/.pkgdir/librt.installed /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/toolchain/.pkgdir/librt
+mkdir -p /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/toolchain/.pkgdir/librt
+install -d -m0755 /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/toolchain/.pkgdir/librt/lib
+touch /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/toolchain/.pkgdir/librt.installed
+mkdir -p /tmp/gl-modem-community-sdk.JpPaTI/staging_dir/target-aarch64_cortex-a53_musl/root-mediatek/stamp
+echo '1' | cmp -s - /tmp/gl-modem-community-sdk.JpPaTI/staging_dir/target-aarch64_cortex-a53_musl/pkginfo/libgcc.version || { echo '1' > /tmp/gl-modem-community-sdk.JpPaTI/staging_dir/target-aarch64_cortex-a53_musl/pkginfo/libgcc.version;  }
+SHELL= flock /tmp/gl-modem-community-sdk.JpPaTI/tmp/.root-copy.flock -c 'cp -fpR /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/toolchain/.pkgdir/libgcc/. /tmp/gl-modem-community-sdk.JpPaTI/staging_dir/target-aarch64_cortex-a53_musl/root-mediatek/'
+touch /tmp/gl-modem-community-sdk.JpPaTI/staging_dir/target-aarch64_cortex-a53_musl/root-mediatek/stamp/.libgcc_installed
+echo "libgcc" >> /tmp/gl-modem-community-sdk.JpPaTI/staging_dir/target-aarch64_cortex-a53_musl/pkginfo/toolchain.default.install
+mkdir -p /tmp/gl-modem-community-sdk.JpPaTI/staging_dir/target-aarch64_cortex-a53_musl/root-mediatek/stamp
+echo '1' | cmp -s - /tmp/gl-modem-community-sdk.JpPaTI/staging_dir/target-aarch64_cortex-a53_musl/pkginfo/libatomic.version || { echo '1' > /tmp/gl-modem-community-sdk.JpPaTI/staging_dir/target-aarch64_cortex-a53_musl/pkginfo/libatomic.version;  }
+SHELL= flock /tmp/gl-modem-community-sdk.JpPaTI/tmp/.root-copy.flock -c 'cp -fpR /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/toolchain/.pkgdir/libatomic/. /tmp/gl-modem-community-sdk.JpPaTI/staging_dir/target-aarch64_cortex-a53_musl/root-mediatek/'
+touch /tmp/gl-modem-community-sdk.JpPaTI/staging_dir/target-aarch64_cortex-a53_musl/root-mediatek/stamp/.libatomic_installed
+mkdir -p /tmp/gl-modem-community-sdk.JpPaTI/staging_dir/target-aarch64_cortex-a53_musl/root-mediatek/stamp
+echo '6' | cmp -s - /tmp/gl-modem-community-sdk.JpPaTI/staging_dir/target-aarch64_cortex-a53_musl/pkginfo/libstdcpp.version || { echo '6' > /tmp/gl-modem-community-sdk.JpPaTI/staging_dir/target-aarch64_cortex-a53_musl/pkginfo/libstdcpp.version;  }
+SHELL= flock /tmp/gl-modem-community-sdk.JpPaTI/tmp/.root-copy.flock -c 'cp -fpR /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/toolchain/.pkgdir/libstdcpp/. /tmp/gl-modem-community-sdk.JpPaTI/staging_dir/target-aarch64_cortex-a53_musl/root-mediatek/'
+touch /tmp/gl-modem-community-sdk.JpPaTI/staging_dir/target-aarch64_cortex-a53_musl/root-mediatek/stamp/.libstdcpp_installed
+mkdir -p /tmp/gl-modem-community-sdk.JpPaTI/staging_dir/target-aarch64_cortex-a53_musl/root-mediatek/stamp
+SHELL= flock /tmp/gl-modem-community-sdk.JpPaTI/tmp/.root-copy.flock -c 'cp -fpR /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/toolchain/.pkgdir/libpthread/. /tmp/gl-modem-community-sdk.JpPaTI/staging_dir/target-aarch64_cortex-a53_musl/root-mediatek/'
+touch /tmp/gl-modem-community-sdk.JpPaTI/staging_dir/target-aarch64_cortex-a53_musl/root-mediatek/stamp/.libpthread_installed
+echo "libpthread" >> /tmp/gl-modem-community-sdk.JpPaTI/staging_dir/target-aarch64_cortex-a53_musl/pkginfo/toolchain.default.install
+mkdir -p /tmp/gl-modem-community-sdk.JpPaTI/staging_dir/target-aarch64_cortex-a53_musl/root-mediatek/stamp
+SHELL= flock /tmp/gl-modem-community-sdk.JpPaTI/tmp/.root-copy.flock -c 'cp -fpR /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/toolchain/.pkgdir/librt/. /tmp/gl-modem-community-sdk.JpPaTI/staging_dir/target-aarch64_cortex-a53_musl/root-mediatek/'
+touch /tmp/gl-modem-community-sdk.JpPaTI/staging_dir/target-aarch64_cortex-a53_musl/root-mediatek/stamp/.librt_installed
+touch -r /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/toolchain/.built /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/toolchain/.autoremove 2>/dev/null >/dev/null
+find /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/toolchain -mindepth 1 -maxdepth 1 -not '(' -type f -and -name '.*' -and -size 0 ')' -and -not -name '.pkgdir'  -print0 | xargs -r -0 rm -rf
+make[2]: Leaving directory '/tmp/gl-modem-community-sdk.JpPaTI/package/toolchain'
+time: package/toolchain/compile#14.67#1.74#13.82
+make[2]: Entering directory '/tmp/gl-modem-community-sdk.JpPaTI/package/gl-modem-community'
+touch /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/gl-modem-community-0.1.13/.prepared_9a243c21ba0a825a617776eb49ebedd4_18f1e190c5d53547fed41a3eaa76e9e9_check
+true
+[ ! -d ./src/ ] || cp -fpR ./src/. /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/gl-modem-community-0.1.13
+touch /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/gl-modem-community-0.1.13/.prepared_9a243c21ba0a825a617776eb49ebedd4_18f1e190c5d53547fed41a3eaa76e9e9
+rm -f /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/gl-modem-community-0.1.13/.configured_*
+rm -f /tmp/gl-modem-community-sdk.JpPaTI/staging_dir/target-aarch64_cortex-a53_musl/stamp/.gl-modem-community_installed
+(cd /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/gl-modem-community-0.1.13/./; if [ -x ./configure ]; then find /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/gl-modem-community-0.1.13/ -name config.guess | xargs -r chmod u+w; find /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/gl-modem-community-0.1.13/ -name config.guess | xargs -r -n1 cp --remove-destination /tmp/gl-modem-community-sdk.JpPaTI/scripts/config.guess; find /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/gl-modem-community-0.1.13/ -name config.sub | xargs -r chmod u+w; find /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/gl-modem-community-0.1.13/ -name config.sub | xargs -r -n1 cp --remove-destination /tmp/gl-modem-community-sdk.JpPaTI/scripts/config.sub; AR="aarch64-openwrt-linux-musl-gcc-ar" AS="aarch64-openwrt-linux-musl-gcc -c -Os -pipe -mcpu=cortex-a53 -fno-caller-saves -fno-plt -fhonour-copts -Wno-error=unused-but-set-variable -Wno-error=unused-result -ffile-prefix-map=/tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/gl-modem-community-0.1.13=gl-modem-community-0.1.13 -Wformat -Werror=format-security -fstack-protector -D_FORTIFY_SOURCE=1 -Wl,-z,now -Wl,-z,relro" LD=aarch64-openwrt-linux-musl-ld NM="aarch64-openwrt-linux-musl-gcc-nm" CC="aarch64-openwrt-linux-musl-gcc" GCC="aarch64-openwrt-linux-musl-gcc" CXX="aarch64-openwrt-linux-musl-g++" RANLIB="aarch64-openwrt-linux-musl-gcc-ranlib" STRIP=aarch64-openwrt-linux-musl-strip OBJCOPY=aarch64-openwrt-linux-musl-objcopy OBJDUMP=aarch64-openwrt-linux-musl-objdump SIZE=aarch64-openwrt-linux-musl-size CFLAGS="-Os -pipe -mcpu=cortex-a53 -fno-caller-saves -fno-plt -fhonour-copts -Wno-error=unused-but-set-variable -Wno-error=unused-result -ffile-prefix-map=/tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/gl-modem-community-0.1.13=gl-modem-community-0.1.13 -Wformat -Werror=format-security -fstack-protector -D_FORTIFY_SOURCE=1 -Wl,-z,now -Wl,-z,relro " CXXFLAGS="-Os -pipe -mcpu=cortex-a53 -fno-caller-saves -fno-plt -fhonour-copts -Wno-error=unused-but-set-variable -Wno-error=unused-result -ffile-prefix-map=/tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/gl-modem-community-0.1.13=gl-modem-community-0.1.13 -Wformat -Werror=format-security -fstack-protector -D_FORTIFY_SOURCE=1 -Wl,-z,now -Wl,-z,relro " CPPFLAGS="-I/tmp/gl-modem-community-sdk.JpPaTI/staging_dir/toolchain-aarch64_cortex-a53_gcc-8.4.0_musl/usr/include -I/tmp/gl-modem-community-sdk.JpPaTI/staging_dir/toolchain-aarch64_cortex-a53_gcc-8.4.0_musl/include/fortify -I/tmp/gl-modem-community-sdk.JpPaTI/staging_dir/toolchain-aarch64_cortex-a53_gcc-8.4.0_musl/include " LDFLAGS="-L/tmp/gl-modem-community-sdk.JpPaTI/staging_dir/toolchain-aarch64_cortex-a53_gcc-8.4.0_musl/usr/lib -L/tmp/gl-modem-community-sdk.JpPaTI/staging_dir/toolchain-aarch64_cortex-a53_gcc-8.4.0_musl/lib -znow -zrelro "   ./configure --target=aarch64-openwrt-linux --host=aarch64-openwrt-linux --build=x86_64-pc-linux-gnu --program-prefix="" --program-suffix="" --prefix=/usr --exec-prefix=/usr --bindir=/usr/bin --sbindir=/usr/sbin --libexecdir=/usr/lib --sysconfdir=/etc --datadir=/usr/share --localstatedir=/var --mandir=/usr/man --infodir=/usr/info --disable-nls  ; fi; )
+touch /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/gl-modem-community-0.1.13/.configured_68b329da9893e34099c7d8ad5cb9c940
+rm -f /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/gl-modem-community-0.1.13/.built
+touch /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/gl-modem-community-0.1.13/.built_check
+aarch64-openwrt-linux-musl-gcc -Os -pipe -mcpu=cortex-a53 -fno-caller-saves -fno-plt -fhonour-copts -Wno-error=unused-but-set-variable -Wno-error=unused-result -ffile-prefix-map=/tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/gl-modem-community-0.1.13=gl-modem-community-0.1.13 -Wformat -Werror=format-security -fstack-protector -D_FORTIFY_SOURCE=1 -Wl,-z,now -Wl,-z,relro -fPIC -shared -o /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/gl-modem-community-0.1.13/fm350-at-compat.so /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/gl-modem-community-0.1.13/fm350_at_compat.c
+touch /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/gl-modem-community-0.1.13/.built
+rm -rf /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/gl-modem-community-0.1.13/.pkgdir/gl-modem-community.installed /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/gl-modem-community-0.1.13/.pkgdir/gl-modem-community
+mkdir -p /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/gl-modem-community-0.1.13/.pkgdir/gl-modem-community
+install -d -m0755 /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/gl-modem-community-0.1.13/.pkgdir/gl-modem-community/etc/config
+install -m0600 ./files/etc/config/gl_modem_community /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/gl-modem-community-0.1.13/.pkgdir/gl-modem-community/etc/config/gl_modem_community
+install -d -m0755 /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/gl-modem-community-0.1.13/.pkgdir/gl-modem-community/etc/init.d
+install -m0755 ./files/etc/init.d/gl_modem_community /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/gl-modem-community-0.1.13/.pkgdir/gl-modem-community/etc/init.d/gl_modem_community
+install -d -m0755 /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/gl-modem-community-0.1.13/.pkgdir/gl-modem-community/etc/gcom
+install -m0644 ./files/etc/gcom/fm350-auth.gcom /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/gl-modem-community-0.1.13/.pkgdir/gl-modem-community/etc/gcom/fm350-auth.gcom
+install -m0644 ./files/etc/gcom/fm350-connect.gcom /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/gl-modem-community-0.1.13/.pkgdir/gl-modem-community/etc/gcom/fm350-connect.gcom
+install -m0644 ./files/etc/gcom/fm350-disconnect.gcom /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/gl-modem-community-0.1.13/.pkgdir/gl-modem-community/etc/gcom/fm350-disconnect.gcom
+install -m0644 ./files/etc/gcom/fm350-query.gcom /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/gl-modem-community-0.1.13/.pkgdir/gl-modem-community/etc/gcom/fm350-query.gcom
+install -m0644 ./files/etc/gcom/fm350-probe.gcom /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/gl-modem-community-0.1.13/.pkgdir/gl-modem-community/etc/gcom/fm350-probe.gcom
+install -m0644 ./files/etc/gcom/fm350-at.gcom /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/gl-modem-community-0.1.13/.pkgdir/gl-modem-community/etc/gcom/fm350-at.gcom
+install -d -m0755 /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/gl-modem-community-0.1.13/.pkgdir/gl-modem-community/etc/hotplug.d/usb
+install -m0755 ./files/etc/hotplug.d/usb/99-gl-modem-community /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/gl-modem-community-0.1.13/.pkgdir/gl-modem-community/etc/hotplug.d/usb/99-gl-modem-community
+install -d -m0755 /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/gl-modem-community-0.1.13/.pkgdir/gl-modem-community/lib/netifd/proto
+install -m0755 ./files/lib/netifd/proto/xmm.sh /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/gl-modem-community-0.1.13/.pkgdir/gl-modem-community/lib/netifd/proto/xmm.sh
+install -d -m0755 /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/gl-modem-community-0.1.13/.pkgdir/gl-modem-community/usr/lib/oui-httpd/rpc
+install -m0644 ./files/usr/lib/oui-httpd/rpc/modem /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/gl-modem-community-0.1.13/.pkgdir/gl-modem-community/usr/lib/oui-httpd/rpc/modem
+install -d -m0755 /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/gl-modem-community-0.1.13/.pkgdir/gl-modem-community/usr/libexec/gl-modem-community
+install -m0755 ./files/usr/libexec/gl-modem-community/merge-models /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/gl-modem-community-0.1.13/.pkgdir/gl-modem-community/usr/libexec/gl-modem-community/merge-models
+install -m0755 ./files/usr/libexec/gl-modem-community/modem_AT-wrapper /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/gl-modem-community-0.1.13/.pkgdir/gl-modem-community/usr/libexec/gl-modem-community/modem_AT-wrapper
+install -m0755 ./files/usr/libexec/gl-modem-community/fm350-network-repair /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/gl-modem-community-0.1.13/.pkgdir/gl-modem-community/usr/libexec/gl-modem-community/fm350-network-repair
+install -m0755 ./files/usr/libexec/gl-modem-community/runtime-stack /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/gl-modem-community-0.1.13/.pkgdir/gl-modem-community/usr/libexec/gl-modem-community/runtime-stack
+install -m0755 ./files/usr/libexec/gl-modem-community/legacy-bus /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/gl-modem-community-0.1.13/.pkgdir/gl-modem-community/usr/libexec/gl-modem-community/legacy-bus
+install -m0755 ./files/usr/libexec/gl-modem-community/fm350-at /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/gl-modem-community-0.1.13/.pkgdir/gl-modem-community/usr/libexec/gl-modem-community/fm350-at
+install -d -m0755 /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/gl-modem-community-0.1.13/.pkgdir/gl-modem-community/usr/lib/gl-modem-community
+install -m0644 /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/gl-modem-community-0.1.13/fm350-at-compat.so /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/gl-modem-community-0.1.13/.pkgdir/gl-modem-community/usr/lib/gl-modem-community/fm350-at-compat.so
+install -d -m0755 /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/gl-modem-community-0.1.13/.pkgdir/gl-modem-community/usr/share/gl-modem-community/drivers.d
+install -m0644 ./files/usr/share/gl-modem-community/drivers.d/fm350.json /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/gl-modem-community-0.1.13/.pkgdir/gl-modem-community/usr/share/gl-modem-community/drivers.d/fm350.json
+install -d -m0755 /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/gl-modem-community-0.1.13/.pkgdir/gl-modem-community/usr/share/gl-modem-community/rpc-drivers
+install -m0644 ./files/usr/share/gl-modem-community/rpc-drivers/fm350.lua /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/gl-modem-community-0.1.13/.pkgdir/gl-modem-community/usr/share/gl-modem-community/rpc-drivers/fm350.lua
+touch /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/gl-modem-community-0.1.13/.pkgdir/gl-modem-community.installed
+mkdir -p /tmp/gl-modem-community-sdk.JpPaTI/staging_dir/target-aarch64_cortex-a53_musl/root-mediatek/stamp
+SHELL= flock /tmp/gl-modem-community-sdk.JpPaTI/tmp/.root-copy.flock -c 'cp -fpR /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/gl-modem-community-0.1.13/.pkgdir/gl-modem-community/. /tmp/gl-modem-community-sdk.JpPaTI/staging_dir/target-aarch64_cortex-a53_musl/root-mediatek/'
+touch /tmp/gl-modem-community-sdk.JpPaTI/staging_dir/target-aarch64_cortex-a53_musl/root-mediatek/stamp/.gl-modem-community_installed
+mkdir -p /tmp/gl-modem-community-sdk.JpPaTI/bin/targets/mediatek/mt7622/packages /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/gl-modem-community-0.1.13/ipkg-aarch64_cortex-a53/gl-modem-community/CONTROL /tmp/gl-modem-community-sdk.JpPaTI/staging_dir/target-aarch64_cortex-a53_musl/pkginfo
+install -d -m0755 /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/gl-modem-community-0.1.13/ipkg-aarch64_cortex-a53/gl-modem-community/etc/config
+install -m0600 ./files/etc/config/gl_modem_community /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/gl-modem-community-0.1.13/ipkg-aarch64_cortex-a53/gl-modem-community/etc/config/gl_modem_community
+install -d -m0755 /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/gl-modem-community-0.1.13/ipkg-aarch64_cortex-a53/gl-modem-community/etc/init.d
+install -m0755 ./files/etc/init.d/gl_modem_community /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/gl-modem-community-0.1.13/ipkg-aarch64_cortex-a53/gl-modem-community/etc/init.d/gl_modem_community
+install -d -m0755 /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/gl-modem-community-0.1.13/ipkg-aarch64_cortex-a53/gl-modem-community/etc/gcom
+install -m0644 ./files/etc/gcom/fm350-auth.gcom /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/gl-modem-community-0.1.13/ipkg-aarch64_cortex-a53/gl-modem-community/etc/gcom/fm350-auth.gcom
+install -m0644 ./files/etc/gcom/fm350-connect.gcom /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/gl-modem-community-0.1.13/ipkg-aarch64_cortex-a53/gl-modem-community/etc/gcom/fm350-connect.gcom
+install -m0644 ./files/etc/gcom/fm350-disconnect.gcom /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/gl-modem-community-0.1.13/ipkg-aarch64_cortex-a53/gl-modem-community/etc/gcom/fm350-disconnect.gcom
+install -m0644 ./files/etc/gcom/fm350-query.gcom /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/gl-modem-community-0.1.13/ipkg-aarch64_cortex-a53/gl-modem-community/etc/gcom/fm350-query.gcom
+install -m0644 ./files/etc/gcom/fm350-probe.gcom /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/gl-modem-community-0.1.13/ipkg-aarch64_cortex-a53/gl-modem-community/etc/gcom/fm350-probe.gcom
+install -m0644 ./files/etc/gcom/fm350-at.gcom /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/gl-modem-community-0.1.13/ipkg-aarch64_cortex-a53/gl-modem-community/etc/gcom/fm350-at.gcom
+install -d -m0755 /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/gl-modem-community-0.1.13/ipkg-aarch64_cortex-a53/gl-modem-community/etc/hotplug.d/usb
+install -m0755 ./files/etc/hotplug.d/usb/99-gl-modem-community /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/gl-modem-community-0.1.13/ipkg-aarch64_cortex-a53/gl-modem-community/etc/hotplug.d/usb/99-gl-modem-community
+install -d -m0755 /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/gl-modem-community-0.1.13/ipkg-aarch64_cortex-a53/gl-modem-community/lib/netifd/proto
+install -m0755 ./files/lib/netifd/proto/xmm.sh /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/gl-modem-community-0.1.13/ipkg-aarch64_cortex-a53/gl-modem-community/lib/netifd/proto/xmm.sh
+install -d -m0755 /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/gl-modem-community-0.1.13/ipkg-aarch64_cortex-a53/gl-modem-community/usr/lib/oui-httpd/rpc
+install -m0644 ./files/usr/lib/oui-httpd/rpc/modem /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/gl-modem-community-0.1.13/ipkg-aarch64_cortex-a53/gl-modem-community/usr/lib/oui-httpd/rpc/modem
+install -d -m0755 /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/gl-modem-community-0.1.13/ipkg-aarch64_cortex-a53/gl-modem-community/usr/libexec/gl-modem-community
+install -m0755 ./files/usr/libexec/gl-modem-community/merge-models /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/gl-modem-community-0.1.13/ipkg-aarch64_cortex-a53/gl-modem-community/usr/libexec/gl-modem-community/merge-models
+install -m0755 ./files/usr/libexec/gl-modem-community/modem_AT-wrapper /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/gl-modem-community-0.1.13/ipkg-aarch64_cortex-a53/gl-modem-community/usr/libexec/gl-modem-community/modem_AT-wrapper
+install -m0755 ./files/usr/libexec/gl-modem-community/fm350-network-repair /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/gl-modem-community-0.1.13/ipkg-aarch64_cortex-a53/gl-modem-community/usr/libexec/gl-modem-community/fm350-network-repair
+install -m0755 ./files/usr/libexec/gl-modem-community/runtime-stack /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/gl-modem-community-0.1.13/ipkg-aarch64_cortex-a53/gl-modem-community/usr/libexec/gl-modem-community/runtime-stack
+install -m0755 ./files/usr/libexec/gl-modem-community/legacy-bus /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/gl-modem-community-0.1.13/ipkg-aarch64_cortex-a53/gl-modem-community/usr/libexec/gl-modem-community/legacy-bus
+install -m0755 ./files/usr/libexec/gl-modem-community/fm350-at /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/gl-modem-community-0.1.13/ipkg-aarch64_cortex-a53/gl-modem-community/usr/libexec/gl-modem-community/fm350-at
+install -d -m0755 /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/gl-modem-community-0.1.13/ipkg-aarch64_cortex-a53/gl-modem-community/usr/lib/gl-modem-community
+install -m0644 /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/gl-modem-community-0.1.13/fm350-at-compat.so /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/gl-modem-community-0.1.13/ipkg-aarch64_cortex-a53/gl-modem-community/usr/lib/gl-modem-community/fm350-at-compat.so
+install -d -m0755 /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/gl-modem-community-0.1.13/ipkg-aarch64_cortex-a53/gl-modem-community/usr/share/gl-modem-community/drivers.d
+install -m0644 ./files/usr/share/gl-modem-community/drivers.d/fm350.json /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/gl-modem-community-0.1.13/ipkg-aarch64_cortex-a53/gl-modem-community/usr/share/gl-modem-community/drivers.d/fm350.json
+install -d -m0755 /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/gl-modem-community-0.1.13/ipkg-aarch64_cortex-a53/gl-modem-community/usr/share/gl-modem-community/rpc-drivers
+install -m0644 ./files/usr/share/gl-modem-community/rpc-drivers/fm350.lua /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/gl-modem-community-0.1.13/ipkg-aarch64_cortex-a53/gl-modem-community/usr/share/gl-modem-community/rpc-drivers/fm350.lua
+find /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/gl-modem-community-0.1.13/ipkg-aarch64_cortex-a53/gl-modem-community -name 'CVS' -o -name '.svn' -o -name '.#*' -o -name '*~'| xargs -r rm -rf
+export CROSS="aarch64-openwrt-linux-musl-"   ; NM="aarch64-openwrt-linux-musl-nm" STRIP="/tmp/gl-modem-community-sdk.JpPaTI/staging_dir/host/bin/sstrip -z" STRIP_KMOD="/tmp/gl-modem-community-sdk.JpPaTI/scripts/strip-kmod.sh" PATCHELF="/tmp/gl-modem-community-sdk.JpPaTI/staging_dir/host/bin/patchelf" /tmp/gl-modem-community-sdk.JpPaTI/scripts/rstrip.sh /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/gl-modem-community-0.1.13/ipkg-aarch64_cortex-a53/gl-modem-community
+rstrip.sh: /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/gl-modem-community-0.1.13/ipkg-aarch64_cortex-a53/gl-modem-community/usr/lib/gl-modem-community/fm350-at-compat.so: shared object
+(cd /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/gl-modem-community-0.1.13/ipkg-aarch64_cortex-a53/gl-modem-community/CONTROL; ( echo "$CONTROL"; printf "Description: "; echo "$DESCRIPTION" | sed -e 's,^[[:space:]]*, ,g'; ) > control; chmod 644 control; ( echo "#!/bin/sh"; echo "[ \"\${IPKG_NO_SCRIPT}\" = \"1\" ] && exit 0"; echo "[ -s "\${IPKG_INSTROOT}/lib/functions.sh" ] || exit 0"; echo ". \${IPKG_INSTROOT}/lib/functions.sh"; echo "default_postinst \$0 \$@"; ) > postinst; ( echo "#!/bin/sh"; echo "[ -s "\${IPKG_INSTROOT}/lib/functions.sh" ] || exit 0"; echo ". \${IPKG_INSTROOT}/lib/functions.sh"; echo "default_prerm \$0 \$@"; ) > prerm; chmod 0755 postinst prerm; echo "$V_Package_gl_modem_community_conffiles" > conffiles;  echo "$V_Package_gl_modem_community_postinst" > postinst-pkg; chmod 0755 postinst-pkg; echo "$V_Package_gl_modem_community_prerm" > prerm-pkg; chmod 0755 prerm-pkg; )
+install -d -m0755 /tmp/gl-modem-community-sdk.JpPaTI/bin/packages/aarch64_cortex-a53/base
+/tmp/gl-modem-community-sdk.JpPaTI/staging_dir/host/bin/fakeroot /tmp/gl-modem-community-sdk.JpPaTI/scripts/ipkg-build -m "" /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/gl-modem-community-0.1.13/ipkg-aarch64_cortex-a53/gl-modem-community /tmp/gl-modem-community-sdk.JpPaTI/bin/packages/aarch64_cortex-a53/base
+Packaged contents of /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/gl-modem-community-0.1.13/ipkg-aarch64_cortex-a53/gl-modem-community into /tmp/gl-modem-community-sdk.JpPaTI/bin/packages/aarch64_cortex-a53/base/gl-modem-community_0.1.13-1_aarch64_cortex-a53.ipk
+touch -r /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/gl-modem-community-0.1.13/.built /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/gl-modem-community-0.1.13/.autoremove 2>/dev/null >/dev/null
+find /tmp/gl-modem-community-sdk.JpPaTI/build_dir/target-aarch64_cortex-a53_musl/gl-modem-community-0.1.13 -mindepth 1 -maxdepth 1 -not '(' -type f -and -name '.*' -and -size 0 ')' -and -not -name '.pkgdir'  -print0 | xargs -r -0 rm -rf
+make[2]: Leaving directory '/tmp/gl-modem-community-sdk.JpPaTI/package/gl-modem-community'
+time: package/gl-modem-community/compile#8.72#0.90#8.26
+make[1]: Leaving directory '/tmp/gl-modem-community-sdk.JpPaTI'

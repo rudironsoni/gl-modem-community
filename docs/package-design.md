@@ -63,7 +63,7 @@ Version `0.1.1` adopted the product-specific interface mapping from modemfeed. D
 
 ## Build evidence
 
-The repository builds the APK with the pinned OpenWrt 25.12.5 MediaTek Filogic SDK and the IPK with the pinned OpenWrt 24.10.7 MediaTek Filogic SDK. CI verifies the current package version and artifact names on every pull request.
+The root `Makefile` builds the APK with the pinned OpenWrt 25.12.5 MediaTek Filogic SDK, the openwrt24 IPK with the exact OpenWrt 24.10.4 Filogic SDK, and the stable/beta userspace IPK with the OpenWrt 21.02.7 MediaTek ABI surrogate. CI verifies the current package version and all three artifact names on every pull request.
 
 The files under `analysis/reports/` record individual local analysis runs. They are snapshots, not statements about the latest release.
 

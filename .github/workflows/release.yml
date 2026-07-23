@@ -169,26 +169,37 @@ jobs:
 
           apk="release-assets/gl-modem-community-${RELEASE_VERSION}-r1.apk"
           ipk="release-assets/gl-modem-community_${RELEASE_VERSION}-r1_aarch64_cortex-a53.ipk"
+          glinet21_ipk="release-assets/gl-modem-community_${RELEASE_VERSION}-1_glinet-21.02_aarch64_cortex-a53.ipk"
           test -s "$apk"
           test -s "$ipk"
-          test "$(find release-assets -maxdepth 1 -type f | wc -l)" -eq 2
+          test -s "$glinet21_ipk"
+          test "$(find release-assets -maxdepth 1 -type f | wc -l)" -eq 3
 
           docker run --rm --platform linux/amd64 \
             --mount "type=bind,src=$GITHUB_WORKSPACE,dst=/repo" \
             --mount "type=bind,src=$signing_dir,dst=/signing,readonly" \
             mt3000-openwrt-sdk:25.12.5 \
-            /repo/scripts/sign-apk-release.sh \
-              /repo/tool-cache/sdk-25.12.5-mediatek-filogic \
-              /signing/private-key.pem \
-              /repo/keys/gl-modem-community.pem \
-              "/repo/$apk" \
-              /repo/release-assets/packages.adb \
-              /repo/release-assets/apk-metadata.json
+            make -C /repo --no-print-directory sign-apk-release \
+              SDK_DIR=/repo/tool-cache/sdk-25.12.5-mediatek-filogic \
+              PRIVATE_KEY=/signing/private-key.pem \
+              PUBLIC_KEY=/repo/keys/gl-modem-community.pem \
+              APK="/repo/$apk" \
+              OUTPUT_INDEX=/repo/release-assets/packages.adb \
+              OUTPUT_METADATA=/repo/release-assets/apk-metadata.json
 
-          ./scripts/generate-sbom.sh apk "$apk" release-assets/gl-modem-community.apk.cdx.json release-assets/apk-metadata.json
-          ./scripts/generate-sbom.sh ipk "$ipk" release-assets/gl-modem-community.ipk.cdx.json
-          ./scripts/validate-sbom.sh release-assets/gl-modem-community.apk.cdx.json
-          ./scripts/validate-sbom.sh release-assets/gl-modem-community.ipk.cdx.json
+          make --no-print-directory generate-sbom SBOM_FORMAT=apk \
+            SBOM_ARTIFACT="$apk" \
+            SBOM_OUTPUT=release-assets/gl-modem-community.apk.cdx.json \
+            APK_METADATA=release-assets/apk-metadata.json
+          make --no-print-directory generate-sbom SBOM_FORMAT=ipk \
+            SBOM_ARTIFACT="$ipk" \
+            SBOM_OUTPUT=release-assets/gl-modem-community.ipk.cdx.json
+          make --no-print-directory generate-sbom SBOM_FORMAT=ipk \
+            SBOM_ARTIFACT="$glinet21_ipk" \
+            SBOM_OUTPUT=release-assets/gl-modem-community.glinet21.ipk.cdx.json
+          make --no-print-directory validate-sbom SBOM=release-assets/gl-modem-community.apk.cdx.json
+          make --no-print-directory validate-sbom SBOM=release-assets/gl-modem-community.ipk.cdx.json
+          make --no-print-directory validate-sbom SBOM=release-assets/gl-modem-community.glinet21.ipk.cdx.json
           docker run --rm --platform linux/amd64 \
             --mount "type=bind,src=$GITHUB_WORKSPACE,dst=/repo,readonly" \
             mt3000-openwrt-sdk:25.12.5 \
@@ -197,6 +208,10 @@ jobs:
             --mount "type=bind,src=$GITHUB_WORKSPACE,dst=/repo,readonly" \
             mt3000-openwrt-sdk:25.12.5 \
             cyclonedx validate --input-file /repo/release-assets/gl-modem-community.ipk.cdx.json
+          docker run --rm --platform linux/amd64 \
+            --mount "type=bind,src=$GITHUB_WORKSPACE,dst=/repo,readonly" \
+            mt3000-openwrt-sdk:25.12.5 \
+            cyclonedx validate --input-file /repo/release-assets/gl-modem-community.glinet21.ipk.cdx.json
           rm release-assets/apk-metadata.json
 
           cp keys/gl-modem-community.pem release-assets/

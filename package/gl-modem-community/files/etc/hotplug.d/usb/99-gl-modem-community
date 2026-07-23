@@ -1,0 +1,12 @@
+#!/bin/sh
+# SPDX-License-Identifier: GPL-3.0-only
+
+[ -x /usr/libexec/gl-modem-community/runtime-stack ] || exit 0
+[ "$(/usr/libexec/gl-modem-community/runtime-stack 2>/dev/null || true)" = legacy ] ||
+	exit 0
+
+case "${PRODUCT:-}" in
+0e8d/7126/*|0e8d/7127/*)
+	/usr/libexec/gl-modem-community/legacy-bus refresh
+	;;
+esac

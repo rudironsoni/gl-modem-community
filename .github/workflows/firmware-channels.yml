@@ -1,0 +1,30 @@
+name: Firmware channel drift
+
+on:
+  schedule:
+    - cron: "19 4 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: firmware-channel-drift
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    name: Verify current GL.iNet channel heads
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Build analysis image
+        run: make tools
+
+      - name: Verify API metadata and embedded firmware
+        run: make verify-firmware-channels

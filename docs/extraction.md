@@ -2,7 +2,7 @@
 
 Conclusion: [CONFIRMED] The outer image is an OpenWrt sysupgrade tar containing `CONTROL`, a 5,305,224-byte ARM64 FIT kernel, and a 71,297,024-byte SquashFS 4 root filesystem compressed with XZ.
 
-Evidence: `analysis/reports/outer-tar-list.txt`, `analysis/reports/fit-list.txt`, `analysis/reports/binwalk.txt`, and `scripts/extract-firmware.sh`.
+Evidence: `analysis/reports/outer-tar-list.txt`, `analysis/reports/fit-list.txt`, `analysis/reports/binwalk.txt`, and `make identify extract`.
 
 Confidence: confirmed.
 
