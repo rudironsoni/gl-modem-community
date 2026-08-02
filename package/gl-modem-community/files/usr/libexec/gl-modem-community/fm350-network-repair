@@ -101,7 +101,10 @@ ensure_network_section() {
 }
 
 repair_fm350_network() {
-	local path bus pid section ip_type profile changed=0 section_changed
+	local paths present_sections path bus pid section ip_type profile changed section_changed
+	paths=
+	present_sections=
+	changed=0
 	NETWORK_CHANGED=0
 	STATE_CHANGED=0
 	profile=5
@@ -112,6 +115,17 @@ repair_fm350_network() {
 		[ -r "$path/idVendor" ] && [ "$(cat "$path/idVendor")" = 0e8d ] || continue
 		pid=$(cat "$path/idProduct" 2>/dev/null || true)
 		case "$pid" in 7126|7127) ;; *) continue ;; esac
+		paths="$paths $path"
+		bus=${path##*/}
+		section=modem_$(printf '%s' "$bus" | tr '.-' '__')_s1
+		present_sections="$present_sections $section"
+	done
+
+	if reconcile_stale_network_states "$present_sections"; then
+		changed=1
+	fi
+
+	for path in $paths; do
 		bus=${path##*/}
 		section=modem_$(printf '%s' "$bus" | tr '.-' '__')_s1
 		section_changed=0
@@ -164,15 +178,70 @@ restore_managed_option() {
 	NETWORK_CHANGED=1
 }
 
-restore_fm350_network() {
-	local states state section created option option_count
-	NETWORK_CHANGED=0
-	STATE_CHANGED=0
-	states=$("$UCI_BIN" -q show "$NETWORK_STATE_CONFIG" 2>/dev/null | awk -F= -v prefix="$NETWORK_STATE_CONFIG." '
+network_state_names() {
+	"$UCI_BIN" -q show "$NETWORK_STATE_CONFIG" 2>/dev/null | awk -F= -v prefix="$NETWORK_STATE_CONFIG." '
 		index($1, prefix) == 1 && ($2 == "network_state" || $2 == "\047network_state\047") {
 			print substr($1, length(prefix) + 1)
 		}
-	')
+	'
+}
+
+restore_network_state() {
+	local section=$1 state=$2 created option option_count
+
+	for option in $MANAGED_OPTIONS; do
+		restore_managed_option "$section" "$state" "$option"
+	done
+
+	created=$(uci_get "$NETWORK_STATE_CONFIG.$state.created" || true)
+	if [ "$created" = 1 ] && uci_get "network.$section" >/dev/null; then
+		option_count=$("$UCI_BIN" -q show "network.$section" 2>/dev/null \
+			| grep -Fc "network.$section." || true)
+		if [ "$option_count" -eq 0 ]; then
+			"$UCI_BIN" -q delete "network.$section"
+			NETWORK_CHANGED=1
+		fi
+	fi
+
+	"$UCI_BIN" -q delete "$NETWORK_STATE_CONFIG.$state"
+	STATE_CHANGED=1
+}
+
+section_is_present() {
+	local section=$1 present_sections=$2 present
+	for present in $present_sections; do
+		[ "$present" != "$section" ] || return 0
+	done
+	return 1
+}
+
+reconcile_stale_network_states() {
+	local present_sections=$1 states state section reconciled=1
+	states=$(network_state_names)
+
+	for state in $states; do
+		section=$(uci_get "$NETWORK_STATE_CONFIG.$state.section" || true)
+		if [ -z "$section" ]; then
+			"$UCI_BIN" -q delete "$NETWORK_STATE_CONFIG.$state"
+			STATE_CHANGED=1
+			reconciled=0
+			continue
+		fi
+		section_is_present "$section" "$present_sections" && continue
+		restore_network_state "$section" "$state"
+		"$LOGGER_BIN" -t gl-modem-community \
+			"released stale plugin-managed FM350 interface $section"
+		reconciled=0
+	done
+
+	return "$reconciled"
+}
+
+restore_fm350_network() {
+	local states state section
+	NETWORK_CHANGED=0
+	STATE_CHANGED=0
+	states=$(network_state_names)
 
 	for state in $states; do
 		section=$(uci_get "$NETWORK_STATE_CONFIG.$state.section" || true)
@@ -182,22 +251,7 @@ restore_fm350_network() {
 			continue
 		fi
 
-		for option in $MANAGED_OPTIONS; do
-			restore_managed_option "$section" "$state" "$option"
-		done
-
-		created=$(uci_get "$NETWORK_STATE_CONFIG.$state.created" || true)
-		if [ "$created" = 1 ] && uci_get "network.$section" >/dev/null; then
-			option_count=$("$UCI_BIN" -q show "network.$section" 2>/dev/null \
-				| grep -Fc "network.$section." || true)
-			if [ "$option_count" -eq 0 ]; then
-				"$UCI_BIN" -q delete "network.$section"
-				NETWORK_CHANGED=1
-			fi
-		fi
-
-		"$UCI_BIN" -q delete "$NETWORK_STATE_CONFIG.$state"
-		STATE_CHANGED=1
+		restore_network_state "$section" "$state"
 	done
 
 	[ "$STATE_CHANGED" -eq 0 ] || "$UCI_BIN" commit "$NETWORK_STATE_CONFIG"
@@ -208,13 +262,20 @@ restore_fm350_network() {
 	fi
 }
 
-with_lock() (
+with_lock() {
+	local lock_dir status
 	lock_dir=${REPAIR_LOCK%/*}
 	[ "$lock_dir" = "$REPAIR_LOCK" ] || mkdir -p "$lock_dir"
 	exec 9>"$REPAIR_LOCK"
 	"$FLOCK_BIN" -x 9
-	"$@"
-)
+	if "$@"; then
+		status=0
+	else
+		status=$?
+	fi
+	exec 9>&-
+	return "$status"
+}
 
 watch_fm350_network() {
 	while :; do

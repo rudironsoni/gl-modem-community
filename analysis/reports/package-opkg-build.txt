@@ -1,3 +1,54 @@
+Checking 'true'... ok.
+Checking 'false'... ok.
+Checking 'working-make'... ok.
+Checking 'case-sensitive-fs'... updated.
+Checking 'proper-umask'... ok.
+Checking 'gcc'... updated.
+Checking 'working-gcc'... ok.
+Checking 'g++'... updated.
+Checking 'working-g++'... ok.
+Checking 'ncurses.h'... ok.
+Checking 'git'... ok.
+Checking 'rsync'... ok.
+Checking 'perl-data-dumper'... ok.
+Checking 'perl-findbin'... ok.
+Checking 'perl-file-copy'... ok.
+Checking 'perl-file-compare'... ok.
+Checking 'perl-thread-queue'... ok.
+Checking 'perl-ipc-cmd'... ok.
+Checking 'tar'... ok.
+Checking 'find'... ok.
+Checking 'bash'... updated.
+Checking 'xargs'... ok.
+Checking 'patch'... ok.
+Checking 'diff'... ok.
+Checking 'cp'... updated.
+Checking 'seq'... ok.
+Checking 'awk'... ok.
+Checking 'grep'... updated.
+Checking 'egrep'... updated.
+Checking 'getopt'... ok.
+Checking 'realpath'... ok.
+Checking 'stat'... ok.
+Checking 'gzip'... updated.
+Checking 'unzip'... ok.
+Checking 'bzip2'... ok.
+Checking 'wget'... ok.
+Checking 'install'... ok.
+Checking 'perl'... ok.
+Checking 'python'... updated.
+Checking 'python3'... updated.
+Checking 'python3-distutils'... ok.
+Checking 'python3-stdlib'... ok.
+Checking 'file'... ok.
+Checking 'which'... ok.
+Checking 'argp.h'... ok.
+Checking 'fts.h'... ok.
+Checking 'obstack.h'... ok.
+Checking 'libintl.h'... ok.
+Checking 'ldconfig-stub'... ok.
+
+
 WARNING: Makefile 'package/kernel/linux/Makefile' has a dependency on 'eip197-mini-firmware', which does not exist
 WARNING: Makefile 'package/kernel/linux/Makefile' has a dependency on 'airoha-en8811h-firmware', which does not exist
 WARNING: Makefile 'package/kernel/linux/Makefile' has a dependency on 'r8169-firmware', which does not exist
@@ -21,7 +72,7 @@ Config-build.in:2087:warning: defaults for choice values not supported
 Config-build.in:2091:warning: defaults for choice values not supported
 Config-build.in:2095:warning: defaults for choice values not supported
 #
-# No change to .config
+# configuration written to .config
 #
 WARNING: Makefile 'package/kernel/linux/Makefile' has a dependency on 'eip197-mini-firmware', which does not exist
 WARNING: Makefile 'package/kernel/linux/Makefile' has a dependency on 'airoha-en8811h-firmware', which does not exist
@@ -78,8 +129,6 @@ mkdir -p /repo/tool-cache/sdk-24.10.4-mediatek-filogic/staging_dir/target-aarch6
 SHELL= flock /repo/tool-cache/sdk-24.10.4-mediatek-filogic/tmp/.root-copy.flock -c 'cp -fpR /repo/tool-cache/sdk-24.10.4-mediatek-filogic/build_dir/target-aarch64_cortex-a53_musl/toolchain/.pkgdir/libc/. /repo/tool-cache/sdk-24.10.4-mediatek-filogic/staging_dir/target-aarch64_cortex-a53_musl/root-mediatek/'
 touch /repo/tool-cache/sdk-24.10.4-mediatek-filogic/staging_dir/target-aarch64_cortex-a53_musl/root-mediatek/stamp/.libc_installed
 rm -rf /repo/tool-cache/sdk-24.10.4-mediatek-filogic/build_dir/target-aarch64_cortex-a53_musl/toolchain/ipkg-aarch64_cortex-a53/libgcc
-/repo/tool-cache/sdk-24.10.4-mediatek-filogic/scripts/ipkg-remove libgcc /repo/tool-cache/sdk-24.10.4-mediatek-filogic/bin/targets/mediatek/filogic/packages/libgcc1_13.3.0-r4_aarch64_cortex-a53.ipk
-removed '/repo/tool-cache/sdk-24.10.4-mediatek-filogic/bin/targets/mediatek/filogic/packages/libgcc1_13.3.0-r4_aarch64_cortex-a53.ipk'
 mkdir -p /repo/tool-cache/sdk-24.10.4-mediatek-filogic/bin/targets/mediatek/filogic/packages /repo/tool-cache/sdk-24.10.4-mediatek-filogic/build_dir/target-aarch64_cortex-a53_musl/toolchain/ipkg-aarch64_cortex-a53/libgcc /repo/tool-cache/sdk-24.10.4-mediatek-filogic/staging_dir/target-aarch64_cortex-a53_musl/pkginfo
 install -d -m0755 /repo/tool-cache/sdk-24.10.4-mediatek-filogic/build_dir/target-aarch64_cortex-a53_musl/toolchain/ipkg-aarch64_cortex-a53/libgcc/lib
 cp -fpR /repo/tool-cache/sdk-24.10.4-mediatek-filogic/staging_dir/toolchain-aarch64_cortex-a53_gcc-13.3.0_musl/lib/libgcc_s.so.* /repo/tool-cache/sdk-24.10.4-mediatek-filogic/build_dir/target-aarch64_cortex-a53_musl/toolchain/ipkg-aarch64_cortex-a53/libgcc/lib/
@@ -92,8 +141,6 @@ mkdir -p /repo/tool-cache/sdk-24.10.4-mediatek-filogic/build_dir/target-aarch64_
 /repo/tool-cache/sdk-24.10.4-mediatek-filogic/staging_dir/host/bin/fakeroot /repo/tool-cache/sdk-24.10.4-mediatek-filogic/staging_dir/host/bin/bash /repo/tool-cache/sdk-24.10.4-mediatek-filogic/scripts/ipkg-build -m "" /repo/tool-cache/sdk-24.10.4-mediatek-filogic/build_dir/target-aarch64_cortex-a53_musl/toolchain/ipkg-aarch64_cortex-a53/libgcc /repo/tool-cache/sdk-24.10.4-mediatek-filogic/bin/targets/mediatek/filogic/packages
 Packaged contents of /repo/tool-cache/sdk-24.10.4-mediatek-filogic/build_dir/target-aarch64_cortex-a53_musl/toolchain/ipkg-aarch64_cortex-a53/libgcc into /repo/tool-cache/sdk-24.10.4-mediatek-filogic/bin/targets/mediatek/filogic/packages/libgcc1_13.3.0-r4_aarch64_cortex-a53.ipk
 rm -rf /repo/tool-cache/sdk-24.10.4-mediatek-filogic/build_dir/target-aarch64_cortex-a53_musl/toolchain/ipkg-aarch64_cortex-a53/libc
-/repo/tool-cache/sdk-24.10.4-mediatek-filogic/scripts/ipkg-remove libc /repo/tool-cache/sdk-24.10.4-mediatek-filogic/bin/targets/mediatek/filogic/packages/libc_1.2.5-r4_aarch64_cortex-a53.ipk
-removed '/repo/tool-cache/sdk-24.10.4-mediatek-filogic/bin/targets/mediatek/filogic/packages/libc_1.2.5-r4_aarch64_cortex-a53.ipk'
 mkdir -p /repo/tool-cache/sdk-24.10.4-mediatek-filogic/bin/targets/mediatek/filogic/packages /repo/tool-cache/sdk-24.10.4-mediatek-filogic/build_dir/target-aarch64_cortex-a53_musl/toolchain/ipkg-aarch64_cortex-a53/libc /repo/tool-cache/sdk-24.10.4-mediatek-filogic/staging_dir/target-aarch64_cortex-a53_musl/pkginfo
 install -d -m0755 /repo/tool-cache/sdk-24.10.4-mediatek-filogic/build_dir/target-aarch64_cortex-a53_musl/toolchain/ipkg-aarch64_cortex-a53/libc/lib /repo/tool-cache/sdk-24.10.4-mediatek-filogic/build_dir/target-aarch64_cortex-a53_musl/toolchain/ipkg-aarch64_cortex-a53/libc/usr/bin
 cp -fpR /repo/tool-cache/sdk-24.10.4-mediatek-filogic/staging_dir/toolchain-aarch64_cortex-a53_gcc-13.3.0_musl/lib/ld-musl-*.so* /repo/tool-cache/sdk-24.10.4-mediatek-filogic/build_dir/target-aarch64_cortex-a53_musl/toolchain/ipkg-aarch64_cortex-a53/libc/lib/
@@ -108,8 +155,6 @@ mkdir -p /repo/tool-cache/sdk-24.10.4-mediatek-filogic/build_dir/target-aarch64_
 /repo/tool-cache/sdk-24.10.4-mediatek-filogic/staging_dir/host/bin/fakeroot /repo/tool-cache/sdk-24.10.4-mediatek-filogic/staging_dir/host/bin/bash /repo/tool-cache/sdk-24.10.4-mediatek-filogic/scripts/ipkg-build -m "" /repo/tool-cache/sdk-24.10.4-mediatek-filogic/build_dir/target-aarch64_cortex-a53_musl/toolchain/ipkg-aarch64_cortex-a53/libc /repo/tool-cache/sdk-24.10.4-mediatek-filogic/bin/targets/mediatek/filogic/packages
 Packaged contents of /repo/tool-cache/sdk-24.10.4-mediatek-filogic/build_dir/target-aarch64_cortex-a53_musl/toolchain/ipkg-aarch64_cortex-a53/libc into /repo/tool-cache/sdk-24.10.4-mediatek-filogic/bin/targets/mediatek/filogic/packages/libc_1.2.5-r4_aarch64_cortex-a53.ipk
 rm -rf /repo/tool-cache/sdk-24.10.4-mediatek-filogic/build_dir/target-aarch64_cortex-a53_musl/toolchain/ipkg-aarch64_cortex-a53/libatomic
-/repo/tool-cache/sdk-24.10.4-mediatek-filogic/scripts/ipkg-remove libatomic /repo/tool-cache/sdk-24.10.4-mediatek-filogic/bin/targets/mediatek/filogic/packages/libatomic1_13.3.0-r4_aarch64_cortex-a53.ipk
-removed '/repo/tool-cache/sdk-24.10.4-mediatek-filogic/bin/targets/mediatek/filogic/packages/libatomic1_13.3.0-r4_aarch64_cortex-a53.ipk'
 mkdir -p /repo/tool-cache/sdk-24.10.4-mediatek-filogic/bin/targets/mediatek/filogic/packages /repo/tool-cache/sdk-24.10.4-mediatek-filogic/build_dir/target-aarch64_cortex-a53_musl/toolchain/ipkg-aarch64_cortex-a53/libatomic /repo/tool-cache/sdk-24.10.4-mediatek-filogic/staging_dir/target-aarch64_cortex-a53_musl/pkginfo
 install -d -m0755 /repo/tool-cache/sdk-24.10.4-mediatek-filogic/build_dir/target-aarch64_cortex-a53_musl/toolchain/ipkg-aarch64_cortex-a53/libatomic/lib
 cp -fpR /repo/tool-cache/sdk-24.10.4-mediatek-filogic/staging_dir/toolchain-aarch64_cortex-a53_gcc-13.3.0_musl/lib/libatomic.so.* /repo/tool-cache/sdk-24.10.4-mediatek-filogic/build_dir/target-aarch64_cortex-a53_musl/toolchain/ipkg-aarch64_cortex-a53/libatomic/lib/
@@ -122,8 +167,6 @@ mkdir -p /repo/tool-cache/sdk-24.10.4-mediatek-filogic/build_dir/target-aarch64_
 /repo/tool-cache/sdk-24.10.4-mediatek-filogic/staging_dir/host/bin/fakeroot /repo/tool-cache/sdk-24.10.4-mediatek-filogic/staging_dir/host/bin/bash /repo/tool-cache/sdk-24.10.4-mediatek-filogic/scripts/ipkg-build -m "" /repo/tool-cache/sdk-24.10.4-mediatek-filogic/build_dir/target-aarch64_cortex-a53_musl/toolchain/ipkg-aarch64_cortex-a53/libatomic /repo/tool-cache/sdk-24.10.4-mediatek-filogic/bin/targets/mediatek/filogic/packages
 Packaged contents of /repo/tool-cache/sdk-24.10.4-mediatek-filogic/build_dir/target-aarch64_cortex-a53_musl/toolchain/ipkg-aarch64_cortex-a53/libatomic into /repo/tool-cache/sdk-24.10.4-mediatek-filogic/bin/targets/mediatek/filogic/packages/libatomic1_13.3.0-r4_aarch64_cortex-a53.ipk
 rm -rf /repo/tool-cache/sdk-24.10.4-mediatek-filogic/build_dir/target-aarch64_cortex-a53_musl/toolchain/ipkg-aarch64_cortex-a53/libstdcpp
-/repo/tool-cache/sdk-24.10.4-mediatek-filogic/scripts/ipkg-remove libstdcpp /repo/tool-cache/sdk-24.10.4-mediatek-filogic/bin/targets/mediatek/filogic/packages/libstdcpp6_13.3.0-r4_aarch64_cortex-a53.ipk
-removed '/repo/tool-cache/sdk-24.10.4-mediatek-filogic/bin/targets/mediatek/filogic/packages/libstdcpp6_13.3.0-r4_aarch64_cortex-a53.ipk'
 mkdir -p /repo/tool-cache/sdk-24.10.4-mediatek-filogic/bin/targets/mediatek/filogic/packages /repo/tool-cache/sdk-24.10.4-mediatek-filogic/build_dir/target-aarch64_cortex-a53_musl/toolchain/ipkg-aarch64_cortex-a53/libstdcpp /repo/tool-cache/sdk-24.10.4-mediatek-filogic/staging_dir/target-aarch64_cortex-a53_musl/pkginfo
 install -d -m0755 /repo/tool-cache/sdk-24.10.4-mediatek-filogic/build_dir/target-aarch64_cortex-a53_musl/toolchain/ipkg-aarch64_cortex-a53/libstdcpp/usr/lib
 cp -fpR /repo/tool-cache/sdk-24.10.4-mediatek-filogic/staging_dir/toolchain-aarch64_cortex-a53_gcc-13.3.0_musl/lib/libstdc++.so.* /repo/tool-cache/sdk-24.10.4-mediatek-filogic/build_dir/target-aarch64_cortex-a53_musl/toolchain/ipkg-aarch64_cortex-a53/libstdcpp/usr/lib/
@@ -137,8 +180,6 @@ mkdir -p /repo/tool-cache/sdk-24.10.4-mediatek-filogic/build_dir/target-aarch64_
 /repo/tool-cache/sdk-24.10.4-mediatek-filogic/staging_dir/host/bin/fakeroot /repo/tool-cache/sdk-24.10.4-mediatek-filogic/staging_dir/host/bin/bash /repo/tool-cache/sdk-24.10.4-mediatek-filogic/scripts/ipkg-build -m "" /repo/tool-cache/sdk-24.10.4-mediatek-filogic/build_dir/target-aarch64_cortex-a53_musl/toolchain/ipkg-aarch64_cortex-a53/libstdcpp /repo/tool-cache/sdk-24.10.4-mediatek-filogic/bin/targets/mediatek/filogic/packages
 Packaged contents of /repo/tool-cache/sdk-24.10.4-mediatek-filogic/build_dir/target-aarch64_cortex-a53_musl/toolchain/ipkg-aarch64_cortex-a53/libstdcpp into /repo/tool-cache/sdk-24.10.4-mediatek-filogic/bin/targets/mediatek/filogic/packages/libstdcpp6_13.3.0-r4_aarch64_cortex-a53.ipk
 rm -rf /repo/tool-cache/sdk-24.10.4-mediatek-filogic/build_dir/target-aarch64_cortex-a53_musl/toolchain/ipkg-aarch64_cortex-a53/libpthread
-/repo/tool-cache/sdk-24.10.4-mediatek-filogic/scripts/ipkg-remove libpthread /repo/tool-cache/sdk-24.10.4-mediatek-filogic/bin/targets/mediatek/filogic/packages/libpthread_1.2.5-r4_aarch64_cortex-a53.ipk
-removed '/repo/tool-cache/sdk-24.10.4-mediatek-filogic/bin/targets/mediatek/filogic/packages/libpthread_1.2.5-r4_aarch64_cortex-a53.ipk'
 mkdir -p /repo/tool-cache/sdk-24.10.4-mediatek-filogic/bin/targets/mediatek/filogic/packages /repo/tool-cache/sdk-24.10.4-mediatek-filogic/build_dir/target-aarch64_cortex-a53_musl/toolchain/ipkg-aarch64_cortex-a53/libpthread /repo/tool-cache/sdk-24.10.4-mediatek-filogic/staging_dir/target-aarch64_cortex-a53_musl/pkginfo
 install -d -m0755 /repo/tool-cache/sdk-24.10.4-mediatek-filogic/build_dir/target-aarch64_cortex-a53_musl/toolchain/ipkg-aarch64_cortex-a53/libpthread/lib
 find /repo/tool-cache/sdk-24.10.4-mediatek-filogic/build_dir/target-aarch64_cortex-a53_musl/toolchain/ipkg-aarch64_cortex-a53/libpthread -name 'CVS' -o -name '.svn' -o -name '.#*' -o -name '*~'| xargs -r rm -rf
@@ -149,8 +190,6 @@ mkdir -p /repo/tool-cache/sdk-24.10.4-mediatek-filogic/build_dir/target-aarch64_
 /repo/tool-cache/sdk-24.10.4-mediatek-filogic/staging_dir/host/bin/fakeroot /repo/tool-cache/sdk-24.10.4-mediatek-filogic/staging_dir/host/bin/bash /repo/tool-cache/sdk-24.10.4-mediatek-filogic/scripts/ipkg-build -m "" /repo/tool-cache/sdk-24.10.4-mediatek-filogic/build_dir/target-aarch64_cortex-a53_musl/toolchain/ipkg-aarch64_cortex-a53/libpthread /repo/tool-cache/sdk-24.10.4-mediatek-filogic/bin/targets/mediatek/filogic/packages
 Packaged contents of /repo/tool-cache/sdk-24.10.4-mediatek-filogic/build_dir/target-aarch64_cortex-a53_musl/toolchain/ipkg-aarch64_cortex-a53/libpthread into /repo/tool-cache/sdk-24.10.4-mediatek-filogic/bin/targets/mediatek/filogic/packages/libpthread_1.2.5-r4_aarch64_cortex-a53.ipk
 rm -rf /repo/tool-cache/sdk-24.10.4-mediatek-filogic/build_dir/target-aarch64_cortex-a53_musl/toolchain/ipkg-aarch64_cortex-a53/librt
-/repo/tool-cache/sdk-24.10.4-mediatek-filogic/scripts/ipkg-remove librt /repo/tool-cache/sdk-24.10.4-mediatek-filogic/bin/targets/mediatek/filogic/packages/librt_1.2.5-r4_aarch64_cortex-a53.ipk
-removed '/repo/tool-cache/sdk-24.10.4-mediatek-filogic/bin/targets/mediatek/filogic/packages/librt_1.2.5-r4_aarch64_cortex-a53.ipk'
 mkdir -p /repo/tool-cache/sdk-24.10.4-mediatek-filogic/bin/targets/mediatek/filogic/packages /repo/tool-cache/sdk-24.10.4-mediatek-filogic/build_dir/target-aarch64_cortex-a53_musl/toolchain/ipkg-aarch64_cortex-a53/librt /repo/tool-cache/sdk-24.10.4-mediatek-filogic/staging_dir/target-aarch64_cortex-a53_musl/pkginfo
 install -d -m0755 /repo/tool-cache/sdk-24.10.4-mediatek-filogic/build_dir/target-aarch64_cortex-a53_musl/toolchain/ipkg-aarch64_cortex-a53/librt/lib
 find /repo/tool-cache/sdk-24.10.4-mediatek-filogic/build_dir/target-aarch64_cortex-a53_musl/toolchain/ipkg-aarch64_cortex-a53/librt -name 'CVS' -o -name '.svn' -o -name '.#*' -o -name '*~'| xargs -r rm -rf
@@ -208,12 +247,12 @@ touch /repo/tool-cache/sdk-24.10.4-mediatek-filogic/staging_dir/target-aarch64_c
 touch -r /repo/tool-cache/sdk-24.10.4-mediatek-filogic/build_dir/target-aarch64_cortex-a53_musl/toolchain/.built /repo/tool-cache/sdk-24.10.4-mediatek-filogic/build_dir/target-aarch64_cortex-a53_musl/toolchain/.autoremove 2>/dev/null >/dev/null
 find /repo/tool-cache/sdk-24.10.4-mediatek-filogic/build_dir/target-aarch64_cortex-a53_musl/toolchain -mindepth 1 -maxdepth 1 -not '(' -type f -and -name '.*' -and -size 0 ')' -and -not -name '.pkgdir'  -print0 | xargs -r -0 rm -rf
 make[2]: Leaving directory '/repo/tool-cache/sdk-24.10.4-mediatek-filogic/package/toolchain'
-time: package/toolchain/compile#16.26#2.30#15.63
+time: package/toolchain/compile#13.90#1.39#12.78
 make[2]: Entering directory '/repo/tool-cache/sdk-24.10.4-mediatek-filogic/package/gl-modem-community'
-touch /repo/tool-cache/sdk-24.10.4-mediatek-filogic/build_dir/target-aarch64_cortex-a53_musl/gl-modem-community-0.1.13/.prepared_9a243c21ba0a825a617776eb49ebedd4_18f1e190c5d53547fed41a3eaa76e9e9_check
+touch /repo/tool-cache/sdk-24.10.4-mediatek-filogic/build_dir/target-aarch64_cortex-a53_musl/gl-modem-community-0.1.13/.prepared_9727612b4a2b057ef70c4384bb2beb74_18f1e190c5d53547fed41a3eaa76e9e9_check
 true
 [ ! -d ./src/ ] || cp -fpR ./src/. /repo/tool-cache/sdk-24.10.4-mediatek-filogic/build_dir/target-aarch64_cortex-a53_musl/gl-modem-community-0.1.13
-touch /repo/tool-cache/sdk-24.10.4-mediatek-filogic/build_dir/target-aarch64_cortex-a53_musl/gl-modem-community-0.1.13/.prepared_9a243c21ba0a825a617776eb49ebedd4_18f1e190c5d53547fed41a3eaa76e9e9
+touch /repo/tool-cache/sdk-24.10.4-mediatek-filogic/build_dir/target-aarch64_cortex-a53_musl/gl-modem-community-0.1.13/.prepared_9727612b4a2b057ef70c4384bb2beb74_18f1e190c5d53547fed41a3eaa76e9e9
 rm -f /repo/tool-cache/sdk-24.10.4-mediatek-filogic/build_dir/target-aarch64_cortex-a53_musl/gl-modem-community-0.1.13/.configured_*
 rm -f /repo/tool-cache/sdk-24.10.4-mediatek-filogic/staging_dir/target-aarch64_cortex-a53_musl/stamp/.gl-modem-community_installed
 (cd /repo/tool-cache/sdk-24.10.4-mediatek-filogic/build_dir/target-aarch64_cortex-a53_musl/gl-modem-community-0.1.13/./; if [ -x ./configure ]; then find /repo/tool-cache/sdk-24.10.4-mediatek-filogic/build_dir/target-aarch64_cortex-a53_musl/gl-modem-community-0.1.13/ -name config.guess | xargs -r chmod u+w; find /repo/tool-cache/sdk-24.10.4-mediatek-filogic/build_dir/target-aarch64_cortex-a53_musl/gl-modem-community-0.1.13/ -name config.guess | xargs -r -n1 cp --remove-destination /repo/tool-cache/sdk-24.10.4-mediatek-filogic/scripts/config.guess; find /repo/tool-cache/sdk-24.10.4-mediatek-filogic/build_dir/target-aarch64_cortex-a53_musl/gl-modem-community-0.1.13/ -name config.sub | xargs -r chmod u+w; find /repo/tool-cache/sdk-24.10.4-mediatek-filogic/build_dir/target-aarch64_cortex-a53_musl/gl-modem-community-0.1.13/ -name config.sub | xargs -r -n1 cp --remove-destination /repo/tool-cache/sdk-24.10.4-mediatek-filogic/scripts/config.sub; AR="aarch64-openwrt-linux-musl-gcc-ar" AS="aarch64-openwrt-linux-musl-gcc -c -Os -pipe -mcpu=cortex-a53 -fno-caller-saves -fno-plt -fhonour-copts -ffile-prefix-map=/repo/tool-cache/sdk-24.10.4-mediatek-filogic/build_dir/target-aarch64_cortex-a53_musl/gl-modem-community-0.1.13=gl-modem-community-0.1.13 -Wformat -Werror=format-security -fstack-protector -D_FORTIFY_SOURCE=1 -Wl,-z,now -Wl,-z,relro" LD="aarch64-openwrt-linux-musl-ld.bfd" NM="aarch64-openwrt-linux-musl-gcc-nm" CC="aarch64-openwrt-linux-musl-gcc" GCC="aarch64-openwrt-linux-musl-gcc" CXX="aarch64-openwrt-linux-musl-g++" RANLIB="aarch64-openwrt-linux-musl-gcc-ranlib" STRIP=aarch64-openwrt-linux-musl-strip OBJCOPY=aarch64-openwrt-linux-musl-objcopy OBJDUMP=aarch64-openwrt-linux-musl-objdump SIZE=aarch64-openwrt-linux-musl-size CFLAGS="-Os -pipe -mcpu=cortex-a53 -fno-caller-saves -fno-plt -fhonour-copts -ffile-prefix-map=/repo/tool-cache/sdk-24.10.4-mediatek-filogic/build_dir/target-aarch64_cortex-a53_musl/gl-modem-community-0.1.13=gl-modem-community-0.1.13 -Wformat -Werror=format-security -fstack-protector -D_FORTIFY_SOURCE=1 -Wl,-z,now -Wl,-z,relro " CXXFLAGS="-Os -pipe -mcpu=cortex-a53 -fno-caller-saves -fno-plt -fhonour-copts -ffile-prefix-map=/repo/tool-cache/sdk-24.10.4-mediatek-filogic/build_dir/target-aarch64_cortex-a53_musl/gl-modem-community-0.1.13=gl-modem-community-0.1.13 -Wformat -Werror=format-security -fstack-protector -D_FORTIFY_SOURCE=1 -Wl,-z,now -Wl,-z,relro " CPPFLAGS="-I/repo/tool-cache/sdk-24.10.4-mediatek-filogic/staging_dir/toolchain-aarch64_cortex-a53_gcc-13.3.0_musl/usr/include -I/repo/tool-cache/sdk-24.10.4-mediatek-filogic/staging_dir/toolchain-aarch64_cortex-a53_gcc-13.3.0_musl/include -I/repo/tool-cache/sdk-24.10.4-mediatek-filogic/staging_dir/toolchain-aarch64_cortex-a53_gcc-13.3.0_musl/include/fortify " LDFLAGS="-L/repo/tool-cache/sdk-24.10.4-mediatek-filogic/staging_dir/toolchain-aarch64_cortex-a53_gcc-13.3.0_musl/usr/lib -L/repo/tool-cache/sdk-24.10.4-mediatek-filogic/staging_dir/toolchain-aarch64_cortex-a53_gcc-13.3.0_musl/lib -fuse-ld=bfd -znow -zrelro "   ./configure --target=aarch64-openwrt-linux --host=aarch64-openwrt-linux --build=x86_64-pc-linux-gnu --disable-dependency-tracking --program-prefix="" --program-suffix="" --prefix=/usr --exec-prefix=/usr --bindir=/usr/bin --sbindir=/usr/sbin --libexecdir=/usr/lib --sysconfdir=/etc --datadir=/usr/share --localstatedir=/var --mandir=/usr/man --infodir=/usr/info --disable-nls  ; fi; )
@@ -301,5 +340,5 @@ Packaged contents of /repo/tool-cache/sdk-24.10.4-mediatek-filogic/build_dir/tar
 touch -r /repo/tool-cache/sdk-24.10.4-mediatek-filogic/build_dir/target-aarch64_cortex-a53_musl/gl-modem-community-0.1.13/.built /repo/tool-cache/sdk-24.10.4-mediatek-filogic/build_dir/target-aarch64_cortex-a53_musl/gl-modem-community-0.1.13/.autoremove 2>/dev/null >/dev/null
 find /repo/tool-cache/sdk-24.10.4-mediatek-filogic/build_dir/target-aarch64_cortex-a53_musl/gl-modem-community-0.1.13 -mindepth 1 -maxdepth 1 -not '(' -type f -and -name '.*' -and -size 0 ')' -and -not -name '.pkgdir'  -print0 | xargs -r -0 rm -rf
 make[2]: Leaving directory '/repo/tool-cache/sdk-24.10.4-mediatek-filogic/package/gl-modem-community'
-time: package/gl-modem-community/compile#8.98#1.10#8.64
+time: package/gl-modem-community/compile#8.39#0.76#7.76
 make[1]: Leaving directory '/repo/tool-cache/sdk-24.10.4-mediatek-filogic'
