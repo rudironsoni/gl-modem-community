@@ -16,6 +16,7 @@ STOCK_MODEM_AT=${STOCK_MODEM_AT:-$RUNTIME_DIR/modem_AT.stock}
 MODEM_AT_WRAPPER=${MODEM_AT_WRAPPER:-/usr/libexec/gl-modem-community/modem_AT-wrapper}
 NETWORK_REPAIR=${NETWORK_REPAIR:-/usr/libexec/gl-modem-community/fm350-network-repair}
 MERGE_MODELS=${MERGE_MODELS:-/usr/libexec/gl-modem-community/merge-models}
+ENSURE_OPTION_IDS=${ENSURE_OPTION_IDS:-/usr/libexec/gl-modem-community/ensure-option-ids}
 PROC_MOUNTS=${PROC_MOUNTS:-/proc/mounts}
 CP_BIN=${CP_BIN:-cp}
 MOUNT_BIN=${MOUNT_BIN:-mount}
@@ -78,18 +79,22 @@ start_service() {
 	fi
 	printf '%s\n' "$stack" >"$STACK_FILE"
 
+	local rc=0
 	case "$stack" in
 	modern)
-		start_modern
+		start_modern || rc=$?
 		;;
 	legacy)
-		start_legacy
+		start_legacy || rc=$?
 		;;
 	*)
 		rm -f "$STACK_FILE"
 		return 1
 		;;
 	esac
+
+	"$ENSURE_OPTION_IDS" || true
+	return "$rc"
 }
 
 stop_service() {
