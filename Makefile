@@ -652,7 +652,7 @@ sign-apk-release:
 		fi
 		grep -F 'UNTRUSTED' "$$tmp/untrusted.log" >/dev/null
 	done
-	"$$apk_tool" --format json info --all "$(APK)" >"$(OUTPUT_METADATA)"
+	"$$apk_tool" info --format json "$(APK)" >"$(OUTPUT_METADATA)"
 
 clean-work:
 	@echo "Remove ignored work directories manually after reviewing their paths."
