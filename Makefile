@@ -652,33 +652,7 @@ sign-apk-release:
 		fi
 		grep -F 'UNTRUSTED' "$$tmp/untrusted.log" >/dev/null
 	done
-	apk_meta_tmp=$$(mktemp -d "$${TMPDIR:-/tmp}/gl-modem-meta.XXXXXX")
-	# APK files are tar archives; extract .PKGINFO (key=value) and build metadata JSON
-	if tar -xf "$(APK)" -C "$${apk_meta_tmp}" .PKGINFO 2>/dev/null && \
-	   test -s "$${apk_meta_tmp}/.PKGINFO"; then
-		apk_name=$$(sed -n 's/^name=//p' "$${apk_meta_tmp}/.PKGINFO")
-		apk_version=$$(sed -n 's/^version=//p' "$${apk_meta_tmp}/.PKGINFO")
-		apk_arch=$$(sed -n 's/^arch=//p' "$${apk_meta_tmp}/.PKGINFO")
-		apk_desc=$$(sed -n 's/^description=//p' "$${apk_meta_tmp}/.PKGINFO")
-		apk_license=$$(sed -n 's/^license=//p' "$${apk_meta_tmp}/.PKGINFO")
-		apk_deps=$$(sed -n 's/^depends=//p' "$${apk_meta_tmp}/.PKGINFO")
-		printf '%s\n' "$${apk_deps}" | tr ' ' '\n' | \
-			sed '/^$$/d' | \
-			LC_ALL=C sort -u | jq -Rsc 'split("\n") | map(select(length > 0))' \
-			>"$${apk_meta_tmp}/deps.json"
-		jq -n \
-			--arg name "$${apk_name}" \
-			--arg version "$${apk_version}" \
-			--arg arch "$${apk_arch}" \
-			--arg description "$${apk_desc}" \
-			--arg license "$${apk_license}" \
-			--slurpfile depends "$${apk_meta_tmp}/deps.json" \
-			'{info:{name:$$name,version:$$version,arch:$$arch,description:$$description,license:$$license,depends:$$depends[0]},paths:[{name:"/",files:[]}]}' \
-			>"$(OUTPUT_METADATA)"
-	else
-		printf '{info:{},paths:[]}\n' >"$(OUTPUT_METADATA)"
-	fi
-	rm -rf "$${apk_meta_tmp}"
+	"$$apk_tool" adbdump --format json "$(APK)" >"$(OUTPUT_METADATA)"
 
 clean-work:
 	@echo "Remove ignored work directories manually after reviewing their paths."
