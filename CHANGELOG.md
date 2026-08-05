@@ -1,5 +1,26 @@
 # Changelog
 
+## [0.2.0](https://github.com/rudironsoni/gl-modem-community/compare/v0.1.13...v0.2.0) (2026-08-05)
+
+
+### Features
+
+* support all GL-MT3000 firmware channels ([2da6b00](https://github.com/rudironsoni/gl-modem-community/commit/2da6b0030df616a8accf06ea0d35f41cd279819e))
+* support all GL-MT3000 firmware channels ([4342515](https://github.com/rudironsoni/gl-modem-community/commit/43425152f9bd94adead0217209458f0b236b1d95))
+
+
+### Bug Fixes
+
+* **modem:** inject FM350-GL Option module IDs at boot and hotplug ([#27](https://github.com/rudironsoni/gl-modem-community/issues/27)) ([ab8522c](https://github.com/rudironsoni/gl-modem-community/commit/ab8522c2dc5e102054574c31f2b77cf3e150de82))
+* reconcile FM350 bus re-enumeration ([ddae0e7](https://github.com/rudironsoni/gl-modem-community/commit/ddae0e74abc6df7b318cae92397edf0fac0f7f17))
+* reconcile FM350 bus re-enumeration ([caa83fa](https://github.com/rudironsoni/gl-modem-community/commit/caa83fa880479d40d4687848ac4ab232289f6083))
+
+
+### Documentation
+
+* refresh firmware compatibility evidence ([0276a0f](https://github.com/rudironsoni/gl-modem-community/commit/0276a0fc4575bbfac49a769b6e5260e3721020d3))
+* refresh firmware compatibility evidence ([3b658f9](https://github.com/rudironsoni/gl-modem-community/commit/3b658f9e2f4afc38293f9addd64cc8ba48ce1a91))
+
 ## [0.1.13](https://github.com/rudironsoni/gl-modem-community/compare/v0.1.12...v0.1.13) (2026-07-23)
 
 
