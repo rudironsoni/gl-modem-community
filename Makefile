@@ -652,7 +652,38 @@ sign-apk-release:
 		fi
 		grep -F 'UNTRUSTED' "$$tmp/untrusted.log" >/dev/null
 	done
-	"$$apk_tool" info --format json "$(APK)" >"$(OUTPUT_METADATA)"
+	apk_meta_tmp=$$(mktemp -d "$${TMPDIR:-/tmp}/gl-modem-meta.XXXXXX")
+	apk_ctrl_tar=$$(unzip -ql "$(APK)" 2>/dev/null | awk '/control\.tar/{found=1} found && /\.tar\.(gz|xz|zst)/{print $$NF; exit}')
+	if test -n "$${apk_ctrl_tar}"; then
+		(cd "$${apk_meta_tmp}" && tar -xzf "$$(unzip -p "$(APK)" "$${apk_ctrl_tar}" 2>/dev/null)" 2>/dev/null) || true
+		apk_ctrl=$$(find "$${apk_meta_tmp}" -type f -name control -print 2>/dev/null | head -n 1)
+		if test -n "$${apk_ctrl}" && test -s "$${apk_ctrl}"; then
+			apk_name=$$(sed -n 's/^Package: //p' "$${apk_ctrl}")
+			apk_version=$$(sed -n 's/^Version: //p' "$${apk_ctrl}")
+			apk_arch=$$(sed -n 's/^Architecture: //p' "$${apk_ctrl}")
+			apk_desc=$$(sed -n 's/^Description: //p' "$${apk_ctrl}")
+			apk_license=$$(sed -n 's/^License: //p' "$${apk_ctrl}")
+			apk_deps=$$(sed -n 's/^Depends: //p' "$${apk_ctrl}")
+			printf '%s\n' "$${apk_deps}" | tr ',' '\n' | \
+				sed 's/^[[:space:]]*//;s/[[:space:]]*(.*$$//;/^$$/d' | \
+				LC_ALL=C sort -u | jq -Rsc 'split("\n") | map(select(length > 0))' \
+				>"$${apk_meta_tmp}/deps.json"
+			jq -n \
+				--arg name "$${apk_name}" \
+				--arg version "$${apk_version}" \
+				--arg arch "$${apk_arch}" \
+				--arg description "$${apk_desc}" \
+				--arg license "$${apk_license}" \
+				--slurpfile depends "$${apk_meta_tmp}/deps.json" \
+				'{info:{name:$$name,version:$$version,arch:$$arch,description:$$description,license:$$license,depends:$$depends[0]},paths:[{name:"/",files:[]}]}' \
+				>"$(OUTPUT_METADATA)"
+		else
+			printf '{info:{},paths:[]}\n' >"$(OUTPUT_METADATA)"
+		fi
+	else
+		printf '{info:{},paths:[]}\n' >"$(OUTPUT_METADATA)"
+	fi
+	rm -rf "$${apk_meta_tmp}"
 
 clean-work:
 	@echo "Remove ignored work directories manually after reviewing their paths."
