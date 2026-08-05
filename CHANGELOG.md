@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.1](https://github.com/rudironsoni/gl-modem-community/compare/v0.2.0...v0.2.1) (2026-08-05)
+
+
+### Bug Fixes
+
+* **build:** drop --all from apk info metadata extraction ([#28](https://github.com/rudironsoni/gl-modem-community/issues/28)) ([def1209](https://github.com/rudironsoni/gl-modem-community/commit/def12093980d3c5b52f4a1f2f3c1b4ec9728bca2))
+
 ## [0.2.0](https://github.com/rudironsoni/gl-modem-community/compare/v0.1.13...v0.2.0) (2026-08-05)
 
 
