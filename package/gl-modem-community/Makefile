@@ -85,6 +85,7 @@ define Package/gl-modem-community/install
 	$(INSTALL_BIN) ./files/usr/libexec/gl-modem-community/fm350-network-repair $(1)/usr/libexec/gl-modem-community/fm350-network-repair
 	$(INSTALL_BIN) ./files/usr/libexec/gl-modem-community/runtime-stack $(1)/usr/libexec/gl-modem-community/runtime-stack
 	$(INSTALL_BIN) ./files/usr/libexec/gl-modem-community/legacy-bus $(1)/usr/libexec/gl-modem-community/legacy-bus
+	$(INSTALL_BIN) ./files/usr/libexec/gl-modem-community/ensure-option-ids $(1)/usr/libexec/gl-modem-community/ensure-option-ids
 	$(INSTALL_BIN) ./files/usr/libexec/gl-modem-community/fm350-at $(1)/usr/libexec/gl-modem-community/fm350-at
 	$(INSTALL_DIR) $(1)/usr/lib/gl-modem-community
 	$(INSTALL_DATA) $(PKG_BUILD_DIR)/fm350-at-compat.so $(1)/usr/lib/gl-modem-community/fm350-at-compat.so

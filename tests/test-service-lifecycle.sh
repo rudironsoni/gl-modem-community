@@ -62,6 +62,11 @@ cat >"$tmp/bin/legacy-bus" <<'EOF'
 printf '%s\n' "$*" >>"${LEGACY_BUS_TEST_LOG:?}"
 EOF
 
+cat >"$tmp/bin/ensure-option-ids" <<'EOF'
+#!/bin/sh
+printf '%s\n' "$*" >>"${ENSURE_OPTION_IDS_TEST_LOG:?}"
+EOF
+
 chmod +x "$tmp/bin/"*
 
 config_load() { :; }
@@ -95,6 +100,9 @@ export STOCK_LIST MERGED_LIST MODEM_AT STOCK_MODEM_AT
 export MODEM_AT_WRAPPER NETWORK_REPAIR MERGE_MODELS PROC_MOUNTS
 export CP_BIN MOUNT_BIN UMOUNT_BIN MOUNT_TEST_LOG MERGE_TEST_LOG REPAIR_TEST_LOG
 export LEGACY_BUS_TEST_LOG
+ENSURE_OPTION_IDS="$tmp/bin/ensure-option-ids"
+ENSURE_OPTION_IDS_TEST_LOG="$tmp/ensure-option-ids.log"
+export ENSURE_OPTION_IDS ENSURE_OPTION_IDS_TEST_LOG
 export MERGE_SHOULD_FAIL
 
 # shellcheck disable=SC1090
