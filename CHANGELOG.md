@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.3](https://github.com/rudironsoni/gl-modem-community/compare/v0.2.2...v0.2.3) (2026-08-05)
+
+
+### Bug Fixes
+
+* **build:** extract APK metadata from .PKGINFO tar entry ([#32](https://github.com/rudironsoni/gl-modem-community/issues/32)) ([b6b9b84](https://github.com/rudironsoni/gl-modem-community/commit/b6b9b84a360358d5dbce9d37175b61e16a3a950d))
+
 ## [0.2.2](https://github.com/rudironsoni/gl-modem-community/compare/v0.2.1...v0.2.2) (2026-08-05)
 
 
