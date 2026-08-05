@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.4](https://github.com/rudironsoni/gl-modem-community/compare/v0.2.3...v0.2.4) (2026-08-05)
+
+
+### Bug Fixes
+
+* **build:** extract APK metadata via adbdump --format json ([#34](https://github.com/rudironsoni/gl-modem-community/issues/34)) ([fc6090a](https://github.com/rudironsoni/gl-modem-community/commit/fc6090aebd18c447cdddf1c4a9c88be4fe624a42))
+
 ## [0.2.3](https://github.com/rudironsoni/gl-modem-community/compare/v0.2.2...v0.2.3) (2026-08-05)
 
 
