@@ -218,6 +218,7 @@ jobs:
           # Generate opkg Packages index for IPK feed
           ipk_size=$(stat -c%s "$ipk")
           ipk_basename=$(basename "$ipk")
+          base_url="https://github.com/${GITHUB_REPOSITORY}/releases/download/${RELEASE_TAG}"
           {
             printf 'Package: gl-modem-community\n'
             printf 'Version: %s-r1\n' "$RELEASE_VERSION"
@@ -228,7 +229,7 @@ jobs:
             printf 'Maintainer: Rudimar Ronsoni <rudironsoni@users.noreply.github.com>\n'
             printf 'Architecture: aarch64_cortex-a53\n'
             printf 'Size: %s\n' "$ipk_size"
-            printf 'Filename: %s\n' "$ipk_basename"
+            printf 'Filename: %s/%s\n' "$base_url" "$ipk_basename"
             printf 'Description: Community modem definitions and compatibility drivers for GL.iNet firmware\n'
           } > release-assets/Packages
 
@@ -321,3 +322,47 @@ jobs:
           set -euo pipefail
           gh release view "$RELEASE_TAG" --repo "$GITHUB_REPOSITORY" >/dev/null
           gh release upload "$RELEASE_TAG" release-assets/* --clobber --repo "$GITHUB_REPOSITORY"
+
+  publish-feed:
+    name: Publish opkg feed to GitHub Pages
+    needs:
+      - detect-release
+      - sign-release
+      - release-please
+      - publish-release
+    if: needs.publish-release.result == 'success'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      contents: write
+      pages: write
+    steps:
+      - name: Download prepared release assets
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: prepared-release-assets
+          path: release-assets
+
+      - name: Publish feed to GitHub Pages
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ needs.detect-release.outputs.tag }}
+          RELEASE_VERSION: ${{ needs.detect-release.outputs.version }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          feed_dir=$(mktemp -d)
+          trap 'rm -rf "$feed_dir"' EXIT
+
+          cp release-assets/Packages "$feed_dir/"
+          cp release-assets/gl-modem-community_*_aarch64_cortex-a53.ipk "$feed_dir/"
+
+          cd "$feed_dir"
+          git init
+          git checkout -b feed
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add .
+          git commit -m "feed: ${RELEASE_TAG}"
+          git remote add origin "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
+          git push origin feed --force
