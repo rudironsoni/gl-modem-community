@@ -124,22 +124,13 @@ apk add /tmp/gl-modem-community-VERSION-r1.apk
 > [!CAUTION]
 > The IPK builds against the OpenWrt 24.10 SDK, but it has not been tested on GL.iNet OEM or OpenWrt 24 firmware.
 
-#### Install as a package source (recommended)
+#### Install from the feed
 
-This method lets `opkg` manage updates automatically. Download the IPK and `Packages` file from the [latest release](https://github.com/rudironsoni/gl-modem-community/releases/latest) and copy both to `/tmp` on the router.
-
-```sh
-mkdir -p /etc/opkg/community
-cp /tmp/gl-modem-community_*_aarch64_cortex-a53.ipk /etc/opkg/community/
-cp /tmp/Packages /etc/opkg/community/
-```
-
-Register the local feed:
+Add this feed to `/etc/opkg/customfeeds.conf`:
 
 ```sh
-cat > /etc/opkg/customfeeds.conf << 'EOF'
-src/gz gl-modem-community file:///etc/opkg/community
-EOF
+echo 'src/gz gl-modem-community https://rudironsoni.github.io/gl-modem-community/feed' \
+  >> /etc/opkg/customfeeds.conf
 opkg update
 opkg install gl-modem-community
 /etc/init.d/gl_modem_community enable
@@ -147,11 +138,18 @@ opkg install gl-modem-community
 /etc/init.d/gl_cellular_manager restart
 ```
 
-After a new release, copy the updated IPK and `Packages` files to `/etc/opkg/community/` and run:
+After a new release, run:
 
 ```sh
 opkg update
 opkg upgrade gl-modem-community
+```
+
+If `customfeeds.conf` does not exist, create it first:
+
+```sh
+touch /etc/opkg/customfeeds.conf
+chmod 0644 /etc/opkg/customfeeds.conf
 ```
 
 #### Install a single IPK manually
@@ -200,7 +198,6 @@ For IPK:
 ```sh
 /etc/init.d/gl_modem_community stop
 opkg remove gl-modem-community
-rm -rf /etc/opkg/community
 sed -i '/gl-modem-community/d' /etc/opkg/customfeeds.conf 2>/dev/null || true
 /etc/init.d/gl_cellular_manager restart
 ```
