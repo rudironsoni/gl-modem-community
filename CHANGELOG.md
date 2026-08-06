@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.5](https://github.com/rudironsoni/gl-modem-community/compare/v0.2.4...v0.2.5) (2026-08-06)
+
+
+### Bug Fixes
+
+* remove AT+CFUN rewrite and synthetic OK from FM350 compat library ([#36](https://github.com/rudironsoni/gl-modem-community/issues/36)) ([958b79b](https://github.com/rudironsoni/gl-modem-community/commit/958b79bfc615c2482359c466fc0840b9493baee1))
+
 ## [0.2.4](https://github.com/rudironsoni/gl-modem-community/compare/v0.2.3...v0.2.4) (2026-08-05)
 
 
