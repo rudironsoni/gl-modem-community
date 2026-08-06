@@ -17,3 +17,6 @@
 *.gz
 *.xz
 .DS_Store
+
+# opkg feed (published by release workflow)
+feed/
