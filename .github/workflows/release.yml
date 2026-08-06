@@ -174,6 +174,7 @@ jobs:
           test -s "$ipk"
           test -s "$glinet21_ipk"
           test "$(find release-assets -maxdepth 1 -type f | wc -l)" -eq 3
+          # Packages file is generated below, not counted here
 
           docker run --rm --platform linux/amd64 \
             --mount "type=bind,src=$GITHUB_WORKSPACE,dst=/repo" \
@@ -213,6 +214,23 @@ jobs:
             mt3000-openwrt-sdk:25.12.5 \
             cyclonedx validate --input-file /repo/release-assets/gl-modem-community.glinet21.ipk.cdx.json
           rm release-assets/apk-metadata.json
+
+          # Generate opkg Packages index for IPK feed
+          ipk_size=$(stat -c%s "$ipk")
+          ipk_basename=$(basename "$ipk")
+          {
+            printf 'Package: gl-modem-community\n'
+            printf 'Version: %s-r1\n' "$RELEASE_VERSION"
+            printf 'Depends: comgt, flock, jq, kmod-usb-acm, kmod-usb-serial-option, kmod-usb-net-rndis\n'
+            printf 'License: GPL-3.0-only\n'
+            printf 'Section: net\n'
+            printf 'Category: Network\n'
+            printf 'Maintainer: Rudimar Ronsoni <rudironsoni@users.noreply.github.com>\n'
+            printf 'Architecture: aarch64_cortex-a53\n'
+            printf 'Size: %s\n' "$ipk_size"
+            printf 'Filename: %s\n' "$ipk_basename"
+            printf 'Description: Community modem definitions and compatibility drivers for GL.iNet firmware\n'
+          } > release-assets/Packages
 
           cp keys/gl-modem-community.pem release-assets/
           cp keys/gl-modem-community.pem.sha256 release-assets/
