@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.7](https://github.com/rudironsoni/gl-modem-community/compare/v0.2.6...v0.2.7) (2026-08-06)
+
+
+### Documentation
+
+* add web-based opkg feed via GitHub Pages ([#40](https://github.com/rudironsoni/gl-modem-community/issues/40)) ([26667a0](https://github.com/rudironsoni/gl-modem-community/commit/26667a01dea46b180df961e7f385139a31ab6b1c))
+
 ## [0.2.6](https://github.com/rudironsoni/gl-modem-community/compare/v0.2.5...v0.2.6) (2026-08-06)
 
 
