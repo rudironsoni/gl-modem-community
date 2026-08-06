@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.6](https://github.com/rudironsoni/gl-modem-community/compare/v0.2.5...v0.2.6) (2026-08-06)
+
+
+### Documentation
+
+* add opkg feed instructions for IPK firmware ([#38](https://github.com/rudironsoni/gl-modem-community/issues/38)) ([d46e0db](https://github.com/rudironsoni/gl-modem-community/commit/d46e0db4ad467476b6f2d1ee6cde51df362d2ae5))
+
 ## [0.2.5](https://github.com/rudironsoni/gl-modem-community/compare/v0.2.4...v0.2.5) (2026-08-06)
 
 
