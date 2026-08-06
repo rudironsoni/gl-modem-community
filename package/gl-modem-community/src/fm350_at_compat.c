@@ -5,23 +5,6 @@
 #include <stddef.h>
 #include <string.h>
 
-static int command_matches(const unsigned char *buffer, size_t length,
-			   const char *command)
-{
-	size_t command_length = strlen(command);
-	size_t index;
-
-	if (length < command_length ||
-	    memcmp(buffer, command, command_length) != 0)
-		return 0;
-
-	for (index = command_length; index < length; index++)
-		if (buffer[index] != '\r' && buffer[index] != '\n')
-			return 0;
-
-	return 1;
-}
-
 static int rewrite_prefix(unsigned char *buffer, size_t length,
 			  const char *prefix, size_t cid_offset,
 			  unsigned char from, unsigned char to)
@@ -44,20 +27,14 @@ static int rewrite_prefix(unsigned char *buffer, size_t length,
 int fm350_command_needs_synthetic_ok(const unsigned char *buffer,
 				     size_t length)
 {
-	return command_matches(buffer, length, "AT+CGACT=0,5") ||
-	       command_matches(buffer, length, "AT+CGACT=1,5") ||
-	       command_matches(buffer, length, "AT+CGACT=0,1") ||
-	       command_matches(buffer, length, "AT+CGACT=1,1");
+	(void)buffer;
+	(void)length;
+	return 0;
 }
 
 int fm350_rewrite_tx(unsigned char *buffer, size_t length)
 {
 	int changed = 0;
-
-	if (command_matches(buffer, length, "AT+CFUN=0")) {
-		buffer[sizeof("AT+CFUN=0") - 2] = '4';
-		changed = 1;
-	}
 
 	changed |= rewrite_prefix(buffer, length, "AT+CGPADDR=5", 11, '5', '1');
 	changed |= rewrite_prefix(buffer, length, "AT+CGDCONT=5", 11, '5', '1');
