@@ -219,8 +219,6 @@ jobs:
           # Generate opkg Packages index for IPK feed
           ipk_size=$(stat -c%s "$ipk")
           ipk_basename=$(basename "$ipk")
-          glinet21_size=$(stat -c%s "$glinet21_ipk")
-          glinet21_basename=$(basename "$glinet21_ipk")
           base_url="https://github.com/${GITHUB_REPOSITORY}/releases/download/${RELEASE_TAG}"
           {
             printf 'Package: gl-modem-community\n'
