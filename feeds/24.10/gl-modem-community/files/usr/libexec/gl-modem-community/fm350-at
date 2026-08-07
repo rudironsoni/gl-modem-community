@@ -1,0 +1,56 @@
+#!/bin/sh
+# SPDX-License-Identifier: GPL-3.0-only
+set -eu
+
+USB_DEVICES_ROOT=${USB_DEVICES_ROOT:-/sys/bus/usb/devices}
+SYS_TTY_ROOT=${SYS_TTY_ROOT:-/sys/class/tty}
+COMGT_BIN=${COMGT_BIN:-comgt}
+GCOM_SCRIPT=${GCOM_SCRIPT:-/etc/gcom/fm350-at.gcom}
+FLOCK_BIN=${FLOCK_BIN:-flock}
+READLINK_BIN=${READLINK_BIN:-readlink}
+LOCK_FILE=${LOCK_FILE:-/var/lock/gl-modem-community-at.lock}
+
+bus=${1:?USB bus required}
+command=${2:?AT command required}
+
+case "$bus" in
+*[!A-Za-z0-9._:-]*|'')
+	exit 2
+	;;
+esac
+
+vendor=$(cat "$USB_DEVICES_ROOT/$bus/idVendor" 2>/dev/null || true)
+product=$(cat "$USB_DEVICES_ROOT/$bus/idProduct" 2>/dev/null || true)
+[ "$vendor" = 0e8d ] || exit 3
+case "$product" in
+7126)
+	expected=04
+	;;
+7127)
+	expected=06
+	;;
+*)
+	exit 3
+	;;
+esac
+
+port=
+for path in "$SYS_TTY_ROOT"/ttyACM*/device "$SYS_TTY_ROOT"/ttyUSB*/device; do
+	[ -e "$path" ] || continue
+	real=$("$READLINK_BIN" -f "$path") || continue
+	case "$real" in
+	"$USB_DEVICES_ROOT/$bus/"*":1.$expected"*)
+		port="/dev/${path#"$SYS_TTY_ROOT"/}"
+		port=${port%/device}
+		break
+		;;
+	esac
+done
+[ -n "$port" ] || exit 4
+
+mkdir -p "${LOCK_FILE%/*}"
+export AT_COMMAND=$command
+(
+	"$FLOCK_BIN" -x 9
+	"$COMGT_BIN" -d "$port" -s "$GCOM_SCRIPT"
+) 9>"$LOCK_FILE"

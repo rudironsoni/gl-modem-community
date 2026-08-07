@@ -1,0 +1,66 @@
+#!/bin/sh
+# SPDX-License-Identifier: GPL-3.0-only
+set -eu
+
+USB_DEVICES_ROOT=${USB_DEVICES_ROOT:-/sys/bus/usb/devices}
+EXTERN_BUS_FILE=${EXTERN_BUS_FILE:-/var/run/modem/extern_modem_bus}
+OWNER_FILE=${OWNER_FILE:-/var/run/gl-modem-community/legacy-bus}
+LOGGER_BIN=${LOGGER_BIN:-logger}
+
+find_fm350_bus() {
+	for device in "$USB_DEVICES_ROOT"/*; do
+		[ -r "$device/idVendor" ] && [ -r "$device/idProduct" ] || continue
+		[ "$(cat "$device/idVendor")" = 0e8d ] || continue
+		case "$(cat "$device/idProduct")" in
+		7126|7127)
+			printf '%s\n' "${device##*/}"
+			return 0
+			;;
+		esac
+	done
+	return 1
+}
+
+restore_bus() {
+	[ -r "$OWNER_FILE" ] || return 0
+	owned_bus=$(cat "$OWNER_FILE")
+	if [ -r "$EXTERN_BUS_FILE" ] &&
+		[ "$(cat "$EXTERN_BUS_FILE")" = "$owned_bus" ]; then
+		rm -f "$EXTERN_BUS_FILE"
+	fi
+	rm -f "$OWNER_FILE"
+}
+
+refresh_bus() {
+	if ! bus=$(find_fm350_bus); then
+		restore_bus
+		return 0
+	fi
+
+	if [ -r "$EXTERN_BUS_FILE" ] && [ ! -r "$OWNER_FILE" ]; then
+		"$LOGGER_BIN" -t gl-modem-community \
+			"leaving stock-owned external modem bus unchanged"
+		return 0
+	fi
+
+	mkdir -p "${EXTERN_BUS_FILE%/*}" "${OWNER_FILE%/*}"
+	tmp="${EXTERN_BUS_FILE}.tmp.$$"
+	printf '%s\n' "$bus" >"$tmp"
+	mv "$tmp" "$EXTERN_BUS_FILE"
+	printf '%s\n' "$bus" >"$OWNER_FILE"
+	"$LOGGER_BIN" -t gl-modem-community \
+		"registered FM350 legacy modem bus=$bus"
+}
+
+case "${1:-refresh}" in
+refresh)
+	refresh_bus
+	;;
+restore)
+	restore_bus
+	;;
+*)
+	printf 'Usage: %s {refresh|restore}\n' "$0" >&2
+	exit 2
+	;;
+esac
