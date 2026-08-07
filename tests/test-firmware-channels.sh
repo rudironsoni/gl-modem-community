@@ -33,9 +33,9 @@ jq -e '
 		.firmware.openwrt_release == "25.12.5 r33051-f5dae5ece4")
 ' "$manifest" >/dev/null
 
-grep -Fq 'package-glinet21:' "$makefile"
+grep -Fq 'package-glinet21: SDK_NAME = openwrt-sdk-21.02.7-mediatek-mt7622' "$makefile"
+grep -Fq 'package-opkg: SDK_NAME = openwrt-sdk-24.10.4-mediatek-filogic' "$makefile"
+grep -Fq 'package: SDK_NAME = openwrt-sdk-25.12.5-mediatek-filogic' "$makefile"
 grep -Fq 'check-firmware-channels:' "$makefile"
 grep -Fq 'verify-firmware-channels:' "$makefile"
-grep -Fq 'openwrt-sdk-24.10.4-mediatek-filogic' "$makefile"
-grep -Fq 'openwrt-sdk-21.02.7-mediatek-mt7622' "$makefile"
 test ! -d "$repo_dir/scripts"
