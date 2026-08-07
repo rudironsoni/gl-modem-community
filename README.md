@@ -277,3 +277,4 @@ The [modem architecture](docs/modem-architecture.md), [package design](docs/pack
 Every pull request runs the offline test suite and builds both package formats. A release adds the signed APK and repository index, the IPK, CycloneDX SBOMs, the public key, checksums, and GitHub build-provenance attestations.
 
 [Release Please](https://github.com/googleapis/release-please) manages versions from Conventional Commits after the release artifacts pass CI and signing.
+# test fix
