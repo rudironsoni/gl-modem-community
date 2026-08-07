@@ -4,6 +4,10 @@ on:
   push:
     branches:
       - main
+  pull_request:
+    types: [opened, synchronize, reopened, closed]
+    branches:
+      - main
   workflow_dispatch:
     inputs:
       tag:
@@ -255,16 +259,12 @@ jobs:
           subject-path: release-assets/*
 
   release-please:
-    name: Maintain release
+    name: Maintain release PR
     needs:
       - detect-release
       - release-ci
       - sign-release
-    if: >-
-      always() &&
-      github.event_name == 'push' &&
-      (needs.detect-release.outputs.release_commit != 'true' ||
-      (needs.release-ci.result == 'success' && needs.sign-release.result == 'success'))
+    if: github.event_name == 'pull_request'
     runs-on: ubuntu-24.04
     timeout-minutes: 10
     permissions:
@@ -272,7 +272,7 @@ jobs:
       contents: write
       pull-requests: write
     steps:
-      - name: Create or update release
+      - name: Create or update release PR
         id: release
         uses: googleapis/release-please-action@45996ed1f6d02564a971a2fa1b5860e934307cf7 # v5.0.0
         with:
@@ -297,11 +297,11 @@ jobs:
     needs:
       - detect-release
       - sign-release
-      - release-please
     if: >-
       always() &&
       needs.sign-release.result == 'success' &&
-      (github.event_name == 'workflow_dispatch' || needs.release-please.result == 'success')
+      (github.event_name == 'workflow_dispatch' ||
+      (github.event_name == 'push' && needs.detect-release.outputs.release_commit == 'true'))
     runs-on: ubuntu-24.04
     timeout-minutes: 10
     permissions:
@@ -314,22 +314,23 @@ jobs:
           name: prepared-release-assets
           path: release-assets
 
-      - name: Upload assets to exact release tag
+      - name: Create release and upload assets
         env:
           GH_TOKEN: ${{ github.token }}
           RELEASE_TAG: ${{ needs.detect-release.outputs.tag }}
         shell: bash
         run: |
           set -euo pipefail
-          gh release view "$RELEASE_TAG" --repo "$GITHUB_REPOSITORY" >/dev/null
-          gh release upload "$RELEASE_TAG" release-assets/* --clobber --repo "$GITHUB_REPOSITORY"
+          gh release create "$RELEASE_TAG" release-assets/* \
+            --repo "$GITHUB_REPOSITORY" \
+            --title "$RELEASE_TAG" \
+            --notes "Release $RELEASE_TAG"
 
   publish-feed:
     name: Publish opkg feed to GitHub Pages
     needs:
       - detect-release
       - sign-release
-      - release-please
       - publish-release
     if: always() && needs.publish-release.result == 'success'
     runs-on: ubuntu-24.04
