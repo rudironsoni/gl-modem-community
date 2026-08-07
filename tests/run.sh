@@ -6,6 +6,7 @@ REPO_DIR=$(cd -- "$(dirname -- "$0")/.." && pwd)
 IMAGE=mt3000-modem-analysis:2026-07-19
 PACKAGE="$REPO_DIR/package/gl-modem-community"
 
+echo "Running container tests..."
 docker run --rm --mount "type=bind,src=$REPO_DIR,dst=/repo" "$IMAGE" sh -c '
 set -eu
 find /repo/tests /repo/package/gl-modem-community/files -type f -perm /111 -exec sh -n {} \;
@@ -25,20 +26,27 @@ shellcheck -S warning -e SC1091,SC2034,SC3043 /repo/tests/*.sh \
     /repo/tests/test-sbom.sh
     /repo/tests/test-signing-key.sh
 '
+echo "Container tests passed"
 
-"$REPO_DIR/tests/test-fm350-at-compat.sh"
-"$REPO_DIR/tests/test-hardware-evidence.sh"
-"$REPO_DIR/tests/test-xmm-proto.sh"
-"$REPO_DIR/tests/test-network-repair.sh"
-"$REPO_DIR/tests/test-network-ownership.sh"
-"$REPO_DIR/tests/test-network-reenumeration.sh"
-"$REPO_DIR/tests/test-package-lifecycle.sh"
-"$REPO_DIR/tests/test-service-lifecycle.sh"
-"$REPO_DIR/tests/test-release-config.sh"
-"$REPO_DIR/tests/test-firmware-channels.sh"
-"$REPO_DIR/tests/test-runtime-stack.sh"
-"$REPO_DIR/tests/test-legacy-bus.sh"
-"$REPO_DIR/tests/test-fm350-at.sh"
+run_test() {
+	echo "Running $1..."
+	"$1"
+	echo "$1 passed"
+}
+
+run_test "$REPO_DIR/tests/test-fm350-at-compat.sh"
+run_test "$REPO_DIR/tests/test-hardware-evidence.sh"
+run_test "$REPO_DIR/tests/test-xmm-proto.sh"
+run_test "$REPO_DIR/tests/test-network-repair.sh"
+run_test "$REPO_DIR/tests/test-network-ownership.sh"
+run_test "$REPO_DIR/tests/test-network-reenumeration.sh"
+run_test "$REPO_DIR/tests/test-package-lifecycle.sh"
+run_test "$REPO_DIR/tests/test-service-lifecycle.sh"
+run_test "$REPO_DIR/tests/test-release-config.sh"
+run_test "$REPO_DIR/tests/test-firmware-channels.sh"
+run_test "$REPO_DIR/tests/test-runtime-stack.sh"
+run_test "$REPO_DIR/tests/test-legacy-bus.sh"
+run_test "$REPO_DIR/tests/test-fm350-at.sh"
 
 tmp=$(mktemp -d "${TMPDIR:-/tmp}/gl-modem-community-test.XXXXXX")
 trap 'rm -rf "$tmp"' EXIT INT TERM
