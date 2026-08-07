@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.2.10](https://github.com/rudironsoni/gl-modem-community/compare/v0.2.9...v0.2.10) (2026-08-07)
+
+
+### Miscellaneous Chores
+
+* trigger release workflow after fixing release-please state ([8a9a09c](https://github.com/rudironsoni/gl-modem-community/commit/8a9a09c48972d0876495500cf25f55c471c13435))
+* trigger release workflow after v0.2.9 tag ([8b13b9f](https://github.com/rudironsoni/gl-modem-community/commit/8b13b9f9aed34fd7ae1e7e77c45b78c17a137b15))
+
 ## [0.2.7](https://github.com/rudironsoni/gl-modem-community/compare/v0.2.6...v0.2.7) (2026-08-06)
 
 
