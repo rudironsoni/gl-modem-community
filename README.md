@@ -49,119 +49,57 @@ The screenshots below show the FM350-GL in the GL.iNet admin panel and mobile ap
 | --- | --- |
 | ![GL-MT3000 admin panel showing the FM350-GL cellular connection](docs/images/gl-mt3000-fm350-admin-panel.png) | ![GL.iNet mobile app showing the enabled FM350-GL modem](docs/images/gl-mt3000-fm350-mobile-app.png) |
 
-## Install the current FM350 release
+## Feeds
 
-Download the package for your firmware and `SHA256SUMS` from the [latest release](https://github.com/rudironsoni/gl-modem-community/releases/latest). Copy both files to `/tmp` on the router and replace `VERSION` below with the release number you downloaded.
+Three version-specific feeds are published:
 
-Check the package before installing it:
+| OpenWrt version | Package format | Feed URL |
+| --- | --- | --- |
+| 21.02 (GL.iNet 21) | IPK | `https://rudironsoni.github.io/gl-modem-community/feed/21.02/aarch64_cortex-a53/custom/` |
+| 24.10 | IPK | `https://rudironsoni.github.io/gl-modem-community/feed/24.10/aarch64_cortex-a53/custom/` |
+| 25.12 | APK | `https://rudironsoni.github.io/gl-modem-community/feed/25.12/aarch64_cortex-a53/custom/` |
 
-```sh
-cd /tmp
-sha256sum gl-modem-community*VERSION*
-cat SHA256SUMS
-```
-
-### APK firmware
-
-GL.iNet firmware that uses APK must trust the project's public key before installing the package. LuCI can manage the feed after this one-time bootstrap, but it cannot import third-party APK signing keys.
+### APK feed (OpenWrt 25.12+)
 
 ```sh
-cd /tmp
-wget -O gl-modem-community.pem \
-  https://github.com/rudironsoni/gl-modem-community/releases/latest/download/gl-modem-community.pem
-wget -O gl-modem-community.pem.sha256 \
-  https://github.com/rudironsoni/gl-modem-community/releases/latest/download/gl-modem-community.pem.sha256
-sha256sum -c gl-modem-community.pem.sha256
-cp gl-modem-community.pem /etc/apk/keys/
-chmod 0644 /etc/apk/keys/gl-modem-community.pem
-```
-
-#### Install from the feed with LuCI
-
-After installing the public key:
-
-1. Open the GL.iNet admin panel, select **Advanced Settings**, and enter LuCI.
-2. Go to **System → Software**.
-3. Select **Configure apk**.
-4. Add this line to `/etc/apk/repositories.d/customfeeds.list`:
-
-   ```text
-   https://github.com/rudironsoni/gl-modem-community/releases/latest/download/packages.adb
-   ```
-
-5. Save the configuration and select **Update lists…**.
-6. Search for `gl-modem-community` and select **Install**.
-7. Go to **System → Startup**, enable and restart `gl_modem_community`, and then restart `gl_cellular_manager`.
-
-If the configuration button says **Configure opkg**, this firmware cannot use the APK feed. Follow the IPK instructions instead.
-
-To register and install from the APK feed without LuCI:
-
-```sh
-feed='https://github.com/rudironsoni/gl-modem-community/releases/latest/download/packages.adb'
 mkdir -p /etc/apk/repositories.d
 touch /etc/apk/repositories.d/customfeeds.list
-grep -Fqx "$feed" /etc/apk/repositories.d/customfeeds.list || \
-  printf '%s\n' "$feed" >> /etc/apk/repositories.d/customfeeds.list
+grep -Fqx 'https://rudironsoni.github.io/gl-modem-community/feed/25.12/aarch64_cortex-a53/custom/' \
+  /etc/apk/repositories.d/customfeeds.list || \
+  printf '%s\n' 'https://rudironsoni.github.io/gl-modem-community/feed/25.12/aarch64_cortex-a53/custom/' \
+  >> /etc/apk/repositories.d/customfeeds.list
 apk update
-apk add gl-modem-community
-/etc/init.d/gl_modem_community enable
-/etc/init.d/gl_modem_community restart
-/etc/init.d/gl_cellular_manager restart
 ```
 
-The release APK carries the same signature, so a direct local install uses the same trust validation after the key is installed:
+The APK feed requires the project's public key for signature verification. Install it first:
 
 ```sh
-apk add /tmp/gl-modem-community-VERSION-r1.apk
-/etc/init.d/gl_modem_community enable
-/etc/init.d/gl_modem_community restart
-/etc/init.d/gl_cellular_manager restart
+wget -O /etc/apk/keys/gl-modem-community.pem \
+  https://github.com/rudironsoni/gl-modem-community/releases/latest/download/gl-modem-community.pem
+wget -O - https://github.com/rudironsoni/gl-modem-community/releases/latest/download/gl-modem-community.pem.sha256 \
+  | sha256sum -c
 ```
 
-### IPK firmware
-
-> [!CAUTION]
-> The IPK builds against the OpenWrt 24.10 SDK, but it has not been tested on GL.iNet OEM or OpenWrt 24 firmware.
-
-#### Install from the feed
-
-Add this feed to `/etc/opkg/customfeeds.conf`:
-
-```sh
-echo 'src/gz gl-modem-community https://rudironsoni.github.io/gl-modem-community/feed' \
-  >> /etc/opkg/customfeeds.conf
-opkg update
-opkg install gl-modem-community
-/etc/init.d/gl_modem_community enable
-/etc/init.d/gl_modem_community restart
-/etc/init.d/gl_cellular_manager restart
-```
-
-After a new release, run:
-
-```sh
-opkg update
-opkg upgrade gl-modem-community
-```
-
-If `customfeeds.conf` does not exist, create it first:
+### IPK feeds (OpenWrt 21.02 / 24.10)
 
 ```sh
 touch /etc/opkg/customfeeds.conf
 chmod 0644 /etc/opkg/customfeeds.conf
+
+# For OpenWrt 21.02 (GL.iNet 21)
+grep -Fqx 'src/gz gl-modem-community https://rudironsoni.github.io/gl-modem-community/feed/21.02/aarch64_cortex-a53/custom/' \
+  /etc/opkg/customfeeds.conf || \
+  printf '%s\n' 'src/gz gl-modem-community https://rudironsoni.github.io/gl-modem-community/feed/21.02/aarch64_cortex-a53/custom/' \
+  >> /etc/opkg/customfeeds.conf
+
+# For OpenWrt 24.10
+grep -Fqx 'src/gz gl-modem-community https://rudironsoni.github.io/gl-modem-community/feed/24.10/aarch64_cortex-a53/custom/' \
+  /etc/opkg/customfeeds.conf || \
+  printf '%s\n' 'src/gz gl-modem-community https://rudironsoni.github.io/gl-modem-community/feed/24.10/aarch64_cortex-a53/custom/' \
+  >> /etc/opkg/customfeeds.conf
+
+opkg update
 ```
-
-#### Install a single IPK manually
-
-```sh
-opkg install /tmp/gl-modem-community_VERSION-r1_aarch64_cortex-a53.ipk
-/etc/init.d/gl_modem_community enable
-/etc/init.d/gl_modem_community restart
-/etc/init.d/gl_cellular_manager restart
-```
-
-The IPK targets `aarch64_cortex-a53` and still requires GL.iNet's `cellular_manager`, `modem_AT`, model table, and RPC stack.
 
 ## Verify the FM350 setup
 
