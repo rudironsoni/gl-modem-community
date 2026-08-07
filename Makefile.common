@@ -2,7 +2,7 @@
 # Included by feeds/<version>/gl-modem-community/Makefile
 
 PKG_NAME:=gl-modem-community
-PKG_VERSION:=0.2.7
+PKG_VERSION:=0.2.8
 PKG_RELEASE:=1
 PKG_LICENSE:=GPL-3.0-only
 PKG_MAINTAINER:=Rudimar Ronsoni <rudironsoni@users.noreply.github.com>
