@@ -1,0 +1,293 @@
+#!/bin/sh
+# SPDX-License-Identifier: GPL-3.0-only
+
+set -eu
+
+USB_DEVICES_ROOT=${USB_DEVICES_ROOT:-/sys/bus/usb/devices}
+UCI_BIN=${UCI_BIN:-uci}
+UBUS_BIN=${UBUS_BIN:-ubus}
+LOGGER_BIN=${LOGGER_BIN:-logger}
+GL_MODEM_BIN=${GL_MODEM_BIN:-gl_modem}
+LEGACY_AT_BIN=${LEGACY_AT_BIN:-/usr/libexec/gl-modem-community/fm350-at}
+RUNTIME_STACK_FILE=${RUNTIME_STACK_FILE:-/var/run/gl-modem-community/stack}
+FLOCK_BIN=${FLOCK_BIN:-flock}
+NETWORK_STATE_CONFIG=${NETWORK_STATE_CONFIG:-gl_modem_community}
+REPAIR_LOCK=${REPAIR_LOCK:-/var/lock/gl-modem-community-network.lock}
+REPAIR_INTERVAL=${REPAIR_INTERVAL:-2}
+MANAGED_OPTIONS='apn_use apn ip_type proto bus profile pdp'
+
+uci_get() {
+	"$UCI_BIN" -q get "$1" 2>/dev/null
+}
+
+state_name_for_section() {
+	printf 'network_%s\n' "$1" | tr '.-' '__'
+}
+
+ensure_network_state() {
+	local section=$1 created=$2 state
+	state=$(state_name_for_section "$section")
+	if uci_get "$NETWORK_STATE_CONFIG.$state" >/dev/null; then
+		printf '%s\n' "$state"
+		return 0
+	fi
+
+	"$UCI_BIN" set "$NETWORK_STATE_CONFIG.$state=network_state"
+	"$UCI_BIN" set "$NETWORK_STATE_CONFIG.$state.section=$section"
+	"$UCI_BIN" set "$NETWORK_STATE_CONFIG.$state.created=$created"
+	STATE_CHANGED=1
+	printf '%s\n' "$state"
+}
+
+record_original_option() {
+	local section=$1 state=$2 option=$3 current
+	if uci_get "$NETWORK_STATE_CONFIG.$state.had_$option" >/dev/null; then
+		return 0
+	fi
+
+	if current=$(uci_get "network.$section.$option"); then
+		"$UCI_BIN" set "$NETWORK_STATE_CONFIG.$state.had_$option=1"
+		"$UCI_BIN" set "$NETWORK_STATE_CONFIG.$state.value_$option=$current"
+	else
+		"$UCI_BIN" set "$NETWORK_STATE_CONFIG.$state.had_$option=0"
+	fi
+	STATE_CHANGED=1
+}
+
+read_fm350_context() {
+	local bus=$1 output context profile
+	profile=5
+	if [ "$(cat "$RUNTIME_STACK_FILE" 2>/dev/null || true)" = legacy ]; then
+		profile=1
+		output=$("$LEGACY_AT_BIN" "$bus" 'AT+CGDCONT?' 2>/dev/null) ||
+			return 1
+	else
+		output=$("$GL_MODEM_BIN" -B "$bus" -U 1 AT 'AT+CGDCONT?' 2>/dev/null) ||
+			return 1
+	fi
+	context=$(printf '%s\n' "$output" | awk -F, -v profile="$profile" '
+		$1 == "+CGDCONT: " profile {
+			gsub(/["\r ]/, "", $2)
+			gsub(/["\r ]/, "", $3)
+			print $2 ":" $3
+			exit
+		}')
+	[ -n "$context" ] || return 1
+	FM350_PDP=${context%%:*}
+	FM350_APN=${context#*:}
+	case "$FM350_PDP" in IP|IPV6|IPV4V6) ;; *) return 1 ;; esac
+	[ -n "$FM350_APN" ]
+}
+
+set_network_option() {
+	local section=$1 option=$2 value=$3 current state
+	current=$(uci_get "network.$section.$option" || true)
+	[ "$current" = "$value" ] && return 1
+	state=$(ensure_network_state "$section" 0)
+	record_original_option "$section" "$state" "$option"
+	"$UCI_BIN" set "network.$section.$option=$value"
+	"$UCI_BIN" set "$NETWORK_STATE_CONFIG.$state.applied_$option=$value"
+	NETWORK_CHANGED=1
+	STATE_CHANGED=1
+}
+
+ensure_network_section() {
+	local section=$1
+	uci_get "network.$section" >/dev/null && return 1
+	ensure_network_state "$section" 1 >/dev/null
+	"$UCI_BIN" set "network.$section=interface"
+	NETWORK_CHANGED=1
+	STATE_CHANGED=1
+}
+
+repair_fm350_network() {
+	local paths present_sections path bus pid section ip_type profile changed section_changed
+	paths=
+	present_sections=
+	changed=0
+	NETWORK_CHANGED=0
+	STATE_CHANGED=0
+	profile=5
+	[ "$(cat "$RUNTIME_STACK_FILE" 2>/dev/null || true)" != legacy ] ||
+		profile=1
+
+	for path in "$USB_DEVICES_ROOT"/*; do
+		[ -r "$path/idVendor" ] && [ "$(cat "$path/idVendor")" = 0e8d ] || continue
+		pid=$(cat "$path/idProduct" 2>/dev/null || true)
+		case "$pid" in 7126|7127) ;; *) continue ;; esac
+		paths="$paths $path"
+		bus=${path##*/}
+		section=modem_$(printf '%s' "$bus" | tr '.-' '__')_s1
+		present_sections="$present_sections $section"
+	done
+
+	if reconcile_stale_network_states "$present_sections"; then
+		changed=1
+	fi
+
+	for path in $paths; do
+		bus=${path##*/}
+		section=modem_$(printf '%s' "$bus" | tr '.-' '__')_s1
+		section_changed=0
+		if ! uci_get "network.$section" >/dev/null; then
+			read_fm350_context "$bus" || continue
+			ensure_network_section "$section"
+			set_network_option "$section" apn_use 5 || true
+			set_network_option "$section" apn "$FM350_APN" || true
+			set_network_option "$section" ip_type "$FM350_PDP" || true
+			section_changed=1
+		fi
+		if set_network_option "$section" proto xmm; then section_changed=1; fi
+		if set_network_option "$section" bus "$bus"; then section_changed=1; fi
+		if set_network_option "$section" profile "$profile"; then section_changed=1; fi
+		ip_type=$(uci_get "network.$section.ip_type" || true)
+		case "$ip_type" in
+			IP|IPV6|IPV4V6)
+				if set_network_option "$section" pdp "$ip_type"; then section_changed=1; fi
+				;;
+		esac
+
+		[ "$section_changed" -eq 0 ] || {
+			"$LOGGER_BIN" -t gl-modem-community "repaired stock FM350 interface $section bus=$bus proto=xmm profile=$profile"
+			changed=1
+		}
+	done
+
+	[ "$STATE_CHANGED" -eq 0 ] || "$UCI_BIN" commit "$NETWORK_STATE_CONFIG"
+	[ "$NETWORK_CHANGED" -eq 0 ] || "$UCI_BIN" commit network
+
+	[ "$changed" -eq 1 ]
+}
+
+restore_managed_option() {
+	local section=$1 state=$2 option=$3 had applied current original
+	had=$(uci_get "$NETWORK_STATE_CONFIG.$state.had_$option" || true)
+	case "$had" in 0|1) ;; *) return 0 ;; esac
+	applied=$(uci_get "$NETWORK_STATE_CONFIG.$state.applied_$option" || true)
+	if ! current=$(uci_get "network.$section.$option"); then
+		return 0
+	fi
+	[ "$current" = "$applied" ] || return 0
+
+	if [ "$had" = 1 ]; then
+		original=$(uci_get "$NETWORK_STATE_CONFIG.$state.value_$option")
+		"$UCI_BIN" set "network.$section.$option=$original"
+	else
+		"$UCI_BIN" -q delete "network.$section.$option"
+	fi
+	NETWORK_CHANGED=1
+}
+
+network_state_names() {
+	"$UCI_BIN" -q show "$NETWORK_STATE_CONFIG" 2>/dev/null | awk -F= -v prefix="$NETWORK_STATE_CONFIG." '
+		index($1, prefix) == 1 && ($2 == "network_state" || $2 == "\047network_state\047") {
+			print substr($1, length(prefix) + 1)
+		}
+	'
+}
+
+restore_network_state() {
+	local section=$1 state=$2 created option option_count
+
+	for option in $MANAGED_OPTIONS; do
+		restore_managed_option "$section" "$state" "$option"
+	done
+
+	created=$(uci_get "$NETWORK_STATE_CONFIG.$state.created" || true)
+	if [ "$created" = 1 ] && uci_get "network.$section" >/dev/null; then
+		option_count=$("$UCI_BIN" -q show "network.$section" 2>/dev/null \
+			| grep -Fc "network.$section." || true)
+		if [ "$option_count" -eq 0 ]; then
+			"$UCI_BIN" -q delete "network.$section"
+			NETWORK_CHANGED=1
+		fi
+	fi
+
+	"$UCI_BIN" -q delete "$NETWORK_STATE_CONFIG.$state"
+	STATE_CHANGED=1
+}
+
+section_is_present() {
+	local section=$1 present_sections=$2 present
+	for present in $present_sections; do
+		[ "$present" != "$section" ] || return 0
+	done
+	return 1
+}
+
+reconcile_stale_network_states() {
+	local present_sections=$1 states state section reconciled=1
+	states=$(network_state_names)
+
+	for state in $states; do
+		section=$(uci_get "$NETWORK_STATE_CONFIG.$state.section" || true)
+		if [ -z "$section" ]; then
+			"$UCI_BIN" -q delete "$NETWORK_STATE_CONFIG.$state"
+			STATE_CHANGED=1
+			reconciled=0
+			continue
+		fi
+		section_is_present "$section" "$present_sections" && continue
+		restore_network_state "$section" "$state"
+		"$LOGGER_BIN" -t gl-modem-community \
+			"released stale plugin-managed FM350 interface $section"
+		reconciled=0
+	done
+
+	return "$reconciled"
+}
+
+restore_fm350_network() {
+	local states state section
+	NETWORK_CHANGED=0
+	STATE_CHANGED=0
+	states=$(network_state_names)
+
+	for state in $states; do
+		section=$(uci_get "$NETWORK_STATE_CONFIG.$state.section" || true)
+		if [ -z "$section" ]; then
+			"$UCI_BIN" -q delete "$NETWORK_STATE_CONFIG.$state"
+			STATE_CHANGED=1
+			continue
+		fi
+
+		restore_network_state "$section" "$state"
+	done
+
+	[ "$STATE_CHANGED" -eq 0 ] || "$UCI_BIN" commit "$NETWORK_STATE_CONFIG"
+	if [ "$NETWORK_CHANGED" -eq 1 ]; then
+		"$UCI_BIN" commit network
+		"$UBUS_BIN" call network reload >/dev/null 2>&1 || true
+		"$LOGGER_BIN" -t gl-modem-community "restored plugin-owned FM350 network state"
+	fi
+}
+
+with_lock() {
+	local lock_dir status
+	lock_dir=${REPAIR_LOCK%/*}
+	[ "$lock_dir" = "$REPAIR_LOCK" ] || mkdir -p "$lock_dir"
+	exec 9>"$REPAIR_LOCK"
+	"$FLOCK_BIN" -x 9
+	if "$@"; then
+		status=0
+	else
+		status=$?
+	fi
+	exec 9>&-
+	return "$status"
+}
+
+watch_fm350_network() {
+	while :; do
+		if with_lock repair_fm350_network; then
+			"$UBUS_BIN" call network reload >/dev/null 2>&1 || true
+		fi
+		sleep "$REPAIR_INTERVAL"
+	done
+}
+
+case "${1:-}" in
+	--watch) watch_fm350_network ;;
+	--restore) with_lock restore_fm350_network ;;
+	*) with_lock repair_fm350_network ;;
+esac

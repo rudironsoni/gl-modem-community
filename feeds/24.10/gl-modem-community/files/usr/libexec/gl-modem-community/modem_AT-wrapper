@@ -1,0 +1,34 @@
+#!/bin/sh
+# SPDX-License-Identifier: GPL-3.0-only
+set -eu
+
+stock=/var/run/gl-modem-community/modem_AT.stock
+compat=/usr/lib/gl-modem-community/fm350-at-compat.so
+bus=
+port=
+previous=
+
+for argument in "$@"; do
+	case "$previous" in
+		-B) bus=$argument ;;
+		-P) port=$argument ;;
+	esac
+	case "$argument" in
+		-B|-P) previous=$argument ;;
+		*) previous= ;;
+	esac
+done
+
+if [ -n "$bus" ] && [ -n "$port" ] &&
+	[ "$(cat "/sys/bus/usb/devices/$bus/idVendor" 2>/dev/null || true)" = 0e8d ]; then
+	case "$(cat "/sys/bus/usb/devices/$bus/idProduct" 2>/dev/null || true)" in
+		7126|7127)
+			export GL_MODEM_FM350_AT_PORT=$port
+			export LD_PRELOAD=$compat
+			logger -t gl-modem-community \
+				"FM350 modem_AT compatibility active bus=$bus port=$port"
+			;;
+	esac
+fi
+
+exec "$stock" "$@"

@@ -1,0 +1,118 @@
+#!/bin/sh
+# SPDX-License-Identifier: GPL-3.0-only
+#
+# Ensure the kernel's option driver claims FM350-GL vendor-specific interfaces.
+#
+# On kernels older than 6.6, the option module's static ID table does not
+# include 0e8d:7126 / 0e8d:7127.  This script adds them at runtime via
+# the option driver's new_id sysfs interface, falling back to reloading the
+# usbserial module with explicit vendor/product parameters.
+
+set -eu
+
+LOGGER_BIN=${LOGGER_BIN:-logger}
+SYS_USB=${SYS_USB:-/sys/bus/usb}
+SYS_USB_SERIAL=${SYS_USB_SERIAL:-/sys/bus/usb-serial}
+MODULES_DIR=${MODULES_DIR:-/lib/modules}
+MODULE_BASE=${MODULE_BASE:-$(uname -r)}
+
+FM350_VID=0e8d
+FM350_PIDS="7126 7127"
+
+log() {
+	"$LOGGER_BIN" -t gl-modem-community "ensure-option-ids: $*"
+}
+
+# Return 0 if any FM350 interface already has a driver bound.
+option_already_bound() {
+	local device
+	for device in "$SYS_USB"/devices/*; do
+		[ -r "$device/idVendor" ] || continue
+		[ "$(cat "$device/idVendor")" = "$FM350_VID" ] || continue
+		case "$(cat "$device/idProduct" 2>/dev/null)" in
+			7126|7127) ;;
+			*) continue ;;
+		esac
+		# Walk child interfaces looking for one claimed by option.
+		local iface
+		for iface in "$device"/*/; do
+			[ -r "${iface}bInterfaceClass" ] || continue
+			[ "$(cat "${iface}bInterfaceClass")" = ff ] || continue
+			if [ -L "${iface}driver" ]; then
+				case "$(basename "$(readlink "${iface}driver")")" in
+					option) return 0 ;;
+				esac
+			fi
+		done
+	done
+	return 1
+}
+
+# Try writing to the option driver's new_id sysfs file.
+try_new_id() {
+	local vid=$1 pid=$2 path
+	for path in \
+		"$SYS_USB_SERIAL/drivers/option1/new_id" \
+		"$SYS_USB/drivers/option/new_id"; do
+		if [ -w "$path" ]; then
+			printf '%s %s\n' "$vid" "$pid" >"$path" 2>/dev/null && return 0
+		fi
+	done
+	return 1
+}
+
+# Reload usbserial with explicit vendor/product parameters.
+try_module_reload() {
+	local mod_path="$MODULES_DIR/$MODULE_BASE/usbserial.ko"
+	[ -f "$mod_path" ] || return 1
+
+	rmmod option 2>/dev/null || true
+	rmmod usbserial 2>/dev/null || true
+	insmod "$mod_path" vendor=0x$FM350_VID product=0x7126,0x7127 2>/dev/null \
+		&& return 0
+	return 1
+}
+
+main() {
+	if option_already_bound; then
+		log "FM350 already claimed by option driver"
+		return 0
+	fi
+
+	log "FM350 not claimed by option; attempting ID injection"
+
+	local added=0 pid
+	for pid in $FM350_PIDS; do
+		if try_new_id "$FM350_VID" "$pid"; then
+			log "added $FM350_VID:$pid via new_id"
+			added=1
+		fi
+	done
+
+	if [ "$added" -eq 0 ]; then
+		log "new_id failed; trying usbserial module reload"
+		if try_module_reload; then
+			log "usbserial reloaded with FM350 IDs"
+			added=1
+		else
+			log "usbserial reload failed"
+		fi
+	fi
+
+	if [ "$added" -eq 0 ]; then
+		log "all ID injection methods failed; option driver cannot claim FM350"
+		return 1
+	fi
+
+	# Give the kernel a moment to enumerate ttyACM nodes.
+	sleep 2
+
+	if option_already_bound; then
+		log "FM350 now claimed by option driver"
+	else
+		log "ID injection completed but FM350 still not claimed by option"
+		return 1
+	fi
+}
+
+main "$@"
