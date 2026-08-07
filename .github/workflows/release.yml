@@ -262,8 +262,6 @@ jobs:
     name: Maintain release PR
     needs:
       - detect-release
-      - release-ci
-      - sign-release
     if: github.event_name == 'pull_request'
     runs-on: ubuntu-24.04
     timeout-minutes: 10
