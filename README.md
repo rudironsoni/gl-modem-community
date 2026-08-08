@@ -133,11 +133,6 @@ apk add /tmp/gl-modem-community-${VERSION}-r1.apk
 
 ### OpenWrt 24 (IPK)
 
-> [!WARNING]
-> The GitHub Pages feed (`https://rudironsoni.github.io/...`) redirects to a custom domain that serves HTTP only, which causes `opkg update` to fail. Use the raw GitHub feed below.
-> The device needs CA certificates for HTTPS. Install them first if `opkg update` fails with "Operation not permitted":
-> `opkg install ca-certificates`
-
 Add the OpenWrt 24 feed to `/etc/opkg/customfeeds.conf`. Create the file first if it does not exist:
 
 ```sh
@@ -177,11 +172,6 @@ opkg install /tmp/gl-modem-community_${VERSION}-r1_aarch64_cortex-a53.ipk
 ### GL.iNet current stable and beta (IPK 21.02)
 
 Current GL.iNet OEM firmware (stable 4.8.x and beta 4.9.x) runs OpenWrt 21.02 with `opkg`. Use the feed for the 21.02 build:
-
-> [!WARNING]
-> The GitHub Pages feed (`https://rudironsoni.github.io/...`) redirects to a custom domain that serves HTTP only, which causes `opkg update` to fail. Use the raw GitHub feed below.
-> The device needs CA certificates for HTTPS. Install them first if `opkg update` fails with "Operation not permitted":
-> `opkg install ca-certificates`
 
 ```sh
 touch /etc/opkg/customfeeds.conf
