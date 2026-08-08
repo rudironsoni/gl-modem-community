@@ -312,17 +312,21 @@ jobs:
           name: prepared-release-assets
           path: release-assets
 
-      - name: Create release and upload assets
+      - name: Create or upload release assets
         env:
           GH_TOKEN: ${{ github.token }}
           RELEASE_TAG: ${{ needs.detect-release.outputs.tag }}
         shell: bash
         run: |
           set -euo pipefail
-          gh release create "$RELEASE_TAG" release-assets/* \
-            --repo "$GITHUB_REPOSITORY" \
-            --title "$RELEASE_TAG" \
-            --notes "Release $RELEASE_TAG"
+          if gh release view "$RELEASE_TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            gh release upload "$RELEASE_TAG" release-assets/* --clobber --repo "$GITHUB_REPOSITORY"
+          else
+            gh release create "$RELEASE_TAG" release-assets/* \
+              --repo "$GITHUB_REPOSITORY" \
+              --title "$RELEASE_TAG" \
+              --notes "Release $RELEASE_TAG"
+          fi
 
   publish-feed:
     name: Publish opkg feed to GitHub Pages
