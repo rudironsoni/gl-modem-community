@@ -83,8 +83,18 @@ grep -Fq 'adbsign' "$ROOT_MAKEFILE"
 grep -Fq 'mkndx' "$ROOT_MAKEFILE"
 grep -Fq 'verify --keys-dir' "$ROOT_MAKEFILE"
 grep -Fq 'empty-keys' "$ROOT_MAKEFILE"
-test ! -d "$REPO_DIR/scripts"
 
+# Per-version opkg feed layout
+grep -Fq 'feed/24.10' "$RELEASE_WORKFLOW"
+grep -Fq 'feed/21.02' "$RELEASE_WORKFLOW"
+grep -Fq 'Packages.gz' "$RELEASE_WORKFLOW"
+
+# README contains all three feed URLs
+grep -Fq 'releases/latest/download/packages.adb' "$REPO_DIR/README.md"
+grep -Fq 'feed/24.10' "$REPO_DIR/README.md"
+grep -Fq 'feed/21.02' "$REPO_DIR/README.md"
+
+test ! -d "$REPO_DIR/scripts"
 test -s "$PUBLIC_KEY"
 test -s "$PUBLIC_KEY_CHECKSUM"
 openssl pkey -pubin -in "$PUBLIC_KEY" -noout

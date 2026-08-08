@@ -359,13 +359,51 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          mkdir -p feed
-          cp release-assets/Packages feed/
-          cp release-assets/gl-modem-community_*_aarch64_cortex-a53.ipk feed/
+          rm -rf feed
+          mkdir -p feed/24.10 feed/21.02
+          VERSION="${RELEASE_TAG#v}"
+
+          # 24.10 feed (openwrt24 IPK)
+          ipk24="release-assets/gl-modem-community_${VERSION}-r1_aarch64_cortex-a53.ipk"
+          cp "$ipk24" feed/24.10/
+          size24=$(stat -c%s "feed/24.10/$(basename "$ipk24")")
+          cat > feed/24.10/Packages <<EOF
+Package: gl-modem-community
+Version: ${VERSION}-r1
+Depends: comgt, flock, jq, kmod-usb-acm, kmod-usb-serial-option, kmod-usb-net-rndis
+License: GPL-3.0-only
+Section: net
+Category: Network
+Maintainer: Rudimar Ronsoni <rudironsoni@users.noreply.github.com>
+Architecture: aarch64_cortex-a53
+Size: ${size24}
+Filename: $(basename "$ipk24")
+Description: Community modem definitions and compatibility drivers for GL.iNet firmware
+EOF
+          gzip -c feed/24.10/Packages > feed/24.10/Packages.gz
+
+          # 21.02 feed (glinet21 IPK)
+          ipk21="release-assets/gl-modem-community_${VERSION}-1_glinet-21.02_aarch64_cortex-a53.ipk"
+          cp "$ipk21" feed/21.02/
+          size21=$(stat -c%s "feed/21.02/$(basename "$ipk21")")
+          cat > feed/21.02/Packages <<EOF
+Package: gl-modem-community
+Version: ${VERSION}-1
+Depends: comgt, flock, jq, kmod-usb-acm, kmod-usb-serial-option, kmod-usb-net-rndis
+License: GPL-3.0-only
+Section: net
+Category: Network
+Maintainer: Rudimar Ronsoni <rudironsoni@users.noreply.github.com>
+Architecture: aarch64_cortex-a53
+Size: ${size21}
+Filename: $(basename "$ipk21")
+Description: Community modem definitions and compatibility drivers for GL.iNet firmware
+EOF
+          gzip -c feed/21.02/Packages > feed/21.02/Packages.gz
 
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add -f feed/
+          git add feed/
           git diff --cached --quiet && exit 0
           git commit -m "feed: ${RELEASE_TAG}"
           git remote set-url origin "https://github-actions:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"

@@ -49,21 +49,27 @@ The screenshots below show the FM350-GL in the GL.iNet admin panel and mobile ap
 | --- | --- |
 | ![GL-MT3000 admin panel showing the FM350-GL cellular connection](docs/images/gl-mt3000-fm350-admin-panel.png) | ![GL.iNet mobile app showing the enabled FM350-GL modem](docs/images/gl-mt3000-fm350-mobile-app.png) |
 
-## Install the current FM350 release
+## Install the current release
 
-Download the package for your firmware and `SHA256SUMS` from the [latest release](https://github.com/rudironsoni/gl-modem-community/releases/latest). Copy both files to `/tmp` on the router and replace `VERSION` below with the release number you downloaded.
-
-Check the package before installing it:
+Your firmware uses one of three feeds. Determine which one applies first:
 
 ```sh
-cd /tmp
-sha256sum gl-modem-community*VERSION*
-cat SHA256SUMS
+cat /etc/openwrt_release
+command -v apk && echo 'apk firmware'
+command -v opkg && echo 'opkg firmware'
 ```
 
-### APK firmware
+| Firmware | Destination feed | Package |
+| --- | --- | --- |
+| GL.iNet OpenWrt 25 | [`…/releases/latest/download/packages.adb`](https://github.com/rudironsoni/gl-modem-community/releases/latest/download/packages.adb) | APK |
+| OpenWrt 24 | [`…/feed/24.10`](https://rudironsoni.github.io/gl-modem-community/feed/24.10) | IPK |
+| GL.iNet 4.8.1 stable and 4.9.x beta | [`…/feed/21.02`](https://rudironsoni.github.io/gl-modem-community/feed/21.02) | IPK |
 
-GL.iNet firmware that uses APK must trust the project's public key before installing the package. LuCI can manage the feed after this one-time bootstrap, but it cannot import third-party APK signing keys.
+All installs require GL.iNet's proprietary cellular services. Check the [compatibility status](#compatibility-status) before installing on hardware that is not yet marked tested.
+
+### GL.iNet OpenWrt 25 (APK)
+
+If the software page shows **Configure apk**, use this section. GL.iNet firmware that uses APK must trust the project's public key before installing the package. LuCI can manage the feed after this one-time bootstrap, but it cannot import third-party APK signing keys.
 
 ```sh
 cd /tmp
@@ -76,9 +82,7 @@ cp gl-modem-community.pem /etc/apk/keys/
 chmod 0644 /etc/apk/keys/gl-modem-community.pem
 ```
 
-#### Install from the feed with LuCI
-
-After installing the public key:
+#### Install the APK feed with LuCI
 
 1. Open the GL.iNet admin panel, select **Advanced Settings**, and enter LuCI.
 2. Go to **System → Software**.
@@ -89,13 +93,13 @@ After installing the public key:
    https://github.com/rudironsoni/gl-modem-community/releases/latest/download/packages.adb
    ```
 
-5. Save the configuration and select **Update lists…**.
+5. Save the configuration and select **Update lists**.
 6. Search for `gl-modem-community` and select **Install**.
-7. Go to **System → Startup**, enable and restart `gl_modem_community`, and then restart `gl_cellular_manager`.
+7. Go to **System → Startup**, enable and restart `gl_modem_community`, and restart `gl_cellular_manager`.
 
-If the configuration button says **Configure opkg**, this firmware cannot use the APK feed. Follow the IPK instructions instead.
+If the software button says **Configure opkg**, use the IPK instructions below instead.
 
-To register and install from the APK feed without LuCI:
+#### Install the APK feed without LuCI
 
 ```sh
 feed='https://github.com/rudironsoni/gl-modem-community/releases/latest/download/packages.adb'
@@ -110,26 +114,31 @@ apk add gl-modem-community
 /etc/init.d/gl_cellular_manager restart
 ```
 
-The release APK carries the same signature, so a direct local install uses the same trust validation after the key is installed:
+#### Install the APK manually
+
+Download the latest APK and `SHA256SUMS` to `/tmp`, verify the hash line for the APK, then install. Replace `VERSION` with the tag from the release (for example `0.2.11`):
 
 ```sh
-apk add /tmp/gl-modem-community-VERSION-r1.apk
+cd /tmp
+wget -O gl-modem-community-${VERSION}-r1.apk \
+  https://github.com/rudironsoni/gl-modem-community/releases/download/v${VERSION}/gl-modem-community-${VERSION}-r1.apk
+wget -O SHA256SUMS \
+  https://github.com/rudironsoni/gl-modem-community/releases/latest/download/SHA256SUMS
+grep "gl-modem-community-${VERSION}-r1.apk" SHA256SUMS | sha256sum -c
+apk add /tmp/gl-modem-community-${VERSION}-r1.apk
 /etc/init.d/gl_modem_community enable
 /etc/init.d/gl_modem_community restart
 /etc/init.d/gl_cellular_manager restart
 ```
 
-### IPK firmware
+### OpenWrt 24 (IPK)
 
-> [!CAUTION]
-> The IPK builds against the OpenWrt 24.10 SDK, but it has not been tested on GL.iNet OEM or OpenWrt 24 firmware.
-
-#### Install from the feed
-
-Add this feed to `/etc/opkg/customfeeds.conf`:
+Add the OpenWrt 24 feed to `/etc/opkg/customfeeds.conf`. Create the file first if it does not exist:
 
 ```sh
-echo 'src/gz gl-modem-community https://rudironsoni.github.io/gl-modem-community/feed' \
+touch /etc/opkg/customfeeds.conf
+chmod 0644 /etc/opkg/customfeeds.conf
+echo 'src/gz gl-modem-community https://rudironsoni.github.io/gl-modem-community/feed/24.10' \
   >> /etc/opkg/customfeeds.conf
 opkg update
 opkg install gl-modem-community
@@ -138,30 +147,60 @@ opkg install gl-modem-community
 /etc/init.d/gl_cellular_manager restart
 ```
 
-After a new release, run:
+After a new release:
 
 ```sh
 opkg update
 opkg upgrade gl-modem-community
 ```
 
-If `customfeeds.conf` does not exist, create it first:
+Install a single IPK manually with `VERSION` set to the release tag:
 
 ```sh
-touch /etc/opkg/customfeeds.conf
-chmod 0644 /etc/opkg/customfeeds.conf
-```
-
-#### Install a single IPK manually
-
-```sh
-opkg install /tmp/gl-modem-community_VERSION-r1_aarch64_cortex-a53.ipk
+cd /tmp
+wget -O gl-modem-community_${VERSION}-r1_aarch64_cortex-a53.ipk \
+  https://github.com/rudironsoni/gl-modem-community/releases/download/v${VERSION}/gl-modem-community_${VERSION}-r1_aarch64_cortex-a53.ipk
+wget -O SHA256SUMS \
+  https://github.com/rudironsoni/gl-modem-community/releases/latest/download/SHA256SUMS
+grep "gl-modem-community_${VERSION}-r1_aarch64_cortex-a53.ipk" SHA256SUMS | sha256sum -c
+opkg install /tmp/gl-modem-community_${VERSION}-r1_aarch64_cortex-a53.ipk
 /etc/init.d/gl_modem_community enable
 /etc/init.d/gl_modem_community restart
 /etc/init.d/gl_cellular_manager restart
 ```
 
-The IPK targets `aarch64_cortex-a53` and still requires GL.iNet's `cellular_manager`, `modem_AT`, model table, and RPC stack.
+### GL.iNet current stable and beta (IPK 21.02)
+
+Current GL.iNet OEM firmware (stable 4.8.x and beta 4.9.x) runs OpenWrt 21.02 with `opkg`. Use the feed for the 21.02 build:
+
+```sh
+touch /etc/opkg/customfeeds.conf
+chmod 0644 /etc/opkg/customfeeds.conf
+echo 'src/gz gl-modem-community https://rudironsoni.github.io/gl-modem-community/feed/21.02' \
+  >> /etc/opkg/customfeeds.conf
+opkg update
+opkg install gl-modem-community
+/etc/init.d/gl_modem_community enable
+/etc/init.d/gl_modem_community restart
+```
+
+A new release upgrade is the same as the OpenWrt 24 case: `opkg update` then `opkg upgrade gl-modem-community`.
+
+Install a single IPK manually with `VERSION` set to the release tag:
+
+```sh
+cd /tmp
+wget -O gl-modem-community_${VERSION}-1_glinet-21.02_aarch64_cortex-a53.ipk \
+  https://github.com/rudironsoni/gl-modem-community/releases/download/v${VERSION}/gl-modem-community_${VERSION}-1_glinet-21.02_aarch64_cortex-a53.ipk
+wget -O SHA256SUMS \
+  https://github.com/rudironsoni/gl-modem-community/releases/latest/download/SHA256SUMS
+grep "gl-modem-community_${VERSION}-1_glinet-21.02_aarch64_cortex-a53.ipk" SHA256SUMS | sha256sum -c
+opkg install /tmp/gl-modem-community_${VERSION}-1_glinet-21.02_aarch64_cortex-a53.ipk
+/etc/init.d/gl_modem_community enable
+/etc/init.d/gl_modem_community restart
+```
+
+On 4.8.x (legacy `modem` stack) and 4.9.x (`gl_cellular_manager`), the package hooks restart the respective stack automatically. The 21.02 IPK is the userspace-only build from `feeds/21.02/`; it still requires the stock `cellular_manager`, `modem_AT`, model table, and RPC stack.
 
 ## Verify the FM350 setup
 
@@ -277,6 +316,3 @@ The [modem architecture](docs/modem-architecture.md), [package design](docs/pack
 Every pull request runs the offline test suite and builds both package formats. A release adds the signed APK and repository index, the IPK, CycloneDX SBOMs, the public key, checksums, and GitHub build-provenance attestations.
 
 [Release Please](https://github.com/googleapis/release-please) manages versions from Conventional Commits after the release artifacts pass CI and signing.
-# test fix
-# fix test
-# test
