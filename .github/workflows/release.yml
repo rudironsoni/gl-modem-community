@@ -368,4 +368,5 @@ jobs:
           git add -f feed/
           git diff --cached --quiet && exit 0
           git commit -m "feed: ${RELEASE_TAG}"
+          git remote set-url origin "https://github-actions:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
           git push origin main
