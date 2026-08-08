@@ -13,10 +13,11 @@ PUBLIC_KEY="$REPO_DIR/keys/gl-modem-community.pem"
 PUBLIC_KEY_CHECKSUM="$PUBLIC_KEY.sha256"
 
 jq -e '
-  .["release-type"] == "simple" and
+  .["release-type"] == "node" and
   .["include-component-in-tag"] == false and
   .["include-v-in-tag"] == true and
   .["include-v-in-release-name"] == true and
+  .["skip-github-release"] == true and
   .packages["."]["package-name"] == "gl-modem-community" and
   .packages["."]["extra-files"] == [
     {"type":"generic","path":"package/gl-modem-community/Makefile"}
