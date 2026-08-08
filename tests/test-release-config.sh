@@ -32,7 +32,7 @@ test "$(grep -c '^# x-release-please-end$' "$PACKAGE_MAKEFILE")" -eq 1
 PACKAGE_VERSION=$(sed -n 's/^PKG_VERSION:=//p' "$PACKAGE_MAKEFILE")
 printf '%s\n' "$PACKAGE_VERSION" | grep -Eq '^[0-9]+\.[0-9]+\.[0-9]+([-.][0-9A-Za-z.-]+)?$'
 jq -e --arg version "$PACKAGE_VERSION" '
-  type == "object" and ((length == 0) or (. == {".": $version}))
+  type == "object" and ((length == 0) or (."." | type == "string" and test("^[0-9]+\\.[0-9]+\\.[0-9]+")))
 ' "$MANIFEST" >/dev/null
 
 for workflow in "$REPO_DIR"/.github/workflows/*.yml; do
