@@ -62,8 +62,8 @@ command -v opkg && echo 'opkg firmware'
 | Firmware | Destination feed | Package |
 | --- | --- | --- |
 | GL.iNet OpenWrt 25 | [`…/releases/latest/download/packages.adb`](https://github.com/rudironsoni/gl-modem-community/releases/latest/download/packages.adb) | APK |
-| OpenWrt 24 | [`…/feed/24.10`](https://rudironsoni.github.io/gl-modem-community/feed/24.10) | IPK |
-| GL.iNet 4.8.1 stable and 4.9.x beta | [`…/feed/21.02`](https://rudironsoni.github.io/gl-modem-community/feed/21.02) | IPK |
+| OpenWrt 24 | [`raw.githubusercontent.com/.../feed/24.10`](https://raw.githubusercontent.com/rudironsoni/gl-modem-community/main/feed/24.10) | IPK |
+| GL.iNet 4.8.1 stable and 4.9.x beta | [`raw.githubusercontent.com/.../feed/21.02`](https://raw.githubusercontent.com/rudironsoni/gl-modem-community/main/feed/21.02) | IPK |
 
 All installs require GL.iNet's proprietary cellular services. Check the [compatibility status](#compatibility-status) before installing on hardware that is not yet marked tested.
 
@@ -133,12 +133,16 @@ apk add /tmp/gl-modem-community-${VERSION}-r1.apk
 
 ### OpenWrt 24 (IPK)
 
+> [!WARNING]
+> The GitHub Pages feed (`https://rudironsoni.github.io/...`) redirects to a custom domain that serves HTTP only, which causes `opkg update` to fail. Use the manual install method below, or use the raw GitHub feed:
+> `src/gz gl-modem-community https://raw.githubusercontent.com/rudironsoni/gl-modem-community/main/feed/24.10`
+
 Add the OpenWrt 24 feed to `/etc/opkg/customfeeds.conf`. Create the file first if it does not exist:
 
 ```sh
 touch /etc/opkg/customfeeds.conf
 chmod 0644 /etc/opkg/customfeeds.conf
-echo 'src/gz gl-modem-community https://rudironsoni.github.io/gl-modem-community/feed/24.10' \
+echo 'src/gz gl-modem-community https://raw.githubusercontent.com/rudironsoni/gl-modem-community/main/feed/24.10' \
   >> /etc/opkg/customfeeds.conf
 opkg update
 opkg install gl-modem-community
@@ -173,10 +177,14 @@ opkg install /tmp/gl-modem-community_${VERSION}-r1_aarch64_cortex-a53.ipk
 
 Current GL.iNet OEM firmware (stable 4.8.x and beta 4.9.x) runs OpenWrt 21.02 with `opkg`. Use the feed for the 21.02 build:
 
+> [!WARNING]
+> The GitHub Pages feed (`https://rudironsoni.github.io/...`) redirects to a custom domain that serves HTTP only, which causes `opkg update` to fail. Use the manual install method below, or use the raw GitHub feed:
+> `src/gz gl-modem-community https://raw.githubusercontent.com/rudironsoni/gl-modem-community/main/feed/21.02`
+
 ```sh
 touch /etc/opkg/customfeeds.conf
 chmod 0644 /etc/opkg/customfeeds.conf
-echo 'src/gz gl-modem-community https://rudironsoni.github.io/gl-modem-community/feed/21.02' \
+echo 'src/gz gl-modem-community https://raw.githubusercontent.com/rudironsoni/gl-modem-community/main/feed/21.02' \
   >> /etc/opkg/customfeeds.conf
 opkg update
 opkg install gl-modem-community
