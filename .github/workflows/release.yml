@@ -47,15 +47,6 @@ jobs:
           path: release-assets
           merge-multiple: true
 
-      - name: Verify artifacts
-        run: |
-          set -euo pipefail
-          ls -la release-assets/
-          VERSION="${{ steps.set-version.outputs.version }}"
-          test -s "release-assets/gl-modem-community-${VERSION}-r1.apk"
-          test -s "release-assets/gl-modem-community_${VERSION}-r1_aarch64_cortex-a53.ipk"
-          test -s "release-assets/gl-modem-community_${VERSION}-1_glinet-21.02_aarch64_cortex-a53.ipk"
-
       - name: Determine version
         id: set-version
         run: |
@@ -67,6 +58,15 @@ jobs:
           fi
           echo "version=${ver}" >> "$GITHUB_OUTPUT"
           echo "tag=v${ver}" >> "$GITHUB_OUTPUT"
+
+      - name: Verify artifacts
+        run: |
+          set -euo pipefail
+          ls -la release-assets/
+          VERSION="${{ steps.set-version.outputs.version }}"
+          test -s "release-assets/gl-modem-community-${VERSION}-r1.apk"
+          test -s "release-assets/gl-modem-community_${VERSION}-r1_aarch64_cortex-a53.ipk"
+          test -s "release-assets/gl-modem-community_${VERSION}-1_glinet-21.02_aarch64_cortex-a53.ipk"
 
       - name: Create release
         uses: softprops/action-gh-release@3d0d9888cb7fd7b750713d6e236d1fcb99157228 # v2
