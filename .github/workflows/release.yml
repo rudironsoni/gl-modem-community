@@ -53,6 +53,7 @@ jobs:
           ls -la release-assets/
           test -s release-assets/gl-modem-community-*.apk
           test -s release-assets/gl-modem-community_*_r1_aarch64_cortex-a53.ipk
+          ls release-assets/gl-modem-community_*_glinet-21.02_aarch64_cortex-a53.ipk
           test -s release-assets/gl-modem-community_*_glinet-21.02_aarch64_cortex-a53.ipk
 
       - name: Determine version
