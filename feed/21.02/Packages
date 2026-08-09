@@ -1,11 +1,11 @@
 Package: gl-modem-community
-Version: 0.2.13-1
+Version: 0.2.14-1
 Depends: comgt, flock, jq, kmod-usb-acm, kmod-usb-serial-option, kmod-usb-net-rndis
 License: GPL-3.0-only
 Section: net
 Category: Network
 Maintainer: Rudimar Ronsoni <rudironsoni@users.noreply.github.com>
 Architecture: aarch64_cortex-a53
-Size: 15991
-Filename: gl-modem-community_0.2.13-1_glinet-21.02_aarch64_cortex-a53.ipk
+Size: 16053
+Filename: gl-modem-community_0.2.14-1_glinet-21.02_aarch64_cortex-a53.ipk
 Description: Community modem definitions and compatibility drivers for GL.iNet firmware
