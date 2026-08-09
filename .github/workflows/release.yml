@@ -51,10 +51,10 @@ jobs:
         run: |
           set -euo pipefail
           ls -la release-assets/
-          test -s release-assets/gl-modem-community-*.apk
-          test -s release-assets/gl-modem-community_*_r1_aarch64_cortex-a53.ipk
-          ls release-assets/gl-modem-community_*_glinet-21.02_aarch64_cortex-a53.ipk
-          test -s release-assets/gl-modem-community_*_glinet-21.02_aarch64_cortex-a53.ipk
+          VERSION="${{ steps.set-version.outputs.version }}"
+          test -s "release-assets/gl-modem-community-${VERSION}-r1.apk"
+          test -s "release-assets/gl-modem-community_${VERSION}-r1_aarch64_cortex-a53.ipk"
+          test -s "release-assets/gl-modem-community_${VERSION}-1_glinet-21.02_aarch64_cortex-a53.ipk"
 
       - name: Determine version
         id: set-version
