@@ -35,10 +35,11 @@ define Package/gl-modem-community/postinst
 initd_root=$${GL_MODEM_COMMUNITY_INITD_ROOT:-/etc/init.d}
 "$$initd_root/gl_modem_community" enable
 "$$initd_root/gl_modem_community" restart
+# Restart cellular manager if it exists (not all firmwares have it)
 if [ -x "$$initd_root/gl_cellular_manager" ]; then
-	"$$initd_root/gl_cellular_manager" restart
+	"$$initd_root/gl_cellular_manager" restart 2>/dev/null || true
 elif [ -x "$$initd_root/modem" ]; then
-	"$$initd_root/modem" restart
+	"$$initd_root/modem" restart 2>/dev/null || true
 fi
 endef
 
@@ -48,10 +49,11 @@ define Package/gl-modem-community/prerm
 initd_root=$${GL_MODEM_COMMUNITY_INITD_ROOT:-/etc/init.d}
 "$$initd_root/gl_modem_community" stop
 "$$initd_root/gl_modem_community" disable
+# Restart cellular manager if it exists (not all firmwares have it)
 if [ -x "$$initd_root/gl_cellular_manager" ]; then
-	"$$initd_root/gl_cellular_manager" restart
+	"$$initd_root/gl_cellular_manager" restart 2>/dev/null || true
 elif [ -x "$$initd_root/modem" ]; then
-	"$$initd_root/modem" restart
+	"$$initd_root/modem" restart 2>/dev/null || true
 fi
 endef
 

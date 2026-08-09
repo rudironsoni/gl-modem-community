@@ -2,16 +2,49 @@
 # SPDX-License-Identifier: GPL-3.0-only
 set -eu
 
-MODERN_LIST=${MODERN_LIST:-/lib/modem_data/modem_list.json}
-MODERN_INIT=${MODERN_INIT:-/etc/init.d/gl_cellular_manager}
+# Detect firmware stack from /etc/openwrt_release
+# Modern: OpenWrt 25+ (GL.iNet 25) - uses gl_cellular_manager
+# Legacy: OpenWrt 21.02 / 4.8.1 / 4.9.x - uses modem.sh functions
+
+RELEASE_FILE=${RELEASE_FILE:-/etc/openwrt_release}
 LEGACY_FUNCTIONS=${LEGACY_FUNCTIONS:-/lib/functions/modem.sh}
 LEGACY_INIT=${LEGACY_INIT:-/etc/init.d/modem}
 
-if [ -r "$MODERN_LIST" ] && [ -x "$MODERN_INIT" ]; then
-	printf '%s\n' modern
-elif [ -r "$LEGACY_FUNCTIONS" ] && [ -x "$LEGACY_INIT" ]; then
-	printf '%s\n' legacy
-else
-	printf '%s\n' unsupported
-	exit 1
-fi
+get_version() {
+	[ -r "$RELEASE_FILE" ] || return 1
+	awk -F"'" '/DISTRIB_RELEASE/ {print $2}' "$RELEASE_FILE"
+}
+
+main() {
+	version=$(get_version) || {
+		echo "unsupported"
+		exit 1
+	}
+
+	case "$version" in
+	21.02*|4.8.1*|4.9.*)
+		# Legacy stack: has modem.sh functions, uses /etc/init.d/modem
+		if [ -r "$LEGACY_FUNCTIONS" ] && [ -x "$LEGACY_INIT" ]; then
+			echo "legacy"
+		else
+			echo "unsupported"
+			exit 1
+		fi
+		;;
+	25.*|26.*|27.*)
+		# Modern stack: has gl_cellular_manager
+		if [ -x /etc/init.d/gl_cellular_manager ] && [ -r /lib/modem_data/modem_list.json ]; then
+			echo "modern"
+		else
+			echo "unsupported"
+			exit 1
+		fi
+		;;
+	*)
+		echo "unsupported"
+		exit 1
+		;;
+	esac
+}
+
+main "$@"
