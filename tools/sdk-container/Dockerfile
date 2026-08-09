@@ -2,7 +2,7 @@ FROM debian:bookworm-slim@sha256:7b140f374b289a7c2befc338f42ebe6441b7ea838a042bb
 
 RUN apt-get update \
  && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-      bash build-essential ca-certificates file gawk git libicu72 libncurses-dev make openssl \
+      bash build-essential ca-certificates file gawk git jq libicu72 libncurses-dev make openssl \
       patch perl python3 python3-distutils rsync unzip wget zlib1g-dev zstd \
  && rm -rf /var/lib/apt/lists/*
 
