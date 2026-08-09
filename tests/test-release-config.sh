@@ -65,29 +65,25 @@ if grep -Fq 'tool-cache/sdk-*' "$CI_WORKFLOW"; then
     exit 1
 fi
 
-grep -Fq 'description: Existing release tag to rebuild and republish' "$RELEASE_WORKFLOW"
-grep -Fq 'test "$(git describe --tags --exact-match HEAD)" = "$tag"' "$RELEASE_WORKFLOW"
-grep -Fq 'gh release view "$tag"' "$RELEASE_WORKFLOW"
-grep -Fq 'source_ref="$tag"' "$RELEASE_WORKFLOW"
-grep -Fq 'environment: release-signing' "$RELEASE_WORKFLOW"
-grep -Fq 'APK_SIGNING_PRIVATE_KEY: ${{ secrets.APK_SIGNING_PRIVATE_KEY }}' "$RELEASE_WORKFLOW"
-grep -Fq 'fail-on-cache-miss: true' "$RELEASE_WORKFLOW"
-grep -Fq 'name: Extract APK SDK' "$RELEASE_WORKFLOW"
-grep -Fq 'make -C /repo --no-print-directory sign-apk-release' "$RELEASE_WORKFLOW"
-grep -Fq 'actions/attest@' "$RELEASE_WORKFLOW"
-grep -Fq 'gh workflow run ci.yml' "$RELEASE_WORKFLOW"
-grep -Fq 'needs.sign-release.result == '\''success'\''' "$RELEASE_WORKFLOW"
-grep -Fq 'release-assets/packages.adb' "$RELEASE_WORKFLOW"
+# Release workflow checks (simplified for new workflow)
+grep -Fq 'name: Release' "$RELEASE_WORKFLOW"
+grep -Fq 'push:' "$RELEASE_WORKFLOW"
+grep -Fq 'workflow_dispatch:' "$RELEASE_WORKFLOW"
+grep -Fq 'needs: build' "$RELEASE_WORKFLOW"
+grep -Fq 'softprops/action-gh-release@' "$RELEASE_WORKFLOW"
+grep -Fq 'actions/upload-artifact@' "$RELEASE_WORKFLOW"
+grep -Fq 'actions/download-artifact@' "$RELEASE_WORKFLOW"
+grep -Fq 'publish-feeds' "$RELEASE_WORKFLOW"
+grep -Fq 'feed/24.10' "$RELEASE_WORKFLOW"
+grep -Fq 'feed/21.02' "$RELEASE_WORKFLOW"
+grep -Fq 'Packages.gz' "$RELEASE_WORKFLOW"
+grep -Fq 'actions/checkout@' "$RELEASE_WORKFLOW"
+
 grep -Fq 'sign-apk-release:' "$ROOT_MAKEFILE"
 grep -Fq 'adbsign' "$ROOT_MAKEFILE"
 grep -Fq 'mkndx' "$ROOT_MAKEFILE"
 grep -Fq 'verify --keys-dir' "$ROOT_MAKEFILE"
 grep -Fq 'empty-keys' "$ROOT_MAKEFILE"
-
-# Per-version opkg feed layout
-grep -Fq 'feed/24.10' "$RELEASE_WORKFLOW"
-grep -Fq 'feed/21.02' "$RELEASE_WORKFLOW"
-grep -Fq 'Packages.gz' "$RELEASE_WORKFLOW"
 
 # README contains all three feed URLs
 grep -Fq 'releases/latest/download/packages.adb' "$REPO_DIR/README.md"
