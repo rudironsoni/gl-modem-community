@@ -89,12 +89,6 @@ jobs:
           docker run --rm --platform linux/amd64 \
             --mount "type=bind,src=$(pwd),dst=/repo" \
             mt3000-openwrt-sdk:25.12.5 \
-            make -C /repo --no-print-directory generate-sbom SBOM_FORMAT=apk \
-              SBOM_ARTIFACT=/repo/release-assets/gl-modem-community-${{ steps.set-version.outputs.version }}-r1.apk \
-              SBOM_OUTPUT=/repo/release-assets/gl-modem-community.apk.cdx.json
-          docker run --rm --platform linux/amd64 \
-            --mount "type=bind,src=$(pwd),dst=/repo" \
-            mt3000-openwrt-sdk:25.12.5 \
             make -C /repo --no-print-directory generate-sbom SBOM_FORMAT=ipk \
               SBOM_ARTIFACT=/repo/release-assets/gl-modem-community_${{ steps.set-version.outputs.version }}-r1_aarch64_cortex-a53.ipk \
               SBOM_OUTPUT=/repo/release-assets/gl-modem-community.ipk.cdx.json
