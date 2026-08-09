@@ -21,6 +21,11 @@ on:
         required: false
         type: string
         default: ""
+      upload_packages:
+        description: Upload packages for the calling release workflow
+        required: false
+        type: boolean
+        default: false
 
 permissions: {}
 
