@@ -36,6 +36,9 @@ jobs:
       contents: write
       id-token: write
       attestations: write
+    outputs:
+      version: ${{ steps.set-version.outputs.version }}
+      tag: ${{ steps.set-version.outputs.tag }}
     steps:
       - name: Download packages
         uses: actions/download-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
@@ -53,22 +56,22 @@ jobs:
           test -s release-assets/gl-modem-community_*_glinet-21.02_aarch64_cortex-a53.ipk
 
       - name: Determine version
-        id: version
+        id: set-version
         run: |
+          set -euo pipefail
           if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
-            echo "version=${{ github.event.inputs.version }}" >> $GITHUB_OUTPUT
-            echo "tag=v${{ github.event.inputs.version }}" >> $GITHUB_OUTPUT
+            ver="${{ github.event.inputs.version }}"
           else
-            version="$(sed -n 's/^PKG_VERSION:=\([^[:space:]#]*\).*/\1/p' package/gl-modem-community/Makefile)"
-            echo "version=$version" >> $GITHUB_OUTPUT
-            echo "tag=v$version" >> $GITHUB_OUTPUT
+            ver="$(sed -n 's/^PKG_VERSION:=\([^[:space:]#]*\).*/\1/p' package/gl-modem-community/Makefile)"
           fi
+          echo "version=${ver}" >> "$GITHUB_OUTPUT"
+          echo "tag=v${ver}" >> "$GITHUB_OUTPUT"
 
       - name: Create release
         uses: softprops/action-gh-release@c95fe1489396fe8a0eb87c5b9d47d54a103f8518 # v2
         with:
-          tag_name: ${{ steps.version.outputs.tag }}
-          name: ${{ steps.version.outputs.tag }}
+          tag_name: ${{ steps.set-version.outputs.tag }}
+          name: ${{ steps.set-version.outputs.tag }}
           files: release-assets/*
           generate_release_notes: true
 
@@ -80,19 +83,19 @@ jobs:
             --mount "type=bind,src=$(pwd),dst=/repo" \
             mt3000-openwrt-sdk:25.12.5 \
             make -C /repo --no-print-directory generate-sbom SBOM_FORMAT=apk \
-              SBOM_ARTIFACT=/repo/release-assets/gl-modem-community-${{ steps.version.outputs.version }}-r1.apk \
+              SBOM_ARTIFACT=/repo/release-assets/gl-modem-community-${{ steps.set-version.outputs.version }}-r1.apk \
               SBOM_OUTPUT=/repo/release-assets/gl-modem-community.apk.cdx.json
           docker run --rm --platform linux/amd64 \
             --mount "type=bind,src=$(pwd),dst=/repo" \
             mt3000-openwrt-sdk:25.12.5 \
             make -C /repo --no-print-directory generate-sbom SBOM_FORMAT=ipk \
-              SBOM_ARTIFACT=/repo/release-assets/gl-modem-community_${{ steps.version.outputs.version }}-r1_aarch64_cortex-a53.ipk \
+              SBOM_ARTIFACT=/repo/release-assets/gl-modem-community_${{ steps.set-version.outputs.version }}-r1_aarch64_cortex-a53.ipk \
               SBOM_OUTPUT=/repo/release-assets/gl-modem-community.ipk.cdx.json
           docker run --rm --platform linux/amd64 \
             --mount "type=bind,src=$(pwd),dst=/repo" \
             mt3000-openwrt-sdk:25.12.5 \
             make -C /repo --no-print-directory generate-sbom SBOM_FORMAT=ipk \
-              SBOM_ARTIFACT=/repo/release-assets/gl-modem-community_${{ steps.version.outputs.version }}-1_glinet-21.02_aarch64_cortex-a53.ipk \
+              SBOM_ARTIFACT=/repo/release-assets/gl-modem-community_${{ steps.set-version.outputs.version }}-1_glinet-21.02_aarch64_cortex-a53.ipk \
               SBOM_OUTPUT=/repo/release-assets/gl-modem-community.glinet21.ipk.cdx.json
 
       - name: Upload SBOMs
@@ -126,44 +129,44 @@ jobs:
       - name: Build feeds
         run: |
           set -euo pipefail
-          VERSION="${{ steps.version.outputs.version }}"
+          VERSION="${{ needs.release.outputs.version }}"
           rm -rf feed
           mkdir -p feed/24.10 feed/21.02
 
           # 24.10 feed
           ipk24="release-assets/gl-modem-community_${VERSION}-r1_aarch64_cortex-a53.ipk"
-          cp "$ipk24" feed/24.10/
-          size24=$(stat -c%s "feed/24.10/$(basename "$ipk24")")
+          cp "${ipk24}" feed/24.10/
+          size24=$(stat -c%s "feed/24.10/$(basename "${ipk24}")")
           {
             printf 'Package: gl-modem-community\n'
-            printf 'Version: %s-r1\n' "$VERSION"
+            printf 'Version: %s-r1\n' "${VERSION}"
             printf 'Depends: comgt, flock, jq, kmod-usb-acm, kmod-usb-serial-option, kmod-usb-net-rndis\n'
             printf 'License: GPL-3.0-only\n'
             printf 'Section: net\n'
             printf 'Category: Network\n'
             printf 'Maintainer: Rudimar Ronsoni <rudironsoni@users.noreply.github.com>\n'
             printf 'Architecture: aarch64_cortex-a53\n'
-            printf 'Size: %s\n' "$size24"
-            printf 'Filename: %s\n' "$(basename "$ipk24")"
+            printf 'Size: %s\n' "${size24}"
+            printf 'Filename: %s\n' "$(basename "${ipk24}")"
             printf 'Description: Community modem definitions and compatibility drivers for GL.iNet firmware\n'
           } > feed/24.10/Packages
           gzip -c feed/24.10/Packages > feed/24.10/Packages.gz
 
           # 21.02 feed
           ipk21="release-assets/gl-modem-community_${VERSION}-1_glinet-21.02_aarch64_cortex-a53.ipk"
-          cp "$ipk21" feed/21.02/
-          size21=$(stat -c%s "feed/21.02/$(basename "$ipk21")")
+          cp "${ipk21}" feed/21.02/
+          size21=$(stat -c%s "feed/21.02/$(basename "${ipk21}")")
           {
             printf 'Package: gl-modem-community\n'
-            printf 'Version: %s-1\n' "$VERSION"
+            printf 'Version: %s-1\n' "${VERSION}"
             printf 'Depends: comgt, flock, jq, kmod-usb-acm, kmod-usb-serial-option, kmod-usb-net-rndis\n'
             printf 'License: GPL-3.0-only\n'
             printf 'Section: net\n'
             printf 'Category: Network\n'
             printf 'Maintainer: Rudimar Ronsoni <rudironsoni@users.noreply.github.com>\n'
             printf 'Architecture: aarch64_cortex-a53\n'
-            printf 'Size: %s\n' "$size21"
-            printf 'Filename: %s\n' "$(basename "$ipk21")"
+            printf 'Size: %s\n' "${size21}"
+            printf 'Filename: %s\n' "$(basename "${ipk21}")"
             printf 'Description: Community modem definitions and compatibility drivers for GL.iNet firmware\n'
           } > feed/21.02/Packages
           gzip -c feed/21.02/Packages > feed/21.02/Packages.gz
@@ -178,5 +181,5 @@ jobs:
           git remote set-url origin "https://github-actions:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
           git add -f feed/
           git diff --cached --quiet && exit 0
-          git commit -m "feed: v${{ steps.version.outputs.version }}"
+          git commit -m "feed: v${{ needs.release.outputs.version }}"
           git push origin main
