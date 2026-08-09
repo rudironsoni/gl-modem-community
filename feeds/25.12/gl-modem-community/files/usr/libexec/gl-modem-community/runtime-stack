@@ -2,20 +2,45 @@
 # SPDX-License-Identifier: GPL-3.0-only
 set -eu
 
-# Detect firmware stack from /etc/openwrt_release
+# Detect firmware stack.
+# Priority 1: Environment variables (for testing/override)
+# Priority 2: /etc/openwrt_release version detection
 # Modern: OpenWrt 25+ (GL.iNet 25) - uses gl_cellular_manager
 # Legacy: OpenWrt 21.02 / 4.8.1 / 4.9.x - uses modem.sh functions
 
 RELEASE_FILE=${RELEASE_FILE:-/etc/openwrt_release}
 LEGACY_FUNCTIONS=${LEGACY_FUNCTIONS:-/lib/functions/modem.sh}
 LEGACY_INIT=${LEGACY_INIT:-/etc/init.d/modem}
+MODERN_LIST=${MODERN_LIST:-/lib/modem_data/modem_list.json}
+MODERN_INIT=${MODERN_INIT:-/etc/init.d/gl_cellular_manager}
 
 get_version() {
 	[ -r "$RELEASE_FILE" ] || return 1
 	awk -F"'" '/DISTRIB_RELEASE/ {print $2}' "$RELEASE_FILE"
 }
 
+# Check legacy env vars (test/override mode)
+check_legacy_env() {
+	[ -r "$LEGACY_FUNCTIONS" ] && [ -x "$LEGACY_INIT" ] && echo "legacy"
+}
+
+# Check modern env vars (test/override mode)
+check_modern_env() {
+	[ -r "$MODERN_LIST" ] && [ -x "$MODERN_INIT" ] && echo "modern"
+}
+
 main() {
+	# Priority 1: Check explicit env vars (for testing)
+	if result=$(check_modern_env); then
+		echo "$result"
+		return 0
+	fi
+	if result=$(check_legacy_env); then
+		echo "$result"
+		return 0
+	fi
+
+	# Priority 2: Version detection from /etc/openwrt_release
 	version=$(get_version) || {
 		echo "unsupported"
 		exit 1
