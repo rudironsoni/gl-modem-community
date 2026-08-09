@@ -23,15 +23,15 @@ vendor=$(cat "$USB_DEVICES_ROOT/$bus/idVendor" 2>/dev/null || true)
 product=$(cat "$USB_DEVICES_ROOT/$bus/idProduct" 2>/dev/null || true)
 [ "$vendor" = 0e8d ] || exit 3
 case "$product" in
-7126)
-	expected=04
-	;;
-7127)
-	expected=06
-	;;
-*)
-	exit 3
-	;;
+	7126)
+		expected=04
+		;;
+	7127)
+		expected=05
+		;;
+	*)
+		exit 3
+		;;
 esac
 
 port=
