@@ -2,7 +2,7 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=gl-modem-community
 # x-release-please-start-version
-PKG_VERSION:=0.2.10
+PKG_VERSION:=0.2.13
 # x-release-please-end
 PKG_RELEASE:=1
 PKG_LICENSE:=GPL-3.0-only
@@ -36,11 +36,10 @@ initd_root=$${GL_MODEM_COMMUNITY_INITD_ROOT:-/etc/init.d}
 "$$initd_root/gl_modem_community" enable
 "$$initd_root/gl_modem_community" restart
 # Restart cellular manager if it exists (not all firmwares have it)
-# Use explicit file check and suppress shell "not found" error
-if [ -f "$$initd_root/gl_cellular_manager" ] && [ -x "$$initd_root/gl_cellular_manager" ]; then
-	( "$$initd_root/gl_cellular_manager" restart ) >/dev/null 2>&1 || true
-elif [ -f "$$initd_root/modem" ] && [ -x "$$initd_root/modem" ]; then
-	( "$$initd_root/modem" restart ) >/dev/null 2>&1 || true
+if [ -x "$$initd_root/gl_cellular_manager" ]; then
+	"$$initd_root/gl_cellular_manager" restart 2>/dev/null || true
+elif [ -x "$$initd_root/modem" ]; then
+	"$$initd_root/modem" restart 2>/dev/null || true
 fi
 endef
 
@@ -51,10 +50,10 @@ initd_root=$${GL_MODEM_COMMUNITY_INITD_ROOT:-/etc/init.d}
 "$$initd_root/gl_modem_community" stop
 "$$initd_root/gl_modem_community" disable
 # Restart cellular manager if it exists (not all firmwares have it)
-if [ -f "$$initd_root/gl_cellular_manager" ] && [ -x "$$initd_root/gl_cellular_manager" ]; then
-	( "$$initd_root/gl_cellular_manager" restart ) >/dev/null 2>&1 || true
-elif [ -f "$$initd_root/modem" ] && [ -x "$$initd_root/modem" ]; then
-	( "$$initd_root/modem" restart ) >/dev/null 2>&1 || true
+if [ -x "$$initd_root/gl_cellular_manager" ]; then
+	"$$initd_root/gl_cellular_manager" restart 2>/dev/null || true
+elif [ -x "$$initd_root/modem" ]; then
+	"$$initd_root/modem" restart 2>/dev/null || true
 fi
 endef
 
