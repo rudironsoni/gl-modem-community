@@ -55,7 +55,7 @@ Do not add dates or release versions to key filenames. Key rotation requires a d
 
 The stable APK feed is:
 
-`https://github.com/rudironsoni/gl-modem-community/releases/latest/download/packages.adb`
+`https://github.rudironsoni.com/gl-modem-community/packages.adb`
 
 The release workflow signs both the APK and `packages.adb`, publishes the public key and checksum, generates CycloneDX SBOMs, and creates GitHub provenance attestations. User-facing installation must verify the key and use normal trust validation. Never recommend `--allow-untrusted`.
 

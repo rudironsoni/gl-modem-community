@@ -61,9 +61,9 @@ command -v opkg && echo 'opkg firmware'
 
 | Firmware | Destination feed | Package |
 | --- | --- | --- |
-| GL.iNet OpenWrt 25 | [`…/releases/latest/download/packages.adb`](https://github.com/rudironsoni/gl-modem-community/releases/latest/download/packages.adb) | APK |
-| OpenWrt 24 | [`…/feed/24.10`](https://rudironsoni.github.io/gl-modem-community/feed/24.10) | IPK |
-| GL.iNet 4.8.1 stable and 4.9.x beta | [`…/feed/21.02`](https://rudironsoni.github.io/gl-modem-community/feed/21.02) | IPK |
+| GL.iNet OpenWrt 25 | [`…/releases/latest/download/packages.adb`](https://github.rudironsoni.com/gl-modem-community/packages.adb) | APK |
+| OpenWrt 24 | [`…/feed/24.10`](https://github.rudironsoni.com/gl-modem-community/feed/24.10) | IPK |
+| GL.iNet 4.8.1 stable and 4.9.x beta | [`…/feed/21.02`](https://github.rudironsoni.com/gl-modem-community/feed/21.02) | IPK |
 
 All installs require GL.iNet's proprietary cellular services. Check the [compatibility status](#compatibility-status) before installing on hardware that is not yet marked tested.
 
@@ -90,7 +90,7 @@ chmod 0644 /etc/apk/keys/gl-modem-community.pem
 4. Add this line to `/etc/apk/repositories.d/customfeeds.list`:
 
    ```text
-   https://github.com/rudironsoni/gl-modem-community/releases/latest/download/packages.adb
+   https://github.rudironsoni.com/gl-modem-community/packages.adb
    ```
 
 5. Save the configuration and select **Update lists**.
@@ -102,7 +102,7 @@ If the software button says **Configure opkg**, use the IPK instructions below i
 #### Install the APK feed without LuCI
 
 ```sh
-feed='https://github.com/rudironsoni/gl-modem-community/releases/latest/download/packages.adb'
+feed='https://github.rudironsoni.com/gl-modem-community/packages.adb'
 mkdir -p /etc/apk/repositories.d
 touch /etc/apk/repositories.d/customfeeds.list
 grep -Fqx "$feed" /etc/apk/repositories.d/customfeeds.list || \
@@ -138,7 +138,7 @@ Add the OpenWrt 24 feed to `/etc/opkg/customfeeds.conf`. Create the file first i
 ```sh
 touch /etc/opkg/customfeeds.conf
 chmod 0644 /etc/opkg/customfeeds.conf
-echo 'src/gz gl-modem-community https://rudironsoni.github.io/gl-modem-community/feed/24.10' \
+echo 'src/gz gl-modem-community https://github.rudironsoni.com/gl-modem-community/feed/24.10' \
   >> /etc/opkg/customfeeds.conf
 opkg update
 opkg install gl-modem-community
@@ -176,7 +176,7 @@ Current GL.iNet OEM firmware (stable 4.8.x and beta 4.9.x) runs OpenWrt 21.02 wi
 ```sh
 touch /etc/opkg/customfeeds.conf
 chmod 0644 /etc/opkg/customfeeds.conf
-echo 'src/gz gl-modem-community https://rudironsoni.github.io/gl-modem-community/feed/21.02' \
+echo 'src/gz gl-modem-community https://github.rudironsoni.com/gl-modem-community/feed/21.02' \
   >> /etc/opkg/customfeeds.conf
 opkg update
 opkg install gl-modem-community
