@@ -11,6 +11,25 @@ The first driver targets the Fibocom FM350-GL on a GL.iNet GL-MT3000 (Beryl AX).
 > [!WARNING]
 > This project is still experimental. The FM350-GL is detected and visible in the GL.iNet interfaces, but the complete data-session and recovery test matrix has not passed yet.
 
+## Quick start
+
+1. Confirm your firmware and package manager:
+
+   ```sh
+   cat /etc/openwrt_release
+   command -v apk && echo 'apk firmware'
+   command -v opkg && echo 'opkg firmware'
+   ```
+
+2. Pick the matching feed:
+
+   - GL.iNet OpenWrt 25 (APK): `https://github.rudironsoni.com/gl-modem-community/feed/25.12`
+   - OpenWrt 24 (IPK): `https://github.rudironsoni.com/gl-modem-community/feed/24.10`
+   - GL.iNet stable/beta 4.8.x/4.9.x (IPK): `https://github.rudironsoni.com/gl-modem-community/feed/21.02`
+
+3. Follow the install path in [Install the current release](#install-the-current-release).
+4. Run the checks in [Verify the FM350 setup](#verify-the-fm350-setup) before relying on production traffic.
+
 ## Compatibility status
 
 A package that builds against an SDK has not necessarily been tested on firmware from the same OpenWrt release.
@@ -61,9 +80,9 @@ command -v opkg && echo 'opkg firmware'
 
 | Firmware | Destination feed | Package |
 | --- | --- | --- |
-| GL.iNet OpenWrt 25 | [`…/releases/latest/download/packages.adb`](https://github.com/rudironsoni/gl-modem-community/releases/latest/download/packages.adb) | APK |
-| OpenWrt 24 | [`…/feed/24.10`](https://rudironsoni.github.io/gl-modem-community/feed/24.10) | IPK |
-| GL.iNet 4.8.1 stable and 4.9.x beta | [`…/feed/21.02`](https://rudironsoni.github.io/gl-modem-community/feed/21.02) | IPK |
+| GL.iNet OpenWrt 25 | [`https://github.rudironsoni.com/gl-modem-community/feed/25.12`](https://github.rudironsoni.com/gl-modem-community/feed/25.12) | APK |
+| OpenWrt 24 | [`https://github.rudironsoni.com/gl-modem-community/feed/24.10`](https://github.rudironsoni.com/gl-modem-community/feed/24.10) | IPK |
+| GL.iNet 4.8.1 stable and 4.9.x beta | [`https://github.rudironsoni.com/gl-modem-community/feed/21.02`](https://github.rudironsoni.com/gl-modem-community/feed/21.02) | IPK |
 
 All installs require GL.iNet's proprietary cellular services. Check the [compatibility status](#compatibility-status) before installing on hardware that is not yet marked tested.
 
@@ -82,7 +101,7 @@ cp gl-modem-community.pem /etc/apk/keys/
 chmod 0644 /etc/apk/keys/gl-modem-community.pem
 ```
 
-#### Install the APK feed with LuCI
+#### Option A (recommended): Install the APK feed with LuCI
 
 1. Open the GL.iNet admin panel, select **Advanced Settings**, and enter LuCI.
 2. Go to **System → Software**.
@@ -90,7 +109,7 @@ chmod 0644 /etc/apk/keys/gl-modem-community.pem
 4. Add this line to `/etc/apk/repositories.d/customfeeds.list`:
 
    ```text
-   https://github.com/rudironsoni/gl-modem-community/releases/latest/download/packages.adb
+   https://github.rudironsoni.com/gl-modem-community/feed/25.12
    ```
 
 5. Save the configuration and select **Update lists**.
@@ -99,10 +118,10 @@ chmod 0644 /etc/apk/keys/gl-modem-community.pem
 
 If the software button says **Configure opkg**, use the IPK instructions below instead.
 
-#### Install the APK feed without LuCI
+#### Option B: Install the APK feed without LuCI
 
 ```sh
-feed='https://github.com/rudironsoni/gl-modem-community/releases/latest/download/packages.adb'
+feed='https://github.rudironsoni.com/gl-modem-community/feed/25.12'
 mkdir -p /etc/apk/repositories.d
 touch /etc/apk/repositories.d/customfeeds.list
 grep -Fqx "$feed" /etc/apk/repositories.d/customfeeds.list || \
@@ -114,7 +133,7 @@ apk add gl-modem-community
 /etc/init.d/gl_cellular_manager restart
 ```
 
-#### Install the APK manually
+#### Option C: Install the APK manually
 
 Download the latest APK and `SHA256SUMS` to `/tmp`, verify the hash line for the APK, then install. Replace `VERSION` with the tag from the release (for example `0.2.11`):
 
@@ -133,12 +152,14 @@ apk add /tmp/gl-modem-community-${VERSION}-r1.apk
 
 ### OpenWrt 24 (IPK)
 
+#### Option A (recommended): Install from the OpenWrt 24 feed
+
 Add the OpenWrt 24 feed to `/etc/opkg/customfeeds.conf`. Create the file first if it does not exist:
 
 ```sh
 touch /etc/opkg/customfeeds.conf
 chmod 0644 /etc/opkg/customfeeds.conf
-echo 'src/gz gl-modem-community https://rudironsoni.github.io/gl-modem-community/feed/24.10' \
+echo 'src/gz gl-modem-community https://github.rudironsoni.com/gl-modem-community/feed/24.10' \
   >> /etc/opkg/customfeeds.conf
 opkg update
 opkg install gl-modem-community
@@ -153,6 +174,8 @@ After a new release:
 opkg update
 opkg upgrade gl-modem-community
 ```
+
+#### Option B: Install one IPK manually
 
 Install a single IPK manually with `VERSION` set to the release tag:
 
@@ -171,12 +194,14 @@ opkg install /tmp/gl-modem-community_${VERSION}-r1_aarch64_cortex-a53.ipk
 
 ### GL.iNet current stable and beta (IPK 21.02)
 
+#### Option A (recommended): Install from the GL.iNet 21.02 feed
+
 Current GL.iNet OEM firmware (stable 4.8.x and beta 4.9.x) runs OpenWrt 21.02 with `opkg`. Use the feed for the 21.02 build:
 
 ```sh
 touch /etc/opkg/customfeeds.conf
 chmod 0644 /etc/opkg/customfeeds.conf
-echo 'src/gz gl-modem-community https://rudironsoni.github.io/gl-modem-community/feed/21.02' \
+echo 'src/gz gl-modem-community https://github.rudironsoni.com/gl-modem-community/feed/21.02' \
   >> /etc/opkg/customfeeds.conf
 opkg update
 opkg install gl-modem-community
@@ -185,6 +210,8 @@ opkg install gl-modem-community
 ```
 
 A new release upgrade is the same as the OpenWrt 24 case: `opkg update` then `opkg upgrade gl-modem-community`.
+
+#### Option B: Install one IPK manually
 
 Install a single IPK manually with `VERSION` set to the release tag:
 

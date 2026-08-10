@@ -86,9 +86,9 @@ grep -Fq 'verify --keys-dir' "$ROOT_MAKEFILE"
 grep -Fq 'empty-keys' "$ROOT_MAKEFILE"
 
 # README contains all three feed URLs
-grep -Fq 'releases/latest/download/packages.adb' "$REPO_DIR/README.md"
-grep -Fq 'feed/24.10' "$REPO_DIR/README.md"
-grep -Fq 'feed/21.02' "$REPO_DIR/README.md"
+grep -Fq 'https://github.rudironsoni.com/gl-modem-community/feed/25.12' "$REPO_DIR/README.md"
+grep -Fq 'https://github.rudironsoni.com/gl-modem-community/feed/24.10' "$REPO_DIR/README.md"
+grep -Fq 'https://github.rudironsoni.com/gl-modem-community/feed/21.02' "$REPO_DIR/README.md"
 
 test ! -d "$REPO_DIR/scripts"
 test -s "$PUBLIC_KEY"
