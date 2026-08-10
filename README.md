@@ -23,7 +23,7 @@ The first driver targets the Fibocom FM350-GL on a GL.iNet GL-MT3000 (Beryl AX).
 
 2. Pick the matching feed:
 
-   - GL.iNet OpenWrt 25 (APK): `https://github.rudironsoni.com/gl-modem-community/packages.adb`
+   - GL.iNet OpenWrt 25 (APK): `https://github.rudironsoni.com/gl-modem-community/feed/25.12`
    - OpenWrt 24 (IPK): `https://github.rudironsoni.com/gl-modem-community/feed/24.10`
    - GL.iNet stable/beta 4.8.x/4.9.x (IPK): `https://github.rudironsoni.com/gl-modem-community/feed/21.02`
 
@@ -80,7 +80,7 @@ command -v opkg && echo 'opkg firmware'
 
 | Firmware | Destination feed | Package |
 | --- | --- | --- |
-| GL.iNet OpenWrt 25 | [`https://github.rudironsoni.com/gl-modem-community/packages.adb`](https://github.rudironsoni.com/gl-modem-community/packages.adb) | APK |
+| GL.iNet OpenWrt 25 | [`https://github.rudironsoni.com/gl-modem-community/feed/25.12`](https://github.rudironsoni.com/gl-modem-community/feed/25.12) | APK |
 | OpenWrt 24 | [`https://github.rudironsoni.com/gl-modem-community/feed/24.10`](https://github.rudironsoni.com/gl-modem-community/feed/24.10) | IPK |
 | GL.iNet 4.8.1 stable and 4.9.x beta | [`https://github.rudironsoni.com/gl-modem-community/feed/21.02`](https://github.rudironsoni.com/gl-modem-community/feed/21.02) | IPK |
 
@@ -109,7 +109,7 @@ chmod 0644 /etc/apk/keys/gl-modem-community.pem
 4. Add this line to `/etc/apk/repositories.d/customfeeds.list`:
 
    ```text
-   https://github.rudironsoni.com/gl-modem-community/packages.adb
+   https://github.rudironsoni.com/gl-modem-community/feed/25.12
    ```
 
 5. Save the configuration and select **Update lists**.
@@ -121,7 +121,7 @@ If the software button says **Configure opkg**, use the IPK instructions below i
 #### Option B: Install the APK feed without LuCI
 
 ```sh
-feed='https://github.rudironsoni.com/gl-modem-community/packages.adb'
+feed='https://github.rudironsoni.com/gl-modem-community/feed/25.12'
 mkdir -p /etc/apk/repositories.d
 touch /etc/apk/repositories.d/customfeeds.list
 grep -Fqx "$feed" /etc/apk/repositories.d/customfeeds.list || \
