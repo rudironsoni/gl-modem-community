@@ -1,15 +1,34 @@
 #!/bin/sh
 # SPDX-License-Identifier: GPL-3.0-only
 
-[ -x /usr/libexec/gl-modem-community/runtime-stack ] || exit 0
-[ "$(/usr/libexec/gl-modem-community/runtime-stack 2>/dev/null || true)" = legacy ] ||
-	exit 0
+RUNTIME_STACK=${RUNTIME_STACK:-/usr/libexec/gl-modem-community/runtime-stack}
+STACK_FILE=${STACK_FILE:-/var/run/gl-modem-community/stack}
+ENSURE_OPTION_IDS=${ENSURE_OPTION_IDS:-/usr/libexec/gl-modem-community/ensure-option-ids}
+LEGACY_BUS=${LEGACY_BUS:-/usr/libexec/gl-modem-community/legacy-bus}
+VOS5G_QMI=${VOS5G_QMI:-/usr/libexec/gl-modem-community/vos5g-qmi}
+SYS_USB=${SYS_USB:-/sys/bus/usb}
 
 case "${PRODUCT:-}" in
 0e8d/7126/*|0e8d/7127/*|e8d/7126/*|e8d/7127/*)
-	/usr/libexec/gl-modem-community/ensure-option-ids || true
-	/usr/libexec/gl-modem-community/legacy-bus refresh
+	[ -x "$RUNTIME_STACK" ] || exit 0
+	[ "$("$RUNTIME_STACK" 2>/dev/null || true)" = legacy ] || exit 0
+	"$ENSURE_OPTION_IDS" || true
+	"$LEGACY_BUS" refresh
 	/usr/libexec/gl-modem-community/fm350-fcc-unlock || true
 	/usr/libexec/gl-modem-community/fm350-network-repair --available || true
+	exit 0
+	;;
+esac
+
+bus=$(basename "${DEVPATH:-}")
+bus=${bus%%:*}
+vid=$(cat "$SYS_USB/devices/$bus/idVendor" 2>/dev/null || true)
+pid=$(cat "$SYS_USB/devices/$bus/idProduct" 2>/dev/null || true)
+
+case "$vid:$pid" in
+05c6:9064)
+	[ "${ACTION:-}" = bind ] || exit 0
+	[ -f "$STACK_FILE" ] || exit 0
+	"$VOS5G_QMI" prepare "$bus" || true
 	;;
 esac

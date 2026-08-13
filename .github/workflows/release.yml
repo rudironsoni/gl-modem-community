@@ -159,6 +159,7 @@ jobs:
           test -s "release-assets/gl-modem-community-${VERSION}-r1.apk"
           test -s "release-assets/gl-modem-community_${VERSION}-r1_aarch64_cortex-a53.ipk"
           test -s "release-assets/gl-modem-community_${VERSION}-1_glinet-21.02_aarch64_cortex-a53.ipk"
+          test -s "release-assets/gl-modem-community_${VERSION}-r1_gl-be3600-4.9_aarch64_cortex-a53_neon-vfpv4.ipk"
           test -s release-assets/packages.adb
           test -s release-assets/gl-modem-community.pem
           test -s release-assets/gl-modem-community.pem.sha256
@@ -192,6 +193,12 @@ jobs:
             make -C /repo --no-print-directory generate-sbom SBOM_FORMAT=ipk \
               SBOM_ARTIFACT=/repo/release-assets/gl-modem-community_${{ steps.set-version.outputs.version }}-1_glinet-21.02_aarch64_cortex-a53.ipk \
               SBOM_OUTPUT=/repo/release-assets/gl-modem-community.glinet21.ipk.cdx.json
+          docker run --rm --platform linux/amd64 \
+            --mount "type=bind,src=$(pwd),dst=/repo" \
+            mt3000-openwrt-sdk:25.12.5 \
+            make -C /repo --no-print-directory generate-sbom SBOM_FORMAT=ipk \
+              SBOM_ARTIFACT=/repo/release-assets/gl-modem-community_${{ steps.set-version.outputs.version }}-r1_gl-be3600-4.9_aarch64_cortex-a53_neon-vfpv4.ipk \
+              SBOM_OUTPUT=/repo/release-assets/gl-modem-community.be3600.ipk.cdx.json
 
       - name: Upload SBOMs
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
@@ -234,7 +241,7 @@ jobs:
           set -euo pipefail
           VERSION="${{ needs.release.outputs.version }}"
           rm -rf feed
-          mkdir -p feed/25.12 feed/24.10 feed/21.02
+          mkdir -p feed/25.12 feed/24.10 feed/21.02 feed/23.05-be3600
 
           # 25.12 feed (APK)
           apk25="release-assets/gl-modem-community-${VERSION}-r1.apk"
@@ -248,7 +255,7 @@ jobs:
           {
             printf 'Package: gl-modem-community\n'
             printf 'Version: %s-r1\n' "${VERSION}"
-            printf 'Depends: comgt, flock, jq, kmod-usb-acm, kmod-usb-serial-option, kmod-usb-net-rndis\n'
+            printf 'Depends: adb, comgt, flock, jq, kmod-usb-acm, kmod-usb-serial-option, kmod-usb-net-qmi-wwan, kmod-usb-net-rndis, lua, uqmi\n'
             printf 'License: GPL-3.0-only\n'
             printf 'Section: net\n'
             printf 'Category: Network\n'
@@ -267,7 +274,7 @@ jobs:
           {
             printf 'Package: gl-modem-community\n'
             printf 'Version: %s-1\n' "${VERSION}"
-            printf 'Depends: comgt, flock, jq, kmod-usb-acm, kmod-usb-serial-option, kmod-usb-net-rndis\n'
+            printf 'Depends: adb, comgt, flock, jq, kmod-usb-acm, kmod-usb-serial-option, kmod-usb-net-qmi-wwan, kmod-usb-net-rndis, lua, uqmi\n'
             printf 'License: GPL-3.0-only\n'
             printf 'Section: net\n'
             printf 'Category: Network\n'
@@ -278,6 +285,25 @@ jobs:
             printf 'Description: Community modem definitions and compatibility drivers for GL.iNet firmware\n'
           } > feed/21.02/Packages
           gzip -c feed/21.02/Packages > feed/21.02/Packages.gz
+
+          # GL-BE3600 4.9 feed (OpenWrt 23.05-derived GL.iNet firmware)
+          ipkbe3600="release-assets/gl-modem-community_${VERSION}-r1_gl-be3600-4.9_aarch64_cortex-a53_neon-vfpv4.ipk"
+          cp "${ipkbe3600}" feed/23.05-be3600/
+          sizebe3600=$(stat -c%s "feed/23.05-be3600/$(basename "${ipkbe3600}")")
+          {
+            printf 'Package: gl-modem-community\n'
+            printf 'Version: %s-r1\n' "${VERSION}"
+            printf 'Depends: adb, comgt, flock, jq, kmod-usb-acm, kmod-usb-serial-option, kmod-usb-net-qmi-wwan, kmod-usb-net-rndis, lua, uqmi\n'
+            printf 'License: GPL-3.0-only\n'
+            printf 'Section: net\n'
+            printf 'Category: Network\n'
+            printf 'Maintainer: Rudimar Ronsoni <rudironsoni@users.noreply.github.com>\n'
+            printf 'Architecture: aarch64_cortex-a53_neon-vfpv4\n'
+            printf 'Size: %s\n' "${sizebe3600}"
+            printf 'Filename: %s\n' "$(basename "${ipkbe3600}")"
+            printf 'Description: Community modem definitions and compatibility drivers for GL.iNet firmware\n'
+          } > feed/23.05-be3600/Packages
+          gzip -c feed/23.05-be3600/Packages > feed/23.05-be3600/Packages.gz
 
       - name: Generate feed index pages
         run: make generate-feed-index

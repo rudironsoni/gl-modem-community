@@ -6,10 +6,10 @@
 
 `gl-modem-community` adds community modem definitions and compatibility drivers to the cellular stack included in GL.iNet firmware. It keeps the stock web UI, mobile app backend, JSON-RPC and ubus interfaces, and built-in modem definitions.
 
-The first driver targets the Fibocom FM350-GL on a GL.iNet GL-MT3000 (Beryl AX). The package depends on GL.iNet's proprietary cellular services and does not replace them, so it is not a modem manager for vanilla OpenWrt.
+The first driver targets the Fibocom FM350-GL on a GL.iNet GL-MT3000 (Beryl AX). A second, USB-ID-scoped driver integrates the VOS 5G (`05c6:9064`) as a native QMI modem on GL.iNet GL-BE3600 (Slate 7) firmware 4.9.0 release2 build 1036. The package depends on GL.iNet's proprietary cellular services and does not replace them, so it is not a modem manager for vanilla OpenWrt.
 
 > [!WARNING]
-> This project is still experimental. Dell DW5931e-eSIM (`0e8d:7127`) physical-SIM and eSIM UI paths are implemented from reporter evidence and firmware analysis. Live download of a carrier profile remains `[UNVERIFIED]`.
+> This project is still experimental. Dell DW5931e-eSIM (`0e8d:7127`) physical-SIM and eSIM UI paths are implemented from reporter evidence and firmware analysis; live download of a carrier profile remains `[UNVERIFIED]`. The FM350-GL is detected and visible in the GL.iNet interfaces, but its complete data-session and recovery matrix has not passed. The VOS 5G data session is verified only on the exact GL-BE3600 4.9.0 combination documented below; stock-supported-modem and FM350 regressions on that router remain incomplete.
 
 ## Quick start
 
@@ -25,7 +25,8 @@ The first driver targets the Fibocom FM350-GL on a GL.iNet GL-MT3000 (Beryl AX).
 
    - GL.iNet OpenWrt 25 (APK): `https://github.rudironsoni.com/gl-modem-community/feed/25.12`
    - OpenWrt 24 (IPK): `https://github.rudironsoni.com/gl-modem-community/feed/24.10`
-   - GL.iNet stable/beta 4.8.x/4.9.x (IPK): `https://github.rudironsoni.com/gl-modem-community/feed/21.02`
+   - GL.iNet GL-MT3000 stable/beta 4.8.x/4.9.x (IPK): `https://github.rudironsoni.com/gl-modem-community/feed/21.02`
+   - GL.iNet GL-BE3600 4.9.x (IPK): `https://github.rudironsoni.com/gl-modem-community/feed/23.05-be3600`
 
 3. Follow the install path in [Install the current release](#install-the-current-release).
 4. Run the checks in [Verify the FM350 setup](#verify-the-fm350-setup) before relying on production traffic.
@@ -38,6 +39,7 @@ A package that builds against an SDK has not necessarily been tested on firmware
 | --- | --- | --- | --- |
 | GL.iNet OpenWrt 25 on GL-MT3000 | APK | Builds with the pinned OpenWrt 25.12.5 MediaTek Filogic SDK | Partially tested with FM350-GL |
 | GL.iNet OEM or OpenWrt 24 on GL-MT3000 | IPK | Builds with the pinned OpenWrt 24.10.7 MediaTek Filogic SDK | Not tested |
+| GL.iNet 4.9.0 release2 build 1036 on GL-BE3600 | IPK | Dedicated target uses the pinned OpenWrt 23.05.5 IPQ807x userspace ABI surrogate; CI verification pending | VOS 5G data session verified; stock-supported modem and FM350-GL not tested |
 | Other GL.iNet routers | Target-specific package required | Not built | Not tested |
 | Vanilla OpenWrt | Not applicable | GL.iNet cellular services are absent | Not supported |
 
@@ -64,6 +66,13 @@ The following behavior still needs hardware testing:
 
 See the [hardware validation plan](docs/validation-plan.md) for the full test matrix.
 
+The GL-BE3600 hardware run verified VOS 5G USB ID `05c6:9064`, QMI control
+through `/dev/cdc-wdm0`, `qmi_wwan`/`wwan0`, stock Cellular UI ownership,
+working IPv4 traffic, reboot and USB reattachment recovery, and the explicit
+DSD/NAS display value `SA n71`. See the
+[GL-BE3600 and VOS 5G evidence](docs/gl-be3600-vos5g.md) for the exact scope
+and remaining cases.
+
 ## Hardware evidence
 
 The screenshots below show the FM350-GL in the GL.iNet admin panel and mobile app on the reference GL-MT3000. They prove detection and UI visibility. They do not prove that the modem completed a data session. IMEI and SIM details are redacted.
@@ -74,7 +83,7 @@ The screenshots below show the FM350-GL in the GL.iNet admin panel and mobile ap
 
 ## Install the current release
 
-Your firmware uses one of three feeds. Determine which one applies first:
+Your firmware uses one of four feeds. Determine which one applies first:
 
 ```sh
 cat /etc/openwrt_release
@@ -86,7 +95,8 @@ command -v opkg && echo 'opkg firmware'
 | --- | --- | --- |
 | GL.iNet OpenWrt 25 | [`https://github.rudironsoni.com/gl-modem-community/feed/25.12`](https://github.rudironsoni.com/gl-modem-community/feed/25.12) | APK |
 | OpenWrt 24 | [`https://github.rudironsoni.com/gl-modem-community/feed/24.10`](https://github.rudironsoni.com/gl-modem-community/feed/24.10) | IPK |
-| GL.iNet 4.8.1 stable and 4.9.x beta | [`https://github.rudironsoni.com/gl-modem-community/feed/21.02`](https://github.rudironsoni.com/gl-modem-community/feed/21.02) | IPK |
+| GL-MT3000 4.8.1 stable and 4.9.x beta | [`https://github.rudironsoni.com/gl-modem-community/feed/21.02`](https://github.rudironsoni.com/gl-modem-community/feed/21.02) | IPK |
+| GL-BE3600 4.9.x | [`https://github.rudironsoni.com/gl-modem-community/feed/23.05-be3600`](https://github.rudironsoni.com/gl-modem-community/feed/23.05-be3600) | IPK |
 
 All installs require GL.iNet's proprietary cellular services. Check the [compatibility status](#compatibility-status) before installing on hardware that is not yet marked tested.
 
@@ -199,11 +209,43 @@ opkg install /tmp/gl-modem-community_${VERSION}-r1_aarch64_cortex-a53.ipk
 /etc/init.d/gl_cellular_manager restart
 ```
 
+### GL.iNet GL-BE3600 4.9.x (IPK)
+
+The Slate 7 reports package architecture
+`aarch64_cortex-a53_neon-vfpv4`; do not install the GL-MT3000 IPK on it.
+
+#### Option A (recommended): Install from the GL-BE3600 feed
+
+```sh
+touch /etc/opkg/customfeeds.conf
+chmod 0644 /etc/opkg/customfeeds.conf
+echo 'src/gz gl-modem-community https://github.rudironsoni.com/gl-modem-community/feed/23.05-be3600' \
+  >> /etc/opkg/customfeeds.conf
+opkg update
+opkg install gl-modem-community
+/etc/init.d/gl_modem_community enable
+/etc/init.d/gl_modem_community restart
+```
+
+#### Option B: Install one IPK manually
+
+```sh
+cd /tmp
+wget -O gl-modem-community_${VERSION}-r1_gl-be3600-4.9_aarch64_cortex-a53_neon-vfpv4.ipk \
+  https://github.com/rudironsoni/gl-modem-community/releases/download/v${VERSION}/gl-modem-community_${VERSION}-r1_gl-be3600-4.9_aarch64_cortex-a53_neon-vfpv4.ipk
+wget -O SHA256SUMS \
+  https://github.com/rudironsoni/gl-modem-community/releases/latest/download/SHA256SUMS
+grep "gl-modem-community_${VERSION}-r1_gl-be3600-4.9_aarch64_cortex-a53_neon-vfpv4.ipk" SHA256SUMS | sha256sum -c
+opkg install /tmp/gl-modem-community_${VERSION}-r1_gl-be3600-4.9_aarch64_cortex-a53_neon-vfpv4.ipk
+/etc/init.d/gl_modem_community enable
+/etc/init.d/gl_modem_community restart
+```
+
 ### GL.iNet current stable and beta (IPK 21.02)
 
 #### Option A (recommended): Install from the GL.iNet 21.02 feed
 
-Current GL.iNet OEM firmware (stable 4.8.x and beta 4.9.x) runs OpenWrt 21.02 with `opkg`. Use the feed for the 21.02 build:
+Current GL-MT3000 OEM firmware (stable 4.8.x and beta 4.9.x) runs OpenWrt 21.02 with `opkg`. Use the feed for the 21.02 build. GL-BE3600 uses the dedicated feed above instead.
 
 ```sh
 touch /etc/opkg/customfeeds.conf
@@ -308,6 +350,7 @@ make tools
 make test
 make package
 make package-opkg
+make package-be3600
 git diff --check
 ```
 
@@ -335,6 +378,7 @@ make tools
 make test
 make package
 make package-opkg
+make package-be3600
 ```
 
 To reproduce the stock firmware analysis:
@@ -347,6 +391,6 @@ The [modem architecture](docs/modem-architecture.md), [package design](docs/pack
 
 ## Releases
 
-Every pull request runs the offline test suite and builds both package formats. A release adds the signed APK and repository index, the IPK, CycloneDX SBOMs, the public key, checksums, and GitHub build-provenance attestations.
+Every pull request runs the offline test suite and all package targets. A release adds the signed APK and repository index, target-specific IPKs, CycloneDX SBOMs, the public key, checksums, and GitHub build-provenance attestations.
 
 [Release Please](https://github.com/googleapis/release-please) manages versions from Conventional Commits after the release artifacts pass CI and signing.

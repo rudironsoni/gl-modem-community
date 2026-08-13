@@ -8,6 +8,10 @@ PKG_RELEASE:=1
 PKG_LICENSE:=GPL-3.0-only
 PKG_MAINTAINER:=Rudimar Ronsoni <rudironsoni@users.noreply.github.com>
 
+ifneq ($(BE3600_BUILD),)
+  PKGARCH:=aarch64_cortex-a53_neon-vfpv4
+endif
+
 include $(INCLUDE_DIR)/package.mk
 
 define Package/gl-modem-community
@@ -17,7 +21,7 @@ define Package/gl-modem-community
   TITLE:=Community modem drivers for GL.iNet firmware
   # Runtime-only dependencies. EXTRA_DEPENDS keeps this architecture-independent
   # package from rebuilding the SDK's complete kernel package set.
-  EXTRA_DEPENDS:=comgt (>=0), flock (>=0), jq (>=0), kmod-usb-acm (>=0), kmod-usb-serial-option (>=0), kmod-usb-net-rndis (>=0)
+  EXTRA_DEPENDS:=adb (>=0), comgt (>=0), flock (>=0), jq (>=0), kmod-usb-acm (>=0), kmod-usb-serial-option (>=0), kmod-usb-net-qmi-wwan (>=0), kmod-usb-net-rndis (>=0), lua (>=0), uqmi (>=0)
 endef
 
 define Package/gl-modem-community/description
@@ -42,6 +46,9 @@ if [ -f "$$initd_root/gl_cellular_manager" ] && [ -x "$$initd_root/gl_cellular_m
 elif [ -f "$$initd_root/modem" ] && [ -x "$$initd_root/modem" ]; then
 	( "$$initd_root/modem" restart ) >/dev/null 2>&1 || true
 fi
+if [ -f "$$initd_root/nginx" ] && [ -x "$$initd_root/nginx" ]; then
+	( "$$initd_root/nginx" restart ) >/dev/null 2>&1 || true
+fi
 endef
 
 define Package/gl-modem-community/prerm
@@ -58,10 +65,22 @@ elif [ -f "$$initd_root/modem" ] && [ -x "$$initd_root/modem" ]; then
 fi
 endef
 
+define Package/gl-modem-community/postrm
+#!/bin/sh
+[ -n "$${IPKG_INSTROOT:-}" ] && exit 0
+initd_root=$${GL_MODEM_COMMUNITY_INITD_ROOT:-/etc/init.d}
+if [ -f "$$initd_root/nginx" ] && [ -x "$$initd_root/nginx" ]; then
+	( "$$initd_root/nginx" restart ) >/dev/null 2>&1 || true
+fi
+endef
+
 define Build/Compile
 	$(TARGET_CC) $(TARGET_CFLAGS) -fPIC -shared \
 		-o $(PKG_BUILD_DIR)/fm350-at-compat.so \
 		$(PKG_BUILD_DIR)/fm350_at_compat.c
+	$(TARGET_CC) $(TARGET_CFLAGS) -fPIC -shared \
+		-o $(PKG_BUILD_DIR)/vos5g-at-compat.so \
+		$(PKG_BUILD_DIR)/vos5g_at_compat.c
 endef
 
 define Package/gl-modem-community/install
@@ -107,12 +126,19 @@ define Package/gl-modem-community/install
 	$(INSTALL_DATA) ./files/www/views/gl-sdk4-ui-esim.common.js $(1)/www/views/gl-sdk4-ui-esim.common.js
 	$(INSTALL_DIR) $(1)/www/i18n
 	$(INSTALL_DATA) ./files/www/i18n/gl-sdk4-ui-esim.en.json $(1)/www/i18n/gl-sdk4-ui-esim.en.json
+	$(INSTALL_BIN) ./files/usr/libexec/gl-modem-community/vos5g-qmi $(1)/usr/libexec/gl-modem-community/vos5g-qmi
+	$(INSTALL_BIN) ./files/usr/libexec/gl-modem-community/vos5g-qmi-rf-band $(1)/usr/libexec/gl-modem-community/vos5g-qmi-rf-band
+	$(INSTALL_BIN) ./files/usr/libexec/gl-modem-community/vos5g-qmi-system-mode $(1)/usr/libexec/gl-modem-community/vos5g-qmi-system-mode
+	$(INSTALL_BIN) ./files/usr/libexec/gl-modem-community/vos5g-band-monitor $(1)/usr/libexec/gl-modem-community/vos5g-band-monitor
 	$(INSTALL_DIR) $(1)/usr/lib/gl-modem-community
 	$(INSTALL_DATA) $(PKG_BUILD_DIR)/fm350-at-compat.so $(1)/usr/lib/gl-modem-community/fm350-at-compat.so
+	$(INSTALL_DATA) $(PKG_BUILD_DIR)/vos5g-at-compat.so $(1)/usr/lib/gl-modem-community/vos5g-at-compat.so
 	$(INSTALL_DIR) $(1)/usr/share/gl-modem-community/drivers.d
 	$(INSTALL_DATA) ./files/usr/share/gl-modem-community/drivers.d/fm350.json $(1)/usr/share/gl-modem-community/drivers.d/fm350.json
+	$(INSTALL_DATA) ./files/usr/share/gl-modem-community/drivers.d/vos5g.json $(1)/usr/share/gl-modem-community/drivers.d/vos5g.json
 	$(INSTALL_DIR) $(1)/usr/share/gl-modem-community/rpc-drivers
 	$(INSTALL_DATA) ./files/usr/share/gl-modem-community/rpc-drivers/fm350.lua $(1)/usr/share/gl-modem-community/rpc-drivers/fm350.lua
+	$(INSTALL_DATA) ./files/usr/share/gl-modem-community/rpc-drivers/vos5g.lua $(1)/usr/share/gl-modem-community/rpc-drivers/vos5g.lua
 endef
 
 $(eval $(call BuildPackage,gl-modem-community))

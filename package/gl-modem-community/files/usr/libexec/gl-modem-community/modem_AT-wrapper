@@ -2,8 +2,10 @@
 # SPDX-License-Identifier: GPL-3.0-only
 set -eu
 
-stock=/var/run/gl-modem-community/modem_AT.stock
-compat=/usr/lib/gl-modem-community/fm350-at-compat.so
+stock=${STOCK_MODEM_AT:-/var/run/gl-modem-community/modem_AT.stock}
+compat=${FM350_COMPAT:-/usr/lib/gl-modem-community/fm350-at-compat.so}
+vos5g_compat=${VOS5G_COMPAT:-/usr/lib/gl-modem-community/vos5g-at-compat.so}
+sys_usb=${SYS_USB:-/sys/bus/usb}
 bus=
 port=
 previous=
@@ -20,8 +22,8 @@ for argument in "$@"; do
 done
 
 if [ -n "$bus" ] && [ -n "$port" ] &&
-	[ "$(cat "/sys/bus/usb/devices/$bus/idVendor" 2>/dev/null || true)" = 0e8d ]; then
-	case "$(cat "/sys/bus/usb/devices/$bus/idProduct" 2>/dev/null || true)" in
+	[ "$(cat "$sys_usb/devices/$bus/idVendor" 2>/dev/null || true)" = 0e8d ]; then
+	case "$(cat "$sys_usb/devices/$bus/idProduct" 2>/dev/null || true)" in
 		7126|7127)
 			export GL_MODEM_FM350_AT_PORT=$port
 			export LD_PRELOAD=$compat
@@ -29,6 +31,28 @@ if [ -n "$bus" ] && [ -n "$port" ] &&
 				"FM350 modem_AT compatibility active bus=$bus port=$port"
 			;;
 	esac
+fi
+
+if [ -n "$bus" ] && [ -n "$port" ] &&
+	[ "$(cat "$sys_usb/devices/$bus/idVendor" 2>/dev/null || true)" = 05c6 ] &&
+	[ "$(cat "$sys_usb/devices/$bus/idProduct" 2>/dev/null || true)" = 9064 ]; then
+	# GL.iNet 4.9 invokes modem_AT for this dynamically-bound option device as
+	# `-B <bus> -P -O2`: the AT path after -P is missing, so stock modem_AT
+	# consumes -O2 as the path and never opens the AT interface.  Resolve the
+	# current tty node from verified USB interface 1.2 because ttyUSB numbering
+	# changes after option reloads.  Limit the correction to the exact VOS
+	# VID:PID and preserve the verified offset for reopen.
+	for tty in "$sys_usb/devices/$bus:1.2"/ttyUSB*; do
+		[ -e "$tty" ] || continue
+		port=/dev/${tty##*/}
+		break
+	done
+	case "$port" in /dev/ttyUSB*) ;; *) exit 1 ;; esac
+	export GL_MODEM_VOS5G_AT_PORT=$port
+	export LD_PRELOAD=$vos5g_compat
+	logger -t gl-modem-community \
+		"VOS 5G modem_AT compatibility active bus=$bus port=$port"
+	exec "$stock" -B "$bus" -P "$port" -O2
 fi
 
 exec "$stock" "$@"

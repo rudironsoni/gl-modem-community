@@ -2,50 +2,86 @@
 -- Transparent stock modem RPC dispatcher with community-driver hooks.
 
 local cjson = require "cjson"
-local driver_dir = "/usr/share/gl-modem-community/rpc-drivers"
+local nixio_fs = require "nixio.fs"
+local getenv = os and type(os.getenv) == "function" and os.getenv or nil
+local driver_dir = (getenv and getenv("GL_MODEM_COMMUNITY_RPC_DRIVER_DIR")) or
+    "/usr/share/gl-modem-community/rpc-drivers"
+local sysfs_usb_root = (getenv and getenv("GL_MODEM_COMMUNITY_SYSFS_USB_ROOT")) or
+    "/sys/bus/usb/devices"
+local runtime_dir = (getenv and getenv("GL_MODEM_COMMUNITY_RUNTIME_DIR")) or
+    "/var/run/gl-modem-community"
+local band_cache_max_age = tonumber(getenv and
+    getenv("GL_MODEM_COMMUNITY_BAND_CACHE_MAX_AGE")) or 15
 local drivers = {}
 
 local function load_drivers()
-    local pipe = io.popen("find " .. driver_dir .. " -type f -name '*.lua' 2>/dev/null | sort")
-    if not pipe then return end
-    for path in pipe:lines() do
+    local paths = {}
+    local iterator = nixio_fs.dir(driver_dir)
+    if not iterator then return end
+    for name in iterator do
+        if name:match("%.lua$") then
+            paths[#paths + 1] = driver_dir .. "/" .. name
+        end
+    end
+    table.sort(paths)
+    for _, path in ipairs(paths) do
         local ok, driver = pcall(dofile, path)
         if ok and type(driver) == "table" and type(driver.methods) == "table" then
             drivers[#drivers + 1] = driver
         end
     end
-    pipe:close()
 end
 
 local function usb_id_for_bus(bus)
     if type(bus) ~= "string" or not bus:match("^[%w%.:_-]+$") then return nil end
-    local base = "/sys/bus/usb/devices/" .. bus
-    local vf = io.open(base .. "/idVendor", "r")
-    local pf = io.open(base .. "/idProduct", "r")
-    if not vf or not pf then
-        if vf then vf:close() end
-        if pf then pf:close() end
-        return nil
-    end
-    local vid = vf:read("*l")
-    local pid = pf:read("*l")
-    vf:close()
-    pf:close()
+    local base = sysfs_usb_root .. "/" .. bus
+    local vid = nixio_fs.readfile(base .. "/idVendor")
+    local pid = nixio_fs.readfile(base .. "/idProduct")
+    if not vid or not pid then return nil end
+    vid = vid:match("^%s*(%x+)")
+    pid = pid:match("^%s*(%x+)")
     if not vid or not pid then return nil end
     return vid:lower() .. ":" .. pid:lower()
 end
 
 local function find_fm350_bus()
-    local pipe = io.popen("ls /sys/bus/usb/devices 2>/dev/null")
-    if not pipe then return nil end
-    for bus in pipe:lines() do
+    local iterator = nixio_fs.dir(sysfs_usb_root)
+    if not iterator then return nil end
+    for bus in iterator do
         local id = usb_id_for_bus(bus)
         if id == "0e8d:7126" or id == "0e8d:7127" then
-            pipe:close()
             return bus
         end
     end
-    pipe:close()
+    return nil
+end
+
+local function fresh_cache_for_bus(prefix, bus)
+    if type(bus) ~= "string" or not bus:match("^[%w%.:_-]+$") then return nil end
+    local path = runtime_dir .. "/" .. prefix .. bus
+    local stat = nixio_fs.stat(path)
+    if type(stat) ~= "table" or type(stat.mtime) ~= "number" or
+        os.time() - stat.mtime > band_cache_max_age then
+        return nil
+    end
+    local value = nixio_fs.readfile(path)
+    return value and value:match("^%s*(.-)%s*$") or nil
+end
+
+local function band_for_bus(bus)
+    local value = fresh_cache_for_bus("vos5g-band-", bus)
+    if not value then return nil end
+    value = value:match("^%s*([nB0-9+]+)%s*$")
+    if not value or value:match("^%+") or value:match("%+$") or
+        value:match("%+%+") then
+        return nil
+    end
+    return value
+end
+
+local function nr_mode_for_bus(bus)
+    local value = fresh_cache_for_bus("vos5g-mode-", bus)
+    if value == "SA" or value == "NSA" then return value end
     return nil
 end
 
@@ -64,6 +100,45 @@ local function vendor_call(method, args)
     return ok and decoded or -32603
 end
 
+local function apply_result_handlers(method, args, result)
+    local context = {
+        usb_id_for_bus = usb_id_for_bus,
+        band_for_bus = band_for_bus,
+        nr_mode_for_bus = nr_mode_for_bus,
+        vendor_results = {},
+    }
+    local applicable = {}
+    for _, driver in ipairs(drivers) do
+        local matches = true
+        if type(driver.result_matches) == "function" then
+            local ok, matched = pcall(driver.result_matches,
+                method, args, result, context)
+            matches = ok and matched == true
+        end
+        applicable[driver] = matches
+        local dependencies = driver.result_dependencies
+        dependencies = type(dependencies) == "table" and
+            dependencies[method] or nil
+        if matches and type(dependencies) == "table" then
+            for _, dependency in ipairs(dependencies) do
+                if context.vendor_results[dependency] == nil then
+                    context.vendor_results[dependency] =
+                        vendor_call(dependency, {})
+                end
+            end
+        end
+    end
+    for _, driver in ipairs(drivers) do
+        local handlers = driver.result_methods
+        local handler = type(handlers) == "table" and handlers[method] or nil
+        if applicable[driver] and handler then
+            local ok, transformed = pcall(handler, args, result, context)
+            if ok and transformed ~= nil then result = transformed end
+        end
+    end
+    return result
+end
+
 local function dispatch(method, args)
     args = args or {}
     if type(args.bus) ~= "string" or args.bus == "" then
@@ -78,7 +153,8 @@ local function dispatch(method, args)
             end
         end
     end
-    return vendor_call(method, args)
+    local result = vendor_call(method, args)
+    return apply_result_handlers(method, args, result)
 end
 
 load_drivers()
@@ -92,7 +168,7 @@ for _, method in ipairs({
     "get_operator_config", "send_at_command", "get_slot_config",
     "set_slot_config",
     "get_traffic_config", "set_traffic_config", "disconnect", "get_debug_msg",
-    "get_profile_list", "get_info", "get_status"
+    "get_profile_list", "get_info", "get_status", "get_network_info"
 }) do
     local name = method
     methods[name] = function(args) return dispatch(name, args or {}) end

@@ -1,0 +1,124 @@
+#!/usr/bin/lua
+-- SPDX-License-Identifier: GPL-3.0-only
+-- Read Qualcomm NAS Get RF Band Information (0x0031) on an already allocated
+-- NAS client.  The caller owns timeout and client-ID release handling.
+
+local device = assert(arg[1], "QMI control device is required")
+assert(arg[2], "NAS client ID is required")
+local client = tonumber(arg[2])
+assert(client and client >= 1 and client <= 255, "invalid NAS client ID")
+
+local lte_bands = {
+    [120] = 1, [121] = 2, [122] = 3, [123] = 4, [124] = 5,
+    [125] = 6, [126] = 7, [127] = 8, [128] = 9, [129] = 10,
+    [130] = 11, [131] = 12, [132] = 13, [133] = 14, [134] = 17,
+    [143] = 18, [144] = 19, [145] = 20, [146] = 21, [152] = 23,
+    [147] = 24, [148] = 25, [153] = 26, [164] = 27, [158] = 28,
+    [159] = 29, [160] = 30, [165] = 31, [154] = 32, [135] = 33,
+    [136] = 34, [137] = 35, [138] = 36, [139] = 37, [140] = 38,
+    [141] = 39, [142] = 40, [149] = 41, [150] = 42, [151] = 43,
+    [163] = 46, [166] = 47, [167] = 48, [161] = 66, [168] = 71,
+    [155] = 125, [156] = 126, [157] = 127, [162] = 250,
+}
+
+-- QmiNasActiveBand values from libqmi's qmi-enums-nas.h.
+local nr_bands = {
+    [250] = 1, [251] = 2, [252] = 3, [253] = 5, [254] = 7,
+    [255] = 8, [256] = 20, [257] = 28, [258] = 38, [259] = 41,
+    [260] = 50, [261] = 51, [262] = 66, [263] = 70, [264] = 71,
+    [265] = 74, [266] = 75, [267] = 76, [268] = 77, [269] = 78,
+    [270] = 79, [271] = 80, [272] = 81, [273] = 82, [274] = 83,
+    [275] = 84, [276] = 85, [277] = 257, [278] = 258,
+    [279] = 259, [280] = 260, [281] = 261, [282] = 12,
+    [283] = 25, [284] = 34, [285] = 39, [286] = 40,
+    [287] = 65, [288] = 86, [289] = 48, [290] = 14,
+    [291] = 13, [292] = 18, [293] = 26, [294] = 30,
+    [295] = 29, [296] = 53, [297] = 46, [298] = 91,
+    [299] = 92, [300] = 93, [301] = 94, [315] = 100,
+    [316] = 101,
+}
+
+local function u16le(data, offset)
+    local a, b = data:byte(offset, offset + 1)
+    if not b then return nil end
+    return a + b * 256
+end
+
+local function parse_list(value, extended, nr, lte, seen)
+    local count = value:byte(1)
+    if not count then return end
+    local entry_size = extended and 7 or 5
+    local offset = 2
+    for _ = 1, count do
+        if offset + entry_size - 1 > #value then return end
+        local radio = value:byte(offset)
+        local active_band = u16le(value, offset + 1)
+        local label
+        if radio == 12 and nr_bands[active_band] then
+            label = "n" .. nr_bands[active_band]
+            if not seen[label] then nr[#nr + 1] = label end
+        elseif radio == 8 and lte_bands[active_band] then
+            label = "B" .. lte_bands[active_band]
+            if not seen[label] then lte[#lte + 1] = label end
+        end
+        if label then seen[label] = true end
+        offset = offset + entry_size
+    end
+end
+
+local nixio = require "nixio"
+local handle = assert(nixio.open(device, "r+"))
+local transaction = 0x51
+local request = string.char(
+    0x01, 0x0c, 0x00, 0x00, 0x03, client,
+    0x00, transaction, 0x00, 0x31, 0x00, 0x00, 0x00
+)
+assert(handle:write(request) == #request)
+local response = assert(handle:read(4096))
+handle:close()
+
+assert(#response >= 13, "short QMI response")
+assert(response:byte(1) == 0x01 and response:byte(4) == 0x80,
+    "invalid QMUX response")
+assert(response:byte(5) == 0x03 and response:byte(6) == client,
+    "unexpected QMI client")
+assert(response:byte(7) == 0x02 and response:byte(8) == transaction,
+    "unexpected QMI transaction")
+assert(u16le(response, 10) == 0x0031, "unexpected QMI message")
+
+local payload_length = assert(u16le(response, 12))
+assert(#response >= 13 + payload_length, "truncated QMI payload")
+local offset = 14
+local limit = 13 + payload_length
+local result_ok = false
+local legacy_list
+local extended_list
+while offset + 2 <= limit do
+    local tlv_type = response:byte(offset)
+    local tlv_length = u16le(response, offset + 1)
+    assert(tlv_length and offset + 2 + tlv_length <= limit,
+        "invalid QMI TLV")
+    local value = response:sub(offset + 3, offset + 2 + tlv_length)
+    if tlv_type == 0x02 and tlv_length >= 4 then
+        result_ok = u16le(value, 1) == 0 and u16le(value, 3) == 0
+    elseif tlv_type == 0x01 then
+        legacy_list = value
+    elseif tlv_type == 0x11 then
+        extended_list = value
+    end
+    offset = offset + 3 + tlv_length
+end
+assert(result_ok, "QMI NAS request failed")
+
+local nr, lte, seen = {}, {}, {}
+if extended_list then
+    parse_list(extended_list, true, nr, lte, seen)
+elseif legacy_list then
+    parse_list(legacy_list, false, nr, lte, seen)
+end
+
+local bands = {}
+for _, label in ipairs(nr) do bands[#bands + 1] = label end
+for _, label in ipairs(lte) do bands[#bands + 1] = label end
+assert(#bands > 0, "no supported active band")
+io.write(table.concat(bands, "+"), "\n")

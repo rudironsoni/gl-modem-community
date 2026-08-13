@@ -67,6 +67,16 @@ cat >"$tmp/bin/ensure-option-ids" <<'EOF'
 printf '%s\n' "$*" >>"${ENSURE_OPTION_IDS_TEST_LOG:?}"
 EOF
 
+cat >"$tmp/bin/vos5g-qmi" <<'EOF'
+#!/bin/sh
+printf '%s\n' "$*" >>"${VOS5G_QMI_TEST_LOG:?}"
+EOF
+
+cat >"$tmp/bin/vos5g-band-monitor" <<'EOF'
+#!/bin/sh
+printf '%s\n' "$*" >>"${VOS5G_BAND_MONITOR_TEST_LOG:?}"
+EOF
+
 chmod +x "$tmp/bin/"*
 
 config_load() { :; }
@@ -103,6 +113,12 @@ export LEGACY_BUS_TEST_LOG
 ENSURE_OPTION_IDS="$tmp/bin/ensure-option-ids"
 ENSURE_OPTION_IDS_TEST_LOG="$tmp/ensure-option-ids.log"
 export ENSURE_OPTION_IDS ENSURE_OPTION_IDS_TEST_LOG
+VOS5G_QMI="$tmp/bin/vos5g-qmi"
+VOS5G_QMI_TEST_LOG="$tmp/vos5g-qmi.log"
+export VOS5G_QMI VOS5G_QMI_TEST_LOG
+VOS5G_BAND_MONITOR="$tmp/bin/vos5g-band-monitor"
+VOS5G_BAND_MONITOR_TEST_LOG="$tmp/vos5g-band-monitor.log"
+export VOS5G_BAND_MONITOR VOS5G_BAND_MONITOR_TEST_LOG
 export MERGE_SHOULD_FAIL
 
 # shellcheck disable=SC1090
@@ -139,6 +155,8 @@ grep -Fx "umount $MODEM_AT" "$tmp/mount.log" >/dev/null
 : >"$tmp/mount.log"
 : >"$tmp/merge.log"
 : >"$tmp/repair.log"
+: >"$tmp/vos5g-qmi.log"
+: >"$tmp/vos5g-band-monitor.log"
 MOUNT_FAIL_TARGET=
 export MOUNT_FAIL_TARGET
 
@@ -149,3 +167,20 @@ test ! -s "$tmp/mounts"
 grep -Fx -- '--restore' "$tmp/repair.log" >/dev/null
 grep -Fx "umount $STOCK_LIST" "$tmp/mount.log" >/dev/null
 grep -Fx "umount $MODEM_AT" "$tmp/mount.log" >/dev/null
+cat >"$tmp/expected-vos5g-qmi" <<'EOF'
+prepare
+EOF
+cmp "$tmp/expected-vos5g-qmi" "$tmp/vos5g-qmi.log"
+grep -Fx refresh "$tmp/vos5g-band-monitor.log" >/dev/null
+
+# A service restart must preserve VOS QMI ownership.  Restoring ECM here
+# starts QCMAP and races the immediately following prepare operation.
+: >"$tmp/vos5g-qmi.log"
+start_service
+stop_service
+start_service
+cat >"$tmp/expected-vos5g-qmi" <<'EOF'
+prepare
+prepare
+EOF
+cmp "$tmp/expected-vos5g-qmi" "$tmp/vos5g-qmi.log"

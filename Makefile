@@ -24,7 +24,7 @@ CHANNEL_MANIFEST := $(REPO_DIR)/config/firmware-channels.json
 .PHONY: tools download verify identify extract inventory inventory-filesystem
 .PHONY: inventory-packages find-modem-components analyze analyze-frontend
 .PHONY: analyze-elf extract-strings report test package package-opkg
-.PHONY: package-glinet21 check-firmware-channels verify-firmware-channels
+.PHONY: package-glinet21 package-be3600 check-firmware-channels verify-firmware-channels
 .PHONY: generate-sbom validate-sbom verify-signing-key sign-apk-release clean-work
 .PHONY: prepare-apk-sdk generate-feed-index
 
@@ -295,7 +295,19 @@ package-glinet21: BUILD_REPORT = package-glinet21-build.txt
 package-glinet21: HASH_REPORT = gl-modem-community-glinet21.ipk.sha256
 package-glinet21: ARTIFACT_REPORT = package-glinet21-artifact-path.txt
 
-package package-opkg:
+package-be3600: SDK_NAME = openwrt-sdk-23.05.5-ipq807x-generic_gcc-12.3.0_musl.Linux-x86_64.tar.xz
+package-be3600: SDK_URL = https://downloads.openwrt.org/releases/23.05.5/targets/ipq807x/generic/$(SDK_NAME)
+package-be3600: SDK_SHA256 = 57c8a1d5586f1548ebe360d71a6dd9deec7833f5cb3e5b93d5a618c6da6e9399
+package-be3600: SDK_DIR_NAME = sdk-23.05.5-ipq807x-generic
+package-be3600: BUILD_IMAGE = be3600-openwrt-sdk:23.05.5
+package-be3600: PACKAGE_GLOB = gl-modem-community*.ipk
+package-be3600: PACKAGE_ASSET = gl-modem-community_$(PACKAGE_VERSION)-r$(PACKAGE_RELEASE)_gl-be3600-4.9_aarch64_cortex-a53_neon-vfpv4.ipk
+package-be3600: BUILD_REPORT = package-be3600-build.txt
+package-be3600: HASH_REPORT = gl-modem-community-be3600.ipk.sha256
+package-be3600: ARTIFACT_REPORT = package-be3600-artifact-path.txt
+package-be3600: PACKAGE_MAKE_ARGS = BE3600_BUILD=1
+
+package package-opkg package-be3600:
 	sdk_archive="$(REPO_DIR)/tool-cache/$(SDK_NAME)"
 	sdk_dir="$(REPO_DIR)/tool-cache/$(SDK_DIR_NAME)"
 	mkdir -p "$(REPO_DIR)/tool-cache" "$(REPO_DIR)/artifacts" "$(ANALYSIS_DIR)/reports" "$(ANALYSIS_DIR)/hashes"
@@ -319,7 +331,7 @@ package package-opkg:
 			set -eu
 			cd /repo/tool-cache/$(SDK_DIR_NAME)
 			make defconfig
-			make V=s package/gl-modem-community/compile
+			make V=s $(PACKAGE_MAKE_ARGS) package/gl-modem-community/compile
 		" >"$(ANALYSIS_DIR)/reports/$(BUILD_REPORT)" 2>&1
 	artifact=$$(find "$$sdk_dir/bin/packages" -type f -name '$(PACKAGE_GLOB)' -print | head -n 1)
 	test -n "$$artifact"
@@ -691,12 +703,17 @@ generate-feed-index:
 				snippet_hint='Add this line to /etc/opkg/customfeeds.conf:'
 				snippet='src/gz gl-modem-community $(FEED_URL)/24.10'
 				;;
-			21.02)
-				label='GL.iNet 4.8.x stable and 4.9.x beta (IPK)'
-				snippet_hint='Add this line to /etc/opkg/customfeeds.conf:'
-				snippet='src/gz gl-modem-community $(FEED_URL)/21.02'
-				;;
-			*)
+		21.02)
+			label='GL.iNet 4.8.x stable and 4.9.x beta (IPK)'
+			snippet_hint='Add this line to /etc/opkg/customfeeds.conf:'
+			snippet='src/gz gl-modem-community $(FEED_URL)/21.02'
+			;;
+		23.05-be3600)
+			label='GL.iNet GL-BE3600 4.9.x (IPK)'
+			snippet_hint='Add this line to /etc/opkg/customfeeds.conf:'
+			snippet='src/gz gl-modem-community $(FEED_URL)/23.05-be3600'
+			;;
+		*)
 				printf 'Unknown feed channel: %s\n' "$$channel" >&2
 				exit 1
 				;;
