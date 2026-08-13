@@ -33,9 +33,20 @@ PATH=$tmp/bin:$PATH SYS_USB=$tmp/sys STOCK_MODEM_AT=$tmp/stock \
 	VOS5G_COMPAT=$tmp/vos5g-at-compat.so TEST_ARGS=$tmp/args \
 	TEST_PORT=$tmp/port TEST_FM350_PORT=$tmp/fm350-port \
 	TEST_PRELOAD=$tmp/preload \
-	"$wrapper" -B 2-1 -P -O2
-test "$(cat "$tmp/args")" = '-B 2-1 -P /dev/ttyUSB7 -O2'
+	"$wrapper" --stock-flag keep -B 2-1 -P -O7 --tail value
+test "$(cat "$tmp/args")" = '--stock-flag keep -B 2-1 -P /dev/ttyUSB7 -O7 --tail value'
 test "$(cat "$tmp/port")" = /dev/ttyUSB7
+test "$(cat "$tmp/preload")" = "$tmp/vos5g-at-compat.so"
+
+# A complete VOS invocation keeps every stock argument and the supplied AT
+# port unchanged while still enabling the response compatibility preload.
+PATH=$tmp/bin:$PATH SYS_USB=$tmp/sys STOCK_MODEM_AT=$tmp/stock \
+	VOS5G_COMPAT=$tmp/vos5g-at-compat.so TEST_ARGS=$tmp/args \
+	TEST_PORT=$tmp/port TEST_FM350_PORT=$tmp/fm350-port \
+	TEST_PRELOAD=$tmp/preload \
+	"$wrapper" --stock-flag keep -B 2-1 -P /dev/ttyUSB5 -O9 --tail value
+test "$(cat "$tmp/args")" = '--stock-flag keep -B 2-1 -P /dev/ttyUSB5 -O9 --tail value'
+test "$(cat "$tmp/port")" = /dev/ttyUSB5
 test "$(cat "$tmp/preload")" = "$tmp/vos5g-at-compat.so"
 
 # The pre-existing FM350 branch must keep the original arguments, port

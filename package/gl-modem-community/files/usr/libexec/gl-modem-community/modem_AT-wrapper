@@ -8,12 +8,18 @@ vos5g_compat=${VOS5G_COMPAT:-/usr/lib/gl-modem-community/vos5g-at-compat.so}
 sys_usb=${SYS_USB:-/sys/bus/usb}
 bus=
 port=
+port_missing=0
 previous=
 
 for argument in "$@"; do
 	case "$previous" in
 		-B) bus=$argument ;;
-		-P) port=$argument ;;
+		-P)
+			case "$argument" in
+				-O*) port_missing=1 ;;
+				*) port=$argument; port_missing=0 ;;
+			esac
+			;;
 	esac
 	case "$argument" in
 		-B|-P) previous=$argument ;;
@@ -33,7 +39,7 @@ if [ -n "$bus" ] && [ -n "$port" ] &&
 	esac
 fi
 
-if [ -n "$bus" ] && [ -n "$port" ] &&
+if [ -n "$bus" ] &&
 	[ "$(cat "$sys_usb/devices/$bus/idVendor" 2>/dev/null || true)" = 05c6 ] &&
 	[ "$(cat "$sys_usb/devices/$bus/idProduct" 2>/dev/null || true)" = 9064 ]; then
 	# GL.iNet 4.9 invokes modem_AT for this dynamically-bound option device as
@@ -41,18 +47,37 @@ if [ -n "$bus" ] && [ -n "$port" ] &&
 	# consumes -O2 as the path and never opens the AT interface.  Resolve the
 	# current tty node from verified USB interface 1.2 because ttyUSB numbering
 	# changes after option reloads.  Limit the correction to the exact VOS
-	# VID:PID and preserve the verified offset for reopen.
-	for tty in "$sys_usb/devices/$bus:1.2"/ttyUSB*; do
-		[ -e "$tty" ] || continue
-		port=/dev/${tty##*/}
-		break
-	done
-	case "$port" in /dev/ttyUSB*) ;; *) exit 1 ;; esac
-	export GL_MODEM_VOS5G_AT_PORT=$port
-	export LD_PRELOAD=$vos5g_compat
-	logger -t gl-modem-community \
-		"VOS 5G modem_AT compatibility active bus=$bus port=$port"
-	exec "$stock" -B "$bus" -P "$port" -O2
+	# VID:PID.  Preserve every stock argument, including the caller's -O value.
+	if [ "$port_missing" -eq 1 ]; then
+		port=
+		for tty in "$sys_usb/devices/$bus:1.2"/ttyUSB*; do
+			[ -e "$tty" ] || continue
+			port=/dev/${tty##*/}
+			break
+		done
+		case "$port" in /dev/ttyUSB*) ;; *) exit 1 ;; esac
+
+		remaining=$#
+		inserted=0
+		while [ "$remaining" -gt 0 ]; do
+			argument=$1
+			shift
+			remaining=$((remaining - 1))
+			set -- "$@" "$argument"
+			if [ "$inserted" -eq 0 ] && [ "$argument" = -P ]; then
+				case "${1-}" in
+					-O*) set -- "$@" "$port"; inserted=1 ;;
+				esac
+			fi
+		done
+	fi
+
+	if [ -n "$port" ]; then
+		export GL_MODEM_VOS5G_AT_PORT=$port
+		export LD_PRELOAD=$vos5g_compat
+		logger -t gl-modem-community \
+			"VOS 5G modem_AT compatibility active bus=$bus port=$port"
+	fi
 fi
 
 exec "$stock" "$@"
