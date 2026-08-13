@@ -15,8 +15,13 @@ MODEM_AT=${MODEM_AT:-/usr/bin/modem_AT}
 STOCK_MODEM_AT=${STOCK_MODEM_AT:-$RUNTIME_DIR/modem_AT.stock}
 MODEM_AT_WRAPPER=${MODEM_AT_WRAPPER:-/usr/libexec/gl-modem-community/modem_AT-wrapper}
 NETWORK_REPAIR=${NETWORK_REPAIR:-/usr/libexec/gl-modem-community/fm350-network-repair}
+VOS5G_POLLER=${VOS5G_POLLER:-/usr/libexec/gl-modem-community/vos5g-state-poller}
 MERGE_MODELS=${MERGE_MODELS:-/usr/libexec/gl-modem-community/merge-models}
+DRIVER_DIR=${DRIVER_DIR:-/usr/share/gl-modem-community/drivers.d}
 ENSURE_OPTION_IDS=${ENSURE_OPTION_IDS:-/usr/libexec/gl-modem-community/ensure-option-ids}
+CELLULAR_WS=${CELLULAR_WS:-/usr/share/gl-ngx/websocket/cellular.lua}
+STOCK_CELLULAR_WS=${STOCK_CELLULAR_WS:-$RUNTIME_DIR/cellular.stock.lua}
+CELLULAR_WS_WRAPPER=${CELLULAR_WS_WRAPPER:-/usr/share/gl-modem-community/websocket/cellular.lua}
 PROC_MOUNTS=${PROC_MOUNTS:-/proc/mounts}
 CP_BIN=${CP_BIN:-cp}
 MOUNT_BIN=${MOUNT_BIN:-mount}
@@ -29,6 +34,18 @@ is_model_list_mounted() {
 
 is_modem_at_mounted() {
 	grep -F " $MODEM_AT " "$PROC_MOUNTS" >/dev/null 2>&1
+}
+
+is_cellular_ws_mounted() {
+	grep -F " $CELLULAR_WS " "$PROC_MOUNTS" >/dev/null 2>&1
+}
+
+mount_cellular_ws_wrapper() {
+	[ -r "$CELLULAR_WS" ] || return 0
+	[ -r "$CELLULAR_WS_WRAPPER" ] || return 0
+	is_cellular_ws_mounted && return 0
+	"$CP_BIN" -p "$CELLULAR_WS" "$STOCK_CELLULAR_WS" || return 1
+	"$MOUNT_BIN" -o bind "$CELLULAR_WS_WRAPPER" "$CELLULAR_WS" || return 1
 }
 
 mount_modem_at_wrapper() {
@@ -45,9 +62,20 @@ start_repair_watcher() {
 	procd_close_instance
 }
 
+start_vos5g_poller() {
+	local enabled
+	config_get_bool enabled vos5g enabled 1
+	[ "$enabled" -eq 1 ] || return 0
+	mount_cellular_ws_wrapper || return 1
+	procd_open_instance vos5g-state-poller
+	procd_set_param command "$VOS5G_POLLER"
+	procd_set_param respawn 3600 5 5
+	procd_close_instance
+}
+
 start_modern() {
 	"$MERGE_MODELS" \
-		"$STOCK_LIST" /usr/share/gl-modem-community/drivers.d "$MERGED_LIST" ||
+		"$STOCK_LIST" "$DRIVER_DIR" "$MERGED_LIST" ||
 		return 1
 	mount_modem_at_wrapper || return 1
 	if ! is_model_list_mounted &&
@@ -94,7 +122,12 @@ start_service() {
 	esac
 
 	"$ENSURE_OPTION_IDS" || true
-	return "$rc"
+	[ "$rc" -eq 0 ] || return "$rc"
+	if ! start_vos5g_poller; then
+		stop_service
+		return 1
+	fi
+	return 0
 }
 
 stop_service() {
@@ -110,6 +143,9 @@ stop_service() {
 		"$LEGACY_BUS" restore
 		;;
 	esac
+	is_cellular_ws_mounted && "$UMOUNT_BIN" "$CELLULAR_WS"
+	rm -f "$STOCK_CELLULAR_WS" "$RUNTIME_DIR/vos5g-state.json" \
+		"$RUNTIME_DIR/vos5g-token" "$RUNTIME_DIR/vos5g-cookie.txt"
 	rm -f "$STACK_FILE"
 	return 0
 }

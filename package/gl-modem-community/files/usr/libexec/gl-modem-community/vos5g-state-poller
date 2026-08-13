@@ -1,0 +1,30 @@
+#!/bin/sh
+# SPDX-License-Identifier: GPL-3.0-only
+set -eu
+umask 077
+
+RUNTIME_DIR=${RUNTIME_DIR:-/var/run/gl-modem-community}
+STATE=${STATE:-/usr/libexec/gl-modem-community/vos5g-state}
+OUTPUT=${OUTPUT:-$RUNTIME_DIR/vos5g-state.json}
+UCI=${UCI:-uci}
+
+mkdir -p "$RUNTIME_DIR"
+cleanup() {
+	"$STATE" --logout >/dev/null 2>&1 || true
+	rm -f "$OUTPUT" "$OUTPUT.tmp.$$"
+}
+trap cleanup EXIT
+trap 'exit 0' HUP INT TERM
+
+while :; do
+	tmp="$OUTPUT.tmp.$$"
+	if "$STATE" >"$tmp"; then
+		mv "$tmp" "$OUTPUT"
+	else
+		rm -f "$tmp"
+	fi
+	interval=$("$UCI" -q get gl_modem_community.vos5g.poll_interval 2>/dev/null || printf '%s' 10)
+	case "$interval" in ''|*[!0-9]*) interval=10 ;; esac
+	[ "$interval" -ge 3 ] || interval=3
+	sleep "$interval"
+done

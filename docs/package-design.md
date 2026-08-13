@@ -15,6 +15,11 @@ flowchart LR
     UI[stock UI/app] --> PROXY[Lua modem RPC proxy]
     PROXY -->|unhandled| SO[stock modem.so]
     PROXY -->|future FM350 hook| DRIVER[FM350 driver]
+    PROXY -->|05c6:9064| VOSRPC[VOS ECM control]
+    VOS[VOS management API] --> POLLER[VOS state poller]
+    POLLER --> CACHE[/var/run VOS state]
+    CACHE --> WS[additive cellular websocket wrapper]
+    WS --> UI
     GL --> NETIFD[xmm netifd protocol]
     NETIFD --> AT[comgt FM350 AT scripts]
 ```
@@ -31,11 +36,17 @@ flowchart LR
 - The GCOM scripts issue the public `CGAUTH`, `CGDCONT`, `CGACT`, `CGPADDR`, and `GTDNS` commands and return an error when an AT command fails.
 - The extensionless Lua `modem` RPC file preserves the confirmed stock method names. A community handler can answer only for its configured USB IDs. All other calls use the stock `.so` path.
 - `rpc-drivers/fm350.lua` does not override any methods yet because the exact live method schemas have not been captured.
+- The ECM adapter deliberately does not add `05c6:9064` to the stock modem model table. Although configuration 1 exposed a `cdc-wdm` QMI control port during a probe, direct QMI session control is not yet validated and is outside this adapter's tested boundary.
+- `vos5g-state-poller` emits an atomic cache entry for the six stock Cellular websocket collections. Its default ECM mode reads netifd status and, when locally configured, authenticated VOS management fields.
+- The Cellular websocket wrapper copies and calls the stock Lua provider. It replaces only an entry whose USB bus matches the live VOS and preserves all other stock entries.
+- `rpc-drivers/vos5g.lua` handles VOS connect/disconnect, SIM configuration reads, profile-list reads, and failover defaults. Other methods retain the normal stock RPC fallback.
 
 ## Failure and rollback behavior
 
 - Invalid modem fragments prevent activation and leave the stock model table visible.
 - A missing FM350 RPC handler falls back to the stock backend.
+- A missing VOS state file leaves all stock websocket responses unchanged.
+- Stopping the service unmounts the VOS websocket wrapper and deletes its token, cookie, and state cache from tmpfs.
 - Non-FM350 AT calls execute the stock binary.
 - GCOM failures propagate to netifd.
 - Per-interface state remains under `/var/run`.

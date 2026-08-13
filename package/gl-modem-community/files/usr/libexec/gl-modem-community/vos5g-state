@@ -1,0 +1,338 @@
+#!/bin/sh
+# SPDX-License-Identifier: GPL-3.0-only
+# Emit one GL GUI state snapshot for a VOS 5G 05c6:9064 modem.
+set -eu
+umask 077
+
+RUNTIME_DIR=${RUNTIME_DIR:-/var/run/gl-modem-community}
+CURL=${CURL:-curl}
+JQ=${JQ:-jq}
+UBUS=${UBUS:-ubus}
+SYS_USB=${SYS_USB:-/sys/bus/usb/devices}
+SYS_NET=${SYS_NET:-/sys/class/net}
+UCI=${UCI:-uci}
+XXTEA=${XXTEA:-/usr/libexec/gl-modem-community/vos5g-xxtea}
+COOKIE_JAR=${COOKIE_JAR:-$RUNTIME_DIR/vos5g-cookie.txt}
+TOKEN_FILE=${TOKEN_FILE:-$RUNTIME_DIR/vos5g-token}
+PREVIOUS_STATE=${PREVIOUS_STATE:-$RUNTIME_DIR/vos5g-state.json}
+
+uci_get() {
+	"$UCI" -q get "gl_modem_community.vos5g.$1" 2>/dev/null || true
+}
+
+find_bus() {
+	for path in "$SYS_USB"/*; do
+		[ -r "$path/idVendor" ] && [ -r "$path/idProduct" ] || continue
+		[ "$(tr 'A-F' 'a-f' <"$path/idVendor")" = 05c6 ] || continue
+		[ "$(tr 'A-F' 'a-f' <"$path/idProduct")" = 9064 ] || continue
+		basename "$path"
+		return 0
+	done
+	return 1
+}
+
+api_login() {
+	base=$1
+	user=$2
+	cipher=$3
+	[ -n "$cipher" ] || return 1
+	mkdir -p "$RUNTIME_DIR"
+	rm -f "$COOKIE_JAR" "$TOKEN_FILE"
+	"$CURL" -ksS --connect-timeout 2 --max-time 5 \
+		--data-urlencode 'type=close' --data-urlencode 'timeout=300' \
+		"$base/cgi-bin/qcmap_auth" >/dev/null 2>&1 || true
+	response=$("$CURL" -ksS --connect-timeout 2 --max-time 5 \
+		-c "$COOKIE_JAR" -b "$COOKIE_JAR" \
+		--data-urlencode 'type=login' --data-urlencode "pwd=$cipher" \
+		--data-urlencode 'timeout=300' --data-urlencode "user=$user" \
+		"$base/cgi-bin/qcmap_auth") || return 1
+	token=$(printf '%s' "$response" | "$JQ" -r '.token // empty' 2>/dev/null) || return 1
+	[ -n "$token" ] || return 1
+	printf '%s\n' "$token" >"$TOKEN_FILE"
+}
+
+api_call() {
+	base=$1
+	page=$2
+	[ -r "$TOKEN_FILE" ] || return 1
+	token=$(cat "$TOKEN_FILE")
+	"$CURL" -ksS --connect-timeout 2 --max-time 5 \
+		-c "$COOKIE_JAR" -b "$COOKIE_JAR" -H "X-Csrf-Token: $token" \
+		--data-urlencode "Page=$page" --data-urlencode 'mask=0' \
+		--data-urlencode "token=$token" "$base/cgi-bin/qcmap_web_cgi"
+}
+
+valid_api_response() {
+	printf '%s' "$1" | "$JQ" -e \
+		'.result != "NOT_LOGIN" and .result != "AUTH_FAIL" and .result != "Token_mismatch"' \
+		>/dev/null 2>&1
+}
+
+signal_level() {
+	value=$1
+	case "$value" in
+	''|*[!0-9-]*|-255|0) printf '%s' 0; return ;;
+	esac
+	[ "$value" -gt -85 ] && { printf '%s' 5; return; }
+	[ "$value" -gt -95 ] && { printf '%s' 4; return; }
+	[ "$value" -gt -105 ] && { printf '%s' 3; return; }
+	[ "$value" -gt -115 ] && { printf '%s' 2; return; }
+	[ "$value" -gt -125 ] && { printf '%s' 1; return; }
+	printf '%s' 0
+}
+
+normalize_dbm() {
+	value=$1
+	case "$value" in
+	''|*[!0-9-]*) printf '%s' 0; return ;;
+	esac
+	if [ "$value" -le 0 ] && [ "$value" -ge -255 ]; then
+		printf '%s' "$value"
+	else
+		printf '%s' 0
+	fi
+}
+
+previous_value() {
+	path=$1
+	[ -r "$PREVIOUS_STATE" ] || return 0
+	"$JQ" -r "$path // empty" "$PREVIOUS_STATE" 2>/dev/null || true
+}
+
+if [ "${1:-}" = --logout ]; then
+	management_url=$(uci_get management_url)
+	management_url=${management_url:-https://192.168.225.1}
+	"$CURL" -ksS --connect-timeout 2 --max-time 5 \
+		--data-urlencode 'type=close' --data-urlencode 'timeout=300' \
+		"$management_url/cgi-bin/qcmap_auth" >/dev/null 2>&1 || true
+	rm -f "$COOKIE_JAR" "$TOKEN_FILE"
+	exit 0
+fi
+
+bus=$(find_bus || true)
+if [ -z "$bus" ]; then
+	printf '%s\n' '{"present":false}'
+	exit 0
+fi
+
+enabled=$(uci_get enabled)
+[ "${enabled:-1}" = 1 ] || {
+	printf '%s\n' '{"present":false}'
+	exit 0
+}
+
+mode=$(uci_get mode)
+mode=${mode:-ecm}
+apn=$(uci_get apn)
+apn=${apn:-}
+management_url=$(uci_get management_url)
+management_url=${management_url:-https://192.168.225.1}
+username=$(uci_get username)
+username=${username:-admin}
+password_cipher=$(uci_get password_cipher)
+if [ -z "$password_cipher" ]; then
+	password=$(uci_get password)
+	[ -z "$password" ] || password_cipher=$(printf '%s' "$password" | "$XXTEA" 2>/dev/null || true)
+fi
+
+connected=false
+interface=usb0
+if [ "$mode" = ecm ]; then
+	status=$("$UBUS" call network.interface.tethering status 2>/dev/null || printf '%s' '{}')
+	[ "$(printf '%s' "$status" | "$JQ" -r '.up // false')" = true ] && connected=true
+	interface=$(printf '%s' "$status" | "$JQ" -r '.l3_device // .device // "usb0"')
+fi
+
+rx=0
+tx=0
+[ -r "$SYS_NET/$interface/statistics/rx_bytes" ] && rx=$(cat "$SYS_NET/$interface/statistics/rx_bytes")
+[ -r "$SYS_NET/$interface/statistics/tx_bytes" ] && tx=$(cat "$SYS_NET/$interface/statistics/tx_bytes")
+traffic_total=$((rx + tx))
+
+home='{}'
+serving='{}'
+band_info='{}'
+sim_status='{}'
+sim_imsi='{}'
+sim_msisdn='{}'
+sim_iccid='{}'
+module_ver='{}'
+apn_profile='{}'
+
+if [ "$mode" = ecm ] && [ -n "$password_cipher" ]; then
+	if [ ! -r "$TOKEN_FILE" ]; then
+		api_login "$management_url" "$username" "$password_cipher" || true
+	fi
+	home=$(api_call "$management_url" GetHomePageInfo 2>/dev/null || printf '%s' '{}')
+	if ! valid_api_response "$home"; then
+		api_login "$management_url" "$username" "$password_cipher" || true
+		home=$(api_call "$management_url" GetHomePageInfo 2>/dev/null || printf '%s' '{}')
+	fi
+	if valid_api_response "$home"; then
+		serving=$(api_call "$management_url" GetServingInfo 2>/dev/null || printf '%s' '{}')
+		band_info=$(api_call "$management_url" GetBandInfo 2>/dev/null || printf '%s' '{}')
+		sim_status=$(api_call "$management_url" GetSimCardStatus 2>/dev/null || printf '%s' '{}')
+		sim_imsi=$(api_call "$management_url" GetSimIMSI 2>/dev/null || printf '%s' '{}')
+		sim_msisdn=$(api_call "$management_url" GetSimMSISDN 2>/dev/null || printf '%s' '{}')
+		sim_iccid=$(api_call "$management_url" GetSimICCID 2>/dev/null || printf '%s' '{}')
+		module_ver=$(api_call "$management_url" GetModuleVer 2>/dev/null || printf '%s' '{}')
+		apn_profile=$(api_call "$management_url" GetApnProfile 2>/dev/null || printf '%s' '{}')
+	fi
+fi
+
+lte_dbm=$(printf '%s' "$home" | "$JQ" -r '.network_signal_strength_lte // 0' 2>/dev/null || printf '%s' 0)
+nr_dbm=$(printf '%s' "$home" | "$JQ" -r '.network_signal_strength_nr5g // 0' 2>/dev/null || printf '%s' 0)
+lte_dbm=$(normalize_dbm "$lte_dbm")
+nr_dbm=$(normalize_dbm "$nr_dbm")
+signal_dbm=$lte_dbm
+[ "$nr_dbm" != 0 ] && [ "$nr_dbm" != -255 ] && signal_dbm=$nr_dbm
+strength=$(signal_level "$signal_dbm")
+
+operator=$(printf '%s' "$serving" | "$JQ" -r '.operator_name // empty' 2>/dev/null || true)
+mcc=$(printf '%s' "$serving" | "$JQ" -r '.mcc // empty' 2>/dev/null || true)
+mnc=$(printf '%s' "$serving" | "$JQ" -r '.mnc // empty' 2>/dev/null || true)
+# RXMG1.20.00.326_0R19 reports these two fields in reverse.  Swap when the
+# value labelled MNC is Canada's 302 MCC; leave other firmware untouched.
+if [ "$mnc" = 302 ] && [ "$mcc" != 302 ]; then
+	tmp_plmn=$mcc
+	mcc=$mnc
+	mnc=$tmp_plmn
+fi
+[ -n "$operator" ] || {
+	case "$mcc-$mnc" in
+	302-220) operator=TELUS ;;
+	302-610) operator=Bell ;;
+	302-720) operator=Rogers ;;
+	?*-?*) operator="PLMN $mcc-$mnc" ;;
+	esac
+}
+band=$(printf '%s' "$band_info" | "$JQ" -r \
+	'[.nr5g_band, .band] | map(select(. != null and . != "")) | join(", ")' \
+	2>/dev/null || true)
+channel=$(printf '%s' "$band_info" | "$JQ" -r '.channel // empty' 2>/dev/null || true)
+version=$(printf '%s' "$module_ver" | "$JQ" -r '.get_module_ver // empty' 2>/dev/null || true)
+imsi=$(printf '%s' "$sim_imsi" | "$JQ" -r '.get_sim_card_imsi // empty' 2>/dev/null || true)
+phone=$(printf '%s' "$sim_msisdn" | "$JQ" -r '.get_sim_card_msisdn // empty' 2>/dev/null || true)
+iccid=$(printf '%s' "$sim_iccid" | "$JQ" -r '.get_sim_card_iccid // empty' 2>/dev/null || true)
+card=$(printf '%s' "$sim_status" | "$JQ" -r '.get_sim_card_status // empty' 2>/dev/null || true)
+api_apn=$(printf '%s' "$apn_profile" | "$JQ" -r '.apn_name // empty' 2>/dev/null || true)
+[ -n "$apn" ] || apn=$api_apn
+[ -n "$apn" ] || apn=$(previous_value '.sim_status.apn')
+
+[ -n "$operator" ] || operator=$(previous_value '.telemetry.operator')
+[ -n "$mcc" ] || mcc=$(previous_value '.sim_info.mcc')
+[ -n "$mnc" ] || mnc=$(previous_value '.sim_info.mnc')
+[ -n "$band" ] || band=$(previous_value '.telemetry.band')
+[ -n "$channel" ] || channel=$(previous_value '.telemetry.channel')
+[ -n "$version" ] || version=$(previous_value '.modem_info.version')
+[ -n "$imsi" ] || imsi=$(previous_value '.sim_info.imsi')
+[ -n "$phone" ] || phone=$(previous_value '.sim_info.phone_number')
+[ -n "$iccid" ] || iccid=$(previous_value '.sim_info.iccid')
+
+technology=4
+case "$band" in *NR5G*|*NR\ *) technology=5 ;; esac
+sim_state=0
+case "$card" in *READY*|*Ready*|*ready*) sim_state=2 ;; esac
+[ -n "$card" ] || sim_state=$(previous_value '.sim_status.status')
+case "$sim_state" in ''|*[!0-9]*) sim_state=0 ;; esac
+[ "$connected" = true ] && [ "$sim_state" -eq 0 ] && sim_state=2
+network_state=2
+[ "$connected" = true ] && network_state=0
+carrier=$operator
+if [ -n "$band" ]; then
+	carrier="${carrier:+$carrier · }$band"
+fi
+
+"$JQ" -n \
+	--arg bus "$bus" --arg mode "$mode" --arg interface "$interface" \
+	--arg apn "$apn" --arg operator "$operator" --arg carrier "$carrier" \
+	--arg mcc "$mcc" --arg mnc "$mnc" --arg band "$band" \
+	--arg channel "$channel" --arg version "$version" --arg imsi "$imsi" \
+	--arg phone "$phone" --arg iccid "$iccid" --arg lte_dbm "$lte_dbm" \
+	--arg nr_dbm "$nr_dbm" --argjson connected "$connected" \
+	--argjson strength "$strength" --argjson technology "$technology" \
+	--argjson sim_state "$sim_state" --argjson network_state "$network_state" \
+	--arg traffic_total "$traffic_total" '
+{
+  present: true,
+  generated_at: now | floor,
+  mode: $mode,
+  bus: $bus,
+  telemetry: {
+    operator: $operator,
+    band: $band,
+    channel: $channel,
+    lte_dbm: $lte_dbm,
+    nr5g_dbm: $nr_dbm
+  },
+  modem_info: {
+    bus: $bus,
+    name: "VOS 5G (MV31-W)",
+    version: $version,
+    vendor: "Qualcomm",
+    sim_slot_num: 1,
+    standby_type: 0,
+    type: 1,
+    mtu_need_sync: 0,
+    support_pin_count: false,
+    offline_doc: false,
+    devices: [$interface],
+    protocols: [$mode],
+    imei: [],
+    supports_ip_type: [
+      {label: "IPv4&IPv6", value: 0},
+      {label: "IPv4", value: 1},
+      {label: "IPv6", value: 2}
+    ],
+    signal_support: true,
+    sms_support: false,
+    lock_tower_support: false,
+    lock_carrier_support: false,
+    network_type_support: false,
+    supports_rrc_seg: false
+  },
+  modem_status: {
+    bus: $bus,
+    status: 0,
+    current_sim_slot: "1",
+    slot_switch_status: 0,
+    slot_switch_count: 0
+  },
+  sim_info: {
+    slot: "1",
+    bus: $bus,
+    iccid: $iccid,
+    imsi: $imsi,
+    mcc: $mcc,
+    mnc: $mnc,
+    phone_number: $phone
+  },
+  sim_status: {
+    slot: "1",
+    bus: $bus,
+    iccid: $iccid,
+    carrier: $carrier,
+    status: $sim_state,
+    strength: $strength,
+    type: 0,
+    technology: $technology,
+    apn: $apn
+  },
+  network_info: {
+    bus: $bus,
+    slot: "1",
+    mtu_sync: 0,
+    ip_type: 0,
+    network_mode: "AUTO",
+    network_interface: $interface
+  },
+  network_status: {
+    bus: $bus,
+    status: $network_state,
+    traffic_total: $traffic_total,
+    slot: "1",
+    callcode: 0,
+    calltype: 0,
+    dial_status: 0
+  }
+}'

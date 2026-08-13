@@ -6,7 +6,7 @@
 
 `gl-modem-community` adds community modem definitions and compatibility drivers to the cellular stack included in GL.iNet firmware. It keeps the stock web UI, mobile app backend, JSON-RPC and ubus interfaces, and built-in modem definitions.
 
-The first driver targets the Fibocom FM350-GL on a GL.iNet GL-MT3000 (Beryl AX). The package depends on GL.iNet's proprietary cellular services and does not replace them, so it is not a modem manager for vanilla OpenWrt.
+The first driver targets the Fibocom FM350-GL on a GL.iNet GL-MT3000 (Beryl AX). An additional adapter exposes the VOS 5G/MV31-W (`05c6:9064`) in the stock Cellular card on a GL.iNet GL-BE3600 (Slate 7). The package depends on GL.iNet's proprietary cellular services and does not replace them, so it is not a modem manager for vanilla OpenWrt.
 
 > [!WARNING]
 > This project is still experimental. The FM350-GL is detected and visible in the GL.iNet interfaces, but the complete data-session and recovery test matrix has not passed yet.
@@ -37,6 +37,7 @@ A package that builds against an SDK has not necessarily been tested on firmware
 | Firmware scope | Package format | Build status | Hardware status |
 | --- | --- | --- | --- |
 | GL.iNet OpenWrt 25 on GL-MT3000 | APK | Builds with the pinned OpenWrt 25.12.5 MediaTek Filogic SDK | Partially tested with FM350-GL |
+| GL.iNet 4.9.0 on GL-BE3600 | Userspace-only IPK source; release artifact not yet installed | Build pending in CI | ECM status/UI tested with VOS 5G `05c6:9064` |
 | GL.iNet OEM or OpenWrt 24 on GL-MT3000 | IPK | Builds with the pinned OpenWrt 24.10.7 MediaTek Filogic SDK | Not tested |
 | Other GL.iNet routers | Target-specific package required | Not built | Not tested |
 | Vanilla OpenWrt | Not applicable | GL.iNet cellular services are absent | Not supported |
@@ -58,6 +59,18 @@ The following behavior still needs hardware testing:
 - installation and runtime behavior on current GL.iNet OEM and OpenWrt 24 firmware;
 - regression testing with a modem already supported by GL.iNet.
 
+The VOS 5G hardware run on GL-BE3600 verified:
+
+- USB product `05c6:9064`, configuration 2 ECM, interface `usb0`;
+- an existing ECM DHCP/NAT data session remained online while the adapter ran;
+- the stock GL.iNet 4.9.0 Internet page rendered a supported external Cellular card;
+- live operator, NR/LTE band, signal level, firmware version, SIM state, APN, traffic, and connect state reached the stock websocket schemas;
+- the stock SIM settings dialog read the VOS APN through the USB-ID-specific RPC driver;
+- stopping the adapter restored the stock websocket file and left ECM online;
+- the stock Cellular Disconnect/Connect buttons took the ECM interface down and back up, restored DHCP, and passed an interface-bound connectivity check.
+
+Direct QMI data-session control in USB configuration 1 and MBIM in configuration 3 remain unverified. See [VOS 5G adapter](docs/vos5g.md).
+
 See the [hardware validation plan](docs/validation-plan.md) for the full test matrix.
 
 ## Hardware evidence
@@ -67,6 +80,10 @@ The screenshots below show the FM350-GL in the GL.iNet admin panel and mobile ap
 | GL.iNet admin panel | GL.iNet mobile app |
 | --- | --- |
 | ![GL-MT3000 admin panel showing the FM350-GL cellular connection](docs/images/gl-mt3000-fm350-admin-panel.png) | ![GL.iNet mobile app showing the enabled FM350-GL modem](docs/images/gl-mt3000-fm350-mobile-app.png) |
+
+The following redacted GL-BE3600 screenshot shows the VOS adapter alongside the unchanged ECM tethering data session. The second card is the injected stock Cellular view; no frontend assets were modified.
+
+![GL-BE3600 stock admin panel showing the VOS 5G Cellular adapter](docs/images/gl-be3600-vos5g-cellular.png)
 
 ## Install the current release
 
@@ -249,6 +266,29 @@ logread | grep -E 'FM350 modem_AT compatibility|modem_AT: Bus:|SIM INSERT|CGDCON
 
 A detected SIM does not prove that the data session works. Confirm that the cellular interface has its own address, route, and DNS configuration. An address on the Wi-Fi repeater interface, usually `wwan` or `sta0`, is unrelated.
 
+## Configure and verify VOS 5G
+
+The VOS adapter defaults to the conservative ECM mode. Set the VOS web password locally so the poller can read band and SIM state. The password is converted with the same XXTEA routine as the VOS login page and is not embedded in the package or pull request.
+
+```sh
+uci set gl_modem_community.vos5g.enabled='1'
+uci set gl_modem_community.vos5g.mode='ecm'
+uci set gl_modem_community.vos5g.username='admin'
+uci set gl_modem_community.vos5g.password='your VOS web password'
+uci commit gl_modem_community
+/etc/init.d/gl_modem_community restart
+```
+
+Verify the reversible websocket overlay and redacted live state:
+
+```sh
+mount | grep /usr/share/gl-ngx/websocket/cellular.lua
+jq '{present,mode,bus,telemetry,sim_status:{carrier,status,strength,technology,apn},network_status}' \
+  /var/run/gl-modem-community/vos5g-state.json
+```
+
+In ECM mode the VOS continues to own cellular registration, PDP activation, and its first NAT layer. The GL router still routes/NATs from its LAN to the ECM DHCP interface. The stock Internet page therefore shows the original Tethering data card plus a VOS Cellular management card. `Connect` and `Disconnect` on the Cellular card call the existing `tethering` netifd interface. See [the VOS adapter notes](docs/vos5g.md) before changing USB composition.
+
 ## Remove the package
 
 For APK:
@@ -277,6 +317,7 @@ Stopping or removing the package unmounts its runtime overlays and restores the 
 | `files/usr/share/gl-modem-community/drivers.d/*.json` | Adds modem definitions to the runtime model table |
 | `files/lib/netifd/proto/*.sh` and `files/etc/gcom/*.gcom` | Adds a data protocol when the stock firmware does not provide one |
 | `files/usr/share/gl-modem-community/rpc-drivers/*.lua` | Handles selected stock RPC methods for a specific USB ID |
+| `files/usr/share/gl-modem-community/websocket/cellular.lua` | Adds VOS state to the six stock Cellular websocket collections while preserving other entries |
 | `files/usr/libexec/gl-modem-community/` | Contains modem-specific compatibility helpers |
 | `files/etc/init.d/gl_modem_community` | Builds and mounts the runtime model table before the stock cellular manager starts |
 

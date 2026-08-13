@@ -15,6 +15,8 @@ mkdir -p "$tmp/bin" "$tmp/runtime"
 printf '%s\n' '{"modems":[]}' >"$tmp/modem-list.json"
 printf '%s\n' '#!/bin/sh' >"$tmp/modem_AT"
 printf '%s\n' '#!/bin/sh' >"$tmp/modem_AT-wrapper"
+printf '%s\n' 'return {}' >"$tmp/cellular.lua"
+printf '%s\n' 'return {}' >"$tmp/cellular-wrapper.lua"
 
 cat >"$tmp/bin/cp" <<'EOF'
 #!/bin/sh
@@ -84,6 +86,9 @@ MERGED_LIST="$tmp/runtime/modem-list.json"
 MODEM_AT="$tmp/modem_AT"
 STOCK_MODEM_AT="$tmp/runtime/modem_AT.stock"
 MODEM_AT_WRAPPER="$tmp/modem_AT-wrapper"
+CELLULAR_WS="$tmp/cellular.lua"
+STOCK_CELLULAR_WS="$tmp/runtime/cellular.stock.lua"
+CELLULAR_WS_WRAPPER="$tmp/cellular-wrapper.lua"
 NETWORK_REPAIR="$tmp/bin/network-repair"
 MERGE_MODELS="$tmp/bin/merge-models"
 PROC_MOUNTS="$tmp/mounts"
@@ -97,7 +102,8 @@ LEGACY_BUS_TEST_LOG="$tmp/legacy-bus.log"
 MERGE_SHOULD_FAIL=1
 export RUNTIME_DIR STACK_FILE RUNTIME_STACK LEGACY_BUS
 export STOCK_LIST MERGED_LIST MODEM_AT STOCK_MODEM_AT
-export MODEM_AT_WRAPPER NETWORK_REPAIR MERGE_MODELS PROC_MOUNTS
+export MODEM_AT_WRAPPER CELLULAR_WS STOCK_CELLULAR_WS CELLULAR_WS_WRAPPER
+export NETWORK_REPAIR MERGE_MODELS PROC_MOUNTS
 export CP_BIN MOUNT_BIN UMOUNT_BIN MOUNT_TEST_LOG MERGE_TEST_LOG REPAIR_TEST_LOG
 export LEGACY_BUS_TEST_LOG
 ENSURE_OPTION_IDS="$tmp/bin/ensure-option-ids"
@@ -149,3 +155,5 @@ test ! -s "$tmp/mounts"
 grep -Fx -- '--restore' "$tmp/repair.log" >/dev/null
 grep -Fx "umount $STOCK_LIST" "$tmp/mount.log" >/dev/null
 grep -Fx "umount $MODEM_AT" "$tmp/mount.log" >/dev/null
+grep -Fx "mount -o bind $CELLULAR_WS_WRAPPER $CELLULAR_WS" "$tmp/mount.log" >/dev/null
+grep -Fx "umount $CELLULAR_WS" "$tmp/mount.log" >/dev/null

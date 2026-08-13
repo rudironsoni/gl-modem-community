@@ -19,10 +19,15 @@ shellcheck -S warning -e SC1091,SC2034,SC3043 /repo/tests/*.sh \
 		/repo/package/gl-modem-community/files/usr/libexec/gl-modem-community/runtime-stack \
 		/repo/package/gl-modem-community/files/usr/libexec/gl-modem-community/legacy-bus \
 		/repo/package/gl-modem-community/files/usr/libexec/gl-modem-community/fm350-at \
+		/repo/package/gl-modem-community/files/usr/libexec/gl-modem-community/vos5g-control \
+		/repo/package/gl-modem-community/files/usr/libexec/gl-modem-community/vos5g-xxtea \
+		/repo/package/gl-modem-community/files/usr/libexec/gl-modem-community/vos5g-state \
+		/repo/package/gl-modem-community/files/usr/libexec/gl-modem-community/vos5g-state-poller \
 		/repo/package/gl-modem-community/files/etc/hotplug.d/usb/99-gl-modem-community \
 		/repo/package/gl-modem-community/files/lib/netifd/proto/xmm.sh
     actionlint /repo/.github/workflows/*.yml
     jq -e ".modems | length == 2" /repo/package/gl-modem-community/files/usr/share/gl-modem-community/drivers.d/fm350.json >/dev/null
+    test "$(/repo/package/gl-modem-community/files/usr/libexec/gl-modem-community/vos5g-xxtea admin)" = "PSGavHQ/LnB2KHjZ"
     /repo/tests/test-sbom.sh
     /repo/tests/test-signing-key.sh
 '
@@ -47,6 +52,7 @@ run_test "$REPO_DIR/tests/test-firmware-channels.sh"
 run_test "$REPO_DIR/tests/test-runtime-stack.sh"
 run_test "$REPO_DIR/tests/test-legacy-bus.sh"
 run_test "$REPO_DIR/tests/test-fm350-at.sh"
+run_test "$REPO_DIR/tests/test-vos5g-state.sh"
 
 tmp=$(mktemp -d "${TMPDIR:-/tmp}/gl-modem-community-test.XXXXXX")
 trap 'rm -rf "$tmp"' EXIT INT TERM

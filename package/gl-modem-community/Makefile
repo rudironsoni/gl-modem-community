@@ -17,7 +17,7 @@ define Package/gl-modem-community
   TITLE:=Community modem drivers for GL.iNet firmware
   # Runtime-only dependencies. EXTRA_DEPENDS keeps this architecture-independent
   # package from rebuilding the SDK's complete kernel package set.
-  EXTRA_DEPENDS:=comgt (>=0), flock (>=0), jq (>=0), kmod-usb-acm (>=0), kmod-usb-serial-option (>=0), kmod-usb-net-rndis (>=0)
+  EXTRA_DEPENDS:=comgt (>=0), curl (>=0), flock (>=0), jq (>=0), kmod-usb-acm (>=0), kmod-usb-serial-option (>=0), kmod-usb-net-rndis (>=0)
 endef
 
 define Package/gl-modem-community/description
@@ -90,12 +90,19 @@ define Package/gl-modem-community/install
 	$(INSTALL_BIN) ./files/usr/libexec/gl-modem-community/legacy-bus $(1)/usr/libexec/gl-modem-community/legacy-bus
 	$(INSTALL_BIN) ./files/usr/libexec/gl-modem-community/ensure-option-ids $(1)/usr/libexec/gl-modem-community/ensure-option-ids
 	$(INSTALL_BIN) ./files/usr/libexec/gl-modem-community/fm350-at $(1)/usr/libexec/gl-modem-community/fm350-at
+	$(INSTALL_BIN) ./files/usr/libexec/gl-modem-community/vos5g-control $(1)/usr/libexec/gl-modem-community/vos5g-control
+	$(INSTALL_BIN) ./files/usr/libexec/gl-modem-community/vos5g-xxtea $(1)/usr/libexec/gl-modem-community/vos5g-xxtea
+	$(INSTALL_BIN) ./files/usr/libexec/gl-modem-community/vos5g-state $(1)/usr/libexec/gl-modem-community/vos5g-state
+	$(INSTALL_BIN) ./files/usr/libexec/gl-modem-community/vos5g-state-poller $(1)/usr/libexec/gl-modem-community/vos5g-state-poller
 	$(INSTALL_DIR) $(1)/usr/lib/gl-modem-community
 	$(INSTALL_DATA) $(PKG_BUILD_DIR)/fm350-at-compat.so $(1)/usr/lib/gl-modem-community/fm350-at-compat.so
 	$(INSTALL_DIR) $(1)/usr/share/gl-modem-community/drivers.d
 	$(INSTALL_DATA) ./files/usr/share/gl-modem-community/drivers.d/fm350.json $(1)/usr/share/gl-modem-community/drivers.d/fm350.json
 	$(INSTALL_DIR) $(1)/usr/share/gl-modem-community/rpc-drivers
 	$(INSTALL_DATA) ./files/usr/share/gl-modem-community/rpc-drivers/fm350.lua $(1)/usr/share/gl-modem-community/rpc-drivers/fm350.lua
+	$(INSTALL_DATA) ./files/usr/share/gl-modem-community/rpc-drivers/vos5g.lua $(1)/usr/share/gl-modem-community/rpc-drivers/vos5g.lua
+	$(INSTALL_DIR) $(1)/usr/share/gl-modem-community/websocket
+	$(INSTALL_DATA) ./files/usr/share/gl-modem-community/websocket/cellular.lua $(1)/usr/share/gl-modem-community/websocket/cellular.lua
 endef
 
 $(eval $(call BuildPackage,gl-modem-community))

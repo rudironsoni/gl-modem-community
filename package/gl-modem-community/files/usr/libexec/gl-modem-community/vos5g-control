@@ -1,0 +1,21 @@
+#!/bin/sh
+# SPDX-License-Identifier: GPL-3.0-only
+set -eu
+
+action=${1:-}
+mode=$(uci -q get gl_modem_community.vos5g.mode || printf '%s' ecm)
+
+case "$mode:$action" in
+ecm:connect)
+	ubus call network.interface.tethering up >/dev/null
+	printf '%s\n' '{}'
+	;;
+ecm:disconnect)
+	ubus call network.interface.tethering down >/dev/null
+	printf '%s\n' '{}'
+	;;
+*:*)
+	logger -t gl-modem-community "VOS 5G action $action is unsupported in mode $mode"
+	exit 1
+	;;
+esac

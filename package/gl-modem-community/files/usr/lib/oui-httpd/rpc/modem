@@ -55,7 +55,10 @@ local function dispatch(method, args)
     if id then
         for _, driver in ipairs(drivers) do
             if driver.usb_ids and driver.usb_ids[id] and driver.methods[method] then
-                return driver.methods[method](args)
+                local result = driver.methods[method](args)
+                -- A driver can decline a method at runtime (for example while
+                -- its optional state service is stopped) by returning nil.
+                if result ~= nil then return result end
             end
         end
     end

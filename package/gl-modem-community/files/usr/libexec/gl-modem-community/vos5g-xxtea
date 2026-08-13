@@ -1,0 +1,89 @@
+#!/usr/bin/lua5.1
+-- SPDX-License-Identifier: GPL-3.0-only
+-- XXTEA encoder compatible with the VOS web UI's xxtea.js login routine.
+
+local bit = require "bit"
+
+local password = arg[1] or io.read("*a") or ""
+local key_string = arg[2] or "O2xiAxil09"
+
+local function words(bytes, include_length)
+    local count = math.floor((#bytes + 3) / 4)
+    local out = {}
+    for i = 0, count - 1 do
+        local value = 0
+        for offset = 0, 3 do
+            local byte = bytes:byte(i * 4 + offset + 1) or 0
+            value = bit.bor(value, bit.lshift(byte, offset * 8))
+        end
+        out[i + 1] = bit.tobit(value)
+    end
+    if include_length then out[count + 1] = #bytes end
+    return out
+end
+
+local function fixed_key(bytes)
+    local value = words(bytes, false)
+    while #value < 4 do value[#value + 1] = 0 end
+    return value
+end
+
+local function mx(sum, y, z, p, e, key)
+    local a = bit.tobit(bit.bxor(bit.rshift(z, 5), bit.lshift(y, 2)) +
+        bit.bxor(bit.rshift(y, 3), bit.lshift(z, 4)))
+    local index = bit.bxor(bit.band(p, 3), e) + 1
+    local b = bit.tobit(bit.bxor(sum, y) + bit.bxor(key[index], z))
+    return bit.bxor(a, b)
+end
+
+local function encrypt(data, key)
+    if data == "" then return "" end
+    local value = words(data, true)
+    local n = #value - 1
+    local z = value[n + 1]
+    local sum = 0
+    local delta = bit.tobit(0x9e3779b9)
+    local rounds = math.floor(6 + 52 / #value)
+    for _ = 1, rounds do
+        sum = bit.tobit(sum + delta)
+        local e = bit.band(bit.rshift(sum, 2), 3)
+        for p = 0, n - 1 do
+            local y = value[p + 2]
+            value[p + 1] = bit.tobit(value[p + 1] + mx(sum, y, z, p, e, key))
+            z = value[p + 1]
+        end
+        local y = value[1]
+        value[n + 1] = bit.tobit(value[n + 1] + mx(sum, y, z, n, e, key))
+        z = value[n + 1]
+    end
+
+    local bytes = {}
+    for _, word in ipairs(value) do
+        for offset = 0, 3 do
+            bytes[#bytes + 1] = string.char(bit.band(bit.rshift(word, offset * 8), 0xff))
+        end
+    end
+    return table.concat(bytes)
+end
+
+local alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
+local function base64(data)
+    local out = {}
+    for pos = 1, #data, 3 do
+        local a = data:byte(pos) or 0
+        local b = data:byte(pos + 1) or 0
+        local c = data:byte(pos + 2) or 0
+        local value = a * 65536 + b * 256 + c
+        local i1 = math.floor(value / 262144) % 64 + 1
+        local i2 = math.floor(value / 4096) % 64 + 1
+        local i3 = math.floor(value / 64) % 64 + 1
+        local i4 = value % 64 + 1
+        out[#out + 1] = alphabet:sub(i1, i1)
+        out[#out + 1] = alphabet:sub(i2, i2)
+        out[#out + 1] = pos + 1 <= #data and alphabet:sub(i3, i3) or "="
+        out[#out + 1] = pos + 2 <= #data and alphabet:sub(i4, i4) or "="
+    end
+    return table.concat(out)
+end
+
+io.write(base64(encrypt(password, fixed_key(key_string))), "\n")
