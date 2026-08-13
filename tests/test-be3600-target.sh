@@ -26,6 +26,8 @@ grep -Fq 'target: package-be3600' "$ci"
 grep -Fq 'gl-be3600-4.9_aarch64_cortex-a53_neon-vfpv4.ipk' "$release"
 grep -Fq 'feed/23.05-be3600' "$release"
 grep -Fq 'feed/23.05-be3600' "$readme"
+grep -Fq 'Dedicated target uses the pinned OpenWrt 23.05.5 IPQ807x userspace ABI surrogate' "$readme"
+! grep -Fq 'CI verification pending' "$readme"
 
 grep -Fq 'GL.iNet version | `4.9.0 release2 build 1036`' "$evidence"
 grep -Fq 'Firmware date | `2026-06-23 21:10:38`' "$evidence"

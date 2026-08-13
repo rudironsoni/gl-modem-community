@@ -39,7 +39,7 @@ A package that builds against an SDK has not necessarily been tested on firmware
 | --- | --- | --- | --- |
 | GL.iNet OpenWrt 25 on GL-MT3000 | APK | Builds with the pinned OpenWrt 25.12.5 MediaTek Filogic SDK | Partially tested with FM350-GL |
 | GL.iNet OEM or OpenWrt 24 on GL-MT3000 | IPK | Builds with the pinned OpenWrt 24.10.7 MediaTek Filogic SDK | Not tested |
-| GL.iNet 4.9.0 release2 build 1036 on GL-BE3600 | IPK | Dedicated target uses the pinned OpenWrt 23.05.5 IPQ807x userspace ABI surrogate; CI verification pending | VOS 5G data session verified; stock-supported modem and FM350-GL not tested |
+| GL.iNet 4.9.0 release2 build 1036 on GL-BE3600 | IPK | Dedicated target uses the pinned OpenWrt 23.05.5 IPQ807x userspace ABI surrogate | VOS 5G data session verified; stock-supported modem and FM350-GL not tested |
 | Other GL.iNet routers | Target-specific package required | Not built | Not tested |
 | Vanilla OpenWrt | Not applicable | GL.iNet cellular services are absent | Not supported |
 
