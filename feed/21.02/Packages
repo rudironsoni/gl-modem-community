@@ -6,6 +6,6 @@ Section: net
 Category: Network
 Maintainer: Rudimar Ronsoni <rudironsoni@users.noreply.github.com>
 Architecture: aarch64_cortex-a53
-Size: 16053
+Size: 24917
 Filename: gl-modem-community_0.2.14-1_glinet-21.02_aarch64_cortex-a53.ipk
 Description: Community modem definitions and compatibility drivers for GL.iNet firmware
