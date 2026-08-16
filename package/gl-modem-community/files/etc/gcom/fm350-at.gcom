@@ -5,5 +5,12 @@ set senddelay 0.02
 waitquiet 0.2 0.2
 send $env("AT_COMMAND")
 send "^m"
-get 5 "" $s
+:read
+get 2 "^m" $s
 print $s
+if % = -1 goto done
+if $s = "OK" goto done
+if $s = "ERROR" goto done
+if $s = "+CME ERROR:" goto done
+goto read
+:done

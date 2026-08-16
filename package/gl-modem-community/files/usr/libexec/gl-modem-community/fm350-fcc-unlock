@@ -1,0 +1,67 @@
+#!/bin/sh
+# SPDX-License-Identifier: GPL-3.0-only
+set -eu
+
+USB_DEVICES_ROOT=${USB_DEVICES_ROOT:-/sys/bus/usb/devices}
+LEGACY_AT_BIN=${LEGACY_AT_BIN:-/usr/libexec/gl-modem-community/fm350-at}
+LOGGER_BIN=${LOGGER_BIN:-logger}
+STAMP_DIR=${STAMP_DIR:-/var/run/gl-modem-community}
+SLEEP_BIN=${SLEEP_BIN:-sleep}
+
+log() {
+	"$LOGGER_BIN" -t gl-modem-community "fm350-fcc-unlock: $*"
+}
+
+status_locked() {
+	case "$1" in
+	*'+GTFCCEFFSTATUS: 2,'*|*'+GTFCCEFFSTATUS:2,'*)
+		return 0
+		;;
+	esac
+	return 1
+}
+
+unlock_bus() {
+	local bus=$1 stamp auth output
+	stamp=$STAMP_DIR/fcc-$bus
+	[ ! -e "$stamp" ] || {
+		log "skipping bus=$bus; unlock already attempted"
+		return 0
+	}
+
+	output=$("$LEGACY_AT_BIN" "$bus" 'AT+GTFCCEFFSTATUS?' 2>/dev/null) || {
+		log "status query failed bus=$bus"
+		return 1
+	}
+	if ! status_locked "$output"; then
+		log "bus=$bus not FCC-locked"
+		return 0
+	fi
+
+	mkdir -p "$STAMP_DIR"
+	printf '%s\n' locked >"$stamp"
+
+	"$LEGACY_AT_BIN" "$bus" 'AT+GTFCCLOCKMODE=0' >/dev/null 2>&1 || {
+		log "GTFCCLOCKMODE=0 failed bus=$bus"
+		return 1
+	}
+
+	auth=$USB_DEVICES_ROOT/$bus/authorized
+	if [ -w "$auth" ]; then
+		printf '%s\n' 0 >"$auth"
+		"$SLEEP_BIN" 1
+		printf '%s\n' 1 >"$auth"
+		log "power-cycled USB bus=$bus after FCC unlock"
+	else
+		log "authorized node missing for bus=$bus; unlock command sent"
+	fi
+}
+
+for path in "$USB_DEVICES_ROOT"/*; do
+	[ -r "$path/idVendor" ] && [ "$(cat "$path/idVendor")" = 0e8d ] || continue
+	case "$(cat "$path/idProduct" 2>/dev/null || true)" in
+	7126|7127) ;;
+	*) continue ;;
+	esac
+	unlock_bus "${path##*/}" || true
+done

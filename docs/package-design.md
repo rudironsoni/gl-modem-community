@@ -30,7 +30,9 @@ flowchart LR
 - `/lib/netifd/proto/xmm.sh` uses `comgt` for discovery and connection. Its UCI inputs are `device`, `apn`, `pdp`, `delay`, `pincode`, `username`, `password`, `auth`, `profile`, `maxfail`, and optional address and interface overrides.
 - The GCOM scripts issue the public `CGAUTH`, `CGDCONT`, `CGACT`, `CGPADDR`, and `GTDNS` commands and return an error when an AT command fails.
 - The extensionless Lua `modem` RPC file preserves the confirmed stock method names. A community handler can answer only for its configured USB IDs. All other calls use the stock `.so` path.
-- `rpc-drivers/fm350.lua` does not override any methods yet because the exact live method schemas have not been captured.
+- `rpc-drivers/fm350.lua` implements `get_info`, `get_status`, `set_connect`, `disconnect`, `get_sim_config`, and `set_sim_config` for FM350 USB IDs. `get_info`/`get_status` also emit `simsStatus` with `type=1` and `status=2` so the 4.9.x Cellular eSIM gate can light up when that payload is consumed.
+- `fm350-esim-sdk` serves `POST /sdk/v1` on `127.0.0.1:3456`. Nginx `conf.d/gl-modem-community-esim.conf` proxies `/sdk/v1` to that daemon.
+- On the legacy 4.8.1 stack, `start_legacy` installs `menu.d/esim.json` and `/www/views/gl-sdk4-ui-esim.common.js`. The view is a clean-room copy of the 4.9.x eSIM Management layout. It is not the stock 4.9.x internet bundle.
 
 ## Failure and rollback behavior
 

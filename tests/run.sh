@@ -19,6 +19,9 @@ shellcheck -S warning -e SC1091,SC2034,SC3043 /repo/tests/*.sh \
 		/repo/package/gl-modem-community/files/usr/libexec/gl-modem-community/runtime-stack \
 		/repo/package/gl-modem-community/files/usr/libexec/gl-modem-community/legacy-bus \
 		/repo/package/gl-modem-community/files/usr/libexec/gl-modem-community/fm350-at \
+		/repo/package/gl-modem-community/files/usr/libexec/gl-modem-community/fm350-port \
+		/repo/package/gl-modem-community/files/usr/libexec/gl-modem-community/fm350-fcc-unlock \
+		/repo/package/gl-modem-community/files/usr/libexec/gl-modem-community/fm350-esim-sdk \
 		/repo/package/gl-modem-community/files/etc/hotplug.d/usb/99-gl-modem-community \
 		/repo/package/gl-modem-community/files/lib/netifd/proto/xmm.sh
     actionlint /repo/.github/workflows/*.yml
@@ -47,6 +50,15 @@ run_test "$REPO_DIR/tests/test-firmware-channels.sh"
 run_test "$REPO_DIR/tests/test-runtime-stack.sh"
 run_test "$REPO_DIR/tests/test-legacy-bus.sh"
 run_test "$REPO_DIR/tests/test-fm350-at.sh"
+run_test "$REPO_DIR/tests/test-fm350-port.sh"
+run_test "$REPO_DIR/tests/test-hotplug-product.sh"
+run_test "$REPO_DIR/tests/test-fm350-fcc-unlock.sh"
+run_test "$REPO_DIR/tests/test-xmm-available.sh"
+run_test "$REPO_DIR/tests/test-fm350-gcom.sh"
+run_test "$REPO_DIR/tests/test-fm350-rpc.sh"
+run_test "$REPO_DIR/tests/test-fm350-esim-sdk.sh"
+run_test "$REPO_DIR/tests/test-fm350-esim-gate.sh"
+run_test "$REPO_DIR/tests/test-fm350-esim-menu.sh"
 
 tmp=$(mktemp -d "${TMPDIR:-/tmp}/gl-modem-community-test.XXXXXX")
 trap 'rm -rf "$tmp"' EXIT INT TERM

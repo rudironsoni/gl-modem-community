@@ -35,6 +35,20 @@ local function usb_id_for_bus(bus)
     return vid:lower() .. ":" .. pid:lower()
 end
 
+local function find_fm350_bus()
+    local pipe = io.popen("ls /sys/bus/usb/devices 2>/dev/null")
+    if not pipe then return nil end
+    for bus in pipe:lines() do
+        local id = usb_id_for_bus(bus)
+        if id == "0e8d:7126" or id == "0e8d:7127" then
+            pipe:close()
+            return bus
+        end
+    end
+    pipe:close()
+    return nil
+end
+
 local function vendor_call(method, args)
     local response = ngx.location.capture("/cgi-bin/glc", {
         method = ngx.HTTP_POST,
@@ -51,7 +65,12 @@ local function vendor_call(method, args)
 end
 
 local function dispatch(method, args)
-    local id = usb_id_for_bus(args and args.bus)
+    args = args or {}
+    if type(args.bus) ~= "string" or args.bus == "" then
+        local bus = find_fm350_bus()
+        if bus then args.bus = bus end
+    end
+    local id = usb_id_for_bus(args.bus)
     if id then
         for _, driver in ipairs(drivers) do
             if driver.usb_ids and driver.usb_ids[id] and driver.methods[method] then
@@ -72,7 +91,7 @@ for _, method in ipairs({
     "scan_cell_tower", "set_operator_config", "scan_operator_list",
     "get_operator_config", "send_at_command", "get_slot_config",
     "get_traffic_config", "set_traffic_config", "disconnect", "get_debug_msg",
-    "get_profile_list"
+    "get_profile_list", "get_info", "get_status"
 }) do
     local name = method
     methods[name] = function(args) return dispatch(name, args or {}) end

@@ -1,0 +1,141 @@
+#!/bin/sh
+# SPDX-License-Identifier: GPL-3.0-only
+# CGI for POST /sdk/v1. Also usable as: fm350-esim-sdk <json>
+set -eu
+
+AT_BIN=${AT_BIN:-/usr/libexec/gl-modem-community/fm350-at}
+PORT_BIN=${PORT_BIN:-/usr/libexec/gl-modem-community/fm350-port}
+USB_DEVICES_ROOT=${USB_DEVICES_ROOT:-/sys/bus/usb/devices}
+JQ_BIN=${JQ_BIN:-jq}
+LPAC_BIN=${LPAC_BIN:-lpac}
+LOG_FILE=${LOG_FILE:-/tmp/gl-modem-community-esim.log}
+
+find_bus() {
+	local path
+	for path in "$USB_DEVICES_ROOT"/*; do
+		[ -r "$path/idVendor" ] && [ "$(cat "$path/idVendor")" = 0e8d ] || continue
+		[ "$(cat "$path/idProduct" 2>/dev/null || true)" = 7127 ] || continue
+		printf '%s\n' "${path##*/}"
+		return 0
+	done
+	return 1
+}
+
+json_out() {
+	code=$1
+	data=$2
+	printf '{"code":%s,"data":%s}\n' "$code" "$data"
+}
+
+lpac_available() {
+	command -v "$LPAC_BIN" >/dev/null 2>&1
+}
+
+lpac_cmd() {
+	bus=$1
+	shift
+	port=$("$PORT_BIN" at "$bus") || return 1
+	LPAC_APDU=at AT_DEVICE=$port LPAC_CUSTOM_ES10X_MSS=80 \
+		"$LPAC_BIN" "$@"
+}
+
+status_from_lpac() {
+	bus=$1
+	info=$(lpac_cmd "$bus" chip info) || return 1
+	list=$(lpac_cmd "$bus" profile list) || list='[]'
+	eid=$(printf '%s' "$info" | "$JQ_BIN" -r '.eid // .data.eid // empty' 2>/dev/null || true)
+	iccid=$(printf '%s' "$list" | "$JQ_BIN" -r '[.[]?, .data[]?] | map(select(.state==1 or .profileState==1)) | .[0].iccid // empty' 2>/dev/null || true)
+	profiles=$(printf '%s' "$list" | "$JQ_BIN" -c '
+		(if type=="array" then . elif .data then .data else [] end)
+		| map({
+			iccid: (.iccid // ""),
+			name: (.name // .profileName // ""),
+			class: (if .class then .class elif .profileClass then .profileClass else 2 end),
+			state: (if .state then .state elif .profileState then .profileState else 0 end)
+		})
+	' 2>/dev/null || printf '%s' '[]')
+	"$JQ_BIN" -nc --arg eid "${eid:-}" --arg iccid "${iccid:-}" --argjson list "${profiles:-[]}" \
+		'{eid:$eid, env:{iccid:$iccid, imsi:""}, profile_list:$list}'
+}
+
+handle() {
+	body=$1
+	method=$(printf '%s' "$body" | "$JQ_BIN" -r '.method // empty')
+	bus=$(find_bus || true)
+	case "$method" in
+	status)
+		if [ -n "$bus" ] && lpac_available; then
+			if data=$(status_from_lpac "$bus"); then
+				json_out 200 "$data"
+				return 0
+			fi
+		fi
+		json_out 200 '{"eid":"","env":{"iccid":"","imsi":""},"profile_list":[]}'
+		;;
+	info2)
+		json_out 200 '{"extCardResource":"{\"non_volatile_mem\":368640}"}'
+		;;
+	GetEIDInfo)
+		json_out 200 '{"dev_info":{"cos":""}}'
+		;;
+	enable|disable|delete|nick)
+		iccid=$(printf '%s' "$body" | "$JQ_BIN" -r '.iccid // empty')
+		[ -n "$iccid" ] || { json_out 600 '{"message":"missing iccid"}'; return 0; }
+		if [ -n "$bus" ] && lpac_available; then
+			case "$method" in
+			enable) lpac_cmd "$bus" profile enable "$iccid" >/dev/null 2>&1 || { json_out 402 '{"message":"enable failed"}'; return 0; } ;;
+			disable) lpac_cmd "$bus" profile disable "$iccid" >/dev/null 2>&1 || { json_out 403 '{"message":"disable failed"}'; return 0; } ;;
+			delete) lpac_cmd "$bus" profile delete "$iccid" >/dev/null 2>&1 || { json_out 600 '{"message":"delete failed"}'; return 0; } ;;
+			nick)
+				name=$(printf '%s' "$body" | "$JQ_BIN" -r '.name // empty')
+				lpac_cmd "$bus" profile nickname "$iccid" "$name" >/dev/null 2>&1 || true
+				;;
+			esac
+			json_out 200 '{}'
+			return 0
+		fi
+		json_out 600 '{"message":"lpac not installed"}'
+		;;
+	install)
+		if [ -n "$bus" ] && lpac_available; then
+			code=$(printf '%s' "$body" | "$JQ_BIN" -r '.activationCode // .code // empty')
+			confirm=$(printf '%s' "$body" | "$JQ_BIN" -r '.confirmationCode // empty')
+			if [ -n "$confirm" ]; then
+				lpac_cmd "$bus" profile download -a "$code" -c "$confirm" >/dev/null 2>&1 ||
+					{ json_out 600 '{"message":"install failed"}'; return 0; }
+			else
+				lpac_cmd "$bus" profile download -a "$code" >/dev/null 2>&1 ||
+					{ json_out 600 '{"message":"install failed"}'; return 0; }
+			fi
+			json_out 200 '{}'
+			return 0
+		fi
+		json_out 600 '{"message":"lpac not installed"}'
+		;;
+	log)
+		[ -f "$LOG_FILE" ] && cat "$LOG_FILE" || printf '%s\n' ''
+		;;
+	progress)
+		json_out 200 '{"progress":0}'
+		;;
+	*)
+		json_out 600 '{"message":"unknown method"}'
+		;;
+	esac
+}
+
+if [ "${REQUEST_METHOD:-}" = POST ]; then
+	printf 'Content-Type: application/json\r\n\r\n'
+	body=$(dd bs=1 count="${CONTENT_LENGTH:-0}" 2>/dev/null || true)
+	handle "$body"
+	exit 0
+fi
+
+if [ "${1:-}" = --serve ]; then
+	# Called from procd; parent starts uhttpd.
+	exit 0
+fi
+
+if [ -n "${1:-}" ]; then
+	handle "$1"
+fi

@@ -5,6 +5,9 @@
 - [UNVERIFIED] Proprietary `/tmp/<bus>.sock` framing.
 - [UNVERIFIED] Whether FM350 `CGMI`/`CGMM` response formatting passes the stock common parser.
 - [CONFIRMED] FM350 uses `ttyUSB`, not `ttyACM`, in the observed RNDIS composition. Product-specific AT offsets are `2` for `7126`/USB interface `04` and `3` for `7127`/USB interface `06`.
+- [CONFIRMED] Dell DW5931e-eSIM (`0e8d:7127`) on GL-MT3000 4.8.1 uses USB interface `06` (`/dev/ttyUSB4`) as AT. Interface `05` is ADB (`bInterfaceSubClass=0x42`). Hotplug `PRODUCT` can be `e8d/7127/1`.
+- [CONFIRMED] That Dell variant enables RF with `AT+GTFCCLOCKMODE=0` plus a USB power cycle after `AT+GTFCCEFFSTATUS?` returns `2,0`. The ModemManager `3df8c719` challenge was rejected.
+- [CONFIRMED] 4.8.1 ships no eSIM Management view. 4.9.x embeds the drawer in `gl-sdk4-ui-internet.common.js` and POSTs `/sdk/v1`. MT3000 firmware does not ship an eSIM daemon.
 - [UNVERIFIED] Correct data interface addressing, `supports_ip_type`, direct-IP prefix, gateway, MTU, and MAC behavior on this router/firmware.
 - [CONFIRMED] Stock `function_at_common` reaches SIM insert and reads ICCID/IMSI, then fails before PDP activation with missing `CGDCONT` definitions and a failed minimum-function transition.
 - [UNVERIFIED] Whether FM350-only `CFUN=0` to `CFUN=4` translation lets stock `CGDCONT`, `CGACT`, and `CGPADDR` complete.

@@ -6,8 +6,10 @@
 	exit 0
 
 case "${PRODUCT:-}" in
-0e8d/7126/*|0e8d/7127/*)
+0e8d/7126/*|0e8d/7127/*|e8d/7126/*|e8d/7127/*)
 	/usr/libexec/gl-modem-community/ensure-option-ids || true
 	/usr/libexec/gl-modem-community/legacy-bus refresh
+	/usr/libexec/gl-modem-community/fm350-fcc-unlock || true
+	/usr/libexec/gl-modem-community/fm350-network-repair --available || true
 	;;
 esac
