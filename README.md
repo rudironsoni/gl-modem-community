@@ -9,7 +9,7 @@
 The first driver targets the Fibocom FM350-GL on a GL.iNet GL-MT3000 (Beryl AX). The package depends on GL.iNet's proprietary cellular services and does not replace them, so it is not a modem manager for vanilla OpenWrt.
 
 > [!WARNING]
-> This project is still experimental. The FM350-GL is detected and visible in the GL.iNet interfaces, but the complete data-session and recovery test matrix has not passed yet.
+> This project is still experimental. Dell DW5931e-eSIM (`0e8d:7127`) physical-SIM and eSIM UI paths are implemented from reporter evidence and firmware analysis. Live download of a carrier profile remains `[UNVERIFIED]`.
 
 ## Quick start
 
@@ -40,6 +40,10 @@ A package that builds against an SDK has not necessarily been tested on firmware
 | GL.iNet OEM or OpenWrt 24 on GL-MT3000 | IPK | Builds with the pinned OpenWrt 24.10.7 MediaTek Filogic SDK | Not tested |
 | Other GL.iNet routers | Target-specific package required | Not built | Not tested |
 | Vanilla OpenWrt | Not applicable | GL.iNet cellular services are absent | Not supported |
+
+Dell DW5931e-eSIM (`0e8d:7127`) on GL-MT3000 4.8.1 uses USB interface 6 as the AT port (`/dev/ttyUSB4`). Interface 5 is ADB and is skipped. The kernel hotplug `PRODUCT` value may be `e8d/7127/1` (no leading zero). FCC lock is cleared with `AT+GTFCCLOCKMODE=0` plus a USB power cycle when `AT+GTFCCEFFSTATUS?` reports `2,0`.
+
+On 4.8.1 the package adds **APPLICATIONS → eSIM Management**, a clean-room page that matches the 4.9.x drawer layout and talks to `POST /sdk/v1`. On 4.9.x the stock INTERNET → Cellular eSIM Management drawer uses the same `/sdk/v1` backend. Profile download needs `lpac` on the router.
 
 The OpenWrt 25 hardware work has verified:
 

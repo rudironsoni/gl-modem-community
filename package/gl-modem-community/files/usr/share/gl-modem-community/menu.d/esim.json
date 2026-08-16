@@ -1,0 +1,10 @@
+{
+	"index": 25,
+	"view": "esim",
+	"title": { "translate": "menu_esim" },
+	"level": 2,
+	"parent": "applications",
+	"parent_icon": "application",
+	"parent_index": 50,
+	"show_mode": ["router"]
+}

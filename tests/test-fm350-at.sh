@@ -10,6 +10,8 @@ trap 'rm -rf "$tmp"' EXIT HUP INT TERM
 mkdir -p "$tmp/bin" "$tmp/usb/2-1/2-1:1.04" "$tmp/tty/ttyUSB2"
 printf '%s\n' 0e8d >"$tmp/usb/2-1/idVendor"
 printf '%s\n' 7126 >"$tmp/usb/2-1/idProduct"
+printf '%s\n' 04 >"$tmp/usb/2-1/2-1:1.04/bInterfaceNumber"
+printf '%s\n' 00 >"$tmp/usb/2-1/2-1:1.04/bInterfaceSubClass"
 ln -s "$tmp/usb/2-1/2-1:1.04" "$tmp/tty/ttyUSB2/device"
 
 cat >"$tmp/bin/comgt" <<'EOF'
@@ -36,6 +38,7 @@ output=$(
 	COMGT_BIN="$tmp/bin/comgt" \
 	FLOCK_BIN="$tmp/bin/flock" \
 	READLINK_BIN="$tmp/bin/readlink" \
+	FM350_PORT_BIN="$repo_dir/package/gl-modem-community/files/usr/libexec/gl-modem-community/fm350-port" \
 	GCOM_SCRIPT="$tmp/fm350-at.gcom" \
 	LOCK_FILE="$tmp/at.lock" \
 	COMGT_TEST_LOG="$tmp/comgt.log" \
@@ -50,7 +53,36 @@ printf '%s\n' 2c7c >"$tmp/usb/2-1/idVendor"
 if USB_DEVICES_ROOT="$tmp/usb" SYS_TTY_ROOT="$tmp/tty" \
 	COMGT_BIN="$tmp/bin/comgt" FLOCK_BIN="$tmp/bin/flock" \
 	READLINK_BIN="$tmp/bin/readlink" \
+	FM350_PORT_BIN="$repo_dir/package/gl-modem-community/files/usr/libexec/gl-modem-community/fm350-port" \
 	LOCK_FILE="$tmp/at.lock" "$helper" 2-1 AT >/dev/null 2>&1; then
 	echo 'Non-FM350 USB ID unexpectedly used the explicit AT transport' >&2
 	exit 1
 fi
+
+# Dell DW5931e: skip ADB if 5 and use if 6 / ttyUSB4.
+rm -rf "$tmp/usb/2-1" "$tmp/tty"
+mkdir -p \
+	"$tmp/usb/2-1/2-1:1.5" \
+	"$tmp/usb/2-1/2-1:1.6" \
+	"$tmp/tty/ttyUSB3" \
+	"$tmp/tty/ttyUSB4"
+printf '%s\n' 0e8d >"$tmp/usb/2-1/idVendor"
+printf '%s\n' 7127 >"$tmp/usb/2-1/idProduct"
+printf '%s\n' 05 >"$tmp/usb/2-1/2-1:1.5/bInterfaceNumber"
+printf '%s\n' 42 >"$tmp/usb/2-1/2-1:1.5/bInterfaceSubClass"
+printf '%s\n' 06 >"$tmp/usb/2-1/2-1:1.6/bInterfaceNumber"
+printf '%s\n' 00 >"$tmp/usb/2-1/2-1:1.6/bInterfaceSubClass"
+ln -s "$tmp/usb/2-1/2-1:1.5" "$tmp/tty/ttyUSB3/device"
+ln -s "$tmp/usb/2-1/2-1:1.6" "$tmp/tty/ttyUSB4/device"
+: >"$tmp/comgt.log"
+USB_DEVICES_ROOT="$tmp/usb" \
+SYS_TTY_ROOT="$tmp/tty" \
+COMGT_BIN="$tmp/bin/comgt" \
+FLOCK_BIN="$tmp/bin/flock" \
+READLINK_BIN="$tmp/bin/readlink" \
+FM350_PORT_BIN="$repo_dir/package/gl-modem-community/files/usr/libexec/gl-modem-community/fm350-port" \
+GCOM_SCRIPT="$tmp/fm350-at.gcom" \
+LOCK_FILE="$tmp/at.lock" \
+COMGT_TEST_LOG="$tmp/comgt.log" \
+	"$helper" 2-1 AT >/dev/null
+test "$(cat "$tmp/comgt.log")" = "-d /dev/ttyUSB4 -s $tmp/fm350-at.gcom"

@@ -78,3 +78,15 @@ test "$(uci_get network.modem_2_1_s1.pdp)" = IP
 test "$(grep -Fxc 'commit gl_modem_community' "$tmp/uci.log")" -eq 1
 test "$(grep -Fxc 'commit network' "$tmp/uci.log")" -eq 1
 test "$(grep -Fxc 'call network reload' "$tmp/ubus.log")" -eq 1
+
+printf '%s\n' modem_1_1_2 >"$tmp/uci-store/kmwan.member.interface"
+printf '%s\n' modem_1_1_2_6 >"$tmp/uci-store/kmwan.member_6.interface"
+export RUNTIME_STACK_FILE="$tmp/stack"
+printf '%s\n' modern >"$tmp/stack"
+"$repo_dir/package/gl-modem-community/files/usr/libexec/gl-modem-community/fm350-network-repair"
+test "$(uci_get kmwan.member.interface)" = modem_2_1_s1
+test "$(uci_get kmwan.member_6.interface)" = modem_2_1_s1_6
+
+"$repo_dir/package/gl-modem-community/files/usr/libexec/gl-modem-community/fm350-network-repair" --restore
+test "$(uci_get kmwan.member.interface)" = modem_1_1_2
+test "$(uci_get kmwan.member_6.interface)" = modem_1_1_2_6

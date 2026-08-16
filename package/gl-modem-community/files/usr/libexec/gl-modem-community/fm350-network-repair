@@ -9,6 +9,7 @@ UBUS_BIN=${UBUS_BIN:-ubus}
 LOGGER_BIN=${LOGGER_BIN:-logger}
 GL_MODEM_BIN=${GL_MODEM_BIN:-gl_modem}
 LEGACY_AT_BIN=${LEGACY_AT_BIN:-/usr/libexec/gl-modem-community/fm350-at}
+FM350_PORT_BIN=${FM350_PORT_BIN:-/usr/libexec/gl-modem-community/fm350-port}
 RUNTIME_STACK_FILE=${RUNTIME_STACK_FILE:-/var/run/gl-modem-community/stack}
 FLOCK_BIN=${FLOCK_BIN:-flock}
 NETWORK_STATE_CONFIG=${NETWORK_STATE_CONFIG:-gl_modem_community}
@@ -107,6 +108,7 @@ repair_fm350_network() {
 	changed=0
 	NETWORK_CHANGED=0
 	STATE_CHANGED=0
+	KMWAN_CHANGED=0
 	profile=5
 	[ "$(cat "$RUNTIME_STACK_FILE" 2>/dev/null || true)" != legacy ] ||
 		profile=1
@@ -153,10 +155,99 @@ repair_fm350_network() {
 		}
 	done
 
+	if repair_kmwan_members "$present_sections"; then
+		changed=1
+	fi
+
 	[ "$STATE_CHANGED" -eq 0 ] || "$UCI_BIN" commit "$NETWORK_STATE_CONFIG"
 	[ "$NETWORK_CHANGED" -eq 0 ] || "$UCI_BIN" commit network
+	[ "$KMWAN_CHANGED" -eq 0 ] || "$UCI_BIN" commit kmwan
 
 	[ "$changed" -eq 1 ]
+}
+
+live_fm350_section() {
+	local present_sections=$1 section
+	for section in $present_sections; do
+		printf '%s\n' "$section"
+		return 0
+	done
+	return 1
+}
+
+kmwan_member_keys() {
+	"$UCI_BIN" -q show kmwan 2>/dev/null | awk -F= '
+		$1 ~ /\.interface$/ {
+			print $1
+		}
+	'
+}
+
+retarget_kmwan_key() {
+	local key=$1 from=$2 to=$3 state member
+	member=${key#kmwan.}
+	member=${member%.interface}
+	state=$(ensure_network_state "kmwan_${member}" 0)
+	"$UCI_BIN" set "$NETWORK_STATE_CONFIG.$state.kind=kmwan"
+	"$UCI_BIN" set "$NETWORK_STATE_CONFIG.$state.key=$key"
+	if ! uci_get "$NETWORK_STATE_CONFIG.$state.had_interface" >/dev/null; then
+		"$UCI_BIN" set "$NETWORK_STATE_CONFIG.$state.had_interface=1"
+		"$UCI_BIN" set "$NETWORK_STATE_CONFIG.$state.value_interface=$from"
+	fi
+	"$UCI_BIN" set "$key=$to"
+	"$UCI_BIN" set "$NETWORK_STATE_CONFIG.$state.applied_interface=$to"
+	KMWAN_CHANGED=1
+	STATE_CHANGED=1
+}
+
+repair_kmwan_members() {
+	local present_sections=$1 key current live target retargeted=1
+	KMWAN_CHANGED=${KMWAN_CHANGED:-0}
+	live=$(live_fm350_section "$present_sections") || return 1
+
+	for key in $(kmwan_member_keys); do
+		current=$(uci_get "$key" || true)
+		case "$current" in
+		modem_*_6)
+			target=${live}_6
+			;;
+		modem_*)
+			target=$live
+			;;
+		*)
+			continue
+			;;
+		esac
+		section_is_present "$current" "$present_sections" && continue
+		uci_get "network.$current" >/dev/null 2>&1 && continue
+
+		retarget_kmwan_key "$key" "$current" "$target"
+		"$LOGGER_BIN" -t gl-modem-community \
+			"retargeted kmwan member from $current to $target"
+		retargeted=0
+	done
+
+	return "$retargeted"
+}
+
+restore_xmm_available() {
+	local path bus section proto
+	for path in "$USB_DEVICES_ROOT"/*; do
+		[ -r "$path/idVendor" ] && [ "$(cat "$path/idVendor")" = 0e8d ] || continue
+		case "$(cat "$path/idProduct" 2>/dev/null || true)" in
+		7126|7127) ;;
+		*) continue ;;
+		esac
+		bus=${path##*/}
+		"$FM350_PORT_BIN" ready "$bus" >/dev/null 2>&1 || continue
+		section=modem_$(printf '%s' "$bus" | tr '.-' '__')_s1
+		proto=$(uci_get "network.$section.proto" || true)
+		[ "$proto" = xmm ] || continue
+		"$UBUS_BIN" call network.interface notify_proto \
+			"{\"interface\":\"$section\",\"available\":true}" >/dev/null 2>&1 || true
+		"$LOGGER_BIN" -t gl-modem-community \
+			"restored xmm availability for $section bus=$bus"
+	done
 }
 
 restore_managed_option() {
@@ -220,6 +311,9 @@ reconcile_stale_network_states() {
 	states=$(network_state_names)
 
 	for state in $states; do
+		if [ "$(uci_get "$NETWORK_STATE_CONFIG.$state.kind" || true)" = kmwan ]; then
+			continue
+		fi
 		section=$(uci_get "$NETWORK_STATE_CONFIG.$state.section" || true)
 		if [ -z "$section" ]; then
 			"$UCI_BIN" -q delete "$NETWORK_STATE_CONFIG.$state"
@@ -237,13 +331,34 @@ reconcile_stale_network_states() {
 	return "$reconciled"
 }
 
+restore_kmwan_state() {
+	local state=$1 key original applied current
+	key=$(uci_get "$NETWORK_STATE_CONFIG.$state.key" || true)
+	[ -n "$key" ] || return 0
+	applied=$(uci_get "$NETWORK_STATE_CONFIG.$state.applied_interface" || true)
+	current=$(uci_get "$key" || true)
+	[ "$current" = "$applied" ] || return 0
+	original=$(uci_get "$NETWORK_STATE_CONFIG.$state.value_interface" || true)
+	[ -n "$original" ] || return 0
+	"$UCI_BIN" set "$key=$original"
+	KMWAN_CHANGED=1
+	"$UCI_BIN" -q delete "$NETWORK_STATE_CONFIG.$state"
+	STATE_CHANGED=1
+}
+
 restore_fm350_network() {
-	local states state section
+	local states state section kind
 	NETWORK_CHANGED=0
 	STATE_CHANGED=0
+	KMWAN_CHANGED=0
 	states=$(network_state_names)
 
 	for state in $states; do
+		kind=$(uci_get "$NETWORK_STATE_CONFIG.$state.kind" || true)
+		if [ "$kind" = kmwan ]; then
+			restore_kmwan_state "$state"
+			continue
+		fi
 		section=$(uci_get "$NETWORK_STATE_CONFIG.$state.section" || true)
 		if [ -z "$section" ]; then
 			"$UCI_BIN" -q delete "$NETWORK_STATE_CONFIG.$state"
@@ -255,6 +370,7 @@ restore_fm350_network() {
 	done
 
 	[ "$STATE_CHANGED" -eq 0 ] || "$UCI_BIN" commit "$NETWORK_STATE_CONFIG"
+	[ "$KMWAN_CHANGED" -eq 0 ] || "$UCI_BIN" commit kmwan
 	if [ "$NETWORK_CHANGED" -eq 1 ]; then
 		"$UCI_BIN" commit network
 		"$UBUS_BIN" call network reload >/dev/null 2>&1 || true
@@ -289,5 +405,6 @@ watch_fm350_network() {
 case "${1:-}" in
 	--watch) watch_fm350_network ;;
 	--restore) with_lock restore_fm350_network ;;
+	--available) restore_xmm_available ;;
 	*) with_lock repair_fm350_network ;;
 esac

@@ -18,6 +18,9 @@ if grep -E 'run_stock_at .*AT\+COPS=' "$handler" >/dev/null; then
 fi
 grep -F 'run_stock_at "$bus" activate "AT+CGACT=1,$profile"' "$handler" >/dev/null
 grep -F 'run_stock_at "$bus" deactivate "AT+CGACT=0,$profile"' "$handler" >/dev/null
+grep -F 'FM350_PORT_BIN=${FM350_PORT_BIN:-/usr/libexec/gl-modem-community/fm350-port}' "$handler" >/dev/null
+grep -F '"$FM350_PORT_BIN" ready "$bus"' "$handler" >/dev/null
+grep -F 'sleep "$delay"' "$handler" >/dev/null
 grep -F 'while [ "$address_attempt" -le "$maxfail" ]; do' "$handler" >/dev/null
 
 if grep -E 'gcom|DEVPORT=' "$handler" >/dev/null; then

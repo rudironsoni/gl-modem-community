@@ -16,6 +16,7 @@ LOGGER_BIN=${LOGGER_BIN:-logger}
 SYS_USB=${SYS_USB:-/sys/bus/usb}
 SYS_USB_SERIAL=${SYS_USB_SERIAL:-/sys/bus/usb-serial}
 SYS_TTY=${SYS_TTY:-/sys/class/tty}
+FM350_PORT_BIN=${FM350_PORT_BIN:-/usr/libexec/gl-modem-community/fm350-port}
 MODULES_DIR=${MODULES_DIR:-/lib/modules}
 MODULE_BASE=${MODULE_BASE:-$(uname -r)}
 
@@ -75,29 +76,12 @@ try_module_reload() {
 	return 1
 }
 
-# Find the AT command port for a given FM350 bus and product ID.
-# Returns the tty device path (e.g., /dev/ttyUSB3) or empty.
+# Find the AT command port for a given FM350 bus.
 find_at_port() {
-	local bus=$1 pid=$2
-	local expected_iface
-	case "$pid" in
-		7126) expected_iface="1.4" ;;  # port_offset_at=2 -> interface 1.4 (1.2 + 2)
-		7127) expected_iface="1.5" ;;  # port_offset_at=3 -> interface 1.5 (1.2 + 3)
-		*) return 1 ;;
-	esac
-
-	local path real_port
-	for path in "$SYS_TTY"/ttyUSB*/device; do
-		[ -e "$path" ] || continue
-		real=$(readlink -f "$path" 2>/dev/null) || continue
-		case "$real" in
-			"$SYS_USB/devices/$bus/"*"$expected_iface"*)
-				echo "/dev/${path#"$SYS_TTY"/}"
-				return 0
-				;;
-		esac
-	done
-	return 1
+	local bus=$1
+	USB_DEVICES_ROOT="$SYS_USB/devices" \
+	SYS_TTY_ROOT="$SYS_TTY" \
+		"$FM350_PORT_BIN" at "$bus"
 }
 
 # Wait for FM350 to fully enumerate (all option interfaces present).
@@ -142,7 +126,13 @@ switch_to_at_mode() {
 	local bus=$1 pid=$2
 	local port
 
-	port=$(find_at_port "$bus" "$pid") || {
+	if USB_DEVICES_ROOT="$SYS_USB/devices" SYS_TTY_ROOT="$SYS_TTY" \
+		"$FM350_PORT_BIN" ready "$bus" >/dev/null 2>&1; then
+		log "skipping USB mode switch for $bus:$pid; RNDIS and AT already present"
+		return 0
+	fi
+
+	port=$(find_at_port "$bus") || {
 		log "cannot find AT port for $bus:$pid"
 		return 1
 	}
@@ -214,7 +204,8 @@ main() {
 		case "$pid" in 7126|7127) ;; *) continue ;; esac
 		bus=${device##*/}
 		wait_for_enumeration "$bus" "$pid" || continue
-		switch_to_at_mode "$bus" "$pid" || log "mode switch failed for $bus:$pid (may already be in AT mode)"
+		switch_to_at_mode "$bus" "$pid" ||
+			log "mode switch failed for $bus:$pid (may already be in AT mode)"
 	done
 
 	# Wait for re-enumeration after mode switch

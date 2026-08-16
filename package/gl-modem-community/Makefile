@@ -90,6 +90,19 @@ define Package/gl-modem-community/install
 	$(INSTALL_BIN) ./files/usr/libexec/gl-modem-community/legacy-bus $(1)/usr/libexec/gl-modem-community/legacy-bus
 	$(INSTALL_BIN) ./files/usr/libexec/gl-modem-community/ensure-option-ids $(1)/usr/libexec/gl-modem-community/ensure-option-ids
 	$(INSTALL_BIN) ./files/usr/libexec/gl-modem-community/fm350-at $(1)/usr/libexec/gl-modem-community/fm350-at
+	$(INSTALL_BIN) ./files/usr/libexec/gl-modem-community/fm350-port $(1)/usr/libexec/gl-modem-community/fm350-port
+	$(INSTALL_BIN) ./files/usr/libexec/gl-modem-community/fm350-fcc-unlock $(1)/usr/libexec/gl-modem-community/fm350-fcc-unlock
+	$(INSTALL_BIN) ./files/usr/libexec/gl-modem-community/fm350-esim-sdk $(1)/usr/libexec/gl-modem-community/fm350-esim-sdk
+	$(INSTALL_DIR) $(1)/usr/share/gl-modem-community/esim-http/sdk
+	$(INSTALL_BIN) ./files/usr/libexec/gl-modem-community/fm350-esim-sdk $(1)/usr/share/gl-modem-community/esim-http/sdk/v1
+	$(INSTALL_DIR) $(1)/usr/share/gl-modem-community/menu.d
+	$(INSTALL_DATA) ./files/usr/share/gl-modem-community/menu.d/esim.json $(1)/usr/share/gl-modem-community/menu.d/esim.json
+	$(INSTALL_DIR) $(1)/www/views
+	$(INSTALL_DATA) ./files/www/views/gl-sdk4-ui-esim.common.js $(1)/www/views/gl-sdk4-ui-esim.common.js
+	$(INSTALL_DIR) $(1)/www/i18n
+	$(INSTALL_DATA) ./files/www/i18n/gl-sdk4-ui-esim.en.json $(1)/www/i18n/gl-sdk4-ui-esim.en.json
+	$(INSTALL_DIR) $(1)/etc/nginx/conf.d
+	$(INSTALL_DATA) ./files/etc/nginx/conf.d/gl-modem-community-esim.conf $(1)/etc/nginx/conf.d/gl-modem-community-esim.conf
 	$(INSTALL_DIR) $(1)/usr/lib/gl-modem-community
 	$(INSTALL_DATA) $(PKG_BUILD_DIR)/fm350-at-compat.so $(1)/usr/lib/gl-modem-community/fm350-at-compat.so
 	$(INSTALL_DIR) $(1)/usr/share/gl-modem-community/drivers.d

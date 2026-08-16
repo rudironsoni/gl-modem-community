@@ -1,0 +1,21 @@
+{
+  "menu_esim": "eSIM Management",
+  "esim": {
+    "esim_profile_list_title": "eSIM Profile List",
+    "current_esim_status_title": "Current eSIM Status",
+    "esim_storage": "eSIM Storage",
+    "export_support_log": "Export Log For Support",
+    "esim_profile_number": "eSIM Profile Number",
+    "add_esim_profile": "Add eSIM Profile",
+    "input_activation_code": "Input Activation Code",
+    "activation_code": "Activation Code",
+    "confirmation_code": "Confirmation code",
+    "name": "Name",
+    "enable": "Enable",
+    "disable": "Disable",
+    "delete": "Delete",
+    "install": "Install",
+    "remain": "remain",
+    "total": "total"
+  }
+}

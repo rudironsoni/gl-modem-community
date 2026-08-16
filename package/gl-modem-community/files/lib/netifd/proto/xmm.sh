@@ -9,6 +9,7 @@
 
 GL_MODEM_BIN=${GL_MODEM_BIN:-gl_modem}
 LEGACY_AT_BIN=${LEGACY_AT_BIN:-/usr/libexec/gl-modem-community/fm350-at}
+FM350_PORT_BIN=${FM350_PORT_BIN:-/usr/libexec/gl-modem-community/fm350-port}
 RUNTIME_STACK_FILE=${RUNTIME_STACK_FILE:-/var/run/gl-modem-community/stack}
 init_proto "$@"
 
@@ -49,41 +50,16 @@ read_usb_id() {
 }
 
 discover_at_port() {
-	local bus=$1 expected dev iface path real cursor
-	case "$(cat "/sys/bus/usb/devices/$bus/idProduct" 2>/dev/null)" in
-		7126) expected=04 ;;
-		7127) expected=06 ;;
-		*) return 1 ;;
-	esac
-	for path in /sys/class/tty/ttyACM*/device /sys/class/tty/ttyUSB*/device; do
-		[ -e "$path" ] || continue
-		real=$(readlink -f "$path")
-		cursor=$real
-		iface=
-		while [ "$cursor" != / ]; do
-			if [ -r "$cursor/bInterfaceNumber" ]; then iface=$(cat "$cursor/bInterfaceNumber"); break; fi
-			cursor=${cursor%/*}
-		done
-		case "$real" in
-			*/$bus/*) ;;
-			*) continue ;;
-		esac
-		[ "$iface" = "$expected" ] || continue
-		dev=${path#/sys/class/tty/}
-		printf '/dev/%s\n' "${dev%%/*}"
-		return 0
-	done
-	return 1
+	local bus=$1
+	USB_DEVICES_ROOT=${USB_DEVICES_ROOT:-/sys/bus/usb/devices} \
+	SYS_TTY_ROOT=${SYS_TTY_ROOT:-/sys/class/tty} \
+		"$FM350_PORT_BIN" at "$bus"
 }
 
 discover_data_iface() {
-	local candidate
-	for candidate in "$USB_PATH"/*/net/* "$USB_PATH"/net/*; do
-		[ -e "$candidate" ] || continue
-		basename "$candidate"
-		return 0
-	done
-	return 1
+	local bus=$1
+	USB_DEVICES_ROOT=${USB_DEVICES_ROOT:-/sys/bus/usb/devices} \
+		"$FM350_PORT_BIN" data "$bus"
 }
 
 run_stock_at() {
@@ -125,14 +101,18 @@ proto_xmm_setup() {
 	disable_arp=${disable_arp:-1}
 	pdp=$(printf '%s' "${pdp:-IP}" | tr '[:lower:]' '[:upper:]')
 	case "$pdp" in IP|IPV6|IPV4V6) ;; *) pdp=IP ;; esac
-	sleep "$delay"
+	if [ -n "$bus" ] && "$FM350_PORT_BIN" ready "$bus" >/dev/null 2>&1; then
+		:
+	else
+		sleep "$delay"
+	fi
 
 	if [ -z "$device" ] && [ -n "$bus" ]; then device=$(discover_at_port "$bus") || true; fi
 	[ -n "$device" ] || { proto_notify_error "$interface" NO_PORT_FOUND; proto_set_available "$interface" 0; return 1; }
 	DEVICE=$device
 	read_usb_id "$DEVICE" || { proto_notify_error "$interface" NO_DEVICE_FOUND; return 1; }
 	case "$VID:$PID" in 0e8d:7126|0e8d:7127) ;; *) proto_notify_error "$interface" NO_DEVICE_SUPPORT; return 1 ;; esac
-	ifname=$(discover_data_iface) || { proto_notify_error "$interface" NO_IFACE; return 1; }
+	ifname=$(discover_data_iface "$bus") || { proto_notify_error "$interface" NO_IFACE; return 1; }
 	logger -t gl-modem-community "FM350 setup bus=${bus:-unknown} at=$DEVICE data=$ifname"
 
 	attempt=1

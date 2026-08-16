@@ -1,0 +1,143 @@
+#!/bin/sh
+# SPDX-License-Identifier: GPL-3.0-only
+set -eu
+
+USB_DEVICES_ROOT=${USB_DEVICES_ROOT:-/sys/bus/usb/devices}
+SYS_TTY_ROOT=${SYS_TTY_ROOT:-/sys/class/tty}
+READLINK_BIN=${READLINK_BIN:-readlink}
+
+usage() {
+	printf 'Usage: %s {at|data|ready} <bus>\n' "${0##*/}" >&2
+	exit 2
+}
+
+norm_iface() {
+	value=$1
+	case "$value" in
+	0x*|0X*)
+		printf '%d\n' "$value"
+		return 0
+		;;
+	esac
+	printf '%d\n' "0x$value" 2>/dev/null || printf '%d\n' "$value"
+}
+
+is_adb_iface() {
+	iface_dir=$1
+	subclass=$(cat "$iface_dir/bInterfaceSubClass" 2>/dev/null || true)
+	[ "$(norm_iface "${subclass:-0}")" = 66 ]
+}
+
+find_iface_dir() {
+	cursor=$1
+	while [ "$cursor" != / ] && [ -n "$cursor" ]; do
+		if [ -r "$cursor/bInterfaceNumber" ]; then
+			printf '%s\n' "$cursor"
+			return 0
+		fi
+		cursor=${cursor%/*}
+	done
+	return 1
+}
+
+usb_real_path() {
+	bus=$1
+	path=$USB_DEVICES_ROOT/$bus
+	real=$("$READLINK_BIN" -f "$path" 2>/dev/null || true)
+	if [ -n "$real" ]; then
+		printf '%s\n' "$real"
+	else
+		printf '%s\n' "$path"
+	fi
+}
+
+product_for_bus() {
+	bus=$1
+	vendor=$(cat "$USB_DEVICES_ROOT/$bus/idVendor" 2>/dev/null || true)
+	product=$(cat "$USB_DEVICES_ROOT/$bus/idProduct" 2>/dev/null || true)
+	[ "$vendor" = 0e8d ] || return 1
+	case "$product" in
+	7126|7127)
+		printf '%s\n' "$product"
+		return 0
+		;;
+	esac
+	return 1
+}
+
+preferred_iface() {
+	case "$1" in
+	7126) printf '%s\n' 4 ;;
+	7127) printf '%s\n' 6 ;;
+	*) return 1 ;;
+	esac
+}
+
+find_at_port() {
+	bus=$1
+	product=$(product_for_bus "$bus") || return 1
+	usb_real=$(usb_real_path "$bus") || return 1
+	preferred=$(preferred_iface "$product")
+	fallback=
+
+	for path in "$SYS_TTY_ROOT"/ttyACM*/device "$SYS_TTY_ROOT"/ttyUSB*/device; do
+		[ -e "$path" ] || continue
+		real=$("$READLINK_BIN" -f "$path") || continue
+		case "$real" in
+		"$usb_real"/*) ;;
+		*) continue ;;
+		esac
+		iface_dir=$(find_iface_dir "$real") || continue
+		is_adb_iface "$iface_dir" && continue
+		iface=$(norm_iface "$(cat "$iface_dir/bInterfaceNumber")")
+		dev=${path#"$SYS_TTY_ROOT"/}
+		dev=${dev%/device}
+		port=/dev/$dev
+		if [ "$iface" = "$preferred" ]; then
+			printf '%s\n' "$port"
+			return 0
+		fi
+		[ -n "$fallback" ] || fallback=$port
+	done
+
+	[ -n "$fallback" ] || return 1
+	printf '%s\n' "$fallback"
+}
+
+find_data_iface() {
+	bus=$1
+	product_for_bus "$bus" >/dev/null || return 1
+	usb_real=$(usb_real_path "$bus") || return 1
+	for candidate in "$usb_real"/*/net/* "$usb_real"/net/*; do
+		[ -e "$candidate" ] || continue
+		basename "$candidate"
+		return 0
+	done
+	return 1
+}
+
+cmd=${1:-}
+bus=${2:-}
+[ -n "$cmd" ] && [ -n "$bus" ] || usage
+
+case "$bus" in
+*[!A-Za-z0-9._:-]*|'')
+	exit 2
+	;;
+esac
+
+case "$cmd" in
+at)
+	find_at_port "$bus"
+	;;
+data)
+	find_data_iface "$bus"
+	;;
+ready)
+	find_at_port "$bus" >/dev/null
+	find_data_iface "$bus" >/dev/null
+	;;
+*)
+	usage
+	;;
+esac
