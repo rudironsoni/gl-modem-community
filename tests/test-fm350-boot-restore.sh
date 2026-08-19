@@ -108,4 +108,4 @@ test "$(uci_get gl_modem_community.restore.connected)" = 1
 : >"$tmp/restore.log"
 run_restore restore
 grep -F 'ifup modem_2_1_s1' "$tmp/ifup.log" >/dev/null
-grep -F '--wait-ready' "$tmp/ensure.log" >/dev/null
+grep -F -- '--wait-ready' "$tmp/ensure.log" >/dev/null
