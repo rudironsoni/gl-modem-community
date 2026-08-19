@@ -26,6 +26,7 @@ shellcheck -S warning -e SC1091,SC2034,SC3043 /repo/tests/*.sh \
 		/repo/package/gl-modem-community/files/usr/libexec/gl-modem-community/tethering-overlay \
 		/repo/package/gl-modem-community/files/usr/libexec/gl-modem-community/fm350-boot-restore \
 		/repo/package/gl-modem-community/files/usr/share/gl-modem-community/esim-http/sdk/v1 \
+		/repo/tests/lib/run-lua.sh \
 		/repo/package/gl-modem-community/files/etc/hotplug.d/usb/99-gl-modem-community \
 		/repo/package/gl-modem-community/files/lib/netifd/proto/xmm.sh
     actionlint /repo/.github/workflows/*.yml

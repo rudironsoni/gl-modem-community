@@ -41,16 +41,8 @@ return {
 }
 EOF
 
-lua_bin=
-if command -v lua5.1 >/dev/null 2>&1; then
-	lua_bin=lua5.1
-elif command -v lua >/dev/null 2>&1; then
-	lua_bin=lua
-fi
-[ -n "$lua_bin" ] || {
-	echo 'lua5.1 is required for tethering overlay tests' >&2
-	exit 1
-}
+# shellcheck disable=SC1091
+. "$repo_dir/tests/lib/run-lua.sh"
 
 if command -v luac5.1 >/dev/null 2>&1; then
 	luac5.1 -p "$wrapper"
@@ -70,7 +62,8 @@ EOF
 TETHERING_STOCK="$tmp/rpc/tethering.stock.lua" \
 FM350_PORT_BIN="$tmp/bin/fm350-port" \
 USB_DEVICES_ROOT="$tmp/sys" \
-	"$lua_bin" "$tmp/run.lua"
+RUN_LUA_BIND="$tmp" \
+	run_lua "$tmp/run.lua"
 
 : >"$tmp/mounts"
 cat >"$tmp/bin/cp" <<'EOF'

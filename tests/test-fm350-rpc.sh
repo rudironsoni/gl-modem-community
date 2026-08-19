@@ -32,16 +32,8 @@ if command -v luac5.1 >/dev/null 2>&1; then
 	luac5.1 -p "$harness"
 fi
 
-lua_bin=
-if command -v lua5.1 >/dev/null 2>&1; then
-	lua_bin=lua5.1
-elif command -v lua >/dev/null 2>&1; then
-	lua_bin=lua
-fi
-[ -n "$lua_bin" ] || {
-	echo 'lua5.1 is required for FM350 RPC fixtures' >&2
-	exit 1
-}
+# shellcheck disable=SC1091
+. "$repo_dir/tests/lib/run-lua.sh"
 
 tmp=$(mktemp -d "${TMPDIR:-/tmp}/gl-modem-fm350-rpc.XXXXXX")
 trap 'rm -rf "$tmp"' EXIT HUP INT TERM
@@ -59,7 +51,8 @@ run_harness() {
 	FM350_EXPECT="$expect" \
 	FM350_GTCCINFO="$gtcc" \
 	FM350_COPS="$cops" \
-		"$lua_bin" "$harness"
+	RUN_LUA_BIND="$tmp" \
+		run_lua "$harness"
 }
 
 run_harness lte-mode gtccinfo-lte
