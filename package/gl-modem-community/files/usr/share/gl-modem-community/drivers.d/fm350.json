@@ -36,7 +36,7 @@
           "port_offset_at": 3
         }
       ],
-      "sim_slot_num": 1,
+      "sim_slot_num": 2,
       "supports_function_map": "function_at_common",
       "supports_proto": ["xmm"],
       "supports_feature": [],

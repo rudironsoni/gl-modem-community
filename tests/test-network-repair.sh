@@ -75,6 +75,13 @@ test "$(uci_get network.modem_2_1_s1.proto)" = xmm
 test "$(uci_get network.modem_2_1_s1.bus)" = 2-1
 test "$(uci_get network.modem_2_1_s1.profile)" = 5
 test "$(uci_get network.modem_2_1_s1.pdp)" = IP
+test "$(uci_get network.modem_2_1_s2)" = interface
+test "$(uci_get network.modem_2_1_s2.proto)" = xmm
+test "$(uci_get network.modem_2_1_s2.bus)" = 2-1
+if uci_get network.modem_2_1_s2.apn >/dev/null 2>&1; then
+	echo 'inactive 7127 slot unexpectedly inherited the serving APN' >&2
+	exit 1
+fi
 test "$(grep -Fxc 'commit gl_modem_community' "$tmp/uci.log")" -eq 1
 test "$(grep -Fxc 'commit network' "$tmp/uci.log")" -eq 1
 test "$(grep -Fxc 'call network reload' "$tmp/ubus.log")" -eq 1

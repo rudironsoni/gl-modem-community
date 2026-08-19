@@ -22,6 +22,10 @@ MODULE_BASE=${MODULE_BASE:-$(uname -r)}
 
 FM350_VID=0e8d
 FM350_PIDS="7126 7127"
+ENUM_TIMEOUT=${ENUM_TIMEOUT:-30}
+ENUM_STABLE_SECONDS=${ENUM_STABLE_SECONDS:-5}
+EXPECTED_TTY=${EXPECTED_TTY:-8}
+READLINK_BIN=${READLINK_BIN:-readlink}
 
 log() {
 	"$LOGGER_BIN" -t gl-modem-community "ensure-option-ids: $*"
@@ -84,40 +88,89 @@ find_at_port() {
 		"$FM350_PORT_BIN" at "$bus"
 }
 
-# Wait for FM350 to fully enumerate (all option interfaces present).
-# Returns 0 when ready, 1 on timeout.
-wait_for_enumeration() {
-	local bus=$1 pid=$2
-	local timeout=30
-	local elapsed=0
-	local expected_ifaces=8  # 8 option interfaces for FM350
+usb_real_path() {
+	local bus=$1 path real
+	path=$SYS_USB/devices/$bus
+	real=$("$READLINK_BIN" -f "$path" 2>/dev/null || true)
+	if [ -n "$real" ]; then
+		printf '%s\n' "$real"
+	else
+		printf '%s\n' "$path"
+	fi
+}
 
-	log "waiting for FM350 $bus:$pid to fully enumerate..."
+count_ttyusb() {
+	local bus=$1 bus_real path real count=0
+	bus_real=$(usb_real_path "$bus")
+	for path in "$SYS_TTY"/ttyUSB*/device; do
+		[ -e "$path" ] || continue
+		real=$("$READLINK_BIN" -f "$path" 2>/dev/null) || continue
+		case "$real" in
+		"$bus_real"/*)
+			count=$((count + 1))
+			;;
+		esac
+	done
+	printf '%s\n' "$count"
+}
+
+device_ready() {
+	local bus=$1 count
+	count=$(count_ttyusb "$bus")
+	[ "$count" -ge "$EXPECTED_TTY" ] || return 1
+	USB_DEVICES_ROOT="$SYS_USB/devices" \
+	SYS_TTY_ROOT="$SYS_TTY" \
+	READLINK_BIN="$READLINK_BIN" \
+		"$FM350_PORT_BIN" ready "$bus" >/dev/null 2>&1
+}
+
+# Wait for 8 ttyUSB nodes, the selected AT port, RNDIS, and optional stability.
+wait_for_ready() {
+	local bus=$1 pid=$2
+	local timeout=$ENUM_TIMEOUT
+	local needed=$ENUM_STABLE_SECONDS
+	local elapsed=0
+	local stable=0
+	local count=0
+
+	log "waiting for FM350 $bus:$pid readiness (ttyUSB/AT/RNDIS)"
 
 	while [ "$elapsed" -lt "$timeout" ]; do
-		local count=0
-		local path
-		for path in "$SYS_TTY"/ttyUSB*/device; do
-			[ -e "$path" ] || continue
-			real=$(readlink -f "$path" 2>/dev/null) || continue
-			case "$real" in
-				"$SYS_USB/devices/$bus/"*"1."[2-9]*)
-					count=$((count + 1))
-					;;
-			esac
-		done
-
-		if [ "$count" -ge "$expected_ifaces" ]; then
-			log "FM350 $bus:$pid enumerated with $count option interfaces"
-			return 0
+		count=$(count_ttyusb "$bus")
+		if device_ready "$bus"; then
+			if [ "$needed" -le 0 ]; then
+				log "FM350 $bus:$pid ready with $count ttyUSB interfaces"
+				return 0
+			fi
+			stable=$((stable + 1))
+			if [ "$stable" -ge "$needed" ]; then
+				log "FM350 $bus:$pid stable for ${needed}s with $count ttyUSB interfaces"
+				return 0
+			fi
+		else
+			stable=0
 		fi
-
 		sleep 1
 		elapsed=$((elapsed + 1))
 	done
 
-	log "timeout waiting for FM350 $bus:$pid enumeration (found $count/$expected_ifaces interfaces)"
+	log "timeout waiting for FM350 $bus:$pid readiness (found $count/$EXPECTED_TTY ttyUSB)"
 	return 1
+}
+
+wait_all_ready() {
+	local device bus pid rc=1
+	for device in "$SYS_USB"/devices/*; do
+		[ -r "$device/idVendor" ] || continue
+		[ "$(cat "$device/idVendor")" = "$FM350_VID" ] || continue
+		pid=$(cat "$device/idProduct" 2>/dev/null || true)
+		case "$pid" in 7126|7127) ;; *) continue ;; esac
+		bus=${device##*/}
+		if wait_for_ready "$bus" "$pid"; then
+			rc=0
+		fi
+	done
+	return "$rc"
 }
 
 # Send AT+CUSBMODE=0 to switch FM350 from MBIM/QMI to AT mode.
@@ -161,7 +214,8 @@ switch_to_at_mode() {
 	return 0
 }
 
-main() {
+inject_ids() {
+	local added=0 pid
 	if option_already_bound; then
 		log "FM350 already claimed by option driver"
 		return 0
@@ -169,7 +223,6 @@ main() {
 
 	log "FM350 not claimed by option; attempting ID injection"
 
-	local added=0 pid
 	for pid in $FM350_PIDS; do
 		if try_new_id "$FM350_VID" "$pid"; then
 			log "added $FM350_VID:$pid via new_id"
@@ -194,8 +247,13 @@ main() {
 
 	# Give the kernel a moment to enumerate ttyUSB nodes.
 	sleep 2
+	return 0
+}
 
-	# Wait for FM350 to fully enumerate before attempting mode switch
+main() {
+	inject_ids || return 1
+
+	# Wait for each FM350, even when the option driver was already bound.
 	local device bus pid
 	for device in "$SYS_USB"/devices/*; do
 		[ -r "$device/idVendor" ] || continue
@@ -203,7 +261,7 @@ main() {
 		pid=$(cat "$device/idProduct" 2>/dev/null || true)
 		case "$pid" in 7126|7127) ;; *) continue ;; esac
 		bus=${device##*/}
-		wait_for_enumeration "$bus" "$pid" || continue
+		wait_for_ready "$bus" "$pid" || continue
 		switch_to_at_mode "$bus" "$pid" ||
 			log "mode switch failed for $bus:$pid (may already be in AT mode)"
 	done
@@ -212,11 +270,18 @@ main() {
 	sleep 3
 
 	if option_already_bound; then
-		log "FM350 now claimed by option driver"
+		log "FM350 claimed by option driver"
 	else
 		log "ID injection completed but FM350 still not claimed by option"
 		return 1
 	fi
 }
 
-main "$@"
+case "${1:-}" in
+--wait-ready)
+	wait_all_ready
+	;;
+*)
+	main "$@"
+	;;
+esac

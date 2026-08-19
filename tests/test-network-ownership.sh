@@ -77,11 +77,17 @@ test "$(uci_get network.modem_2_1_s1)" = interface
 test "$(uci_get network.modem_2_1_s1.proto)" = xmm
 test "$(uci_get gl_modem_community.network_modem_2_1_s1)" = network_state
 test "$(uci_get gl_modem_community.network_modem_2_1_s1.created)" = 1
+test "$(uci_get network.modem_2_1_s2)" = interface
+test "$(uci_get gl_modem_community.network_modem_2_1_s2.created)" = 1
 
 run_repair --restore
 
 if uci_get network.modem_2_1_s1 >/dev/null 2>&1; then
 	echo "plugin-created network section remained after restore" >&2
+	exit 1
+fi
+if uci_get network.modem_2_1_s2 >/dev/null 2>&1; then
+	echo "plugin-created companion slot remained after restore" >&2
 	exit 1
 fi
 if uci_get gl_modem_community.network_modem_2_1_s1 >/dev/null 2>&1; then
@@ -110,6 +116,10 @@ test "$(uci_get network.modem_2_1_s1)" = interface
 test "$(uci_get network.modem_2_1_s1.proto)" = custom
 test "$(uci_get network.modem_2_1_s1.bus)" = stock-bus
 test "$(uci_get network.modem_2_1_s1.profile)" = 9
+if uci_get network.modem_2_1_s2 >/dev/null 2>&1; then
+	echo "plugin-created companion slot remained after releasing user-modified state" >&2
+	exit 1
+fi
 if uci_get network.modem_2_1_s1.pdp >/dev/null 2>&1; then
 	echo "plugin-created pdp option remained after restore" >&2
 	exit 1

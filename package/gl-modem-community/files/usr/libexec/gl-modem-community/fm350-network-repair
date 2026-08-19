@@ -80,6 +80,34 @@ read_fm350_context() {
 	[ -n "$FM350_APN" ]
 }
 
+slots_for_pid() {
+	case "$1" in
+	7127) printf '%s\n' "1 2" ;;
+	*) printf '%s\n' "1" ;;
+	esac
+}
+
+section_for_slot() {
+	printf 'modem_%s_s%s\n' "$(printf '%s' "$1" | tr '.-' '__')" "$2"
+}
+
+active_gl_slot() {
+	local bus=$1 pid=$2 output n
+	[ "$pid" = 7127 ] || {
+		printf '%s\n' 1
+		return 0
+	}
+	output=$("$LEGACY_AT_BIN" "$bus" 'AT+GTDUALSIM?' 2>/dev/null) || {
+		printf '%s\n' 1
+		return 0
+	}
+	n=$(printf '%s\n' "$output" | sed -n 's/.*+GTDUALSIM:[[:space:]]*\([01]\).*/\1/p' | head -n 1)
+	case "$n" in
+	1) printf '%s\n' 2 ;;
+	*) printf '%s\n' 1 ;;
+	esac
+}
+
 set_network_option() {
 	local section=$1 option=$2 value=$3 current state
 	current=$(uci_get "network.$section.$option" || true)
@@ -119,8 +147,10 @@ repair_fm350_network() {
 		case "$pid" in 7126|7127) ;; *) continue ;; esac
 		paths="$paths $path"
 		bus=${path##*/}
-		section=modem_$(printf '%s' "$bus" | tr '.-' '__')_s1
-		present_sections="$present_sections $section"
+		for slot in $(slots_for_pid "$pid"); do
+			section=$(section_for_slot "$bus" "$slot")
+			present_sections="$present_sections $section"
+		done
 	done
 
 	if reconcile_stale_network_states "$present_sections"; then
@@ -129,30 +159,46 @@ repair_fm350_network() {
 
 	for path in $paths; do
 		bus=${path##*/}
-		section=modem_$(printf '%s' "$bus" | tr '.-' '__')_s1
-		section_changed=0
-		if ! uci_get "network.$section" >/dev/null; then
-			read_fm350_context "$bus" || continue
-			ensure_network_section "$section"
-			set_network_option "$section" apn_use 5 || true
-			set_network_option "$section" apn "$FM350_APN" || true
-			set_network_option "$section" ip_type "$FM350_PDP" || true
-			section_changed=1
-		fi
-		if set_network_option "$section" proto xmm; then section_changed=1; fi
-		if set_network_option "$section" bus "$bus"; then section_changed=1; fi
-		if set_network_option "$section" profile "$profile"; then section_changed=1; fi
-		ip_type=$(uci_get "network.$section.ip_type" || true)
-		case "$ip_type" in
-			IP|IPV6|IPV4V6)
-				if set_network_option "$section" pdp "$ip_type"; then section_changed=1; fi
-				;;
-		esac
+		pid=$(cat "$path/idProduct" 2>/dev/null || true)
+		active=$(active_gl_slot "$bus" "$pid")
+		created_active=0
+		for slot in $(slots_for_pid "$pid"); do
+			section=$(section_for_slot "$bus" "$slot")
+			section_changed=0
+			if ! uci_get "network.$section" >/dev/null; then
+				if [ "$slot" = "$active" ]; then
+					read_fm350_context "$bus" || continue
+					ensure_network_section "$section"
+					set_network_option "$section" apn_use 5 || true
+					set_network_option "$section" apn "$FM350_APN" || true
+					set_network_option "$section" ip_type "$FM350_PDP" || true
+					created_active=1
+					section_changed=1
+				else
+					active_section=$(section_for_slot "$bus" "$active")
+					if uci_get "network.$active_section" >/dev/null || [ "$created_active" -eq 1 ]; then
+						ensure_network_section "$section"
+						section_changed=1
+					else
+						continue
+					fi
+				fi
+			fi
+			if set_network_option "$section" proto xmm; then section_changed=1; fi
+			if set_network_option "$section" bus "$bus"; then section_changed=1; fi
+			if set_network_option "$section" profile "$profile"; then section_changed=1; fi
+			ip_type=$(uci_get "network.$section.ip_type" || true)
+			case "$ip_type" in
+				IP|IPV6|IPV4V6)
+					if set_network_option "$section" pdp "$ip_type"; then section_changed=1; fi
+					;;
+			esac
 
-		[ "$section_changed" -eq 0 ] || {
-			"$LOGGER_BIN" -t gl-modem-community "repaired stock FM350 interface $section bus=$bus proto=xmm profile=$profile"
-			changed=1
-		}
+			[ "$section_changed" -eq 0 ] || {
+				"$LOGGER_BIN" -t gl-modem-community "repaired stock FM350 interface $section bus=$bus proto=xmm profile=$profile"
+				changed=1
+			}
+		done
 	done
 
 	if repair_kmwan_members "$present_sections"; then
@@ -231,22 +277,25 @@ repair_kmwan_members() {
 }
 
 restore_xmm_available() {
-	local path bus section proto
+	local path bus section proto pid slot
 	for path in "$USB_DEVICES_ROOT"/*; do
 		[ -r "$path/idVendor" ] && [ "$(cat "$path/idVendor")" = 0e8d ] || continue
-		case "$(cat "$path/idProduct" 2>/dev/null || true)" in
+		pid=$(cat "$path/idProduct" 2>/dev/null || true)
+		case "$pid" in
 		7126|7127) ;;
 		*) continue ;;
 		esac
 		bus=${path##*/}
 		"$FM350_PORT_BIN" ready "$bus" >/dev/null 2>&1 || continue
-		section=modem_$(printf '%s' "$bus" | tr '.-' '__')_s1
-		proto=$(uci_get "network.$section.proto" || true)
-		[ "$proto" = xmm ] || continue
-		"$UBUS_BIN" call network.interface notify_proto \
-			"{\"interface\":\"$section\",\"available\":true}" >/dev/null 2>&1 || true
-		"$LOGGER_BIN" -t gl-modem-community \
-			"restored xmm availability for $section bus=$bus"
+		for slot in $(slots_for_pid "$pid"); do
+			section=$(section_for_slot "$bus" "$slot")
+			proto=$(uci_get "network.$section.proto" || true)
+			[ "$proto" = xmm ] || continue
+			"$UBUS_BIN" call network.interface notify_proto \
+				"{\"interface\":\"$section\",\"available\":true}" >/dev/null 2>&1 || true
+			"$LOGGER_BIN" -t gl-modem-community \
+				"restored xmm availability for $section bus=$bus"
+		done
 	done
 }
 

@@ -1,0 +1,241 @@
+#!/bin/sh
+# SPDX-License-Identifier: GPL-3.0-only
+#
+# Conservative persist/restore for the last deliberate FM350 connection state.
+# A missing restore record leaves stock behavior unchanged.
+set -eu
+
+USB_DEVICES_ROOT=${USB_DEVICES_ROOT:-/sys/bus/usb/devices}
+UCI_BIN=${UCI_BIN:-uci}
+UBUS_BIN=${UBUS_BIN:-ubus}
+LOGGER_BIN=${LOGGER_BIN:-logger}
+AT_BIN=${AT_BIN:-/usr/libexec/gl-modem-community/fm350-at}
+PORT_BIN=${PORT_BIN:-/usr/libexec/gl-modem-community/fm350-port}
+ENSURE_OPTION_IDS=${ENSURE_OPTION_IDS:-/usr/libexec/gl-modem-community/ensure-option-ids}
+IFUP_BIN=${IFUP_BIN:-ifup}
+IFDOWN_BIN=${IFDOWN_BIN:-ifdown}
+STATE_CONFIG=${STATE_CONFIG:-gl_modem_community}
+STATE_SECTION=${STATE_SECTION:-restore}
+CONNECT_HOLD=${CONNECT_HOLD:-5}
+RESTORE_RETRIES=${RESTORE_RETRIES:-3}
+RESTORE_RETRY_DELAY=${RESTORE_RETRY_DELAY:-5}
+SNAPSHOT_INTERVAL=${SNAPSHOT_INTERVAL:-10}
+ENUM_STABLE_SECONDS=${ENUM_STABLE_SECONDS:-5}
+
+log() {
+	"$LOGGER_BIN" -t gl-modem-community "boot-restore: $*"
+}
+
+uci_get() {
+	"$UCI_BIN" -q get "$1" 2>/dev/null
+}
+
+section_name() {
+	printf 'modem_%s_s%s\n' "$(printf '%s' "$1" | tr '.-' '__')" "$2"
+}
+
+find_bus() {
+	local path want=${1:-}
+	for path in "$USB_DEVICES_ROOT"/*; do
+		[ -r "$path/idVendor" ] && [ "$(cat "$path/idVendor")" = 0e8d ] || continue
+		case "$(cat "$path/idProduct" 2>/dev/null || true)" in
+		7126|7127)
+			if [ -z "$want" ] || [ "$want" = "${path##*/}" ]; then
+				printf '%s\n' "${path##*/}"
+				return 0
+			fi
+			;;
+		esac
+	done
+	return 1
+}
+
+usb_product() {
+	cat "$USB_DEVICES_ROOT/$1/idProduct" 2>/dev/null || true
+}
+
+is_dual_slot() {
+	[ "$(usb_product "$1")" = 7127 ]
+}
+
+active_slot() {
+	local bus=$1 out n
+	is_dual_slot "$bus" || {
+		printf '%s\n' 1
+		return 0
+	}
+	out=$("$AT_BIN" "$bus" 'AT+GTDUALSIM?' 2>/dev/null) || {
+		printf '%s\n' 1
+		return 0
+	}
+	n=$(printf '%s\n' "$out" | sed -n 's/.*+GTDUALSIM:[[:space:]]*\([01]\).*/\1/p' | head -n 1)
+	case "$n" in
+	1) printf '%s\n' 2 ;;
+	*) printf '%s\n' 1 ;;
+	esac
+}
+
+select_slot() {
+	local bus=$1 slot=$2 modem_slot=0
+	is_dual_slot "$bus" || return 0
+	[ "$slot" = 2 ] && modem_slot=1
+	"$AT_BIN" "$bus" "AT+GTDUALSIM=$modem_slot" >/dev/null 2>&1 || true
+}
+
+ensure_restore_section() {
+	if ! uci_get "$STATE_CONFIG.$STATE_SECTION" >/dev/null; then
+		"$UCI_BIN" set "$STATE_CONFIG.$STATE_SECTION=restore"
+	fi
+}
+
+persist_snapshot() {
+	local bus=$1 connected=$2 slot apn auth section
+	slot=$(active_slot "$bus")
+	section=$(section_name "$bus" "$slot")
+	apn=$(uci_get "network.$section.apn" || true)
+	auth=$(uci_get "network.$section.auth" || true)
+	ensure_restore_section
+	"$UCI_BIN" set "$STATE_CONFIG.$STATE_SECTION.bus=$bus"
+	"$UCI_BIN" set "$STATE_CONFIG.$STATE_SECTION.slot=$slot"
+	"$UCI_BIN" set "$STATE_CONFIG.$STATE_SECTION.connected=$connected"
+	"$UCI_BIN" set "$STATE_CONFIG.$STATE_SECTION.apn=${apn:-}"
+	"$UCI_BIN" set "$STATE_CONFIG.$STATE_SECTION.auth=${auth:-}"
+	"$UCI_BIN" commit "$STATE_CONFIG"
+}
+
+persist_disconnect() {
+	local bus
+	bus=${1:-$(find_bus || true)}
+	[ -n "$bus" ] || return 0
+	persist_snapshot "$bus" 0
+	log "persisted deliberate disconnect bus=$bus"
+}
+
+netifd_up() {
+	local section=$1 status
+	status=$("$UBUS_BIN" call "network.interface.$section" status 2>/dev/null) || return 1
+	printf '%s\n' "$status" | grep -q '"up"[[:space:]]*:[[:space:]]*true' || return 1
+	printf '%s\n' "$status" | grep -q '"address"[[:space:]]*:' || return 1
+	return 0
+}
+
+kmwan_online() {
+	local section=$1 key current
+	uci_get kmwan >/dev/null 2>&1 || return 0
+	for key in $("$UCI_BIN" -q show kmwan 2>/dev/null | awk -F= '$1 ~ /\.interface$/ {print $1}'); do
+		current=$(uci_get "$key" || true)
+		if [ "$current" = "$section" ] || [ "$current" = "${section}_6" ]; then
+			netifd_up "$section" || return 1
+			return 0
+		fi
+	done
+	return 0
+}
+
+connectivity_ok() {
+	local section=$1
+	netifd_up "$section" || return 1
+	kmwan_online "$section" || return 1
+	return 0
+}
+
+sustained_online() {
+	local section=$1 hold=$CONNECT_HOLD elapsed=0
+	[ "$hold" -gt 0 ] || hold=1
+	while [ "$elapsed" -lt "$hold" ]; do
+		connectivity_ok "$section" || return 1
+		elapsed=$((elapsed + 1))
+		[ "$elapsed" -lt "$hold" ] || break
+		sleep 1
+	done
+	return 0
+}
+
+persist_if_online() {
+	local bus section slot
+	bus=$(find_bus "$(uci_get "$STATE_CONFIG.$STATE_SECTION.bus" || true)" || find_bus || true)
+	[ -n "$bus" ] || return 0
+	slot=$(active_slot "$bus")
+	section=$(section_name "$bus" "$slot")
+	sustained_online "$section" || return 0
+	persist_snapshot "$bus" 1
+	log "persisted connected state bus=$bus slot=$slot"
+}
+
+has_restore_record() {
+	uci_get "$STATE_CONFIG.$STATE_SECTION" >/dev/null
+}
+
+wait_ready() {
+	ENUM_STABLE_SECONDS="$ENUM_STABLE_SECONDS" "$ENSURE_OPTION_IDS" --wait-ready
+}
+
+restore_once() {
+	local bus slot connected section attempt=0
+	has_restore_record || {
+		log "no restore record; leaving stock behavior"
+		return 0
+	}
+	bus=$(uci_get "$STATE_CONFIG.$STATE_SECTION.bus" || true)
+	bus=$(find_bus "$bus" || find_bus || true)
+	[ -n "$bus" ] || {
+		log "FM350 not present; skip restore"
+		return 0
+	}
+	wait_ready || {
+		log "enumeration did not become ready"
+		return 1
+	}
+	slot=$(uci_get "$STATE_CONFIG.$STATE_SECTION.slot" || true)
+	[ -n "$slot" ] || slot=$(active_slot "$bus")
+	connected=$(uci_get "$STATE_CONFIG.$STATE_SECTION.connected" || true)
+	select_slot "$bus" "$slot"
+	section=$(section_name "$bus" "$slot")
+	if [ "$connected" != 1 ]; then
+		"$IFDOWN_BIN" "$section" >/dev/null 2>&1 || true
+		log "kept disconnected bus=$bus slot=$slot"
+		return 0
+	fi
+	while [ "$attempt" -lt "$RESTORE_RETRIES" ]; do
+		"$IFUP_BIN" "$section" >/dev/null 2>&1 || true
+		if sustained_online "$section"; then
+			log "restored connected bus=$bus slot=$slot"
+			return 0
+		fi
+		attempt=$((attempt + 1))
+		log "restore attempt $attempt failed bus=$bus slot=$slot"
+		sleep "$RESTORE_RETRY_DELAY"
+	done
+	log "bounded restore failed; not retrying further"
+	return 1
+}
+
+daemon() {
+	restore_once || true
+	while :; do
+		persist_if_online || true
+		sleep "$SNAPSHOT_INTERVAL"
+	done
+}
+
+case "${1:-}" in
+persist-disconnect)
+	persist_disconnect "${2:-}"
+	;;
+persist-if-online)
+	persist_if_online
+	;;
+restore)
+	restore_once
+	;;
+--daemon)
+	daemon
+	;;
+--wait-ready)
+	wait_ready
+	;;
+*)
+	printf 'Usage: %s {persist-disconnect [bus]|persist-if-online|restore|--daemon}\n' "${0##*/}" >&2
+	exit 2
+	;;
+esac

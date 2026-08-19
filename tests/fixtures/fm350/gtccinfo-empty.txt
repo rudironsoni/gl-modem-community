@@ -1,0 +1,4 @@
++GTCCINFO:
+LTE service cell:
+NR service cell:
+OK

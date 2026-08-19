@@ -61,6 +61,7 @@ uci_set() {
 run_repair
 test "$(uci_get network.modem_1_1_s1.bus)" = 1-1
 test "$(uci_get gl_modem_community.network_modem_1_1_s1.created)" = 1
+test "$(uci_get network.modem_1_1_s2.proto)" = xmm
 
 rm -rf "$tmp/sys/1-1"
 mkdir -p "$tmp/sys/2-1"
@@ -71,8 +72,13 @@ run_repair
 
 test "$(uci_get network.modem_2_1_s1.bus)" = 2-1
 test "$(uci_get gl_modem_community.network_modem_2_1_s1.created)" = 1
+test "$(uci_get network.modem_2_1_s2.proto)" = xmm
 if uci_get network.modem_1_1_s1 >/dev/null 2>&1; then
 	echo "plugin-created stale modem_1_1_s1 survived FM350 re-enumeration" >&2
+	exit 1
+fi
+if uci_get network.modem_1_1_s2 >/dev/null 2>&1; then
+	echo "plugin-created stale modem_1_1_s2 survived FM350 re-enumeration" >&2
 	exit 1
 fi
 if uci_get gl_modem_community.network_modem_1_1_s1 >/dev/null 2>&1; then

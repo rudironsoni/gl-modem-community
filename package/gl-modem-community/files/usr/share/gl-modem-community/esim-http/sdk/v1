@@ -1,0 +1,4 @@
+#!/bin/sh
+# SPDX-License-Identifier: GPL-3.0-only
+# uhttpd CGI launcher for POST /sdk/v1.
+exec /usr/libexec/gl-modem-community/fm350-esim-sdk
