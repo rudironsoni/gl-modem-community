@@ -11,6 +11,8 @@ command -v jq >/dev/null 2>&1
 jq -e '.view == "esim"' "$menu" >/dev/null
 jq -e '.parent == "applications"' "$menu" >/dev/null
 grep -F 'module.exports=' "$view" >/dev/null
+grep -F 'render: function (h)' "$view" >/dev/null
+! grep -F 'template:' "$view" >/dev/null
 grep -F 'esim-management-wrapper' "$view" >/dev/null
 grep -F 'esim-info-wrapper' "$view" >/dev/null
 grep -F 'esim-profile-wrapper' "$view" >/dev/null

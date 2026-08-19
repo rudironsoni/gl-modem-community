@@ -90,6 +90,7 @@ for _, method in ipairs({
     "set_apn_db_update", "remove_profile", "set_cell_tower", "get_cell_tower",
     "scan_cell_tower", "set_operator_config", "scan_operator_list",
     "get_operator_config", "send_at_command", "get_slot_config",
+    "set_slot_config",
     "get_traffic_config", "set_traffic_config", "disconnect", "get_debug_msg",
     "get_profile_list", "get_info", "get_status"
 }) do

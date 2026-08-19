@@ -16,6 +16,7 @@
 - [UNVERIFIED] Mobile-app transport and tolerance of partial capabilities.
 - [UNVERIFIED] Runtime behavior of the Lua `.so` fallback and exact GL error propagation.
 - [UNVERIFIED] FM350 reset, USB re-enumeration, concurrent polling, and reconnect behavior.
+- [UNVERIFIED] Package-level 4.8.1 / MT3000 / `0e8d:7127` retest of slot switch, per-slot APN, `/sdk/v1` profile ops with MSS 80, GTCCINFO modes 4/5, tethering RNDIS filter, and cold-boot persist/restore. Reporter diffs for `AT+GTCCINFO?`, `AT+GTDUALSIM?`, and the exact connectivity predicate were not available; restore uses netifd-up plus address and optional KMWAN member presence.
 - [BLOCKED] Ghidra/radare/checksec analysis was unavailable in the pinned analysis container.
 - [BLOCKED] Physical GL-MT3000, FM350, supported comparison modem, and mobile app were outside this offline task.
 - [BLOCKED] Full advanced Fibocom support needs live schemas and command captures before clean-room handlers can be implemented safely.

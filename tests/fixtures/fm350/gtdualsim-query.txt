@@ -1,0 +1,2 @@
++GTDUALSIM: 1
+OK

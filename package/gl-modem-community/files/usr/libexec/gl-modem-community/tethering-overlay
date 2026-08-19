@@ -1,0 +1,55 @@
+#!/bin/sh
+# SPDX-License-Identifier: GPL-3.0-only
+#
+# Bind-mount a community wrapper over stock tethering without replacing the
+# firmware-specific bytecode. Stop/remove unmounts the wrapper.
+set -eu
+
+STOCK_TETHERING=${STOCK_TETHERING:-/usr/lib/oui-httpd/rpc/tethering}
+RUNTIME_DIR=${RUNTIME_DIR:-/var/run/gl-modem-community}
+STOCK_COPY=${STOCK_COPY:-$RUNTIME_DIR/tethering.stock}
+WRAPPER=${WRAPPER:-/usr/share/gl-modem-community/rpc-wrappers/tethering.lua}
+PROC_MOUNTS=${PROC_MOUNTS:-/proc/mounts}
+CP_BIN=${CP_BIN:-cp}
+MOUNT_BIN=${MOUNT_BIN:-mount}
+UMOUNT_BIN=${UMOUNT_BIN:-umount}
+LOGGER_BIN=${LOGGER_BIN:-logger}
+
+log() {
+	"$LOGGER_BIN" -t gl-modem-community "tethering-overlay: $*"
+}
+
+is_mounted() {
+	grep -F " $STOCK_TETHERING " "$PROC_MOUNTS" >/dev/null 2>&1
+}
+
+start_overlay() {
+	[ -e "$STOCK_TETHERING" ] || return 0
+	[ -f "$WRAPPER" ] || return 0
+	mkdir -p "$RUNTIME_DIR"
+	if [ ! -e "$STOCK_COPY" ]; then
+		"$CP_BIN" -p "$STOCK_TETHERING" "$STOCK_COPY" || return 1
+	fi
+	is_mounted && return 0
+	"$MOUNT_BIN" -o bind "$WRAPPER" "$STOCK_TETHERING" || {
+		log "bind-mount failed"
+		return 1
+	}
+	log "wrapped stock tethering RPC"
+}
+
+stop_overlay() {
+	if is_mounted; then
+		"$UMOUNT_BIN" "$STOCK_TETHERING" || true
+	fi
+	rm -f "$STOCK_COPY"
+}
+
+case "${1:-start}" in
+start) start_overlay ;;
+stop) stop_overlay ;;
+*)
+	printf 'Usage: %s {start|stop}\n' "${0##*/}" >&2
+	exit 2
+	;;
+esac

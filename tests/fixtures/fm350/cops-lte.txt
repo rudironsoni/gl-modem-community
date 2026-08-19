@@ -1,0 +1,2 @@
++COPS: 0,0,"Telekom.de",7
+OK

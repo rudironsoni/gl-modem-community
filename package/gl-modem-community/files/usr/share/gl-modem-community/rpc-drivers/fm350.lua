@@ -1,8 +1,10 @@
 -- SPDX-License-Identifier: GPL-3.0-only
 -- FM350 Cellular RPC for the stock 4.8.1/4.9.x internet page.
 
-local AT_BIN = "/usr/libexec/gl-modem-community/fm350-at"
-local PORT_BIN = "/usr/libexec/gl-modem-community/fm350-port"
+local AT_BIN = os.getenv("FM350_AT_BIN") or "/usr/libexec/gl-modem-community/fm350-at"
+local PORT_BIN = os.getenv("FM350_PORT_BIN") or "/usr/libexec/gl-modem-community/fm350-port"
+local USB_ROOT = os.getenv("USB_DEVICES_ROOT") or "/sys/bus/usb/devices"
+local RESTORE_BIN = os.getenv("FM350_RESTORE_BIN") or "/usr/libexec/gl-modem-community/fm350-boot-restore"
 
 local function trim(s)
     return (tostring(s or ""):gsub("^%s+", ""):gsub("%s+$", ""))
@@ -42,10 +44,34 @@ local function parse_cops(text)
     return trim(name or ""), tonumber(act or "")
 end
 
+local function gl_mode_from_cops(act)
+    if act == 5 or act == 51 or act == 11 or act == 12 or act == 13 then
+        return 5
+    end
+    if act == 4 or act == 41 or act == 7 or act == 10 then
+        return 4
+    end
+    return act
+end
+
+-- Documented GTCCINFO record prefix:
+--   field 1 = 1 serving, 2 neighbor
+--   field 2 = RAT 4 LTE, 9 NR
+-- Do not substring-match "NR"; section headings false-positive 5G.
 local function radio_from_gtccinfo(text)
-    if text:find("NR", 1, true) then return 13, "NR5G" end
-    if text:find("LTE", 1, true) or text:find("E%-UTRAN", 1, true) then
-        return 7, "LTE"
+    local lte, nr = false, false
+    for line in tostring(text or ""):gmatch("[^\r\n]+") do
+        local serving, rat = line:match("^%s*(%d+)%s*,%s*(%d+)%s*,")
+        if serving == "1" then
+            if rat == "4" then lte = true end
+            if rat == "9" then nr = true end
+        end
+    end
+    if nr then
+        return 5, "NR5G"
+    end
+    if lte then
+        return 4, "LTE"
     end
     return nil
 end
@@ -64,8 +90,53 @@ local function parse_rsrp(text)
     return text:match("RSRP:?%s*([-%d]+)") or text:match("([-%d]+)dBm")
 end
 
+local function read_sys_id(bus, name)
+    local path = USB_ROOT .. "/" .. tostring(bus) .. "/" .. name
+    local fh = io.open(path, "r")
+    if not fh then return "" end
+    local value = trim(fh:read("*l") or "")
+    fh:close()
+    return value
+end
+
+local function usb_product(bus)
+    return read_sys_id(bus, "idVendor"), read_sys_id(bus, "idProduct")
+end
+
+local function is_dual_slot(bus)
+    local vid, pid = usb_product(bus)
+    return vid == "0e8d" and pid == "7127"
+end
+
+local function parse_gtdualsim(text)
+    local n = tostring(text or ""):match("%+GTDUALSIM:%s*(%d)")
+    return tonumber(n)
+end
+
+local function modem_slot_to_gl(modem_slot)
+    if modem_slot == 1 then return 2 end
+    return 1
+end
+
+local function gl_slot_to_modem(gl_slot)
+    local n = tonumber(gl_slot)
+    if n == 2 then return 1 end
+    return 0
+end
+
+local function active_slot_num(bus)
+    if not is_dual_slot(bus) then return 1 end
+    local modem_slot = parse_gtdualsim(at(bus, "AT+GTDUALSIM?"))
+    if modem_slot == nil then return 1 end
+    return modem_slot_to_gl(modem_slot)
+end
+
+local function section_for_slot(bus, slot)
+    return "modem_" .. tostring(bus):gsub("[%.%-]", "_") .. "_s" .. tostring(slot)
+end
+
 local function section_for_bus(bus)
-    return "modem_" .. tostring(bus):gsub("[%.%-]", "_") .. "_s1"
+    return section_for_slot(bus, active_slot_num(bus))
 end
 
 local function uci_get(key)
@@ -79,6 +150,25 @@ end
 
 local function ipv4_from_status(status)
     return first_match(status, '"address":%s*"([%d%.]+)"')
+end
+
+local function config_from_args(args)
+    if type(args.config) == "table" then
+        return args.config
+    end
+    return args
+end
+
+local function persist_disconnect(bus)
+    if RESTORE_BIN == "" then return end
+    run(shell_quote(RESTORE_BIN) .. " persist-disconnect " .. shell_quote(bus))
+end
+
+local function set_modem_slot(bus, gl_slot)
+    if not is_dual_slot(bus) then return true end
+    local modem_slot = gl_slot_to_modem(gl_slot)
+    local out = at(bus, "AT+GTDUALSIM=" .. tostring(modem_slot))
+    return out:find("OK") ~= nil or out:find("ERROR") == nil
 end
 
 local function collect_modem(bus)
@@ -95,10 +185,10 @@ local function collect_modem(bus)
     local cell = at(bus, "AT+GTCCINFO?")
     local mode, tech = radio_from_gtccinfo(cell)
     if not mode then
-        mode = act
-        if act == 13 then
+        mode = gl_mode_from_cops(act)
+        if mode == 5 then
             tech = "NR5G"
-        elseif act == 7 then
+        elseif mode == 4 then
             tech = "LTE"
         else
             tech = ""
@@ -107,7 +197,9 @@ local function collect_modem(bus)
     local rsrp = parse_rsrp(cell)
     local strength = rsrp_to_bars(rsrp)
     local at_port = trim(run(shell_quote(PORT_BIN) .. " at " .. shell_quote(bus)))
-    local section = section_for_bus(bus)
+    local slot = active_slot_num(bus)
+    local slots = is_dual_slot(bus) and 2 or 1
+    local section = section_for_slot(bus, slot)
     local up, raw = netifd_up(section)
     local ip = ipv4_from_status(raw)
     local apn = uci_get("network." .. section .. ".apn")
@@ -125,13 +217,13 @@ local function collect_modem(bus)
         imei = imei,
         proto = proto,
         device = at_port,
-        sim_slot_num = 1,
+        sim_slot_num = slots,
         simcard = {
             status = pin,
             iccid = iccid,
             imsi = imsi,
             carrier = carrier,
-            active_sim = 1,
+            active_sim = slot,
             signal = {
                 mode = mode or 0,
                 strength = strength,
@@ -159,7 +251,7 @@ local function get_info(args)
                 type = 1,
                 status = 2,
                 bus = args.bus,
-                slot = 1,
+                slot = modem.simcard.active_sim,
                 iccid = modem.simcard.iccid,
             },
         },
@@ -177,7 +269,7 @@ local function get_status(args)
                 type = 1,
                 status = 2,
                 bus = args.bus,
-                slot = 1,
+                slot = modem.simcard.active_sim,
                 iccid = modem.simcard.iccid,
             },
         },
@@ -195,6 +287,7 @@ end
 local function disconnect(args)
     local section = section_for_bus(args.bus)
     run("ifdown " .. shell_quote(section))
+    persist_disconnect(args.bus)
     return { success = true }
 end
 
@@ -212,16 +305,37 @@ local function get_sim_config(args)
     }
 end
 
+local function get_slot_config(args)
+    local slot = active_slot_num(args.bus)
+    return {
+        current_sim = tostring(slot),
+        enable_switch = false,
+        sim_slot_num = is_dual_slot(args.bus) and 2 or 1,
+    }
+end
+
+local function set_slot_config(args)
+    local current = args.current_sim
+    if current ~= nil and current ~= "" then
+        set_modem_slot(args.bus, current)
+    end
+    return { success = true, current_sim = tostring(active_slot_num(args.bus)) }
+end
+
 local function set_sim_config(args)
+    if args.current_sim ~= nil and args.current_sim ~= "" then
+        set_slot_config(args)
+    end
+    local cfg = config_from_args(args)
     local section = section_for_bus(args.bus)
     local map = {
-        apn = args.apn,
-        ip_type = args.ip_type,
-        pdp = args.pdp or args.ip_type,
-        auth = args.auth,
-        username = args.username,
-        password = args.password,
-        proto = args.proto,
+        apn = cfg.apn,
+        ip_type = cfg.ip_type,
+        pdp = cfg.pdp or cfg.ip_type,
+        auth = cfg.auth,
+        username = cfg.username,
+        password = cfg.password,
+        proto = cfg.proto,
     }
     for option, value in pairs(map) do
         if value ~= nil and value ~= "" then
@@ -246,5 +360,7 @@ return {
         disconnect = disconnect,
         get_sim_config = get_sim_config,
         set_sim_config = set_sim_config,
+        get_slot_config = get_slot_config,
+        set_slot_config = set_slot_config,
     },
 }

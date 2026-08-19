@@ -1,36 +1,87 @@
 module.exports=({
 	name: "esim",
-	template: '<div class="esim-management-wrapper">' +
-		'<div class="esim-info-wrapper"><ul class="info-main">' +
-		'<li class="title-li">{{ titleStatus }}</li>' +
-		'<li><span>EID</span><span>{{ esimStatusInfo.eid || "-" }}</span></li>' +
-		'<li><span>ICCID</span><span>{{ esimStatusInfo.iccid || "-" }}</span></li>' +
-		'<li><span>IMSI</span><span>{{ esimStatusInfo.imsi || "-" }}</span></li>' +
-		'<li><span>{{ labelOs }}</span><span>{{ esimStatusInfo.cos || "-" }}</span></li>' +
-		'<li><span>{{ labelStorage }}</span><span>{{ esimStatusInfo.esimStorage || "-" }}</span></li>' +
-		'<li><span>{{ labelCount }}</span><span>{{ esimStatusInfo.esimProfileNumber }}</span></li>' +
-		'</ul></div>' +
-		'<div class="esim-profile-wrapper">' +
-		'<div class="profile-header"><div class="profile-title">{{ titleList }}</div></div>' +
-		'<div class="profile-main" v-for="item in profileList" :key="item.iccid">' +
-		'<span class="badge" :class="{ \'is-online\': item.state === 1 }"></span> ' +
-		'<span>{{ item.name || item.iccid }}</span>' +
-		'<div class="btns">' +
-		'<button class="btn-item" @click="enable(item.iccid)">Enable</button>' +
-		'<button class="btn-item" @click="disable(item.iccid)">Disable</button>' +
-		'<button class="btn-item" @click="remove(item.iccid)">Delete</button>' +
-		'</div></div></div>' +
-		'<div class="add-profile-btn" @click="showAdd = !showAdd">' +
-		'<span class="iconfont icon-plus"></span> {{ labelAdd }}' +
-		'</div>' +
-		'<div v-if="showAdd">' +
-		'<input v-model="activationCode" :placeholder="labelCode" />' +
-		'<input v-model="confirmationCode" :placeholder="labelConfirm" />' +
-		'<button class="btn-item" @click="install">Install</button>' +
-		'</div>' +
-		'<div class="export-log-btn"><span @click="exportLog">{{ labelLog }}</span></div>' +
-		'<pre class="esim-install-dialog" v-if="logText">{{ logText }}</pre>' +
-		'</div>',
+	render: function (h) {
+		var self = this;
+		var info = this.esimStatusInfo || {};
+		var profiles = (this.profileList || []).map(function (item) {
+			return h("div", { class: "profile-main", key: item.iccid }, [
+				h("span", { class: { badge: true, "is-online": item.state === 1 } }),
+				" ",
+				h("span", [item.name || item.iccid]),
+				h("div", { class: "btns" }, [
+					h("button", {
+						class: "btn-item",
+						on: { click: function () { self.enable(item.iccid); } }
+					}, ["Enable"]),
+					h("button", {
+						class: "btn-item",
+						on: { click: function () { self.disable(item.iccid); } }
+					}, ["Disable"]),
+					h("button", {
+						class: "btn-item",
+						on: { click: function () { self.remove(item.iccid); } }
+					}, ["Delete"])
+				])
+			]);
+		});
+		var addForm = this.showAdd ? [
+			h("input", {
+				domProps: {
+					value: this.activationCode,
+					placeholder: this.labelCode
+				},
+				on: {
+					input: function (e) { self.activationCode = e.target.value; }
+				}
+			}),
+			h("input", {
+				domProps: {
+					value: this.confirmationCode,
+					placeholder: this.labelConfirm
+				},
+				on: {
+					input: function (e) { self.confirmationCode = e.target.value; }
+				}
+			}),
+			h("button", {
+				class: "btn-item",
+				on: { click: this.install }
+			}, ["Install"])
+		] : [];
+		var logNode = this.logText
+			? h("pre", { class: "esim-install-dialog" }, [this.logText])
+			: null;
+		return h("div", { class: "esim-management-wrapper" }, [
+			h("div", { class: "esim-info-wrapper" }, [
+				h("ul", { class: "info-main" }, [
+					h("li", { class: "title-li" }, [this.titleStatus]),
+					h("li", [h("span", ["EID"]), h("span", [info.eid || "-"])]),
+					h("li", [h("span", ["ICCID"]), h("span", [info.iccid || "-"])]),
+					h("li", [h("span", ["IMSI"]), h("span", [info.imsi || "-"])]),
+					h("li", [h("span", [this.labelOs]), h("span", [info.cos || "-"])]),
+					h("li", [h("span", [this.labelStorage]), h("span", [info.esimStorage || "-"])]),
+					h("li", [h("span", [this.labelCount]), h("span", [String(info.esimProfileNumber)])])
+				])
+			]),
+			h("div", { class: "esim-profile-wrapper" }, [
+				h("div", { class: "profile-header" }, [
+					h("div", { class: "profile-title" }, [this.titleList])
+				])
+			].concat(profiles)),
+			h("div", {
+				class: "add-profile-btn",
+				on: { click: function () { self.showAdd = !self.showAdd; } }
+			}, [
+				h("span", { class: "iconfont icon-plus" }),
+				" " + this.labelAdd
+			])
+		].concat(addForm).concat([
+			h("div", { class: "export-log-btn" }, [
+				h("span", { on: { click: this.exportLog } }, [this.labelLog])
+			]),
+			logNode
+		]));
+	},
 	data: function () {
 		return {
 			esimStatusInfo: { eid: "", iccid: "", imsi: "", cos: "", esimStorage: "", esimProfileNumber: 0 },
@@ -122,7 +173,9 @@ module.exports=({
 			var self = this;
 			this.sdk("install", {
 				activationCode: this.activationCode,
-				confirmationCode: this.confirmationCode
+				confirmationCode: this.confirmationCode,
+				ac_code: this.activationCode,
+				cf_code: this.confirmationCode
 			}).then(function () { self.showAdd = false; self.activationCode = ""; self.confirmationCode = ""; self.refresh(); });
 		},
 		exportLog: function () {

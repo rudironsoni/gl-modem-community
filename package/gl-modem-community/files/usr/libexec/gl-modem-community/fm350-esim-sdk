@@ -7,8 +7,12 @@ AT_BIN=${AT_BIN:-/usr/libexec/gl-modem-community/fm350-at}
 PORT_BIN=${PORT_BIN:-/usr/libexec/gl-modem-community/fm350-port}
 USB_DEVICES_ROOT=${USB_DEVICES_ROOT:-/sys/bus/usb/devices}
 JQ_BIN=${JQ_BIN:-jq}
-LPAC_BIN=${LPAC_BIN:-lpac}
+LPAC_BIN=${LPAC_BIN:-/usr/bin/lpac}
+LPAC_LOCK=${LPAC_LOCK:-/var/lock/gl-modem-community-lpac.lock}
+LPAC_LIB_PATH=${LPAC_LIB_PATH:-}
 LOG_FILE=${LOG_FILE:-/tmp/gl-modem-community-esim.log}
+PROGRESS_FILE=${PROGRESS_FILE:-/tmp/gl-modem-community-esim-progress.json}
+FLOCK_BIN=${FLOCK_BIN:-flock}
 
 find_bus() {
 	local path
@@ -27,33 +31,98 @@ json_out() {
 	printf '{"code":%s,"data":%s}\n' "$code" "$data"
 }
 
+esim_log() {
+	# Never write request bodies; activation/confirmation codes must stay out.
+	printf '%s %s\n' "$(date +%s 2>/dev/null || printf unknown)" "$*" >>"$LOG_FILE"
+}
+
 lpac_available() {
+	if [ -x "$LPAC_BIN" ]; then
+		return 0
+	fi
 	command -v "$LPAC_BIN" >/dev/null 2>&1
+}
+
+write_progress() {
+	ratio=$1
+	hint=${2:-}
+	ac_code=${3:-}
+	"$JQ_BIN" -nc --argjson ratio "$ratio" --arg hint "$hint" --arg ac_code "$ac_code" \
+		'{ac_code:$ac_code,hint:$hint,ratio:$ratio,progress:$ratio}' >"$PROGRESS_FILE"
+}
+
+read_progress() {
+	if [ -f "$PROGRESS_FILE" ]; then
+		cat "$PROGRESS_FILE"
+		return 0
+	fi
+	printf '%s\n' '{"ac_code":"","hint":"","ratio":0,"progress":0}'
+}
+
+lpac_data() {
+	"$JQ_BIN" -c '
+		if type == "array" then .
+		elif .payload.data != null then .payload.data
+		elif .data != null then .data
+		else empty end
+	' 2>/dev/null
 }
 
 lpac_cmd() {
 	bus=$1
 	shift
 	port=$("$PORT_BIN" at "$bus") || return 1
-	LPAC_APDU=at AT_DEVICE=$port LPAC_CUSTOM_ES10X_MSS=80 \
-		"$LPAC_BIN" "$@"
+	lock_dir=${LPAC_LOCK%/*}
+	[ "$lock_dir" = "$LPAC_LOCK" ] || mkdir -p "$lock_dir"
+	# shellcheck disable=SC2086
+	(
+		"$FLOCK_BIN" -x 9
+		if [ -n "$LPAC_LIB_PATH" ]; then
+			LD_LIBRARY_PATH="$LPAC_LIB_PATH${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
+			export LD_LIBRARY_PATH
+		fi
+		LPAC_APDU=at \
+		LPAC_APDU_AT_DEVICE=$port \
+		LPAC_CUSTOM_ES10X_MSS=80 \
+			"$LPAC_BIN" "$@"
+	) 9>"$LPAC_LOCK"
+}
+
+map_profiles() {
+	"$JQ_BIN" -c '
+		(if type=="array" then .
+		 elif type=="object" and (.profiles|type)=="array" then .profiles
+		 else [] end)
+		| map({
+			iccid: (.iccid // ""),
+			name: (.profileNickname // .profileName // .name // ""),
+			class: (
+				if .class then .class
+				elif .profileClass == "provisioning" or .profileClass == "Provisioning" then 1
+				elif .profileClass == "test" or .profileClass == "testing" then 1
+				else 2 end
+			),
+			state: (
+				if .state == 1 or .state == "1" then 1
+				elif .state == 0 or .state == "0" then 0
+				elif .profileState == "enabled" or .profileState == "Enabled" then 1
+				else 0 end
+			)
+		})
+	' 2>/dev/null || printf '%s' '[]'
 }
 
 status_from_lpac() {
 	bus=$1
 	info=$(lpac_cmd "$bus" chip info) || return 1
 	list=$(lpac_cmd "$bus" profile list) || list='[]'
-	eid=$(printf '%s' "$info" | "$JQ_BIN" -r '.eid // .data.eid // empty' 2>/dev/null || true)
-	iccid=$(printf '%s' "$list" | "$JQ_BIN" -r '[.[]?, .data[]?] | map(select(.state==1 or .profileState==1)) | .[0].iccid // empty' 2>/dev/null || true)
-	profiles=$(printf '%s' "$list" | "$JQ_BIN" -c '
-		(if type=="array" then . elif .data then .data else [] end)
-		| map({
-			iccid: (.iccid // ""),
-			name: (.name // .profileName // ""),
-			class: (if .class then .class elif .profileClass then .profileClass else 2 end),
-			state: (if .state then .state elif .profileState then .profileState else 0 end)
-		})
-	' 2>/dev/null || printf '%s' '[]')
+	info_data=$(printf '%s' "$info" | lpac_data)
+	list_data=$(printf '%s' "$list" | lpac_data)
+	[ -n "$info_data" ] || info_data=$info
+	[ -n "$list_data" ] || list_data=$list
+	eid=$(printf '%s' "$info_data" | "$JQ_BIN" -r '.eidValue // .eid // empty' 2>/dev/null || true)
+	profiles=$(printf '%s' "$list_data" | map_profiles)
+	iccid=$(printf '%s' "$profiles" | "$JQ_BIN" -r 'map(select(.state==1)) | .[0].iccid // empty' 2>/dev/null || true)
 	"$JQ_BIN" -nc --arg eid "${eid:-}" --arg iccid "${iccid:-}" --argjson list "${profiles:-[]}" \
 		'{eid:$eid, env:{iccid:$iccid, imsi:""}, profile_list:$list}'
 }
@@ -64,6 +133,7 @@ handle() {
 	bus=$(find_bus || true)
 	case "$method" in
 	status)
+		esim_log status
 		if [ -n "$bus" ] && lpac_available; then
 			if data=$(status_from_lpac "$bus"); then
 				json_out 200 "$data"
@@ -81,6 +151,7 @@ handle() {
 	enable|disable|delete|nick)
 		iccid=$(printf '%s' "$body" | "$JQ_BIN" -r '.iccid // empty')
 		[ -n "$iccid" ] || { json_out 600 '{"message":"missing iccid"}'; return 0; }
+		esim_log "$method"
 		if [ -n "$bus" ] && lpac_available; then
 			case "$method" in
 			enable) lpac_cmd "$bus" profile enable "$iccid" >/dev/null 2>&1 || { json_out 402 '{"message":"enable failed"}'; return 0; } ;;
@@ -97,16 +168,25 @@ handle() {
 		json_out 600 '{"message":"lpac not installed"}'
 		;;
 	install)
+		code=$(printf '%s' "$body" | "$JQ_BIN" -r '.ac_code // .activationCode // .code // empty')
+		confirm=$(printf '%s' "$body" | "$JQ_BIN" -r '.cf_code // .confirmationCode // empty')
+		esim_log install
 		if [ -n "$bus" ] && lpac_available; then
-			code=$(printf '%s' "$body" | "$JQ_BIN" -r '.activationCode // .code // empty')
-			confirm=$(printf '%s' "$body" | "$JQ_BIN" -r '.confirmationCode // empty')
+			write_progress 10 "download" >/dev/null
 			if [ -n "$confirm" ]; then
-				lpac_cmd "$bus" profile download -a "$code" -c "$confirm" >/dev/null 2>&1 ||
-					{ json_out 600 '{"message":"install failed"}'; return 0; }
+				if ! lpac_cmd "$bus" profile download -a "$code" -c "$confirm" >/dev/null 2>&1; then
+					write_progress 0 "failed" >/dev/null
+					json_out 600 '{"message":"install failed"}'
+					return 0
+				fi
 			else
-				lpac_cmd "$bus" profile download -a "$code" >/dev/null 2>&1 ||
-					{ json_out 600 '{"message":"install failed"}'; return 0; }
+				if ! lpac_cmd "$bus" profile download -a "$code" >/dev/null 2>&1; then
+					write_progress 0 "failed" >/dev/null
+					json_out 600 '{"message":"install failed"}'
+					return 0
+				fi
 			fi
+			write_progress 100 "done" >/dev/null
 			json_out 200 '{}'
 			return 0
 		fi
@@ -116,7 +196,7 @@ handle() {
 		[ -f "$LOG_FILE" ] && cat "$LOG_FILE" || printf '%s\n' ''
 		;;
 	progress)
-		json_out 200 '{"progress":0}'
+		json_out 200 "$(read_progress)"
 		;;
 	*)
 		json_out 600 '{"message":"unknown method"}'

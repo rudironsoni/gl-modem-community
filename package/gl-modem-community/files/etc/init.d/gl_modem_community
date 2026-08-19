@@ -22,6 +22,12 @@ OUI_MENU_DIR=${OUI_MENU_DIR:-/usr/share/oui/menu.d}
 ESIM_MENU_SRC=${ESIM_MENU_SRC:-/usr/share/gl-modem-community/menu.d/esim.json}
 ESIM_MENU_DST=${ESIM_MENU_DST:-$OUI_MENU_DIR/gl-modem-community-esim.json}
 ESIM_HTTP_ROOT=${ESIM_HTTP_ROOT:-/usr/share/gl-modem-community/esim-http}
+ESIM_NGINX_SRC=${ESIM_NGINX_SRC:-/usr/share/gl-modem-community/nginx/gl-modem-community-esim.conf}
+ESIM_NGINX_DST=${ESIM_NGINX_DST:-/etc/nginx/gl-conf.d/gl-modem-community-esim.conf}
+NGINX_BIN=${NGINX_BIN:-nginx}
+PROC_NET_TCP=${PROC_NET_TCP:-/proc/net/tcp}
+TETHERING_OVERLAY=${TETHERING_OVERLAY:-/usr/libexec/gl-modem-community/tethering-overlay}
+BOOT_RESTORE=${BOOT_RESTORE:-/usr/libexec/gl-modem-community/fm350-boot-restore}
 UHTTPD_BIN=${UHTTPD_BIN:-uhttpd}
 PROC_MOUNTS=${PROC_MOUNTS:-/proc/mounts}
 CP_BIN=${CP_BIN:-cp}
@@ -61,12 +67,76 @@ remove_legacy_esim_menu() {
 	rm -f "$ESIM_MENU_DST"
 }
 
+port_3456_busy() {
+	# 3456 = 0x0D80, TCP_LISTEN = 0A
+	local files=""
+	[ -r "$PROC_NET_TCP" ] && files="$PROC_NET_TCP"
+	[ -r "${PROC_NET_TCP}6" ] && files="$files ${PROC_NET_TCP}6"
+	[ -n "$files" ] || return 1
+	# shellcheck disable=SC2086
+	awk '
+		$4 == "0A" {
+			n = split($2, a, ":")
+			if (tolower(a[n]) == "0d80") exit 0
+		}
+		END { exit 1 }
+	' $files
+}
+
+install_esim_nginx() {
+	local dst_dir
+	[ -f "$ESIM_NGINX_SRC" ] || return 0
+	dst_dir=${ESIM_NGINX_DST%/*}
+	[ -d "$dst_dir" ] || return 0
+	"$CP_BIN" "$ESIM_NGINX_SRC" "$ESIM_NGINX_DST" || return 1
+	if command -v "$NGINX_BIN" >/dev/null 2>&1 || [ -x "$NGINX_BIN" ]; then
+		if ! "$NGINX_BIN" -t >/dev/null 2>&1; then
+			rm -f "$ESIM_NGINX_DST"
+			"$LOGGER_BIN" -t gl-modem-community "nginx rejected eSIM location; left stock config"
+			return 1
+		fi
+		"$NGINX_BIN" -s reload >/dev/null 2>&1 || true
+	fi
+}
+
+remove_esim_nginx() {
+	[ -f "$ESIM_NGINX_DST" ] || return 0
+	rm -f "$ESIM_NGINX_DST"
+	if command -v "$NGINX_BIN" >/dev/null 2>&1 || [ -x "$NGINX_BIN" ]; then
+		"$NGINX_BIN" -s reload >/dev/null 2>&1 || true
+	fi
+}
+
 start_esim_sdk() {
 	[ -x "$UHTTPD_BIN" ] || command -v "$UHTTPD_BIN" >/dev/null 2>&1 || return 0
 	[ -d "$ESIM_HTTP_ROOT" ] || return 0
+	if port_3456_busy; then
+		"$LOGGER_BIN" -t gl-modem-community \
+			"port 3456 already in use; not starting community eSIM SDK"
+		return 0
+	fi
+	install_esim_nginx || true
 	procd_open_instance fm350-esim-sdk
 	procd_set_param command "$UHTTPD_BIN" -f -p 127.0.0.1:3456 \
 		-h "$ESIM_HTTP_ROOT" -x /sdk
+	procd_set_param respawn 3600 5 5
+	procd_close_instance
+}
+
+start_tethering_overlay() {
+	[ -x "$TETHERING_OVERLAY" ] || return 0
+	"$TETHERING_OVERLAY" start || true
+}
+
+stop_tethering_overlay() {
+	[ -x "$TETHERING_OVERLAY" ] || return 0
+	"$TETHERING_OVERLAY" stop || true
+}
+
+start_boot_restore() {
+	[ -x "$BOOT_RESTORE" ] || return 0
+	procd_open_instance fm350-boot-restore
+	procd_set_param command "$BOOT_RESTORE" --daemon
 	procd_set_param respawn 3600 5 5
 	procd_close_instance
 }
@@ -120,9 +190,11 @@ start_service() {
 		;;
 	esac
 
-	"$ENSURE_OPTION_IDS" || true
+	ENUM_STABLE_SECONDS=0 "$ENSURE_OPTION_IDS" || true
 	[ -x "$FCC_UNLOCK" ] && "$FCC_UNLOCK" || true
+	start_tethering_overlay
 	start_esim_sdk
+	start_boot_restore
 	return "$rc"
 }
 
@@ -130,6 +202,8 @@ stop_service() {
 	stack=$(cat "$STACK_FILE" 2>/dev/null || true)
 
 	"$NETWORK_REPAIR" --restore || true
+	stop_tethering_overlay
+	remove_esim_nginx
 	case "$stack" in
 	modern)
 		is_model_list_mounted && "$UMOUNT_BIN" "$STOCK_LIST"
