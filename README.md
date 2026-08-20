@@ -90,6 +90,9 @@ command -v opkg && echo 'opkg firmware'
 
 All installs require GL.iNet's proprietary cellular services. Check the [compatibility status](#compatibility-status) before installing on hardware that is not yet marked tested.
 
+> [!NOTE]
+> The feeds are static files served by GitHub Pages. `opkg update` and `apk update` fetch them with plain HTTP clients that cannot answer JavaScript challenges. If the feed domain sits behind a CDN with bot protection (for example Cloudflare), requests to `/gl-modem-community/feed/*` must be exempted from managed challenges, or feed downloads fail on the router even though the same URLs open in a browser.
+
 ### GL.iNet OpenWrt 25 (APK)
 
 If the software page shows **Configure apk**, use this section. GL.iNet firmware that uses APK must trust the project's public key before installing the package. LuCI can manage the feed after this one-time bootstrap, but it cannot import third-party APK signing keys.
@@ -110,10 +113,10 @@ chmod 0644 /etc/apk/keys/gl-modem-community.pem
 1. Open the GL.iNet admin panel, select **Advanced Settings**, and enter LuCI.
 2. Go to **System → Software**.
 3. Select **Configure apk**.
-4. Add this line to `/etc/apk/repositories.d/customfeeds.list`:
+4. Add this line to `/etc/apk/repositories.d/customfeeds.list`. `apk` reads a repository line as the index URL itself, so it must end in `packages.adb`:
 
    ```text
-   https://github.rudironsoni.com/gl-modem-community/feed/25.12
+   https://github.rudironsoni.com/gl-modem-community/feed/25.12/packages.adb
    ```
 
 5. Save the configuration and select **Update lists**.
@@ -125,7 +128,7 @@ If the software button says **Configure opkg**, use the IPK instructions below i
 #### Option B: Install the APK feed without LuCI
 
 ```sh
-feed='https://github.rudironsoni.com/gl-modem-community/feed/25.12'
+feed='https://github.rudironsoni.com/gl-modem-community/feed/25.12/packages.adb'
 mkdir -p /etc/apk/repositories.d
 touch /etc/apk/repositories.d/customfeeds.list
 grep -Fqx "$feed" /etc/apk/repositories.d/customfeeds.list || \

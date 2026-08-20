@@ -26,6 +26,7 @@ CHANNEL_MANIFEST := $(REPO_DIR)/config/firmware-channels.json
 .PHONY: analyze-elf extract-strings report test package package-opkg
 .PHONY: package-glinet21 check-firmware-channels verify-firmware-channels
 .PHONY: generate-sbom validate-sbom verify-signing-key sign-apk-release clean-work
+.PHONY: prepare-apk-sdk generate-feed-index
 
 tools:
 	docker build -t $(ANALYSIS_IMAGE) tools/analysis-container
@@ -261,10 +262,10 @@ report:
 test:
 	./tests/run.sh
 
-package: SDK_NAME = openwrt-sdk-25.12.5-mediatek-filogic_gcc-14.3.0_musl.Linux-x86_64.tar.zst
-package: SDK_URL = https://downloads.openwrt.org/releases/25.12.5/targets/mediatek/filogic/$(SDK_NAME)
-package: SDK_SHA256 = ff4a38a397caa2cfe1c39e18f84ddede14878221b3593c3f2c4cfe24e3ec4c25
-package: SDK_DIR_NAME = sdk-25.12.5-mediatek-filogic
+package prepare-apk-sdk: SDK_NAME = openwrt-sdk-25.12.5-mediatek-filogic_gcc-14.3.0_musl.Linux-x86_64.tar.zst
+package prepare-apk-sdk: SDK_URL = https://downloads.openwrt.org/releases/25.12.5/targets/mediatek/filogic/$(SDK_NAME)
+package prepare-apk-sdk: SDK_SHA256 = ff4a38a397caa2cfe1c39e18f84ddede14878221b3593c3f2c4cfe24e3ec4c25
+package prepare-apk-sdk: SDK_DIR_NAME = sdk-25.12.5-mediatek-filogic
 package: BUILD_IMAGE = mt3000-openwrt-sdk:25.12.5
 package: PACKAGE_GLOB = gl-modem-community*.apk
 package: PACKAGE_ASSET = gl-modem-community-$(PACKAGE_VERSION)-r$(PACKAGE_RELEASE).apk
@@ -326,6 +327,21 @@ package package-opkg:
 	shasum -a 256 "$(REPO_DIR)/artifacts/$(PACKAGE_ASSET)" |
 		sed "s# $(REPO_DIR)/# #" >"$(ANALYSIS_DIR)/hashes/$(HASH_REPORT)"
 	printf '%s\n' "artifacts/$(PACKAGE_ASSET)" >"$(ANALYSIS_DIR)/reports/$(ARTIFACT_REPORT)"
+
+prepare-apk-sdk:
+	sdk_archive="$(REPO_DIR)/tool-cache/$(SDK_NAME)"
+	sdk_dir="$(REPO_DIR)/tool-cache/$(SDK_DIR_NAME)"
+	mkdir -p "$(REPO_DIR)/tool-cache"
+	if ! test -f "$$sdk_archive"; then
+		curl --fail --location --retry 2 --output "$$sdk_archive.partial" "$(SDK_URL)"
+		mv "$$sdk_archive.partial" "$$sdk_archive"
+	fi
+	printf '%s  %s\n' "$(SDK_SHA256)" "$$sdk_archive" | shasum -a 256 -c -
+	if ! test -d "$$sdk_dir"; then
+		mkdir -p "$$sdk_dir"
+		tar --strip-components=1 -xf "$$sdk_archive" -C "$$sdk_dir"
+	fi
+	test -x "$$sdk_dir/staging_dir/host/bin/apk"
 
 package-glinet21:
 	sdk_archive="$(REPO_DIR)/tool-cache/$(SDK_NAME)"
@@ -653,6 +669,71 @@ sign-apk-release:
 		grep -F 'UNTRUSTED' "$$tmp/untrusted.log" >/dev/null
 	done
 	"$$apk_tool" adbdump --format json "$(APK)" >"$(OUTPUT_METADATA)"
+
+generate-feed-index: FEED_DIR = $(REPO_DIR)/feed
+generate-feed-index: FEED_URL = https://github.rudironsoni.com/gl-modem-community/feed
+generate-feed-index:
+	test -d "$(FEED_DIR)"
+	root_items=""
+	found=0
+	for channel_dir in "$(FEED_DIR)"/*/; do
+		test -d "$$channel_dir" || continue
+		found=1
+		channel=$$(basename "$$channel_dir")
+		case "$$channel" in
+			25.12)
+				label='GL.iNet OpenWrt 25 (APK)'
+				snippet_hint='Add this line to /etc/apk/repositories.d/customfeeds.list:'
+				snippet='$(FEED_URL)/25.12/packages.adb'
+				;;
+			24.10)
+				label='OpenWrt 24 (IPK)'
+				snippet_hint='Add this line to /etc/opkg/customfeeds.conf:'
+				snippet='src/gz gl-modem-community $(FEED_URL)/24.10'
+				;;
+			21.02)
+				label='GL.iNet 4.8.x stable and 4.9.x beta (IPK)'
+				snippet_hint='Add this line to /etc/opkg/customfeeds.conf:'
+				snippet='src/gz gl-modem-community $(FEED_URL)/21.02'
+				;;
+			*)
+				printf 'Unknown feed channel: %s\n' "$$channel" >&2
+				exit 1
+				;;
+		esac
+		{
+			printf '<!DOCTYPE html>\n<html lang="en">\n<head>\n'
+			printf '<meta charset="utf-8">\n'
+			printf '<meta name="viewport" content="width=device-width, initial-scale=1">\n'
+			printf '<title>gl-modem-community feed %s</title>\n</head>\n<body>\n' "$$channel"
+			printf '<h1>gl-modem-community feed %s</h1>\n' "$$channel"
+			printf '<p>%s</p>\n' "$$label"
+			printf '<p>%s</p>\n<pre>%s</pre>\n' "$$snippet_hint" "$$snippet"
+			printf '<h2>Files</h2>\n<ul>\n'
+			for feed_file in "$$channel_dir"*; do
+				test -f "$$feed_file" || continue
+				name=$$(basename "$$feed_file")
+				test "$$name" != index.html || continue
+				printf '<li><a href="%s">%s</a></li>\n' "$$name" "$$name"
+			done
+			printf '</ul>\n'
+			printf '<p><a href="../">All feeds</a> - '
+			printf '<a href="https://github.com/rudironsoni/gl-modem-community">Project repository</a></p>\n'
+			printf '</body>\n</html>\n'
+		} >"$$channel_dir/index.html"
+		root_items="$$root_items<li><a href=\"$$channel/\">$$channel</a> - $$label</li>"
+	done
+	test "$$found" -eq 1
+	{
+		printf '<!DOCTYPE html>\n<html lang="en">\n<head>\n'
+		printf '<meta charset="utf-8">\n'
+		printf '<meta name="viewport" content="width=device-width, initial-scale=1">\n'
+		printf '<title>gl-modem-community package feeds</title>\n</head>\n<body>\n'
+		printf '<h1>gl-modem-community package feeds</h1>\n'
+		printf '<ul>\n%s\n</ul>\n' "$$root_items"
+		printf '<p><a href="https://github.com/rudironsoni/gl-modem-community">Project repository</a></p>\n'
+		printf '</body>\n</html>\n'
+	} >"$(FEED_DIR)/index.html"
 
 clean-work:
 	@echo "Remove ignored work directories manually after reviewing their paths."
