@@ -684,7 +684,7 @@ generate-feed-index:
 			25.12)
 				label='GL.iNet OpenWrt 25 (APK)'
 				snippet_hint='Add this line to /etc/apk/repositories.d/customfeeds.list:'
-				snippet='$(FEED_URL)/25.12'
+				snippet='$(FEED_URL)/25.12/packages.adb'
 				;;
 			24.10)
 				label='OpenWrt 24 (IPK)'

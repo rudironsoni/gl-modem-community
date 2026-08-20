@@ -113,10 +113,10 @@ chmod 0644 /etc/apk/keys/gl-modem-community.pem
 1. Open the GL.iNet admin panel, select **Advanced Settings**, and enter LuCI.
 2. Go to **System → Software**.
 3. Select **Configure apk**.
-4. Add this line to `/etc/apk/repositories.d/customfeeds.list`:
+4. Add this line to `/etc/apk/repositories.d/customfeeds.list`. `apk` reads a repository line as the index URL itself, so it must end in `packages.adb`:
 
    ```text
-   https://github.rudironsoni.com/gl-modem-community/feed/25.12
+   https://github.rudironsoni.com/gl-modem-community/feed/25.12/packages.adb
    ```
 
 5. Save the configuration and select **Update lists**.
@@ -128,7 +128,7 @@ If the software button says **Configure opkg**, use the IPK instructions below i
 #### Option B: Install the APK feed without LuCI
 
 ```sh
-feed='https://github.rudironsoni.com/gl-modem-community/feed/25.12'
+feed='https://github.rudironsoni.com/gl-modem-community/feed/25.12/packages.adb'
 mkdir -p /etc/apk/repositories.d
 touch /etc/apk/repositories.d/customfeeds.list
 grep -Fqx "$feed" /etc/apk/repositories.d/customfeeds.list || \

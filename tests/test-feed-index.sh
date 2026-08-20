@@ -24,7 +24,9 @@ for page in index.html 25.12/index.html 24.10/index.html 21.02/index.html; do
 done
 
 # Channel pages carry the install snippet and link every published file.
-grep -Fq '<pre>https://github.rudironsoni.com/gl-modem-community/feed/25.12</pre>' \
+# apk resolves a repository line as the index URL itself, so the snippet
+# must point at packages.adb, not at the channel directory.
+grep -Fq '<pre>https://github.rudironsoni.com/gl-modem-community/feed/25.12/packages.adb</pre>' \
 	"$tmp/feed/25.12/index.html"
 grep -Fq '/etc/apk/repositories.d/customfeeds.list' "$tmp/feed/25.12/index.html"
 grep -Fq 'href="gl-modem-community-0.0.1-r1.apk"' "$tmp/feed/25.12/index.html"
