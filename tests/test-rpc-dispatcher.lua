@@ -3,6 +3,8 @@ local sysfs_root = assert(os.getenv("GL_MODEM_COMMUNITY_SYSFS_USB_ROOT"),
     "test sysfs root is required")
 local runtime_dir = assert(os.getenv("GL_MODEM_COMMUNITY_RUNTIME_DIR"),
     "test runtime dir is required")
+local rpc_driver_dir = assert(os.getenv("GL_MODEM_COMMUNITY_RPC_DRIVER_DIR"),
+    "test RPC driver directory is required")
 
 assert(os.execute("mkdir -p " .. sysfs_root .. "/2-1 " .. runtime_dir) == 0)
 local vendor = assert(io.open(sysfs_root .. "/2-1/idVendor", "w"))
@@ -34,6 +36,34 @@ local fixtures = {
     send_at_command = { ret = 0, resp = "OK" },
 }
 local calls = {}
+
+local test_open = io.open
+package.preload["nixio.fs"] = function()
+    local driver_names = { "fm350.lua", "vos5g.lua" }
+    return {
+        dir = function(path)
+            if path ~= rpc_driver_dir then return nil end
+            local index = 0
+            return function()
+                index = index + 1
+                return driver_names[index]
+            end
+        end,
+        readfile = function(path)
+            local file = test_open(path, "r")
+            if not file then return nil end
+            local value = file:read("*a")
+            file:close()
+            return value
+        end,
+        stat = function(path)
+            local file = test_open(path, "r")
+            if not file then return nil end
+            file:close()
+            return { mtime = os.time() }
+        end,
+    }
+end
 
 package.preload.cjson = function()
     return {
@@ -86,15 +116,29 @@ assert(calls[4] == "send_at_command")
 local original_getenv = os.getenv
 local original_open = io.open
 local original_popen = io.popen
+local original_nixio_preload = package.preload["nixio.fs"]
+local original_nixio_loaded = package.loaded["nixio.fs"]
 os.getenv = nil
 io.open = nil
 io.popen = nil
+package.loaded["nixio.fs"] = nil
+package.preload["nixio.fs"] = function()
+    error("nixio.fs intentionally unavailable")
+end
 local sandboxed = assert(loadfile(dispatcher_path))
 local ok, sandbox_methods = pcall(sandboxed)
+local call_ok, sandbox_result
+if ok then
+    call_ok, sandbox_result = pcall(sandbox_methods.send_at_command, {})
+end
 os.getenv = original_getenv
 io.open = original_open
 io.popen = original_popen
+package.preload["nixio.fs"] = original_nixio_preload
+package.loaded["nixio.fs"] = original_nixio_loaded
 assert(ok and type(sandbox_methods) == "table",
-    "dispatcher failed in the restricted OUI runtime")
+    "dispatcher failed without nixio.fs in the restricted OUI runtime")
+assert(call_ok and sandbox_result == fixtures.send_at_command,
+    "stock dispatch failed without nixio.fs and restricted io functions")
 
 print("RPC dispatcher stock-result tests passed")

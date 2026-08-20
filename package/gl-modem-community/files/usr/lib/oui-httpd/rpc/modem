@@ -2,26 +2,50 @@
 -- Transparent stock modem RPC dispatcher with community-driver hooks.
 
 local cjson = require "cjson"
-local nixio_fs = require "nixio.fs"
+local nixio_ok, nixio_fs = pcall(require, "nixio.fs")
+if not nixio_ok then nixio_fs = nil end
 local getenv = os and type(os.getenv) == "function" and os.getenv or nil
+local gettime = os and type(os.time) == "function" and os.time or nil
+local io_open = io and type(io.open) == "function" and io.open or nil
+local io_popen = io and type(io.popen) == "function" and io.popen or nil
 local driver_dir = (getenv and getenv("GL_MODEM_COMMUNITY_RPC_DRIVER_DIR")) or
     "/usr/share/gl-modem-community/rpc-drivers"
 local sysfs_usb_root = (getenv and getenv("GL_MODEM_COMMUNITY_SYSFS_USB_ROOT")) or
     "/sys/bus/usb/devices"
 local runtime_dir = (getenv and getenv("GL_MODEM_COMMUNITY_RUNTIME_DIR")) or
     "/var/run/gl-modem-community"
+-- Keep values through three default 30-second watcher intervals so a single
+-- best-effort QMI timeout does not make the stock UI flap back to technology.
 local band_cache_max_age = tonumber(getenv and
-    getenv("GL_MODEM_COMMUNITY_BAND_CACHE_MAX_AGE")) or 15
+    getenv("GL_MODEM_COMMUNITY_BAND_CACHE_MAX_AGE")) or 90
 local drivers = {}
+
+local function shell_quote(value)
+    return "'" .. value:gsub("'", "'\\''") .. "'"
+end
 
 local function load_drivers()
     local paths = {}
-    local iterator = nixio_fs.dir(driver_dir)
-    if not iterator then return end
-    for name in iterator do
-        if name:match("%.lua$") then
-            paths[#paths + 1] = driver_dir .. "/" .. name
+    if nixio_fs and type(nixio_fs.dir) == "function" then
+        local iterator = nixio_fs.dir(driver_dir)
+        if not iterator then return end
+        for name in iterator do
+            if name:match("%.lua$") then
+                paths[#paths + 1] = driver_dir .. "/" .. name
+            end
         end
+    elseif io_popen then
+        -- Preserve the original loader on targets where nixio.fs is not a
+        -- package dependency. Quoting also keeps the test override inert.
+        local pipe = io_popen("find " .. shell_quote(driver_dir) ..
+            " -type f -name '*.lua' 2>/dev/null | sort")
+        if not pipe then return end
+        for path in pipe:lines() do paths[#paths + 1] = path end
+        pipe:close()
+    else
+        -- A restricted OUI worker may expose neither filesystem API. The
+        -- stock RPC object must still load and pass every method through.
+        return
     end
     table.sort(paths)
     for _, path in ipairs(paths) do
@@ -32,11 +56,23 @@ local function load_drivers()
     end
 end
 
+local function readfile(path)
+    if nixio_fs and type(nixio_fs.readfile) == "function" then
+        return nixio_fs.readfile(path)
+    end
+    if not io_open then return nil end
+    local file = io_open(path, "r")
+    if not file then return nil end
+    local value = file:read("*a")
+    file:close()
+    return value
+end
+
 local function usb_id_for_bus(bus)
     if type(bus) ~= "string" or not bus:match("^[%w%.:_-]+$") then return nil end
     local base = sysfs_usb_root .. "/" .. bus
-    local vid = nixio_fs.readfile(base .. "/idVendor")
-    local pid = nixio_fs.readfile(base .. "/idProduct")
+    local vid = readfile(base .. "/idVendor")
+    local pid = readfile(base .. "/idProduct")
     if not vid or not pid then return nil end
     vid = vid:match("^%s*(%x+)")
     pid = pid:match("^%s*(%x+)")
@@ -45,23 +81,40 @@ local function usb_id_for_bus(bus)
 end
 
 local function find_fm350_bus()
-    local iterator = nixio_fs.dir(sysfs_usb_root)
-    if not iterator then return nil end
-    for bus in iterator do
+    if nixio_fs and type(nixio_fs.dir) == "function" then
+        local iterator = nixio_fs.dir(sysfs_usb_root)
+        if not iterator then return nil end
+        for bus in iterator do
+            local id = usb_id_for_bus(bus)
+            if id == "0e8d:7126" or id == "0e8d:7127" then return bus end
+        end
+        return nil
+    end
+    if not io_popen then return nil end
+    local pipe = io_popen("ls " .. shell_quote(sysfs_usb_root) ..
+        " 2>/dev/null")
+    if not pipe then return nil end
+    for bus in pipe:lines() do
         local id = usb_id_for_bus(bus)
         if id == "0e8d:7126" or id == "0e8d:7127" then
+            pipe:close()
             return bus
         end
     end
+    pipe:close()
     return nil
 end
 
 local function fresh_cache_for_bus(prefix, bus)
     if type(bus) ~= "string" or not bus:match("^[%w%.:_-]+$") then return nil end
+    if not nixio_fs or type(nixio_fs.stat) ~= "function" or
+        type(nixio_fs.readfile) ~= "function" or not gettime then
+        return nil
+    end
     local path = runtime_dir .. "/" .. prefix .. bus
     local stat = nixio_fs.stat(path)
     if type(stat) ~= "table" or type(stat.mtime) ~= "number" or
-        os.time() - stat.mtime > band_cache_max_age then
+        gettime() - stat.mtime > band_cache_max_age then
         return nil
     end
     local value = nixio_fs.readfile(path)

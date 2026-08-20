@@ -42,6 +42,7 @@ local function run_case(rat, mask_high, expected)
     local systems = string.char(1) .. le32(0) .. le32(rat) ..
         le32(0x1000) .. le32(mask_high)
     local reads = {
+        service_response(0x03, 9, 0x1111, 0x0020, result_tlv),
         ctl_response(0x71, 0x0022,
             result_tlv .. tlv(0x01, string.char(0x2a, client))),
         service_response(0x2a, client, 0x6251, 0x0024,

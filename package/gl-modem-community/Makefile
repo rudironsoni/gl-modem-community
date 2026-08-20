@@ -8,8 +8,10 @@ PKG_RELEASE:=1
 PKG_LICENSE:=GPL-3.0-only
 PKG_MAINTAINER:=Rudimar Ronsoni <rudironsoni@users.noreply.github.com>
 
+VOS5G_EXTRA_DEPENDS:=
 ifneq ($(BE3600_BUILD),)
   PKGARCH:=aarch64_cortex-a53_neon-vfpv4
+  VOS5G_EXTRA_DEPENDS:=, adb (>=0), kmod-usb-net-qmi-wwan (>=0), lua (>=0), luci-lib-nixio (>=0), uqmi (>=0)
 endif
 
 include $(INCLUDE_DIR)/package.mk
@@ -21,7 +23,7 @@ define Package/gl-modem-community
   TITLE:=Community modem drivers for GL.iNet firmware
   # Runtime-only dependencies. EXTRA_DEPENDS keeps this architecture-independent
   # package from rebuilding the SDK's complete kernel package set.
-  EXTRA_DEPENDS:=adb (>=0), comgt (>=0), flock (>=0), jq (>=0), kmod-usb-acm (>=0), kmod-usb-serial-option (>=0), kmod-usb-net-qmi-wwan (>=0), kmod-usb-net-rndis (>=0), lua (>=0), uqmi (>=0)
+  EXTRA_DEPENDS:=comgt (>=0), flock (>=0), jq (>=0), kmod-usb-acm (>=0), kmod-usb-serial-option (>=0), kmod-usb-net-rndis (>=0)$(VOS5G_EXTRA_DEPENDS)
 endef
 
 define Package/gl-modem-community/description

@@ -205,11 +205,11 @@ start_service() {
 	start_tethering_overlay
 	start_esim_sdk
 	start_boot_restore
-	if "$VOS5G_QMI" prepare; then
+	if [ -x "$VOS5G_QMI" ] && "$VOS5G_QMI" prepare; then
 		start_vos5g_band_watcher
 	else
 		"$LOGGER_BIN" -t gl-modem-community \
-			"VOS 5G QMI preparation failed; continuing with the stock runtime"
+			"VOS 5G preparation failed; continuing without VOS QMI integration"
 	fi
 	return "$rc"
 }

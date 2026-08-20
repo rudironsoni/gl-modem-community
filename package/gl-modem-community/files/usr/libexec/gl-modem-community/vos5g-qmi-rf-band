@@ -7,6 +7,7 @@ local device = assert(arg[1], "QMI control device is required")
 assert(arg[2], "NAS client ID is required")
 local client = tonumber(arg[2])
 assert(client and client >= 1 and client <= 255, "invalid NAS client ID")
+local transaction = 0x51
 
 local lte_bands = {
     [120] = 1, [121] = 2, [122] = 3, [123] = 4, [124] = 5,
@@ -44,6 +45,33 @@ local function u16le(data, offset)
     return a + b * 256
 end
 
+local function matching_response(frame)
+    return #frame >= 13 and frame:byte(1) == 0x01 and
+        frame:byte(4) == 0x80 and frame:byte(5) == 0x03 and
+        frame:byte(6) == client and frame:byte(7) == 0x02 and
+        u16le(frame, 8) == transaction and u16le(frame, 10) == 0x0031
+end
+
+local function read_matching_response(handle)
+    -- cdc-wdm is a shared character device. Another QMI user can leave an
+    -- unrelated response at the head of the receive queue, so never treat the
+    -- first frame as ours merely because a read succeeded. The outer watchdog
+    -- owns the wall-clock bound; this loop also limits the number of frames.
+    for _ = 1, 8 do
+        local data = assert(handle:read(4096), "QMI read failed")
+        local offset = 1
+        while offset + 2 <= #data do
+            if data:byte(offset) ~= 0x01 then break end
+            local length = u16le(data, offset + 1)
+            if not length or length < 5 or offset + length > #data then break end
+            local frame = data:sub(offset, offset + length)
+            if matching_response(frame) then return frame end
+            offset = offset + length + 1
+        end
+    end
+    error("matching QMI NAS response not found")
+end
+
 local function parse_list(value, extended, nr, lte, seen)
     local count = value:byte(1)
     if not count then return end
@@ -68,13 +96,12 @@ end
 
 local nixio = require "nixio"
 local handle = assert(nixio.open(device, "r+"))
-local transaction = 0x51
 local request = string.char(
     0x01, 0x0c, 0x00, 0x00, 0x03, client,
     0x00, transaction, 0x00, 0x31, 0x00, 0x00, 0x00
 )
 assert(handle:write(request) == #request)
-local response = assert(handle:read(4096))
+local response = read_matching_response(handle)
 handle:close()
 
 assert(#response >= 13, "short QMI response")

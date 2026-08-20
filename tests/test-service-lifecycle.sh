@@ -70,6 +70,7 @@ EOF
 cat >"$tmp/bin/vos5g-qmi" <<'EOF'
 #!/bin/sh
 printf '%s\n' "$*" >>"${VOS5G_QMI_TEST_LOG:?}"
+exit "${VOS5G_QMI_TEST_STATUS:-0}"
 EOF
 
 cat >"$tmp/bin/vos5g-band-monitor" <<'EOF'
@@ -172,6 +173,17 @@ prepare
 EOF
 cmp "$tmp/expected-vos5g-qmi" "$tmp/vos5g-qmi.log"
 grep -Fx refresh "$tmp/vos5g-band-monitor.log" >/dev/null
+
+# VOS display preparation is optional and must not take down the stock modem
+# service or start the watcher when the helper reports a failure.
+: >"$tmp/vos5g-qmi.log"
+: >"$tmp/vos5g-band-monitor.log"
+VOS5G_QMI_TEST_STATUS=1
+export VOS5G_QMI_TEST_STATUS
+start_service
+test ! -s "$tmp/vos5g-band-monitor.log"
+stop_service
+unset VOS5G_QMI_TEST_STATUS
 
 # A service restart must preserve VOS QMI ownership.  Restoring ECM here
 # starts QCMAP and races the immediately following prepare operation.

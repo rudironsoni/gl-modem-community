@@ -36,6 +36,7 @@ flowchart LR
 - The tethering overlay copies the exact stock `tethering` RPC aside and bind-mounts a wrapper that filters FM350 RNDIS from `get_status`. Stop/remove unmounts it.
 - `fm350-boot-restore` persists a deliberate disconnect immediately and a connected snapshot only after a sustained netifd-up check. Restore runs in a background procd worker and is a no-op when no record exists.
 - On the legacy 4.8.1 stack, `start_legacy` installs `menu.d/esim.json` and `/www/views/gl-sdk4-ui-esim.common.js`. The view is a clean-room copy of the 4.9.x eSIM Management layout. It is not the stock 4.9.x internet bundle.
+- The VOS display watcher is a best-effort observer of the shared raw QMI control endpoint, not an owner or proxy for it. It polls at 30-second intervals, accepts only matching service/client/transaction/message responses, skips unrelated frames within a bounded loop, and relies on an outer watchdog. These measures reduce interference but cannot guarantee coordination with proprietary readers of the same `/dev/cdc-wdm0` queue.
 - Package installation restarts nginx after replacing an RPC object; package removal restarts it after the Lua object is deleted, so OpenResty's per-worker object cache cannot retain stale handlers.
 
 ## Failure and rollback behavior

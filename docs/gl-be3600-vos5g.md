@@ -52,6 +52,8 @@ The integration is restricted to USB ID `05c6:9064`:
   VOS-specific response normalizer;
 - NAS `Get RF Band Information` and DSD `Get System Status` use temporary,
   independently allocated clients and never reuse the active WDS client;
+  responses are accepted only when their service, client, transaction, and
+  message identifiers match the request;
 - the RPC result hook runs only after `get_network_info` identifies
   `05c6:9064`; other modem responses do not trigger its supplemental stock
   call and retain the original result;
@@ -78,7 +80,7 @@ The following behavior was observed on hardware:
   redialling it;
 - active NAS band `n71` and explicit DSD NR-SA service option, rendered as
   `SA n71` in `cell_info.mode`;
-- five-second band and system-mode cache refresh without a stuck QMI client;
+- 30-second band and system-mode cache refresh without a stuck QMI client;
 - `wwan0` remaining `UP,LOWER_UP` and three of three Internet probes passing
   after the final local package upgrade;
 - unchanged router boot ID across the final local package upgrade.
@@ -99,6 +101,16 @@ package contained numeric `root:root` ownership; installed scripts were mode
 - The VOS AT firmware returned `ERROR` for the tested vendor band-detail
   commands. Active band and SA/NSA status therefore come from read-only QMI
   NAS and DSD messages.
+- VOS ownership preparation runs synchronously during service start. On a
+  cold boot it can spend roughly 20 one-second settle iterations, in addition
+  to bounded ADB calls, waiting for late QCMAP startup before stopping it.
+- Linux exposes QMI control as one shared `/dev/cdc-wdm0` receive queue. The
+  display watcher cannot coordinate with GL.iNet's proprietary QMI process,
+  so exact band and SA/NSA values remain best-effort: polling is limited to
+  once every 30 seconds, unmatched responses are skipped, every operation is
+  bounded by a watchdog, and stale or missing cache data falls back to the
+  stock technology label. This reduces but does not eliminate the possibility
+  that another raw QMI reader consumes a response first.
 
 ## Incomplete hardware matrix
 

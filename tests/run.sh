@@ -40,6 +40,7 @@ shellcheck -S warning -e SC1091,SC2034,SC3043 /repo/tests/*.sh \
     jq -e ".modems | length == 2" /repo/package/gl-modem-community/files/usr/share/gl-modem-community/drivers.d/fm350.json >/dev/null
     jq -e ".modems | length == 1" /repo/package/gl-modem-community/files/usr/share/gl-modem-community/drivers.d/vos5g.json >/dev/null
     lua5.1 /repo/tests/test-vos5g-rpc.lua /repo
+    lua5.1 /repo/tests/test-vos5g-qmi-rf-band.lua /repo
     lua5.1 /repo/tests/test-vos5g-qmi-system-mode.lua /repo
     GL_MODEM_COMMUNITY_RPC_DRIVER_DIR=/repo/package/gl-modem-community/files/usr/share/gl-modem-community/rpc-drivers \
         GL_MODEM_COMMUNITY_SYSFS_USB_ROOT=/tmp/gl-modem-community-rpc-sysfs \

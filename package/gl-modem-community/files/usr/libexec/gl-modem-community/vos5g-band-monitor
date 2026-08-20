@@ -17,7 +17,7 @@ SYSTEM_MODE_READER=${SYSTEM_MODE_READER:-/usr/libexec/gl-modem-community/vos5g-q
 DEVICE_TEST_BIN=${DEVICE_TEST_BIN:-test}
 QMI_TIMEOUT_MS=${QMI_TIMEOUT_MS:-3000}
 QMI_WALL_SECS=${QMI_WALL_SECS:-5}
-POLL_SECS=${POLL_SECS:-5}
+POLL_SECS=${POLL_SECS:-30}
 
 log() {
 	"$LOGGER_BIN" -t gl-modem-community "vos5g-band-monitor: $*"
