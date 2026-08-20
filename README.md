@@ -90,6 +90,9 @@ command -v opkg && echo 'opkg firmware'
 
 All installs require GL.iNet's proprietary cellular services. Check the [compatibility status](#compatibility-status) before installing on hardware that is not yet marked tested.
 
+> [!NOTE]
+> The feeds are static files served by GitHub Pages. `opkg update` and `apk update` fetch them with plain HTTP clients that cannot answer JavaScript challenges. If the feed domain sits behind a CDN with bot protection (for example Cloudflare), requests to `/gl-modem-community/feed/*` must be exempted from managed challenges, or feed downloads fail on the router even though the same URLs open in a browser.
+
 ### GL.iNet OpenWrt 25 (APK)
 
 If the software page shows **Configure apk**, use this section. GL.iNet firmware that uses APK must trust the project's public key before installing the package. LuCI can manage the feed after this one-time bootstrap, but it cannot import third-party APK signing keys.
