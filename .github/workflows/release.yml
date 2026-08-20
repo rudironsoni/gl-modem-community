@@ -26,9 +26,78 @@ jobs:
     permissions:
       contents: read
 
+  sign-apk:
+    name: Sign APK and build index
+    needs: build
+    if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    environment: release-signing
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+
+      - name: Download unsigned APK
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: release-apk
+          path: signing-assets
+
+      - name: Restore SDK
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: tool-cache/openwrt-sdk-25.12.5-mediatek-filogic_gcc-14.3.0_musl.Linux-x86_64.tar.zst
+          key: openwrt-sdk-25.12.5-mediatek-filogic-ff4a38a397caa2cfe1c39e18f84ddede14878221b3593c3f2c4cfe24e3ec4c25
+
+      - name: Prepare pinned SDK
+        run: make prepare-apk-sdk
+
+      - name: Sign APK and generate packages.adb
+        env:
+          APK_SIGNING_PRIVATE_KEY: ${{ secrets.APK_SIGNING_PRIVATE_KEY }}
+        run: |
+          set -euo pipefail
+          test -n "${APK_SIGNING_PRIVATE_KEY}"
+          umask 077
+          key_dir="$(mktemp -d "${RUNNER_TEMP}/signing.XXXXXX")"
+          trap 'rm -rf "${key_dir}"' EXIT
+          printf '%s\n' "${APK_SIGNING_PRIVATE_KEY}" > "${key_dir}/private-key.pem"
+          apk_file="$(find signing-assets -maxdepth 1 -type f -name '*.apk' | head -n 1)"
+          test -n "${apk_file}"
+          apk_name="$(basename "${apk_file}")"
+          docker build --platform linux/amd64 -t mt3000-openwrt-sdk:25.12.5 tools/sdk-container
+          docker run --rm --platform linux/amd64 \
+            --mount "type=bind,src=$(pwd),dst=/repo" \
+            --mount "type=bind,src=${key_dir},dst=/signing,readonly" \
+            mt3000-openwrt-sdk:25.12.5 \
+            make -C /repo --no-print-directory sign-apk-release \
+              SDK_DIR=/repo/tool-cache/sdk-25.12.5-mediatek-filogic \
+              PRIVATE_KEY=/signing/private-key.pem \
+              PUBLIC_KEY=/repo/keys/gl-modem-community.pem \
+              APK="/repo/signing-assets/${apk_name}" \
+              OUTPUT_INDEX=/repo/signing-assets/packages.adb \
+              OUTPUT_METADATA=/repo/signing-assets/gl-modem-community.apk.adb.json
+          test -s signing-assets/packages.adb
+          test -s signing-assets/gl-modem-community.apk.adb.json
+
+      - name: Upload signed APK and index
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: signed-apk
+          path: signing-assets/*
+          if-no-files-found: error
+          retention-days: 7
+
   release:
     name: Create release
-    needs: build
+    needs:
+      - build
+      - sign-apk
     if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-24.04
     timeout-minutes: 30
@@ -46,12 +115,18 @@ jobs:
           ref: ${{ github.sha }}
           persist-credentials: false
 
-      - name: Download packages
+      - name: Download IPK packages
         uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
-          pattern: release-*
+          pattern: release-ipk*
           path: release-assets
           merge-multiple: true
+
+      - name: Download signed APK and index
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: signed-apk
+          path: release-assets
 
       - name: Determine version
         id: set-version
@@ -65,6 +140,17 @@ jobs:
           echo "version=${ver}" >> "$GITHUB_OUTPUT"
           echo "tag=v${ver}" >> "$GITHUB_OUTPUT"
 
+      - name: Add public key and checksums
+        run: |
+          set -euo pipefail
+          install -m 0644 keys/gl-modem-community.pem release-assets/
+          install -m 0644 keys/gl-modem-community.pem.sha256 release-assets/
+          (
+            cd release-assets
+            sha256sum -- * > SHA256SUMS.tmp
+            mv SHA256SUMS.tmp SHA256SUMS
+          )
+
       - name: Verify artifacts
         run: |
           set -euo pipefail
@@ -73,6 +159,14 @@ jobs:
           test -s "release-assets/gl-modem-community-${VERSION}-r1.apk"
           test -s "release-assets/gl-modem-community_${VERSION}-r1_aarch64_cortex-a53.ipk"
           test -s "release-assets/gl-modem-community_${VERSION}-1_glinet-21.02_aarch64_cortex-a53.ipk"
+          test -s release-assets/packages.adb
+          test -s release-assets/gl-modem-community.pem
+          test -s release-assets/gl-modem-community.pem.sha256
+          test -s release-assets/SHA256SUMS
+          (
+            cd release-assets
+            sha256sum -c gl-modem-community.pem.sha256
+          )
 
       - name: Create release
         uses: softprops/action-gh-release@3d0d9888cb7fd7b750713d6e236d1fcb99157228 # v2
@@ -107,8 +201,10 @@ jobs:
           retention-days: 7
 
   publish-feeds:
-    name: Publish opkg feeds
-    needs: release
+    name: Publish package feeds
+    needs:
+      - release
+      - sign-apk
     runs-on: ubuntu-24.04
     timeout-minutes: 10
     permissions:
@@ -120,19 +216,30 @@ jobs:
           ref: main
           persist-credentials: false
 
-      - name: Download packages
+      - name: Download IPK packages
         uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
-          pattern: release-*
+          pattern: release-ipk*
           path: release-assets
           merge-multiple: true
+
+      - name: Download signed APK and index
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: signed-apk
+          path: release-assets
 
       - name: Build feeds
         run: |
           set -euo pipefail
           VERSION="${{ needs.release.outputs.version }}"
           rm -rf feed
-          mkdir -p feed/24.10 feed/21.02
+          mkdir -p feed/25.12 feed/24.10 feed/21.02
+
+          # 25.12 feed (APK)
+          apk25="release-assets/gl-modem-community-${VERSION}-r1.apk"
+          cp "${apk25}" feed/25.12/
+          cp release-assets/packages.adb feed/25.12/
 
           # 24.10 feed
           ipk24="release-assets/gl-modem-community_${VERSION}-r1_aarch64_cortex-a53.ipk"
@@ -171,6 +278,9 @@ jobs:
             printf 'Description: Community modem definitions and compatibility drivers for GL.iNet firmware\n'
           } > feed/21.02/Packages
           gzip -c feed/21.02/Packages > feed/21.02/Packages.gz
+
+      - name: Generate feed index pages
+        run: make generate-feed-index
 
       - name: Commit and push feeds
         env:
