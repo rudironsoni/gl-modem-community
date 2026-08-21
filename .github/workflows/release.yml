@@ -255,7 +255,7 @@ jobs:
           {
             printf 'Package: gl-modem-community\n'
             printf 'Version: %s-r1\n' "${VERSION}"
-            printf 'Depends: adb, comgt, flock, jq, kmod-usb-acm, kmod-usb-serial-option, kmod-usb-net-qmi-wwan, kmod-usb-net-rndis, lua, uqmi\n'
+            printf 'Depends: comgt, flock, jq, kmod-usb-acm, kmod-usb-serial-option, kmod-usb-net-rndis\n'
             printf 'License: GPL-3.0-only\n'
             printf 'Section: net\n'
             printf 'Category: Network\n'
@@ -274,7 +274,7 @@ jobs:
           {
             printf 'Package: gl-modem-community\n'
             printf 'Version: %s-1\n' "${VERSION}"
-            printf 'Depends: adb, comgt, flock, jq, kmod-usb-acm, kmod-usb-serial-option, kmod-usb-net-qmi-wwan, kmod-usb-net-rndis, lua, uqmi\n'
+            printf 'Depends: comgt, flock, jq, kmod-usb-acm, kmod-usb-serial-option, kmod-usb-net-rndis\n'
             printf 'License: GPL-3.0-only\n'
             printf 'Section: net\n'
             printf 'Category: Network\n'
@@ -293,7 +293,7 @@ jobs:
           {
             printf 'Package: gl-modem-community\n'
             printf 'Version: %s-r1\n' "${VERSION}"
-            printf 'Depends: adb, comgt, flock, jq, kmod-usb-acm, kmod-usb-serial-option, kmod-usb-net-qmi-wwan, kmod-usb-net-rndis, lua, uqmi\n'
+            printf 'Depends: adb, comgt, flock, jq, kmod-usb-acm, kmod-usb-serial-option, kmod-usb-net-qmi-wwan, kmod-usb-net-rndis, lua, luci-lib-nixio, uqmi\n'
             printf 'License: GPL-3.0-only\n'
             printf 'Section: net\n'
             printf 'Category: Network\n'

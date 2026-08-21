@@ -7,7 +7,7 @@ REPO_DIR=$(cd "$(dirname "$0")/.." && pwd)
 tmp=$(mktemp -d "${TMPDIR:-/tmp}/gl-modem-feed-index.XXXXXX")
 trap 'rm -rf "$tmp"' EXIT INT TERM
 
-mkdir -p "$tmp/feed/25.12" "$tmp/feed/24.10" "$tmp/feed/21.02"
+mkdir -p "$tmp/feed/25.12" "$tmp/feed/24.10" "$tmp/feed/21.02" "$tmp/feed/23.05-be3600"
 printf 'apk' > "$tmp/feed/25.12/gl-modem-community-0.0.1-r1.apk"
 printf 'adb' > "$tmp/feed/25.12/packages.adb"
 printf 'ipk' > "$tmp/feed/24.10/gl-modem-community_0.0.1-r1_aarch64_cortex-a53.ipk"
@@ -16,10 +16,13 @@ printf 'idz' > "$tmp/feed/24.10/Packages.gz"
 printf 'ipk' > "$tmp/feed/21.02/gl-modem-community_0.0.1-1_glinet-21.02_aarch64_cortex-a53.ipk"
 printf 'idx' > "$tmp/feed/21.02/Packages"
 printf 'idz' > "$tmp/feed/21.02/Packages.gz"
+printf 'ipk' > "$tmp/feed/23.05-be3600/gl-modem-community_0.0.1-r1_gl-be3600-4.9_aarch64_cortex-a53_neon-vfpv4.ipk"
+printf 'idx' > "$tmp/feed/23.05-be3600/Packages"
+printf 'idz' > "$tmp/feed/23.05-be3600/Packages.gz"
 
 make -C "$REPO_DIR" --no-print-directory generate-feed-index FEED_DIR="$tmp/feed"
 
-for page in index.html 25.12/index.html 24.10/index.html 21.02/index.html; do
+for page in index.html 25.12/index.html 24.10/index.html 21.02/index.html 23.05-be3600/index.html; do
 	test -s "$tmp/feed/$page"
 done
 
@@ -44,6 +47,11 @@ grep -Fq '<pre>src/gz gl-modem-community https://github.rudironsoni.com/gl-modem
 grep -Fq 'href="gl-modem-community_0.0.1-1_glinet-21.02_aarch64_cortex-a53.ipk"' \
 	"$tmp/feed/21.02/index.html"
 
+grep -Fq '<pre>src/gz gl-modem-community https://github.rudironsoni.com/gl-modem-community/feed/23.05-be3600</pre>' \
+	"$tmp/feed/23.05-be3600/index.html"
+grep -Fq 'href="gl-modem-community_0.0.1-r1_gl-be3600-4.9_aarch64_cortex-a53_neon-vfpv4.ipk"' \
+	"$tmp/feed/23.05-be3600/index.html"
+
 # Channel pages never link themselves.
 if grep -Fq 'href="index.html"' "$tmp/feed/24.10/index.html"; then
 	echo 'Channel index must not link itself' >&2
@@ -54,6 +62,7 @@ fi
 grep -Fq 'href="25.12/"' "$tmp/feed/index.html"
 grep -Fq 'href="24.10/"' "$tmp/feed/index.html"
 grep -Fq 'href="21.02/"' "$tmp/feed/index.html"
+grep -Fq 'href="23.05-be3600/"' "$tmp/feed/index.html"
 
 # Regeneration is idempotent: the index pages do not list themselves after a rerun.
 make -C "$REPO_DIR" --no-print-directory generate-feed-index FEED_DIR="$tmp/feed"

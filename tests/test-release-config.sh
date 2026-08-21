@@ -84,6 +84,11 @@ grep -Fq 'Packages.gz' "$RELEASE_WORKFLOW"
 grep -Fq 'packages.adb' "$RELEASE_WORKFLOW"
 grep -Fq 'actions/checkout@' "$RELEASE_WORKFLOW"
 
+BASE_FEED_DEPENDS="printf 'Depends: comgt, flock, jq, kmod-usb-acm, kmod-usb-serial-option, kmod-usb-net-rndis\\n'"
+BE3600_FEED_DEPENDS="printf 'Depends: adb, comgt, flock, jq, kmod-usb-acm, kmod-usb-serial-option, kmod-usb-net-qmi-wwan, kmod-usb-net-rndis, lua, luci-lib-nixio, uqmi\\n'"
+test "$(grep -Fc "$BASE_FEED_DEPENDS" "$RELEASE_WORKFLOW")" -eq 2
+test "$(grep -Fc "$BE3600_FEED_DEPENDS" "$RELEASE_WORKFLOW")" -eq 1
+
 # APK signing runs in the protected environment and publishes the key material.
 grep -Fq 'environment: release-signing' "$RELEASE_WORKFLOW"
 grep -Fq 'APK_SIGNING_PRIVATE_KEY' "$RELEASE_WORKFLOW"
@@ -100,6 +105,7 @@ grep -Fq 'verify --keys-dir' "$ROOT_MAKEFILE"
 grep -Fq 'empty-keys' "$ROOT_MAKEFILE"
 grep -Fq 'prepare-apk-sdk:' "$ROOT_MAKEFILE"
 grep -Fq 'generate-feed-index:' "$ROOT_MAKEFILE"
+grep -Fq '23.05-be3600)' "$ROOT_MAKEFILE"
 
 # README contains every feed URL
 grep -Fq 'https://github.rudironsoni.com/gl-modem-community/feed/25.12' "$REPO_DIR/README.md"

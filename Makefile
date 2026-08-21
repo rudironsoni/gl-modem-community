@@ -703,17 +703,17 @@ generate-feed-index:
 				snippet_hint='Add this line to /etc/opkg/customfeeds.conf:'
 				snippet='src/gz gl-modem-community $(FEED_URL)/24.10'
 				;;
-		21.02)
-			label='GL.iNet 4.8.x stable and 4.9.x beta (IPK)'
-			snippet_hint='Add this line to /etc/opkg/customfeeds.conf:'
-			snippet='src/gz gl-modem-community $(FEED_URL)/21.02'
-			;;
-		23.05-be3600)
-			label='GL.iNet GL-BE3600 4.9.x (IPK)'
-			snippet_hint='Add this line to /etc/opkg/customfeeds.conf:'
-			snippet='src/gz gl-modem-community $(FEED_URL)/23.05-be3600'
-			;;
-		*)
+			21.02)
+				label='GL.iNet 4.8.x stable and 4.9.x beta (IPK)'
+				snippet_hint='Add this line to /etc/opkg/customfeeds.conf:'
+				snippet='src/gz gl-modem-community $(FEED_URL)/21.02'
+				;;
+			23.05-be3600)
+				label='GL.iNet GL-BE3600 4.9.x (IPK)'
+				snippet_hint='Add this line to /etc/opkg/customfeeds.conf:'
+				snippet='src/gz gl-modem-community $(FEED_URL)/23.05-be3600'
+				;;
+			*)
 				printf 'Unknown feed channel: %s\n' "$$channel" >&2
 				exit 1
 				;;
