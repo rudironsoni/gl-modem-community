@@ -123,6 +123,17 @@ jobs:
       pr_branch: ${{ steps.pr.outputs.pr_branch }}
       pr_sha: ${{ steps.pr.outputs.pr_sha }}
     steps:
+      - name: Require repository auto-merge
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ "$(gh api "repos/${GITHUB_REPOSITORY}" --jq '.allow_auto_merge')" != true ]]; then
+            echo "::error::Enable Settings > General > Pull Requests > Allow auto-merge" >&2
+            exit 1
+          fi
+
       - name: Reconcile historical Release Please labels
         id: baseline
         env:
@@ -429,11 +440,17 @@ jobs:
           pr_number="$(jq -r '.number' <<< "$pr")"
           gh pr merge "$pr_number" \
             --repo "$GITHUB_REPOSITORY" \
+            --auto \
             --squash \
             --match-head-commit "$FEED_SHA"
-          merged_pr="$(gh pr view "$pr_number" \
-            --repo "$GITHUB_REPOSITORY" \
-            --json mergeCommit,state)"
+          merged_pr=
+          for ((attempt = 1; attempt <= 60; attempt++)); do
+            merged_pr="$(gh pr view "$pr_number" \
+              --repo "$GITHUB_REPOSITORY" \
+              --json mergeCommit,state)"
+            test "$(jq -r '.state' <<< "$merged_pr")" != MERGED || break
+            sleep 10
+          done
           release_sha="$(jq -er \
             'select(.state == "MERGED") | .mergeCommit.oid' \
             <<< "$merged_pr")"
