@@ -123,6 +123,43 @@ jobs:
       pr_branch: ${{ steps.pr.outputs.pr_branch }}
       pr_sha: ${{ steps.pr.outputs.pr_sha }}
     steps:
+      - name: Reconcile historical Release Please labels
+        id: baseline
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          config="$(gh api \
+            "repos/${GITHUB_REPOSITORY}/contents/release-please-config.json?ref=${GITHUB_SHA}" \
+            --jq '.content' | base64 --decode)"
+          baseline="$(jq -r '.["last-release-sha"] // empty' <<< "$config")"
+          active=false
+          if [[ -n "$baseline" ]]; then
+            active=true
+            gh pr list \
+              --repo "$GITHUB_REPOSITORY" \
+              --state merged \
+              --label 'autorelease: pending' \
+              --limit 100 \
+              --json number,mergeCommit \
+              --jq '.[] | [.number, .mergeCommit.oid] | @tsv' |
+            while IFS=$'\t' read -r number merge_sha; do
+              compare_status="$(gh api \
+                "repos/${GITHUB_REPOSITORY}/compare/${merge_sha}...${baseline}" \
+                --jq '.status')"
+              case "$compare_status" in
+                ahead|identical)
+                  gh pr edit "$number" \
+                    --repo "$GITHUB_REPOSITORY" \
+                    --remove-label 'autorelease: pending' \
+                    --add-label 'autorelease: tagged'
+                  ;;
+              esac
+            done
+          fi
+          echo "active=${active}" >> "$GITHUB_OUTPUT"
+
       - name: Create or update release PR
         id: release
         uses: googleapis/release-please-action@45996ed1f6d02564a971a2fa1b5860e934307cf7 # v5.0.0
@@ -135,6 +172,7 @@ jobs:
         id: pr
         env:
           GH_TOKEN: ${{ github.token }}
+          RELEASE_BASELINE_ACTIVE: ${{ steps.baseline.outputs.active }}
           RELEASE_PRS: ${{ steps.release.outputs.prs }}
           RELEASE_PRS_CREATED: ${{ steps.release.outputs.prs_created }}
         shell: bash
@@ -142,6 +180,10 @@ jobs:
           set -euo pipefail
           branch=
           sha=
+          if [[ "$RELEASE_BASELINE_ACTIVE" == true && "$RELEASE_PRS_CREATED" != true ]]; then
+            echo "Release Please baseline migration did not create a release PR" >&2
+            exit 1
+          fi
           if [[ "$RELEASE_PRS_CREATED" == true ]]; then
             branch="$(jq -er '.[0].headBranchName' <<< "$RELEASE_PRS")"
             if [[ "$branch" != release-please--* ]]; then
