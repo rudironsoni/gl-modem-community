@@ -123,17 +123,6 @@ jobs:
       pr_branch: ${{ steps.pr.outputs.pr_branch }}
       pr_sha: ${{ steps.pr.outputs.pr_sha }}
     steps:
-      - name: Require repository auto-merge
-        env:
-          GH_TOKEN: ${{ github.token }}
-        shell: bash
-        run: |
-          set -euo pipefail
-          if [[ "$(gh api "repos/${GITHUB_REPOSITORY}" --jq '.allow_auto_merge')" != true ]]; then
-            echo "::error::Enable Settings > General > Pull Requests > Allow auto-merge" >&2
-            exit 1
-          fi
-
       - name: Reconcile historical Release Please labels
         id: baseline
         env:
@@ -410,6 +399,17 @@ jobs:
               exit 1
             }
 
+      - name: Require repository auto-merge
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ "$(gh api "repos/${GITHUB_REPOSITORY}" --jq '.allow_auto_merge')" != true ]]; then
+            echo "::error::Enable Settings > General > Pull Requests > Allow auto-merge" >&2
+            exit 1
+          fi
+
       - name: Squash merge validated release PR
         id: merge
         env:
@@ -622,7 +622,7 @@ jobs:
                 "${RELEASE_VERSION}-1" aarch64_cortex-a53
               validate_component \
                 /repo/release-assets/gl-modem-community.be3600.ipk.cdx.json \
-                "${RELEASE_VERSION}-r1" aarch64_cortex-a53_neon-vfpv4
+                "${RELEASE_VERSION}-1" aarch64_cortex-a53
             '
 
       - name: Add keys and checksums

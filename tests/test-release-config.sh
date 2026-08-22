@@ -123,9 +123,11 @@ grep -Fq -- "--add-label 'autorelease: tagged'" "$RELEASE_WORKFLOW"
 grep -Fq -- "--remove-label 'autorelease: pending'" "$RELEASE_WORKFLOW"
 dispatch_line=$(grep -nF 'gh workflow run ci.yml' "$RELEASE_WORKFLOW" | cut -d: -f1)
 watch_line=$(grep -nF 'gh run watch "$CI_RUN_ID"' "$RELEASE_WORKFLOW" | cut -d: -f1)
+auto_merge_line=$(grep -nF 'name: Require repository auto-merge' "$RELEASE_WORKFLOW" | cut -d: -f1)
 merge_line=$(grep -nF 'gh pr merge "$pr_number"' "$RELEASE_WORKFLOW" | cut -d: -f1)
 publish_line=$(grep -nF 'uses: softprops/action-gh-release@' "$RELEASE_WORKFLOW" | cut -d: -f1)
 test "$dispatch_line" -lt "$watch_line"
+test "$watch_line" -lt "$auto_merge_line"
 test "$watch_line" -lt "$merge_line"
 test "$merge_line" -lt "$publish_line"
 if grep -Fq 'git push origin main' "$RELEASE_WORKFLOW"; then
@@ -149,6 +151,7 @@ grep -Fq 'gl-modem-community.be3600.ipk.cdx.json' "$RELEASE_WORKFLOW"
 grep -Fq '(.packages // .) as $packages' "$RELEASE_WORKFLOW"
 grep -Fq '.metadata.component.version == $version' "$RELEASE_WORKFLOW"
 grep -Fq 'sha256sum -c gl-modem-community.pem.sha256' "$RELEASE_WORKFLOW"
+test "$(grep -Fc '"${RELEASE_VERSION}-1" aarch64_cortex-a53' "$RELEASE_WORKFLOW")" -eq 2
 
 BASE_FEED_DEPENDS="printf 'Depends: comgt, flock, jq, kmod-usb-acm, kmod-usb-serial-option, kmod-usb-net-rndis\\n'"
 BE3600_FEED_DEPENDS="printf 'Depends: adb, comgt, flock, jq, kmod-usb-acm, kmod-usb-serial-option, kmod-usb-net-qmi-wwan, kmod-usb-net-rndis, lua, luci-lib-nixio, uqmi\\n'"
