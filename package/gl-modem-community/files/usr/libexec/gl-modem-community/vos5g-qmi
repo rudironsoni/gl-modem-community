@@ -156,18 +156,23 @@ disable_qmi_autoconnect() {
 	# Stopping QCMAP does not necessarily clear its persistent WDS session.
 	# Disable that autoconnect before GL.iNet's netifd QMI driver starts its
 	# own session; otherwise the second --start-network is rejected.
-	if ! "$TIMEOUT_BIN" "$QMI_WALL_SECS" \
+	autoconnect_status=0
+	"$TIMEOUT_BIN" "$QMI_WALL_SECS" \
 		"$UQMI_BIN" -t "$QMI_TIMEOUT_MS" -d "$device" \
 		--set-client-id "wds,$cid" --set-autoconnect disabled \
-		>/dev/null 2>&1; then
-		log "could not disable the previous WDS autoconnect on $bus"
-		return 1
-	fi
+		>/dev/null 2>&1 || autoconnect_status=1
+	# Release the temporary WDS client even when disabling autoconnect
+	# failed: the modem-side client pool is small and persistent, and the
+	# failure path is exactly the one that gets retried.
 	"$TIMEOUT_BIN" "$QMI_WALL_SECS" \
 		"$UQMI_BIN" -t "$QMI_TIMEOUT_MS" -d "$device" \
 		--set-client-id "wds,$cid" --release-client-id wds \
 		>/dev/null 2>&1 || true
 	[ "$QMI_RELEASE_WAIT_SECS" -eq 0 ] || sleep "$QMI_RELEASE_WAIT_SECS"
+	if [ "$autoconnect_status" -ne 0 ]; then
+		log "could not disable the previous WDS autoconnect on $bus"
+		return 1
+	fi
 }
 
 wait_for_config() {

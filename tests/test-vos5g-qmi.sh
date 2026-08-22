@@ -46,6 +46,7 @@ cat >"$bin_dir/uqmi" <<EOF
 printf '%s\\n' "\$*" >>"$uqmi_log"
 case "\$*" in
 *--get-client-id\ wds*) printf '%s\\n' 7 ;;
+*--set-autoconnect*) exit "\${UQMI_AUTOCONNECT_STATUS:-0}" ;;
 *) exit 0 ;;
 esac
 EOF
@@ -98,6 +99,20 @@ test ! -s "$uqmi_log"
 printf '%s\n' 6 >"$sys_usb/devices/2-1/devnum"
 run_vos5g prepare 2-1
 grep -F -- '--get-client-id wds' "$uqmi_log" >/dev/null
+test "$(cat "$tmp/runtime/vos5g-prepared-2-1")" = 6
+
+# A failed autoconnect disable must fail preparation, leave no success
+# stamp, and still release the temporary WDS client ID.
+printf '%s\n' 7 >"$sys_usb/devices/2-1/devnum"
+: >"$uqmi_log"
+UQMI_AUTOCONNECT_STATUS=1
+export UQMI_AUTOCONNECT_STATUS
+if run_vos5g prepare 2-1; then
+	echo 'prepare unexpectedly succeeded when autoconnect disable failed' >&2
+	exit 1
+fi
+unset UQMI_AUTOCONNECT_STATUS
+grep -F -- '--set-client-id wds,7 --release-client-id wds' "$uqmi_log" >/dev/null
 test "$(cat "$tmp/runtime/vos5g-prepared-2-1")" = 6
 
 mkdir -p "$sys_usb/devices/3-1"
