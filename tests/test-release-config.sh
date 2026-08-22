@@ -57,7 +57,9 @@ grep -Fq 'workflow_dispatch:' "$CI_WORKFLOW"
 grep -Fq 'name: CI required' "$CI_WORKFLOW"
 grep -Fq 'kind: ipk' "$CI_WORKFLOW"
 grep -Fq 'kind: ipk-glinet21' "$CI_WORKFLOW"
+grep -Fq 'kind: ipk-be3600' "$CI_WORKFLOW"
 grep -Fq 'kind: apk' "$CI_WORKFLOW"
+grep -Fq 'package-be3600: SDK_NAME = openwrt-sdk-23.05.5-ipq807x-generic' "$ROOT_MAKEFILE"
 grep -Fq 'if: inputs.upload_packages' "$CI_WORKFLOW"
 grep -Fq 'path: ${{ matrix.sdk_archive }}' "$CI_WORKFLOW"
 if grep -Fq 'tool-cache/sdk-*' "$CI_WORKFLOW"; then
@@ -77,9 +79,15 @@ grep -Fq 'publish-feeds' "$RELEASE_WORKFLOW"
 grep -Fq 'feed/25.12' "$RELEASE_WORKFLOW"
 grep -Fq 'feed/24.10' "$RELEASE_WORKFLOW"
 grep -Fq 'feed/21.02' "$RELEASE_WORKFLOW"
+grep -Fq 'feed/23.05-be3600' "$RELEASE_WORKFLOW"
 grep -Fq 'Packages.gz' "$RELEASE_WORKFLOW"
 grep -Fq 'packages.adb' "$RELEASE_WORKFLOW"
 grep -Fq 'actions/checkout@' "$RELEASE_WORKFLOW"
+
+BASE_FEED_DEPENDS="printf 'Depends: comgt, flock, jq, kmod-usb-acm, kmod-usb-serial-option, kmod-usb-net-rndis\\n'"
+BE3600_FEED_DEPENDS="printf 'Depends: adb, comgt, flock, jq, kmod-usb-acm, kmod-usb-serial-option, kmod-usb-net-qmi-wwan, kmod-usb-net-rndis, lua, luci-lib-nixio, uqmi\\n'"
+test "$(grep -Fc "$BASE_FEED_DEPENDS" "$RELEASE_WORKFLOW")" -eq 2
+test "$(grep -Fc "$BE3600_FEED_DEPENDS" "$RELEASE_WORKFLOW")" -eq 1
 
 # APK signing runs in the protected environment and publishes the key material.
 grep -Fq 'environment: release-signing' "$RELEASE_WORKFLOW"
@@ -97,11 +105,13 @@ grep -Fq 'verify --keys-dir' "$ROOT_MAKEFILE"
 grep -Fq 'empty-keys' "$ROOT_MAKEFILE"
 grep -Fq 'prepare-apk-sdk:' "$ROOT_MAKEFILE"
 grep -Fq 'generate-feed-index:' "$ROOT_MAKEFILE"
+grep -Fq '23.05-be3600)' "$ROOT_MAKEFILE"
 
-# README contains all three feed URLs
+# README contains every feed URL
 grep -Fq 'https://github.rudironsoni.com/gl-modem-community/feed/25.12' "$REPO_DIR/README.md"
 grep -Fq 'https://github.rudironsoni.com/gl-modem-community/feed/24.10' "$REPO_DIR/README.md"
 grep -Fq 'https://github.rudironsoni.com/gl-modem-community/feed/21.02' "$REPO_DIR/README.md"
+grep -Fq 'https://github.rudironsoni.com/gl-modem-community/feed/23.05-be3600' "$REPO_DIR/README.md"
 
 test ! -d "$REPO_DIR/scripts"
 test -s "$PUBLIC_KEY"

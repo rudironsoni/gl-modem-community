@@ -1,0 +1,29 @@
+{
+  "modems": [
+    {
+      "bus_type": "USB",
+      "pid": "9064",
+      "vid": "05c6",
+      "name": "VOS 5G",
+      "vendor": "Tri Cascade",
+      "traffic_stat_method": "iface",
+      "supports_5g": true,
+      "supports_port": [
+        {
+          "port_type": "USB",
+          "port_name": "ttyUSB",
+          "port_offset_at": 2
+        },
+        {
+          "port_type": "WDM",
+          "port_name": "cdc-wdm",
+          "port_offset_qmi": 0
+        }
+      ],
+      "sim_slot_num": 1,
+      "supports_function_map": "function_at_common",
+      "supports_proto": ["qmi"],
+      "supports_feature": []
+    }
+  ]
+}

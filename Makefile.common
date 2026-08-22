@@ -7,6 +7,10 @@ PKG_RELEASE:=1
 PKG_LICENSE:=GPL-3.0-only
 PKG_MAINTAINER:=Rudimar Ronsoni <rudironsoni@users.noreply.github.com>
 
+ifneq ($(BE3600_BUILD),)
+  PKGARCH:=aarch64_cortex-a53_neon-vfpv4
+endif
+
 # Common runtime dependencies (all GL.iNet firmwares include these kernel modules)
 COMMON_DEPENDS := \
 	comgt \
@@ -15,6 +19,17 @@ COMMON_DEPENDS := \
 	+kmod-usb-acm \
 	+kmod-usb-serial-option \
 	+kmod-usb-net-rndis
+
+# VOS 5G is verified only on the dedicated GL-BE3600 target. Keep its tools
+# out of the APK, generic IPK, and legacy GL.iNet feed dependency closures.
+ifneq ($(BE3600_BUILD),)
+COMMON_DEPENDS += \
+	adb \
+	+kmod-usb-net-qmi-wwan \
+	lua \
+	+luci-lib-nixio \
+	uqmi
+endif
 
 define Package/gl-modem-community
   SECTION:=net
@@ -44,6 +59,9 @@ if [ -x "$$initd_root/gl_cellular_manager" ]; then
 elif [ -x "$$initd_root/modem" ]; then
 	"$$initd_root/modem" restart
 fi
+if [ -x "$$initd_root/nginx" ]; then
+	"$$initd_root/nginx" restart
+fi
 endef
 
 define Package/gl-modem-community/prerm
@@ -59,10 +77,22 @@ elif [ -x "$$initd_root/modem" ]; then
 fi
 endef
 
+define Package/gl-modem-community/postrm
+#!/bin/sh
+[ -n "$${IPKG_INSTROOT:-}" ] && exit 0
+initd_root=$${GL_MODEM_COMMUNITY_INITD_ROOT:-/etc/init.d}
+if [ -x "$$initd_root/nginx" ]; then
+	"$$initd_root/nginx" restart
+fi
+endef
+
 define Build/Compile
 	$(TARGET_CC) $(TARGET_CFLAGS) -fPIC -shared \
 		-o $(PKG_BUILD_DIR)/fm350-at-compat.so \
 		$(PKG_BUILD_DIR)/fm350_at_compat.c
+	$(TARGET_CC) $(TARGET_CFLAGS) -fPIC -shared \
+		-o $(PKG_BUILD_DIR)/vos5g-at-compat.so \
+		$(PKG_BUILD_DIR)/vos5g_at_compat.c
 endef
 
 define Package/gl-modem-community/install
@@ -91,10 +121,17 @@ define Package/gl-modem-community/install
 	$(INSTALL_BIN) ./files/usr/libexec/gl-modem-community/legacy-bus $(1)/usr/libexec/gl-modem-community/legacy-bus
 	$(INSTALL_BIN) ./files/usr/libexec/gl-modem-community/ensure-option-ids $(1)/usr/libexec/gl-modem-community/ensure-option-ids
 	$(INSTALL_BIN) ./files/usr/libexec/gl-modem-community/fm350-at $(1)/usr/libexec/gl-modem-community/fm350-at
+	$(INSTALL_BIN) ./files/usr/libexec/gl-modem-community/vos5g-qmi $(1)/usr/libexec/gl-modem-community/vos5g-qmi
+	$(INSTALL_BIN) ./files/usr/libexec/gl-modem-community/vos5g-qmi-rf-band $(1)/usr/libexec/gl-modem-community/vos5g-qmi-rf-band
+	$(INSTALL_BIN) ./files/usr/libexec/gl-modem-community/vos5g-qmi-system-mode $(1)/usr/libexec/gl-modem-community/vos5g-qmi-system-mode
+	$(INSTALL_BIN) ./files/usr/libexec/gl-modem-community/vos5g-band-monitor $(1)/usr/libexec/gl-modem-community/vos5g-band-monitor
 	$(INSTALL_DIR) $(1)/usr/lib/gl-modem-community
 	$(INSTALL_DATA) $(PKG_BUILD_DIR)/fm350-at-compat.so $(1)/usr/lib/gl-modem-community/fm350-at-compat.so
+	$(INSTALL_DATA) $(PKG_BUILD_DIR)/vos5g-at-compat.so $(1)/usr/lib/gl-modem-community/vos5g-at-compat.so
 	$(INSTALL_DIR) $(1)/usr/share/gl-modem-community/drivers.d
 	$(INSTALL_DATA) ./files/usr/share/gl-modem-community/drivers.d/fm350.json $(1)/usr/share/gl-modem-community/drivers.d/fm350.json
+	$(INSTALL_DATA) ./files/usr/share/gl-modem-community/drivers.d/vos5g.json $(1)/usr/share/gl-modem-community/drivers.d/vos5g.json
 	$(INSTALL_DIR) $(1)/usr/share/gl-modem-community/rpc-drivers
 	$(INSTALL_DATA) ./files/usr/share/gl-modem-community/rpc-drivers/fm350.lua $(1)/usr/share/gl-modem-community/rpc-drivers/fm350.lua
+	$(INSTALL_DATA) ./files/usr/share/gl-modem-community/rpc-drivers/vos5g.lua $(1)/usr/share/gl-modem-community/rpc-drivers/vos5g.lua
 endef

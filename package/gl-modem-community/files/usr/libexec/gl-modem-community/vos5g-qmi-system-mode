@@ -1,0 +1,169 @@
+#!/usr/bin/lua
+-- SPDX-License-Identifier: GPL-3.0-only
+-- Read Qualcomm DSD Get System Status (0x0024) and report only an explicit
+-- 5G SA or NSA service-option bit. The temporary DSD client is always released.
+
+local device = assert(arg[1], "QMI control device is required")
+local nixio = require "nixio"
+
+local function le16(value)
+    return string.char(value % 256, math.floor(value / 256) % 256)
+end
+
+local function u16le(data, offset)
+    local a, b = data:byte(offset, offset + 1)
+    assert(b, "truncated uint16")
+    return a + b * 256
+end
+
+local function u32le(data, offset)
+    local a, b, c, d = data:byte(offset, offset + 3)
+    assert(d, "truncated uint32")
+    return a + b * 256 + c * 65536 + d * 16777216
+end
+
+local function ctl_request(transaction, message, payload)
+    local qmi = string.char(0x00, transaction) .. le16(message) ..
+        le16(#payload) .. payload
+    return string.char(0x01) .. le16(5 + #qmi) ..
+        string.char(0x00, 0x00, 0x00) .. qmi
+end
+
+
+local function service_request(service, client, transaction, message)
+    local qmi = string.char(0x00) .. le16(transaction) .. le16(message) ..
+        le16(0)
+    return string.char(0x01) .. le16(5 + #qmi) ..
+        string.char(0x00, service, client) .. qmi
+end
+
+local function parse_response(data, service, client, transaction, message)
+    assert(#data >= 12, "short QMI response")
+    assert(data:byte(1) == 0x01 and data:byte(4) == 0x80,
+        "invalid QMUX response")
+    assert(data:byte(5) == service and data:byte(6) == client,
+        "unexpected QMI service/client")
+    local response_flag = service == 0 and 0x01 or 0x02
+    assert(data:byte(7) == response_flag, "not a QMI response")
+
+    local payload_length, offset, limit
+    if service == 0 then
+        assert(data:byte(8) == transaction, "unexpected CTL transaction")
+        assert(u16le(data, 9) == message, "unexpected CTL message")
+        payload_length = u16le(data, 11)
+        offset = 13
+        limit = 12 + payload_length
+    else
+        assert(u16le(data, 8) == transaction,
+            "unexpected service transaction")
+        assert(u16le(data, 10) == message, "unexpected service message")
+        payload_length = u16le(data, 12)
+        offset = 14
+        limit = 13 + payload_length
+    end
+    assert(#data >= limit, "truncated QMI payload")
+
+    local tlvs = {}
+    local result_ok = false
+    while offset + 2 <= limit do
+        local kind = data:byte(offset)
+        local length = u16le(data, offset + 1)
+        assert(offset + 2 + length <= limit, "invalid QMI TLV")
+        local value = data:sub(offset + 3, offset + 2 + length)
+        tlvs[kind] = value
+        if kind == 0x02 and length >= 4 then
+            result_ok = u16le(value, 1) == 0 and u16le(value, 3) == 0
+        end
+        offset = offset + 3 + length
+    end
+    assert(result_ok, "QMI request failed")
+    return tlvs
+end
+
+local function matching_response(frame, service, client, transaction, message)
+    if #frame < 12 or frame:byte(1) ~= 0x01 or frame:byte(4) ~= 0x80 or
+        frame:byte(5) ~= service or frame:byte(6) ~= client then
+        return false
+    end
+    if service == 0 then
+        return frame:byte(7) == 0x01 and frame:byte(8) == transaction and
+            u16le(frame, 9) == message
+    end
+    return frame:byte(7) == 0x02 and u16le(frame, 8) == transaction and
+        u16le(frame, 10) == message
+end
+
+local function read_matching_response(handle, service, client, transaction,
+        message)
+    for _ = 1, 8 do
+        local data = assert(handle:read(4096), "QMI read failed")
+        local offset = 1
+        while offset + 2 <= #data do
+            if data:byte(offset) ~= 0x01 then break end
+            local length = u16le(data, offset + 1)
+            if length < 5 or offset + length > #data then break end
+            local frame = data:sub(offset, offset + length)
+            if matching_response(frame, service, client, transaction,
+                    message) then
+                return frame
+            end
+            offset = offset + length + 1
+        end
+    end
+    error("matching QMI response not found")
+end
+
+local function send_and_read(handle, request, service, client, transaction,
+        message)
+    assert(handle:write(request) == #request, "short QMI write")
+    return read_matching_response(handle, service, client, transaction,
+        message)
+end
+
+local handle = assert(nixio.open(device, "r+"))
+local dsd_service = 0x2a
+local allocate_tx = 0x71
+local allocation = parse_response(
+    send_and_read(handle, ctl_request(allocate_tx, 0x0022,
+        string.char(0x01, 0x01, 0x00, dsd_service)),
+        0, 0, allocate_tx, 0x0022),
+    0, 0, allocate_tx, 0x0022)
+local allocation_info = assert(allocation[0x01], "missing allocation info")
+assert(allocation_info:byte(1) == dsd_service, "wrong allocated service")
+local client = assert(allocation_info:byte(2), "missing DSD client ID")
+
+local ok, result = pcall(function()
+    local transaction = 0x6251
+    local response = parse_response(
+        send_and_read(handle,
+            service_request(dsd_service, client, transaction, 0x0024),
+            dsd_service, client, transaction, 0x0024),
+        dsd_service, client, transaction, 0x0024)
+    local systems = assert(response[0x10], "missing available systems")
+    local count = assert(systems:byte(1), "missing system count")
+    assert(count > 0 and #systems >= 1 + count * 16,
+        "invalid system list")
+
+    -- qmicli treats the first DSD entry as the current preferred data system.
+    local technology = u32le(systems, 2)
+    local rat = u32le(systems, 6)
+    local mask_high = u32le(systems, 14)
+    assert(technology == 0 and rat == 6, "preferred system is not 3GPP 5G")
+    local nsa = math.floor(mask_high / 2048) % 2 == 1 -- bit 43
+    local sa = math.floor(mask_high / 4096) % 2 == 1  -- bit 44
+    assert(sa ~= nsa, "ambiguous 5G SA/NSA service-option mask")
+    return sa and "SA" or "NSA"
+end)
+
+local release_tx = 0x72
+pcall(function()
+    parse_response(
+        send_and_read(handle, ctl_request(release_tx, 0x0023,
+            string.char(0x01, 0x02, 0x00, dsd_service, client)),
+            0, 0, release_tx, 0x0023),
+        0, 0, release_tx, 0x0023)
+end)
+handle:close()
+
+assert(ok, result)
+io.write(result, "\n")

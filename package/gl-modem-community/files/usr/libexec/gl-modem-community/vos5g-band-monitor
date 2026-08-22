@@ -1,0 +1,160 @@
+#!/bin/sh
+# SPDX-License-Identifier: GPL-3.0-only
+# Cache the active VOS 5G bands without blocking the GL.iNet HTTP worker.
+
+set -eu
+
+SYS_USB=${SYS_USB:-/sys/bus/usb}
+DEV_ROOT=${DEV_ROOT:-/dev}
+RUNTIME_DIR=${RUNTIME_DIR:-/var/run/gl-modem-community}
+LOCK_ROOT=${LOCK_ROOT:-/var/lock}
+UQMI_BIN=${UQMI_BIN:-uqmi}
+TIMEOUT_BIN=${TIMEOUT_BIN:-timeout}
+FLOCK_BIN=${FLOCK_BIN:-flock}
+LOGGER_BIN=${LOGGER_BIN:-logger}
+RF_BAND_READER=${RF_BAND_READER:-/usr/libexec/gl-modem-community/vos5g-qmi-rf-band}
+SYSTEM_MODE_READER=${SYSTEM_MODE_READER:-/usr/libexec/gl-modem-community/vos5g-qmi-system-mode}
+DEVICE_TEST_BIN=${DEVICE_TEST_BIN:-test}
+QMI_TIMEOUT_MS=${QMI_TIMEOUT_MS:-3000}
+QMI_WALL_SECS=${QMI_WALL_SECS:-5}
+POLL_SECS=${POLL_SECS:-30}
+
+log() {
+	"$LOGGER_BIN" -t gl-modem-community "vos5g-band-monitor: $*"
+}
+
+valid_bus() {
+	case "$1" in
+	''|*[!A-Za-z0-9._-]*) return 1 ;;
+	*) return 0 ;;
+	esac
+}
+
+is_vos5g() {
+	device=$SYS_USB/devices/$1
+	[ -r "$device/idVendor" ] &&
+		[ -r "$device/idProduct" ] &&
+		[ "$(cat "$device/idVendor")" = 05c6 ] &&
+		[ "$(cat "$device/idProduct")" = 9064 ]
+}
+
+qmi_control_device() {
+	bus=$1
+	for control in "$SYS_USB/devices/$bus:1.3/usbmisc"/cdc-wdm*; do
+		[ -e "$control" ] || continue
+		printf '%s/%s\n' "$DEV_ROOT" "${control##*/}"
+		return 0
+	done
+	return 1
+}
+
+valid_band_string() {
+	case "$1" in
+	''|*[!nB0-9+]*|+*|*+|*++*) return 1 ;;
+	*) return 0 ;;
+	esac
+}
+
+valid_system_mode() {
+	case "$1" in
+	SA|NSA) return 0 ;;
+	*) return 1 ;;
+	esac
+}
+
+write_cache() {
+	name=$1
+	value=$2
+	tmp=$RUNTIME_DIR/.$name.$$
+	printf '%s\n' "$value" >"$tmp"
+	mv -f "$tmp" "$RUNTIME_DIR/$name"
+}
+
+query_locked() {
+	bus=$1
+	device=$2
+
+	cid=$("$TIMEOUT_BIN" "$QMI_WALL_SECS" \
+		"$UQMI_BIN" -s -t "$QMI_TIMEOUT_MS" -d "$device" \
+		--get-client-id nas 2>/dev/null || true)
+	case "$cid" in
+	''|*[!0-9]*) return 1 ;;
+	esac
+
+	band_status=0
+	band=$("$TIMEOUT_BIN" "$QMI_WALL_SECS" \
+		"$RF_BAND_READER" "$device" "$cid" 2>/dev/null) || band_status=$?
+	"$TIMEOUT_BIN" "$QMI_WALL_SECS" \
+		"$UQMI_BIN" -s -t "$QMI_TIMEOUT_MS" -d "$device" \
+		--set-client-id "nas,$cid" --release-client-id nas \
+		>/dev/null 2>&1 || true
+
+	if [ "$band_status" -eq 0 ] && valid_band_string "$band"; then
+		write_cache "vos5g-band-$bus" "$band"
+		band_status=0
+	else
+		band_status=1
+	fi
+
+	mode_status=0
+	mode=$("$TIMEOUT_BIN" "$QMI_WALL_SECS" \
+		"$SYSTEM_MODE_READER" "$device" 2>/dev/null) || mode_status=$?
+	if [ "$mode_status" -eq 0 ] && valid_system_mode "$mode"; then
+		write_cache "vos5g-mode-$bus" "$mode"
+		mode_status=0
+	else
+		mode_status=1
+	fi
+
+	[ "$band_status" -eq 0 ] || [ "$mode_status" -eq 0 ]
+}
+
+query_one() {
+	bus=$1
+	valid_bus "$bus" || return 1
+	is_vos5g "$bus" || return 1
+	device=$(qmi_control_device "$bus") || return 1
+	"$DEVICE_TEST_BIN" -c "$device" || return 1
+
+	mkdir -p "$RUNTIME_DIR" "$LOCK_ROOT"
+	(
+		# Share vos5g-qmi's per-bus lock so this reader never overlaps an
+		# in-flight QCMAP/WDS ownership handoff on the same control device.
+		# Non-blocking: while a prepare holds the lock, skip this poll and
+		# let the next 30-second cycle refresh the cache.
+		exec 9>"$LOCK_ROOT/vos5g-qmi-$bus.lock"
+		"$FLOCK_BIN" -n 9 || exit 0
+		query_locked "$bus" "$device"
+	)
+}
+
+refresh_all() {
+	for device in "$SYS_USB"/devices/*; do
+		[ -d "$device" ] || continue
+		bus=${device##*/}
+		is_vos5g "$bus" || continue
+		query_one "$bus" || true
+	done
+}
+
+command=${1:-refresh}
+case "$command" in
+refresh)
+	if [ "$#" -ge 2 ]; then
+		query_one "$2"
+	else
+		refresh_all
+	fi
+	;;
+--watch)
+	trap 'exit 0' INT TERM
+	while :; do
+		refresh_all
+		sleep "$POLL_SECS"
+	done
+	;;
+*)
+	echo "usage: ${0##*/} refresh [usb-bus] | --watch" >&2
+	exit 2
+	;;
+esac

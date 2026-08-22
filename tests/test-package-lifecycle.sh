@@ -22,7 +22,7 @@ extract_hook() {
 	chmod +x "$tmp/$hook"
 }
 
-for service in gl_modem_community gl_cellular_manager; do
+for service in gl_modem_community gl_cellular_manager nginx; do
 	cat >"$tmp/init.d/$service" <<'EOF'
 #!/bin/sh
 printf '%s %s\n' "${0##*/}" "$*" >>"${LIFECYCLE_TEST_LOG:?}"
@@ -32,6 +32,7 @@ done
 
 extract_hook postinst
 extract_hook prerm
+extract_hook postrm
 
 IPKG_INSTROOT="$tmp/offline-root" \
 GL_MODEM_COMMUNITY_INITD_ROOT="$tmp/init.d" \
@@ -47,6 +48,7 @@ cat >"$tmp/expected-postinst" <<'EOF'
 gl_modem_community enable
 gl_modem_community restart
 gl_cellular_manager restart
+nginx restart
 EOF
 cmp "$tmp/expected-postinst" "$tmp/lifecycle.log"
 
@@ -61,3 +63,13 @@ gl_modem_community disable
 gl_cellular_manager restart
 EOF
 cmp "$tmp/expected-prerm" "$tmp/lifecycle.log"
+
+: >"$tmp/lifecycle.log"
+IPKG_INSTROOT='' \
+GL_MODEM_COMMUNITY_INITD_ROOT="$tmp/init.d" \
+LIFECYCLE_TEST_LOG="$tmp/lifecycle.log" \
+	"$tmp/postrm"
+cat >"$tmp/expected-postrm" <<'EOF'
+nginx restart
+EOF
+cmp "$tmp/expected-postrm" "$tmp/lifecycle.log"
