@@ -19,6 +19,7 @@ printf '%s\n' 05c6 >"$sys_usb/devices/2-1/idVendor"
 printf '%s\n' 9064 >"$sys_usb/devices/2-1/idProduct"
 printf '%s\n' 2 >"$sys_usb/devices/2-1/bConfigurationValue"
 printf '%s\n' testserial >"$sys_usb/devices/2-1/serial"
+printf '%s\n' 5 >"$sys_usb/devices/2-1/devnum"
 printf '%s\n' active >"$qcmap_state"
 : >"$sys_usb/devices/2-1:1.3/usbmisc/cdc-wdm0"
 : >"$tmp/dev/cdc-wdm0"
@@ -48,13 +49,18 @@ case "\$*" in
 *) exit 0 ;;
 esac
 EOF
+cat >"$bin_dir/flock" <<EOF
+#!/bin/sh
+printf '%s\\n' "\$*" >>"$tmp/flock.log"
+EOF
 chmod +x "$bin_dir/"*
 
 run_vos5g() {
 	SYS_USB=$sys_usb LOGGER_BIN=true WAIT_LOOPS=1 \
 		ADB_BIN=$bin_dir/adb TIMEOUT_BIN=$bin_dir/timeout \
 		UQMI_BIN=$bin_dir/uqmi DEV_ROOT=$tmp/dev \
-		FLOCK_BIN=true LOCK_ROOT=$tmp/lock \
+		FLOCK_BIN=$bin_dir/flock LOCK_ROOT=$tmp/lock \
+		RUNTIME_DIR=$tmp/runtime \
 		QCMAP_SETTLE_LOOPS=0 QMI_RELEASE_WAIT_SECS=0 \
 		"$script" "$@"
 }
@@ -67,10 +73,32 @@ test "$(basename "$(readlink "$sys_usb/devices/2-1:1.2/driver")")" = option
 grep -F -- '--set-client-id wds,7 --set-autoconnect disabled' "$uqmi_log" >/dev/null
 grep -F -- '--set-client-id wds,7 --release-client-id wds' "$uqmi_log" >/dev/null
 
-# Preparation is idempotent while QMI already owns the modem.
+# Contention must block until the winning prepare finishes, never report an
+# unverified success, so the lock is taken without the non-blocking flag.
+grep -Fx 9 "$tmp/flock.log" >/dev/null
+if grep -F -- '-n' "$tmp/flock.log" >/dev/null; then
+	echo 'prepare unexpectedly used a non-blocking lock' >&2
+	exit 1
+fi
+
+# A completed preparation is recorded against the current USB connection.
+test "$(cat "$tmp/runtime/vos5g-prepared-2-1")" = 5
+
+# Preparation is idempotent while QMI already owns the modem, and a repeat
+# call for the same USB connection short-circuits on the recorded stamp
+# instead of repeating the QCMAP settle window and WDS client allocation.
+: >"$uqmi_log"
 run_vos5g prepare 2-1
 test "$(cat "$sys_usb/devices/2-1/bConfigurationValue")" = 1
 test "$(cat "$qcmap_state")" = inactive
+test ! -s "$uqmi_log"
+
+# A physical detach/attach assigns a new devnum, which invalidates the stamp
+# and forces a full preparation for the new connection.
+printf '%s\n' 6 >"$sys_usb/devices/2-1/devnum"
+run_vos5g prepare 2-1
+grep -F -- '--get-client-id wds' "$uqmi_log" >/dev/null
+test "$(cat "$tmp/runtime/vos5g-prepared-2-1")" = 6
 
 mkdir -p "$sys_usb/devices/3-1"
 printf '%s\n' 1234 >"$sys_usb/devices/3-1/idVendor"

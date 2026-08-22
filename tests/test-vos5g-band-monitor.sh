@@ -61,6 +61,11 @@ SYS_USB=$sys_usb DEV_ROOT=$tmp/dev RUNTIME_DIR=$runtime \
 
 test "$(cat "$runtime/vos5g-band-2-1")" = n71+B2
 test "$(cat "$runtime/vos5g-mode-2-1")" = SA
+
+# The reader serializes on vos5g-qmi's per-bus lock, not a private one, so
+# it can never interleave with an in-flight QCMAP/WDS ownership handoff.
+test -f "$tmp/lock/vos5g-qmi-2-1.lock"
+test ! -e "$tmp/lock/vos5g-band-2-1.lock"
 grep -F -- '--get-client-id nas' "$tmp/uqmi.log" >/dev/null
 grep -F -- '--set-client-id nas,7 --release-client-id nas' "$tmp/uqmi.log" >/dev/null
 

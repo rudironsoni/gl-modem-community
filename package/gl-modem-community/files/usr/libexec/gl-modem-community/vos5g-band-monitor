@@ -118,7 +118,11 @@ query_one() {
 
 	mkdir -p "$RUNTIME_DIR" "$LOCK_ROOT"
 	(
-		exec 9>"$LOCK_ROOT/vos5g-band-$bus.lock"
+		# Share vos5g-qmi's per-bus lock so this reader never overlaps an
+		# in-flight QCMAP/WDS ownership handoff on the same control device.
+		# Non-blocking: while a prepare holds the lock, skip this poll and
+		# let the next 30-second cycle refresh the cache.
+		exec 9>"$LOCK_ROOT/vos5g-qmi-$bus.lock"
 		"$FLOCK_BIN" -n 9 || exit 0
 		query_locked "$bus" "$device"
 	)

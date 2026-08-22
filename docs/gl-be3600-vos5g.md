@@ -47,7 +47,12 @@ The integration is restricted to USB ID `05c6:9064`:
 - the model fragment selects the stock common function map and QMI protocol;
 - `vos5g-qmi` selects verified USB configuration 1, binds interface 1.3 to
   `qmi_wwan`, binds interface 1.2 to `option`, releases VOS QCMAP ownership,
-  and leaves GL.iNet's stock QMI dialer in control;
+  and leaves GL.iNet's stock QMI dialer in control; concurrent callers
+  (service start and USB bind events) serialize on one per-bus lock and
+  block until the winning preparation finishes, a completed preparation is
+  recorded against the current USB connection (kernel `devnum`) so repeated
+  bind events do not repeat the QCMAP settle window, and the temporary WDS
+  client ID is released even when disabling the leftover autoconnect fails;
 - the AT wrapper resolves only the VOS interface 1.2 path and preloads a
   VOS-specific response normalizer;
 - NAS `Get RF Band Information` and DSD `Get System Status` use temporary,
@@ -104,6 +109,9 @@ package contained numeric `root:root` ownership; installed scripts were mode
 - VOS ownership preparation runs synchronously during service start. On a
   cold boot it can spend roughly 20 one-second settle iterations, in addition
   to bounded ADB calls, waiting for late QCMAP startup before stopping it.
+  When a USB bind event starts that preparation first, service start blocks
+  on the shared per-bus lock until it completes instead of continuing on an
+  unverified success, so the stock dialer never starts mid-handoff.
 - Linux exposes QMI control as one shared `/dev/cdc-wdm0` receive queue. The
   display watcher cannot coordinate with GL.iNet's proprietary QMI process,
   so exact band and SA/NSA values remain best-effort: polling is limited to

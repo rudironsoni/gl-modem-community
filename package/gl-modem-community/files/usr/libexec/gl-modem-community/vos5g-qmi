@@ -18,6 +18,7 @@ UQMI_BIN=${UQMI_BIN:-uqmi}
 FLOCK_BIN=${FLOCK_BIN:-flock}
 DEV_ROOT=${DEV_ROOT:-/dev}
 LOCK_ROOT=${LOCK_ROOT:-/var/lock}
+RUNTIME_DIR=${RUNTIME_DIR:-/var/run/gl-modem-community}
 WAIT_LOOPS=${WAIT_LOOPS:-20}
 ADB_WAIT_SECS=${ADB_WAIT_SECS:-30}
 QCMAP_SERVICE=${QCMAP_SERVICE:-QCMAP_ConnectionManagerd.service}
@@ -53,6 +54,32 @@ driver_name() {
 
 device_serial() {
 	cat "$SYS_USB/devices/$1/serial" 2>/dev/null || true
+}
+
+device_devnum() {
+	cat "$SYS_USB/devices/$1/devnum" 2>/dev/null || true
+}
+
+stamp_path() {
+	printf '%s/vos5g-prepared-%s\n' "$RUNTIME_DIR" "$1"
+}
+
+# A completed preparation stays valid for the lifetime of one USB connection.
+# The kernel assigns a new devnum on physical detach/attach, so a stamp that
+# still matches the current devnum proves QCMAP was stopped and the WDS
+# autoconnect cleared for exactly this connection.
+prepare_is_current() {
+	current=$(device_devnum "$1")
+	[ -n "$current" ] || return 1
+	recorded=$(cat "$(stamp_path "$1")" 2>/dev/null) || return 1
+	[ "$recorded" = "$current" ]
+}
+
+record_prepared() {
+	current=$(device_devnum "$1")
+	[ -n "$current" ] || return 0
+	mkdir -p "$RUNTIME_DIR"
+	printf '%s\n' "$current" >"$(stamp_path "$1")"
 }
 
 adb_for_bus() {
@@ -254,10 +281,21 @@ prepare_all() {
 prepare_locked() {
 	bus=$1
 	valid_bus "$bus" || return 1
+	is_vos5g "$bus" || return 0
 	mkdir -p "$LOCK_ROOT"
 	exec 9>"$LOCK_ROOT/vos5g-qmi-$bus.lock"
-	"$FLOCK_BIN" -n 9 || return 0
-	prepare_one "$bus"
+	# Block instead of skipping on contention.  A caller that loses the
+	# race (service start versus a USB bind event) must not report success
+	# until the winning prepare has actually finished, and a bind event
+	# that arrives while another prepare is running must retry afterwards
+	# rather than being dropped.  prepare_one is bounded, so this wait is
+	# bounded too.
+	"$FLOCK_BIN" 9 || return 1
+	if prepare_is_current "$bus"; then
+		return 0
+	fi
+	prepare_one "$bus" || return 1
+	record_prepared "$bus"
 }
 
 command=${1:-prepare}
