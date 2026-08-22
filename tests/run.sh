@@ -17,6 +17,7 @@ find /repo/package/gl-modem-community/files -type f -name "*.lua" -exec luac5.1 
         /repo/package/gl-modem-community/files/usr/libexec/gl-modem-community/vos5g-qmi-rf-band \
         /repo/package/gl-modem-community/files/usr/libexec/gl-modem-community/vos5g-qmi-system-mode
 shellcheck -S warning -e SC1091,SC2034,SC3043 /repo/tests/*.sh \
+		/repo/tools/assemble-release-feeds \
 		/repo/package/gl-modem-community/files/etc/init.d/gl_modem_community \
 		/repo/package/gl-modem-community/files/usr/libexec/gl-modem-community/merge-models \
 		/repo/package/gl-modem-community/files/usr/libexec/gl-modem-community/modem_AT-wrapper \
@@ -69,6 +70,7 @@ run_test "$REPO_DIR/tests/test-package-lifecycle.sh"
 run_test "$REPO_DIR/tests/test-service-lifecycle.sh"
 run_test "$REPO_DIR/tests/test-release-config.sh"
 run_test "$REPO_DIR/tests/test-feed-index.sh"
+run_test "$REPO_DIR/tests/test-assemble-release-feeds.sh"
 run_test "$REPO_DIR/tests/test-firmware-channels.sh"
 run_test "$REPO_DIR/tests/test-runtime-stack.sh"
 run_test "$REPO_DIR/tests/test-legacy-bus.sh"
