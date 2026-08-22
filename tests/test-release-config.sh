@@ -120,7 +120,7 @@ grep -Fq -- "--remove-label 'autorelease: pending'" "$RELEASE_WORKFLOW"
 dispatch_line=$(grep -nF 'gh workflow run ci.yml' "$RELEASE_WORKFLOW" | cut -d: -f1)
 watch_line=$(grep -nF 'gh run watch "$CI_RUN_ID"' "$RELEASE_WORKFLOW" | cut -d: -f1)
 merge_line=$(grep -nF 'gh pr merge "$pr_number"' "$RELEASE_WORKFLOW" | cut -d: -f1)
-publish_line=$(grep -nF 'name: Create or update release' "$RELEASE_WORKFLOW" | cut -d: -f1)
+publish_line=$(grep -nF 'uses: softprops/action-gh-release@' "$RELEASE_WORKFLOW" | cut -d: -f1)
 test "$dispatch_line" -lt "$watch_line"
 test "$watch_line" -lt "$merge_line"
 test "$merge_line" -lt "$publish_line"
