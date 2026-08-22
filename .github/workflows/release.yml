@@ -71,16 +71,12 @@ jobs:
             version="${tag#v}"
             source_ref="$tag"
           else
-            if ! git cat-file -e 'HEAD^:.release-please-manifest.json' 2>/dev/null; then
-              write_outputs
-              exit 0
-            fi
-            if git diff --quiet HEAD^ HEAD -- .release-please-manifest.json; then
-              write_outputs
-              exit 0
-            fi
             version="$(jq -er '.["."] | select(type == "string")' .release-please-manifest.json)"
             tag="v${version}"
+            if gh release view "$tag" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+              write_outputs
+              exit 0
+            fi
           fi
 
           if ! [[ "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
@@ -91,6 +87,21 @@ jobs:
           if [[ "$package_version" != "$version" ]]; then
             echo "Manifest version $version does not match PKG_VERSION $package_version" >&2
             exit 1
+          fi
+          if [[ "$GITHUB_EVENT_NAME" != workflow_dispatch ]]; then
+            release_files=(
+              "feed/25.12/gl-modem-community-${version}-r1.apk"
+              "feed/25.12/packages.adb"
+              "feed/24.10/gl-modem-community_${version}-r1_aarch64_cortex-a53.ipk"
+              "feed/21.02/gl-modem-community_${version}-1_glinet-21.02_aarch64_cortex-a53.ipk"
+              "feed/23.05-be3600/gl-modem-community_${version}-r1_gl-be3600-4.9_aarch64_cortex-a53_neon-vfpv4.ipk"
+            )
+            for release_file in "${release_files[@]}"; do
+              if [[ ! -s "$release_file" ]]; then
+                write_outputs
+                exit 0
+              fi
+            done
           fi
 
           release_commit=true
