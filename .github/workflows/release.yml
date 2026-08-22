@@ -219,6 +219,9 @@ jobs:
     permissions:
       actions: write
       contents: write
+    outputs:
+      ci_run_id: ${{ steps.feed.outputs.ci_run_id }}
+      feed_sha: ${{ steps.feed.outputs.feed_sha }}
     steps:
       - name: Check out release PR
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -277,7 +280,8 @@ jobs:
 
           sh tools/assemble-release-feeds "$version" release-assets feed
 
-      - name: Commit feeds to release PR
+      - name: Commit feeds and dispatch final CI
+        id: feed
         env:
           GH_TOKEN: ${{ github.token }}
           RELEASE_BRANCH: ${{ needs.release-please.outputs.pr_branch }}
@@ -312,10 +316,112 @@ jobs:
           fi
 
           feed_sha="$(git rev-parse HEAD)"
+          dispatch_started="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
           gh workflow run ci.yml \
             --repo "$GITHUB_REPOSITORY" \
             --ref "$RELEASE_BRANCH" \
             -f "source_ref=$feed_sha"
+
+          ci_run_id=
+          for attempt in {1..30}; do
+            runs="$(gh run list \
+              --repo "$GITHUB_REPOSITORY" \
+              --workflow ci.yml \
+              --branch "$RELEASE_BRANCH" \
+              --event workflow_dispatch \
+              --limit 20 \
+              --json databaseId,createdAt,headSha)"
+            ci_run_id="$(jq -r \
+              --arg sha "$feed_sha" \
+              --arg started "$dispatch_started" \
+              '[
+                .[] |
+                select(.headSha == $sha and .createdAt >= $started)
+              ] | sort_by(.createdAt) | last | .databaseId // empty' \
+              <<< "$runs")"
+            test -z "$ci_run_id" || break
+            sleep 2
+          done
+          if [[ -z "$ci_run_id" ]]; then
+            echo "Could not resolve dispatched CI run for $feed_sha" >&2
+            exit 1
+          fi
+          {
+            echo "ci_run_id=${ci_run_id}"
+            echo "feed_sha=${feed_sha}"
+          } >> "$GITHUB_OUTPUT"
+
+  merge-release-pr:
+    name: Merge validated release PR
+    needs:
+      - release-please
+      - prepare-release-pr
+    if: needs.prepare-release-pr.result == 'success'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    permissions:
+      actions: read
+      contents: write
+      pull-requests: write
+    steps:
+      - name: Wait for exact release commit validation
+        env:
+          CI_RUN_ID: ${{ needs.prepare-release-pr.outputs.ci_run_id }}
+          FEED_SHA: ${{ needs.prepare-release-pr.outputs.feed_sha }}
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          gh run watch "$CI_RUN_ID" \
+            --repo "$GITHUB_REPOSITORY" \
+            --exit-status \
+            --interval 10
+          run="$(gh run view "$CI_RUN_ID" \
+            --repo "$GITHUB_REPOSITORY" \
+            --json conclusion,event,headSha,status,url)"
+          jq -e \
+            --arg sha "$FEED_SHA" \
+            '
+              .event == "workflow_dispatch" and
+              .headSha == $sha and
+              .status == "completed" and
+              .conclusion == "success"
+            ' <<< "$run" >/dev/null || {
+              echo "Dispatched CI did not validate exact release commit $FEED_SHA" >&2
+              jq . <<< "$run" >&2
+              exit 1
+            }
+
+      - name: Squash merge validated release PR
+        env:
+          FEED_SHA: ${{ needs.prepare-release-pr.outputs.feed_sha }}
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_BRANCH: ${{ needs.release-please.outputs.pr_branch }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          pr="$(gh pr view "$RELEASE_BRANCH" \
+            --repo "$GITHUB_REPOSITORY" \
+            --json baseRefName,headRefName,headRefOid,isDraft,number,state)"
+          jq -e \
+            --arg branch "$RELEASE_BRANCH" \
+            --arg sha "$FEED_SHA" \
+            '
+              .baseRefName == "main" and
+              .headRefName == $branch and
+              .headRefOid == $sha and
+              .isDraft == false and
+              .state == "OPEN"
+            ' <<< "$pr" >/dev/null || {
+              echo "Release PR no longer matches validated commit $FEED_SHA" >&2
+              jq . <<< "$pr" >&2
+              exit 1
+            }
+          pr_number="$(jq -r '.number' <<< "$pr")"
+          gh pr merge "$pr_number" \
+            --repo "$GITHUB_REPOSITORY" \
+            --squash \
+            --match-head-commit "$FEED_SHA"
 
   release-ci:
     name: Validate release source
