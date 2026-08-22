@@ -255,6 +255,12 @@ jobs:
 
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
+          if jq -e 'has("last-release-sha")' release-please-config.json >/dev/null; then
+            config_tmp="$(mktemp "${RUNNER_TEMP}/release-please-config.XXXXXX")"
+            jq 'del(.["last-release-sha"])' release-please-config.json > "$config_tmp"
+            mv "$config_tmp" release-please-config.json
+          fi
+          git add release-please-config.json
           git add -f feed/
           if ! git diff --cached --quiet; then
             version="$(jq -er '.["."]' .release-please-manifest.json)"

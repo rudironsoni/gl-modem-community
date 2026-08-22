@@ -5,6 +5,7 @@
   "include-v-in-tag": true,
   "include-v-in-release-name": true,
   "skip-github-release": true,
+  "last-release-sha": "4fd19430c33adef637ee25a68c3dbea0a757e815",
   "changelog-sections": [
     { "type": "feat", "section": "Features", "hidden": false },
     { "type": "fix", "section": "Bug Fixes", "hidden": false },

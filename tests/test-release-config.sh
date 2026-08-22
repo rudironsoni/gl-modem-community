@@ -19,6 +19,8 @@ jq -e '
   .["include-v-in-tag"] == true and
   .["include-v-in-release-name"] == true and
   .["skip-github-release"] == true and
+  (.["last-release-sha"] == null or
+    .["last-release-sha"] == "4fd19430c33adef637ee25a68c3dbea0a757e815") and
   .packages["."]["package-name"] == "gl-modem-community" and
   .packages["."]["extra-files"] == [
     {"type":"generic","path":"package/gl-modem-community/Makefile"}
@@ -90,6 +92,7 @@ grep -Fq 'name: Add signed feeds to release PR' "$RELEASE_WORKFLOW"
 grep -Fq 'source_ref: ${{ needs.release-please.outputs.pr_sha }}' "$RELEASE_WORKFLOW"
 grep -Fq 'ref: ${{ needs.release-please.outputs.pr_sha }}' "$RELEASE_WORKFLOW"
 grep -Fq 'Release Please branch advanced from $RELEASE_SHA to $remote_sha' "$RELEASE_WORKFLOW"
+grep -Fq "jq 'del(.[\"last-release-sha\"])' release-please-config.json" "$RELEASE_WORKFLOW"
 grep -Fq 'sh tools/assemble-release-feeds "$version" release-assets feed' "$RELEASE_WORKFLOW"
 grep -Fq 'git push origin "HEAD:refs/heads/${RELEASE_BRANCH}"' "$RELEASE_WORKFLOW"
 grep -Fq 'gh workflow run ci.yml' "$RELEASE_WORKFLOW"
