@@ -437,14 +437,14 @@ jobs:
           release_sha="$(jq -er \
             'select(.state == "MERGED") | .mergeCommit.oid' \
             <<< "$merged_pr")"
-          feed_tree="$(gh api \
-            "repos/${GITHUB_REPOSITORY}/git/commits/${FEED_SHA}" \
-            --jq '.tree.sha')"
-          release_tree="$(gh api \
-            "repos/${GITHUB_REPOSITORY}/git/commits/${release_sha}" \
-            --jq '.tree.sha')"
-          if [[ "$release_tree" != "$feed_tree" ]]; then
-            echo "Merged release tree does not match validated feed commit" >&2
+          feed_entries="$(gh api \
+            "repos/${GITHUB_REPOSITORY}/git/trees/${FEED_SHA}?recursive=1" \
+            --jq '[.tree[] | select(.path | startswith("feed/")) | [.path, .sha]]')"
+          release_entries="$(gh api \
+            "repos/${GITHUB_REPOSITORY}/git/trees/${release_sha}?recursive=1" \
+            --jq '[.tree[] | select(.path | startswith("feed/")) | [.path, .sha]]')"
+          if [[ "$release_entries" != "$feed_entries" ]]; then
+            echo "Merged release feeds do not match validated feed commit" >&2
             exit 1
           fi
           {
