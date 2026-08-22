@@ -324,7 +324,7 @@ jobs:
             -f "source_ref=$feed_sha"
 
           ci_run_id=
-          for attempt in {1..30}; do
+          for ((attempt = 1; attempt <= 30; attempt++)); do
             runs="$(gh run list \
               --repo "$GITHUB_REPOSITORY" \
               --workflow ci.yml \
