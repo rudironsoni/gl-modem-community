@@ -90,9 +90,10 @@ grep -Fq 'Exact existing release tag to rebuild' "$RELEASE_WORKFLOW"
 grep -Fq 'gh release view "$tag"' "$RELEASE_WORKFLOW"
 grep -Fq 'test "$(git describe --tags --exact-match HEAD)" = "$tag"' "$RELEASE_WORKFLOW"
 
-# The proposed release is built and signed before its one reviewed PR merges.
+# The proposed release is built, signed, revalidated, and automatically merged.
 grep -Fq 'name: Build proposed release' "$RELEASE_WORKFLOW"
 grep -Fq 'name: Add signed feeds to release PR' "$RELEASE_WORKFLOW"
+grep -Fq 'name: Merge validated release PR' "$RELEASE_WORKFLOW"
 grep -Fq 'source_ref: ${{ needs.release-please.outputs.pr_sha }}' "$RELEASE_WORKFLOW"
 grep -Fq 'ref: ${{ needs.release-please.outputs.pr_sha }}' "$RELEASE_WORKFLOW"
 grep -Fq 'Release Please branch advanced from $RELEASE_SHA to $remote_sha' "$RELEASE_WORKFLOW"
@@ -100,6 +101,29 @@ grep -Fq "jq 'del(.[\"last-release-sha\"])' release-please-config.json" "$RELEAS
 grep -Fq 'sh tools/assemble-release-feeds "$version" release-assets feed' "$RELEASE_WORKFLOW"
 grep -Fq 'git push origin "HEAD:refs/heads/${RELEASE_BRANCH}"' "$RELEASE_WORKFLOW"
 grep -Fq 'gh workflow run ci.yml' "$RELEASE_WORKFLOW"
+grep -Fq 'ci_run_id: ${{ steps.feed.outputs.ci_run_id }}' "$RELEASE_WORKFLOW"
+grep -Fq 'feed_sha: ${{ steps.feed.outputs.feed_sha }}' "$RELEASE_WORKFLOW"
+grep -Fq 'version: ${{ steps.feed.outputs.version }}' "$RELEASE_WORKFLOW"
+grep -Fq 'gh run watch "$CI_RUN_ID"' "$RELEASE_WORKFLOW"
+grep -Fq '.headSha == $sha and' "$RELEASE_WORKFLOW"
+grep -Fq '.conclusion == "success"' "$RELEASE_WORKFLOW"
+grep -Fq 'pull-requests: write' "$RELEASE_WORKFLOW"
+grep -Fq 'gh pr merge "$pr_number"' "$RELEASE_WORKFLOW"
+grep -Fq -- '--match-head-commit "$FEED_SHA"' "$RELEASE_WORKFLOW"
+grep -Fq 'release_sha: ${{ steps.merge.outputs.release_sha }}' "$RELEASE_WORKFLOW"
+grep -Fq 'Merged release feeds do not match validated feed commit' "$RELEASE_WORKFLOW"
+grep -Fq "needs.merge-release-pr.result == 'success'" "$RELEASE_WORKFLOW"
+grep -Fq 'needs.merge-release-pr.outputs.release_sha || needs.detect-release.outputs.source_ref' "$RELEASE_WORKFLOW"
+grep -Fq "if: needs.merge-release-pr.outputs.release_pr_number != ''" "$RELEASE_WORKFLOW"
+grep -Fq -- "--add-label 'autorelease: tagged'" "$RELEASE_WORKFLOW"
+grep -Fq -- "--remove-label 'autorelease: pending'" "$RELEASE_WORKFLOW"
+dispatch_line=$(grep -nF 'gh workflow run ci.yml' "$RELEASE_WORKFLOW" | cut -d: -f1)
+watch_line=$(grep -nF 'gh run watch "$CI_RUN_ID"' "$RELEASE_WORKFLOW" | cut -d: -f1)
+merge_line=$(grep -nF 'gh pr merge "$pr_number"' "$RELEASE_WORKFLOW" | cut -d: -f1)
+publish_line=$(grep -nF 'uses: softprops/action-gh-release@' "$RELEASE_WORKFLOW" | cut -d: -f1)
+test "$dispatch_line" -lt "$watch_line"
+test "$watch_line" -lt "$merge_line"
+test "$merge_line" -lt "$publish_line"
 if grep -Fq 'git push origin main' "$RELEASE_WORKFLOW"; then
 	echo 'Release workflow must not bypass pull-request-only main protection' >&2
 	exit 1
@@ -115,7 +139,7 @@ grep -Fq 'feed/23.05-be3600' "$RELEASE_WORKFLOW"
 grep -Fq 'packages.adb' "$RELEASE_WORKFLOW"
 grep -Fq 'actions/checkout@' "$RELEASE_WORKFLOW"
 grep -Fq 'actions/attest@f7c74d28b9d84cb8768d0b8ca14a4bac6ef463e6 # v4.2.0' "$RELEASE_WORKFLOW"
-grep -Fq 'target_commitish: ${{ needs.detect-release.outputs.source_sha }}' "$RELEASE_WORKFLOW"
+grep -Fq 'target_commitish: ${{ needs.merge-release-pr.outputs.release_sha || needs.detect-release.outputs.source_sha }}' "$RELEASE_WORKFLOW"
 grep -Fq 'SBOM_FORMAT=apk' "$RELEASE_WORKFLOW"
 grep -Fq 'gl-modem-community.be3600.ipk.cdx.json' "$RELEASE_WORKFLOW"
 grep -Fq '(.packages // .) as $packages' "$RELEASE_WORKFLOW"
