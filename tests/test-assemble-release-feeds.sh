@@ -32,6 +32,12 @@ cmp "$assets/gl-modem-community_${version}-r1_gl-be3600-4.9_aarch64_cortex-a53_n
 grep -Fqx "Version: ${version}-r1" "$feed/24.10/Packages"
 grep -Fqx "Version: ${version}-1" "$feed/21.02/Packages"
 grep -Fqx "Version: ${version}-r1" "$feed/23.05-be3600/Packages"
+hash24=$(sha256sum "$assets/gl-modem-community_${version}-r1_aarch64_cortex-a53.ipk" | awk '{print $1}')
+hash21=$(sha256sum "$assets/gl-modem-community_${version}-1_glinet-21.02_aarch64_cortex-a53.ipk" | awk '{print $1}')
+hashbe3600=$(sha256sum "$assets/gl-modem-community_${version}-r1_gl-be3600-4.9_aarch64_cortex-a53_neon-vfpv4.ipk" | awk '{print $1}')
+grep -Fqx "SHA256sum: $hash24" "$feed/24.10/Packages"
+grep -Fqx "SHA256sum: $hash21" "$feed/21.02/Packages"
+grep -Fqx "SHA256sum: $hashbe3600" "$feed/23.05-be3600/Packages"
 grep -Fqx 'Depends: comgt, flock, jq, kmod-usb-acm, kmod-usb-serial-option, kmod-usb-net-rndis' \
 	"$feed/24.10/Packages"
 grep -Fqx 'Depends: adb, comgt, flock, jq, kmod-usb-acm, kmod-usb-serial-option, kmod-usb-net-qmi-wwan, kmod-usb-net-rndis, lua, luci-lib-nixio, uqmi' \

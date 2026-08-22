@@ -26,6 +26,7 @@ jobs:
       contents: read
     outputs:
       release_commit: ${{ steps.release.outputs.release_commit }}
+      source_sha: ${{ steps.release.outputs.source_sha }}
       source_ref: ${{ steps.release.outputs.source_ref }}
       tag: ${{ steps.release.outputs.tag }}
       version: ${{ steps.release.outputs.version }}
@@ -47,6 +48,7 @@ jobs:
           set -euo pipefail
 
           release_commit=false
+          source_sha="$(git rev-parse HEAD)"
           source_ref="$GITHUB_SHA"
           tag=
           version=
@@ -54,6 +56,7 @@ jobs:
           write_outputs() {
             {
               echo "release_commit=${release_commit}"
+              echo "source_sha=${source_sha}"
               echo "source_ref=${source_ref}"
               echo "tag=${tag}"
               echo "version=${version}"
@@ -118,6 +121,7 @@ jobs:
       pull-requests: write
     outputs:
       pr_branch: ${{ steps.pr.outputs.pr_branch }}
+      pr_sha: ${{ steps.pr.outputs.pr_sha }}
     steps:
       - name: Create or update release PR
         id: release
@@ -130,20 +134,24 @@ jobs:
       - name: Resolve release PR branch
         id: pr
         env:
+          GH_TOKEN: ${{ github.token }}
           RELEASE_PRS: ${{ steps.release.outputs.prs }}
           RELEASE_PRS_CREATED: ${{ steps.release.outputs.prs_created }}
         shell: bash
         run: |
           set -euo pipefail
           branch=
+          sha=
           if [[ "$RELEASE_PRS_CREATED" == true ]]; then
             branch="$(jq -er '.[0].headBranchName' <<< "$RELEASE_PRS")"
             if [[ "$branch" != release-please--* ]]; then
               echo "Unexpected Release Please branch: $branch" >&2
               exit 1
             fi
+            sha="$(gh api "repos/${GITHUB_REPOSITORY}/branches/${branch}" --jq '.commit.sha')"
           fi
           echo "pr_branch=${branch}" >> "$GITHUB_OUTPUT"
+          echo "pr_sha=${sha}" >> "$GITHUB_OUTPUT"
 
   build-release-pr:
     name: Build proposed release
@@ -152,7 +160,7 @@ jobs:
     if: needs.release-please.outputs.pr_branch != ''
     uses: ./.github/workflows/ci.yml
     with:
-      source_ref: ${{ needs.release-please.outputs.pr_branch }}
+      source_ref: ${{ needs.release-please.outputs.pr_sha }}
       upload_packages: true
     permissions:
       contents: read
@@ -173,7 +181,7 @@ jobs:
       - name: Check out release PR
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          ref: ${{ needs.release-please.outputs.pr_branch }}
+          ref: ${{ needs.release-please.outputs.pr_sha }}
           fetch-depth: 0
           persist-credentials: false
 
@@ -231,11 +239,17 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           RELEASE_BRANCH: ${{ needs.release-please.outputs.pr_branch }}
+          RELEASE_SHA: ${{ needs.release-please.outputs.pr_sha }}
         shell: bash
         run: |
           set -euo pipefail
           if [[ "$RELEASE_BRANCH" != release-please--* ]]; then
             echo "Unexpected Release Please branch: $RELEASE_BRANCH" >&2
+            exit 1
+          fi
+          remote_sha="$(gh api "repos/${GITHUB_REPOSITORY}/branches/${RELEASE_BRANCH}" --jq '.commit.sha')"
+          if [[ "$remote_sha" != "$RELEASE_SHA" ]]; then
+            echo "Release Please branch advanced from $RELEASE_SHA to $remote_sha" >&2
             exit 1
           fi
 
@@ -246,13 +260,14 @@ jobs:
             version="$(jq -er '.["."]' .release-please-manifest.json)"
             git commit -m "feed: v${version}"
             git remote set-url origin "https://github-actions:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
-            git push origin "HEAD:${RELEASE_BRANCH}"
+            git push origin "HEAD:refs/heads/${RELEASE_BRANCH}"
           fi
 
+          feed_sha="$(git rev-parse HEAD)"
           gh workflow run ci.yml \
             --repo "$GITHUB_REPOSITORY" \
             --ref "$RELEASE_BRANCH" \
-            -f "source_ref=$RELEASE_BRANCH"
+            -f "source_ref=$feed_sha"
 
   release-ci:
     name: Validate release source
@@ -337,6 +352,14 @@ jobs:
               "$apk_tool" verify --keys-dir /repo/keys /repo/release-assets/packages.adb
               "$apk_tool" adbdump --format json "$apk" \
                 >/repo/release-assets/gl-modem-community.apk.adb.json
+              "$apk_tool" adbdump --format json /repo/release-assets/packages.adb \
+                >/tmp/packages-index.json
+              jq -e --arg version "${RELEASE_VERSION}-r1" '"'"'
+                (.packages // .) as $packages |
+                ([$packages[] | select(
+                  .name == "gl-modem-community" and .version == $version
+                )] | length) == 1
+              '"'"' /tmp/packages-index.json >/dev/null
               tar -tzf "$ipk" >/dev/null
               tar -tzf "$glinet21_ipk" >/dev/null
               tar -tzf "$be3600_ipk" >/dev/null
@@ -363,6 +386,35 @@ jobs:
                 make -C /repo --no-print-directory validate-sbom SBOM="$sbom"
                 cyclonedx validate --input-file "$sbom"
               done
+
+              validate_component() {
+                sbom=$1
+                expected_version=$2
+                expected_architecture=$3
+                jq -e \
+                  --arg version "$expected_version" \
+                  --arg architecture "$expected_architecture" \
+                  '"'"'
+                    .metadata.component.name == "gl-modem-community" and
+                    .metadata.component.version == $version and
+                    any(
+                      .metadata.component.properties[];
+                      .name == "openwrt:architecture" and .value == $architecture
+                    )
+                  '"'"' "$sbom" >/dev/null
+              }
+              validate_component \
+                /repo/release-assets/gl-modem-community.apk.cdx.json \
+                "${RELEASE_VERSION}-r1" aarch64_cortex-a53
+              validate_component \
+                /repo/release-assets/gl-modem-community.ipk.cdx.json \
+                "${RELEASE_VERSION}-r1" aarch64_cortex-a53
+              validate_component \
+                /repo/release-assets/gl-modem-community.glinet21.ipk.cdx.json \
+                "${RELEASE_VERSION}-1" aarch64_cortex-a53
+              validate_component \
+                /repo/release-assets/gl-modem-community.be3600.ipk.cdx.json \
+                "${RELEASE_VERSION}-r1" aarch64_cortex-a53_neon-vfpv4
             '
 
       - name: Add keys and checksums
@@ -387,6 +439,7 @@ jobs:
         uses: softprops/action-gh-release@3d0d9888cb7fd7b750713d6e236d1fcb99157228 # v2
         with:
           tag_name: ${{ needs.detect-release.outputs.tag }}
+          target_commitish: ${{ needs.detect-release.outputs.source_sha }}
           name: ${{ needs.detect-release.outputs.tag }}
           files: release-assets/*
           generate_release_notes: true

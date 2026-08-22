@@ -9,7 +9,8 @@ fi
 VERSION=$1
 RELEASE_ASSETS=$2
 FEED_DIR=$3
-REPO_DIR=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
+unset CDPATH
+REPO_DIR=$(cd -- "$(dirname -- "$0")/.." && pwd)
 
 case "$VERSION" in
 	''|*[!0-9A-Za-z.-]*)
@@ -41,6 +42,7 @@ cp "$RELEASE_ASSETS/packages.adb" "$FEED_DIR/25.12/"
 
 cp "$ipk24" "$FEED_DIR/24.10/"
 size24=$(wc -c <"$ipk24" | tr -d ' ')
+hash24=$(sha256sum "$ipk24" | awk '{print $1}')
 {
 	printf 'Package: gl-modem-community\n'
 	printf 'Version: %s-r1\n' "$VERSION"
@@ -51,6 +53,7 @@ size24=$(wc -c <"$ipk24" | tr -d ' ')
 	printf 'Maintainer: Rudimar Ronsoni <rudironsoni@users.noreply.github.com>\n'
 	printf 'Architecture: aarch64_cortex-a53\n'
 	printf 'Size: %s\n' "$size24"
+	printf 'SHA256sum: %s\n' "$hash24"
 	printf 'Filename: %s\n' "$(basename "$ipk24")"
 	printf 'Description: Community modem definitions and compatibility drivers for GL.iNet firmware\n'
 } >"$FEED_DIR/24.10/Packages"
@@ -58,6 +61,7 @@ gzip -c "$FEED_DIR/24.10/Packages" >"$FEED_DIR/24.10/Packages.gz"
 
 cp "$ipk21" "$FEED_DIR/21.02/"
 size21=$(wc -c <"$ipk21" | tr -d ' ')
+hash21=$(sha256sum "$ipk21" | awk '{print $1}')
 {
 	printf 'Package: gl-modem-community\n'
 	printf 'Version: %s-1\n' "$VERSION"
@@ -68,6 +72,7 @@ size21=$(wc -c <"$ipk21" | tr -d ' ')
 	printf 'Maintainer: Rudimar Ronsoni <rudironsoni@users.noreply.github.com>\n'
 	printf 'Architecture: aarch64_cortex-a53\n'
 	printf 'Size: %s\n' "$size21"
+	printf 'SHA256sum: %s\n' "$hash21"
 	printf 'Filename: %s\n' "$(basename "$ipk21")"
 	printf 'Description: Community modem definitions and compatibility drivers for GL.iNet firmware\n'
 } >"$FEED_DIR/21.02/Packages"
@@ -75,6 +80,7 @@ gzip -c "$FEED_DIR/21.02/Packages" >"$FEED_DIR/21.02/Packages.gz"
 
 cp "$ipkbe3600" "$FEED_DIR/23.05-be3600/"
 sizebe3600=$(wc -c <"$ipkbe3600" | tr -d ' ')
+hashbe3600=$(sha256sum "$ipkbe3600" | awk '{print $1}')
 {
 	printf 'Package: gl-modem-community\n'
 	printf 'Version: %s-r1\n' "$VERSION"
@@ -85,6 +91,7 @@ sizebe3600=$(wc -c <"$ipkbe3600" | tr -d ' ')
 	printf 'Maintainer: Rudimar Ronsoni <rudironsoni@users.noreply.github.com>\n'
 	printf 'Architecture: aarch64_cortex-a53_neon-vfpv4\n'
 	printf 'Size: %s\n' "$sizebe3600"
+	printf 'SHA256sum: %s\n' "$hashbe3600"
 	printf 'Filename: %s\n' "$(basename "$ipkbe3600")"
 	printf 'Description: Community modem definitions and compatibility drivers for GL.iNet firmware\n'
 } >"$FEED_DIR/23.05-be3600/Packages"

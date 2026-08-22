@@ -87,8 +87,11 @@ grep -Fq 'test "$(git describe --tags --exact-match HEAD)" = "$tag"' "$RELEASE_W
 # The proposed release is built and signed before its one reviewed PR merges.
 grep -Fq 'name: Build proposed release' "$RELEASE_WORKFLOW"
 grep -Fq 'name: Add signed feeds to release PR' "$RELEASE_WORKFLOW"
+grep -Fq 'source_ref: ${{ needs.release-please.outputs.pr_sha }}' "$RELEASE_WORKFLOW"
+grep -Fq 'ref: ${{ needs.release-please.outputs.pr_sha }}' "$RELEASE_WORKFLOW"
+grep -Fq 'Release Please branch advanced from $RELEASE_SHA to $remote_sha' "$RELEASE_WORKFLOW"
 grep -Fq 'sh tools/assemble-release-feeds "$version" release-assets feed' "$RELEASE_WORKFLOW"
-grep -Fq 'git push origin "HEAD:${RELEASE_BRANCH}"' "$RELEASE_WORKFLOW"
+grep -Fq 'git push origin "HEAD:refs/heads/${RELEASE_BRANCH}"' "$RELEASE_WORKFLOW"
 grep -Fq 'gh workflow run ci.yml' "$RELEASE_WORKFLOW"
 if grep -Fq 'git push origin main' "$RELEASE_WORKFLOW"; then
 	echo 'Release workflow must not bypass pull-request-only main protection' >&2
@@ -105,14 +108,18 @@ grep -Fq 'feed/23.05-be3600' "$RELEASE_WORKFLOW"
 grep -Fq 'packages.adb' "$RELEASE_WORKFLOW"
 grep -Fq 'actions/checkout@' "$RELEASE_WORKFLOW"
 grep -Fq 'actions/attest@f7c74d28b9d84cb8768d0b8ca14a4bac6ef463e6 # v4.2.0' "$RELEASE_WORKFLOW"
+grep -Fq 'target_commitish: ${{ needs.detect-release.outputs.source_sha }}' "$RELEASE_WORKFLOW"
 grep -Fq 'SBOM_FORMAT=apk' "$RELEASE_WORKFLOW"
 grep -Fq 'gl-modem-community.be3600.ipk.cdx.json' "$RELEASE_WORKFLOW"
+grep -Fq '(.packages // .) as $packages' "$RELEASE_WORKFLOW"
+grep -Fq '.metadata.component.version == $version' "$RELEASE_WORKFLOW"
 grep -Fq 'sha256sum -c gl-modem-community.pem.sha256' "$RELEASE_WORKFLOW"
 
 BASE_FEED_DEPENDS="printf 'Depends: comgt, flock, jq, kmod-usb-acm, kmod-usb-serial-option, kmod-usb-net-rndis\\n'"
 BE3600_FEED_DEPENDS="printf 'Depends: adb, comgt, flock, jq, kmod-usb-acm, kmod-usb-serial-option, kmod-usb-net-qmi-wwan, kmod-usb-net-rndis, lua, luci-lib-nixio, uqmi\\n'"
 test "$(grep -Fc "$BASE_FEED_DEPENDS" "$FEED_ASSEMBLER")" -eq 2
 test "$(grep -Fc "$BE3600_FEED_DEPENDS" "$FEED_ASSEMBLER")" -eq 1
+test "$(grep -Fc "printf 'SHA256sum: %s" "$FEED_ASSEMBLER")" -eq 3
 
 # APK signing runs in the protected environment and publishes the key material.
 grep -Fq 'environment: release-signing' "$RELEASE_WORKFLOW"
@@ -137,6 +144,10 @@ grep -Fq 'https://github.rudironsoni.com/gl-modem-community/feed/25.12' "$REPO_D
 grep -Fq 'https://github.rudironsoni.com/gl-modem-community/feed/24.10' "$REPO_DIR/README.md"
 grep -Fq 'https://github.rudironsoni.com/gl-modem-community/feed/21.02' "$REPO_DIR/README.md"
 grep -Fq 'https://github.rudironsoni.com/gl-modem-community/feed/23.05-be3600' "$REPO_DIR/README.md"
+if grep -Fq 'releases/latest/download/SHA256SUMS' "$REPO_DIR/README.md"; then
+	echo 'Versioned package instructions must fetch checksums from the same release tag' >&2
+	exit 1
+fi
 
 test ! -d "$REPO_DIR/scripts"
 test -s "$PUBLIC_KEY"
