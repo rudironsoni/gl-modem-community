@@ -222,6 +222,7 @@ jobs:
     outputs:
       ci_run_id: ${{ steps.feed.outputs.ci_run_id }}
       feed_sha: ${{ steps.feed.outputs.feed_sha }}
+      version: ${{ steps.feed.outputs.version }}
     steps:
       - name: Check out release PR
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -349,6 +350,7 @@ jobs:
           {
             echo "ci_run_id=${ci_run_id}"
             echo "feed_sha=${feed_sha}"
+            echo "version=$(jq -er '.["."]' .release-please-manifest.json)"
           } >> "$GITHUB_OUTPUT"
 
   merge-release-pr:
@@ -363,6 +365,11 @@ jobs:
       actions: read
       contents: write
       pull-requests: write
+    outputs:
+      release_pr_number: ${{ steps.merge.outputs.release_pr_number }}
+      release_sha: ${{ steps.merge.outputs.release_sha }}
+      tag: ${{ steps.merge.outputs.tag }}
+      version: ${{ steps.merge.outputs.version }}
     steps:
       - name: Wait for exact release commit validation
         env:
@@ -393,10 +400,12 @@ jobs:
             }
 
       - name: Squash merge validated release PR
+        id: merge
         env:
           FEED_SHA: ${{ needs.prepare-release-pr.outputs.feed_sha }}
           GH_TOKEN: ${{ github.token }}
           RELEASE_BRANCH: ${{ needs.release-please.outputs.pr_branch }}
+          RELEASE_VERSION: ${{ needs.prepare-release-pr.outputs.version }}
         shell: bash
         run: |
           set -euo pipefail
@@ -422,6 +431,28 @@ jobs:
             --repo "$GITHUB_REPOSITORY" \
             --squash \
             --match-head-commit "$FEED_SHA"
+          merged_pr="$(gh pr view "$pr_number" \
+            --repo "$GITHUB_REPOSITORY" \
+            --json mergeCommit,state)"
+          release_sha="$(jq -er \
+            'select(.state == "MERGED") | .mergeCommit.oid' \
+            <<< "$merged_pr")"
+          feed_tree="$(gh api \
+            "repos/${GITHUB_REPOSITORY}/git/commits/${FEED_SHA}" \
+            --jq '.tree.sha')"
+          release_tree="$(gh api \
+            "repos/${GITHUB_REPOSITORY}/git/commits/${release_sha}" \
+            --jq '.tree.sha')"
+          if [[ "$release_tree" != "$feed_tree" ]]; then
+            echo "Merged release tree does not match validated feed commit" >&2
+            exit 1
+          fi
+          {
+            echo "release_pr_number=${pr_number}"
+            echo "release_sha=${release_sha}"
+            echo "tag=v${RELEASE_VERSION}"
+            echo "version=${RELEASE_VERSION}"
+          } >> "$GITHUB_OUTPUT"
 
   release-ci:
     name: Validate release source
@@ -439,19 +470,25 @@ jobs:
     name: Publish release
     needs:
       - detect-release
+      - merge-release-pr
       - release-ci
-    if: needs.release-ci.result == 'success'
+    if: |
+      always() &&
+      (needs.release-ci.result == 'success' ||
+       needs.merge-release-pr.result == 'success')
     runs-on: ubuntu-24.04
     timeout-minutes: 30
     permissions:
       attestations: write
       contents: write
       id-token: write
+      issues: write
+      pull-requests: write
     steps:
       - name: Check out release source
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          ref: ${{ needs.detect-release.outputs.source_ref }}
+          ref: ${{ needs.merge-release-pr.outputs.release_sha || needs.detect-release.outputs.source_ref }}
           persist-credentials: false
 
       - name: Restore APK SDK
@@ -465,7 +502,7 @@ jobs:
 
       - name: Collect committed release packages
         env:
-          RELEASE_VERSION: ${{ needs.detect-release.outputs.version }}
+          RELEASE_VERSION: ${{ needs.merge-release-pr.outputs.version || needs.detect-release.outputs.version }}
         shell: bash
         run: |
           set -euo pipefail
@@ -594,8 +631,30 @@ jobs:
       - name: Create or update release
         uses: softprops/action-gh-release@3d0d9888cb7fd7b750713d6e236d1fcb99157228 # v2
         with:
-          tag_name: ${{ needs.detect-release.outputs.tag }}
-          target_commitish: ${{ needs.detect-release.outputs.source_sha }}
-          name: ${{ needs.detect-release.outputs.tag }}
+          tag_name: ${{ needs.merge-release-pr.outputs.tag || needs.detect-release.outputs.tag }}
+          target_commitish: ${{ needs.merge-release-pr.outputs.release_sha || needs.detect-release.outputs.source_sha }}
+          name: ${{ needs.merge-release-pr.outputs.tag || needs.detect-release.outputs.tag }}
           files: release-assets/*
           generate_release_notes: true
+
+      - name: Mark automated release PR as tagged
+        if: needs.merge-release-pr.outputs.release_pr_number != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_PR_NUMBER: ${{ needs.merge-release-pr.outputs.release_pr_number }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          edit_args=(
+            "$RELEASE_PR_NUMBER"
+            --repo "$GITHUB_REPOSITORY"
+            --add-label 'autorelease: tagged'
+          )
+          if gh pr view "$RELEASE_PR_NUMBER" \
+            --repo "$GITHUB_REPOSITORY" \
+            --json labels \
+            --jq '.labels[].name' |
+            grep -Fxq 'autorelease: pending'; then
+            edit_args+=(--remove-label 'autorelease: pending')
+          fi
+          gh pr edit "${edit_args[@]}"
