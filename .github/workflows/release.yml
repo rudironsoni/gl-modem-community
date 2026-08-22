@@ -6,317 +6,442 @@ on:
       - main
   workflow_dispatch:
     inputs:
-      version:
-        description: Version to release (e.g., 0.2.14)
+      tag:
+        description: Exact existing release tag to rebuild (e.g., v0.3.0)
         required: true
         type: string
 
-permissions:
-  contents: write
-  id-token: write
-  attestations: write
+permissions: {}
+
+concurrency:
+  group: release-main
+  cancel-in-progress: false
 
 jobs:
-  build:
-    name: Build packages
+  detect-release:
+    name: Resolve release source
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      contents: read
+    outputs:
+      release_commit: ${{ steps.release.outputs.release_commit }}
+      source_sha: ${{ steps.release.outputs.source_sha }}
+      source_ref: ${{ steps.release.outputs.source_ref }}
+      tag: ${{ steps.release.outputs.tag }}
+      version: ${{ steps.release.outputs.version }}
+    steps:
+      - name: Check out release source
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ inputs.tag || github.sha }}
+          fetch-depth: 2
+          persist-credentials: false
+
+      - name: Resolve manifest version and tag
+        id: release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REQUESTED_TAG: ${{ inputs.tag }}
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          release_commit=false
+          source_sha="$(git rev-parse HEAD)"
+          source_ref="$GITHUB_SHA"
+          tag=
+          version=
+
+          write_outputs() {
+            {
+              echo "release_commit=${release_commit}"
+              echo "source_sha=${source_sha}"
+              echo "source_ref=${source_ref}"
+              echo "tag=${tag}"
+              echo "version=${version}"
+            } >> "$GITHUB_OUTPUT"
+          }
+
+          if [[ "$GITHUB_EVENT_NAME" == workflow_dispatch ]]; then
+            tag="$REQUESTED_TAG"
+            if ! [[ "$tag" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+              echo "Unsupported release tag: $tag" >&2
+              exit 1
+            fi
+            test "$(git describe --tags --exact-match HEAD)" = "$tag"
+            gh release view "$tag" --repo "$GITHUB_REPOSITORY" >/dev/null
+            version="${tag#v}"
+            source_ref="$tag"
+          else
+            version="$(jq -er '.["."] | select(type == "string")' .release-please-manifest.json)"
+            tag="v${version}"
+            if gh release view "$tag" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+              write_outputs
+              exit 0
+            fi
+          fi
+
+          if ! [[ "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "Unsupported release version: $version" >&2
+            exit 1
+          fi
+          package_version="$(sed -n 's/^PKG_VERSION:=\([^[:space:]#]*\).*/\1/p' package/gl-modem-community/Makefile)"
+          if [[ "$package_version" != "$version" ]]; then
+            echo "Manifest version $version does not match PKG_VERSION $package_version" >&2
+            exit 1
+          fi
+          if [[ "$GITHUB_EVENT_NAME" != workflow_dispatch ]]; then
+            release_files=(
+              "feed/25.12/gl-modem-community-${version}-r1.apk"
+              "feed/25.12/packages.adb"
+              "feed/24.10/gl-modem-community_${version}-r1_aarch64_cortex-a53.ipk"
+              "feed/21.02/gl-modem-community_${version}-1_glinet-21.02_aarch64_cortex-a53.ipk"
+              "feed/23.05-be3600/gl-modem-community_${version}-r1_gl-be3600-4.9_aarch64_cortex-a53_neon-vfpv4.ipk"
+            )
+            for release_file in "${release_files[@]}"; do
+              if [[ ! -s "$release_file" ]]; then
+                write_outputs
+                exit 0
+              fi
+            done
+          fi
+
+          release_commit=true
+          write_outputs
+
+  release-please:
+    name: Maintain release PR
+    if: github.event_name == 'push'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      contents: write
+      issues: write
+      pull-requests: write
+    outputs:
+      pr_branch: ${{ steps.pr.outputs.pr_branch }}
+      pr_sha: ${{ steps.pr.outputs.pr_sha }}
+    steps:
+      - name: Create or update release PR
+        id: release
+        uses: googleapis/release-please-action@45996ed1f6d02564a971a2fa1b5860e934307cf7 # v5.0.0
+        with:
+          token: ${{ github.token }}
+          config-file: release-please-config.json
+          manifest-file: .release-please-manifest.json
+
+      - name: Resolve release PR branch
+        id: pr
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_PRS: ${{ steps.release.outputs.prs }}
+          RELEASE_PRS_CREATED: ${{ steps.release.outputs.prs_created }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          branch=
+          sha=
+          if [[ "$RELEASE_PRS_CREATED" == true ]]; then
+            branch="$(jq -er '.[0].headBranchName' <<< "$RELEASE_PRS")"
+            if [[ "$branch" != release-please--* ]]; then
+              echo "Unexpected Release Please branch: $branch" >&2
+              exit 1
+            fi
+            sha="$(gh api "repos/${GITHUB_REPOSITORY}/branches/${branch}" --jq '.commit.sha')"
+          fi
+          echo "pr_branch=${branch}" >> "$GITHUB_OUTPUT"
+          echo "pr_sha=${sha}" >> "$GITHUB_OUTPUT"
+
+  build-release-pr:
+    name: Build proposed release
+    needs:
+      - release-please
+    if: needs.release-please.outputs.pr_branch != ''
     uses: ./.github/workflows/ci.yml
     with:
-      source_ref: ${{ github.sha }}
+      source_ref: ${{ needs.release-please.outputs.pr_sha }}
       upload_packages: true
     permissions:
       contents: read
 
-  sign-apk:
-    name: Sign APK and build index
-    needs: build
-    if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+  prepare-release-pr:
+    name: Add signed feeds to release PR
+    needs:
+      - release-please
+      - build-release-pr
+    if: needs.build-release-pr.result == 'success'
     runs-on: ubuntu-24.04
     timeout-minutes: 30
     environment: release-signing
     permissions:
-      contents: read
+      actions: write
+      contents: write
     steps:
-      - name: Checkout
+      - name: Check out release PR
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          ref: ${{ github.sha }}
+          ref: ${{ needs.release-please.outputs.pr_sha }}
+          fetch-depth: 0
           persist-credentials: false
 
-      - name: Download unsigned APK
+      - name: Download proposed packages
         uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
-          name: release-apk
-          path: signing-assets
+          pattern: release-*
+          path: release-assets
+          merge-multiple: true
 
-      - name: Restore SDK
+      - name: Restore APK SDK
         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: tool-cache/openwrt-sdk-25.12.5-mediatek-filogic_gcc-14.3.0_musl.Linux-x86_64.tar.zst
           key: openwrt-sdk-25.12.5-mediatek-filogic-ff4a38a397caa2cfe1c39e18f84ddede14878221b3593c3f2c4cfe24e3ec4c25
 
-      - name: Prepare pinned SDK
+      - name: Prepare pinned APK SDK
         run: make prepare-apk-sdk
 
-      - name: Sign APK and generate packages.adb
+      - name: Sign APK and generate feeds
         env:
           APK_SIGNING_PRIVATE_KEY: ${{ secrets.APK_SIGNING_PRIVATE_KEY }}
+        shell: bash
         run: |
           set -euo pipefail
-          test -n "${APK_SIGNING_PRIVATE_KEY}"
+          test -n "$APK_SIGNING_PRIVATE_KEY"
+          version="$(jq -er '.["."]' .release-please-manifest.json)"
+          package_version="$(sed -n 's/^PKG_VERSION:=\([^[:space:]#]*\).*/\1/p' package/gl-modem-community/Makefile)"
+          test "$version" = "$package_version"
+          apk="release-assets/gl-modem-community-${version}-r1.apk"
+          test -s "$apk"
+
           umask 077
-          key_dir="$(mktemp -d "${RUNNER_TEMP}/signing.XXXXXX")"
-          trap 'rm -rf "${key_dir}"' EXIT
-          printf '%s\n' "${APK_SIGNING_PRIVATE_KEY}" > "${key_dir}/private-key.pem"
-          apk_file="$(find signing-assets -maxdepth 1 -type f -name '*.apk' | head -n 1)"
-          test -n "${apk_file}"
-          apk_name="$(basename "${apk_file}")"
+          signing_dir="$(mktemp -d "${RUNNER_TEMP}/signing.XXXXXX")"
+          trap 'rm -rf "$signing_dir"' EXIT
+          printf '%s\n' "$APK_SIGNING_PRIVATE_KEY" > "$signing_dir/private-key.pem"
+          unset APK_SIGNING_PRIVATE_KEY
+
           docker build --platform linux/amd64 -t mt3000-openwrt-sdk:25.12.5 tools/sdk-container
           docker run --rm --platform linux/amd64 \
             --mount "type=bind,src=$(pwd),dst=/repo" \
-            --mount "type=bind,src=${key_dir},dst=/signing,readonly" \
+            --mount "type=bind,src=${signing_dir},dst=/signing,readonly" \
             mt3000-openwrt-sdk:25.12.5 \
             make -C /repo --no-print-directory sign-apk-release \
               SDK_DIR=/repo/tool-cache/sdk-25.12.5-mediatek-filogic \
               PRIVATE_KEY=/signing/private-key.pem \
               PUBLIC_KEY=/repo/keys/gl-modem-community.pem \
-              APK="/repo/signing-assets/${apk_name}" \
-              OUTPUT_INDEX=/repo/signing-assets/packages.adb \
-              OUTPUT_METADATA=/repo/signing-assets/gl-modem-community.apk.adb.json
-          test -s signing-assets/packages.adb
-          test -s signing-assets/gl-modem-community.apk.adb.json
+              APK="/repo/${apk}" \
+              OUTPUT_INDEX=/repo/release-assets/packages.adb \
+              OUTPUT_METADATA=/repo/release-assets/gl-modem-community.apk.adb.json
 
-      - name: Upload signed APK and index
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
-        with:
-          name: signed-apk
-          path: signing-assets/*
-          if-no-files-found: error
-          retention-days: 7
+          sh tools/assemble-release-feeds "$version" release-assets feed
 
-  release:
-    name: Create release
+      - name: Commit feeds to release PR
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_BRANCH: ${{ needs.release-please.outputs.pr_branch }}
+          RELEASE_SHA: ${{ needs.release-please.outputs.pr_sha }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ "$RELEASE_BRANCH" != release-please--* ]]; then
+            echo "Unexpected Release Please branch: $RELEASE_BRANCH" >&2
+            exit 1
+          fi
+          remote_sha="$(gh api "repos/${GITHUB_REPOSITORY}/branches/${RELEASE_BRANCH}" --jq '.commit.sha')"
+          if [[ "$remote_sha" != "$RELEASE_SHA" ]]; then
+            echo "Release Please branch advanced from $RELEASE_SHA to $remote_sha" >&2
+            exit 1
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add -f feed/
+          if ! git diff --cached --quiet; then
+            version="$(jq -er '.["."]' .release-please-manifest.json)"
+            git commit -m "feed: v${version}"
+            git remote set-url origin "https://github-actions:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
+            git push origin "HEAD:refs/heads/${RELEASE_BRANCH}"
+          fi
+
+          feed_sha="$(git rev-parse HEAD)"
+          gh workflow run ci.yml \
+            --repo "$GITHUB_REPOSITORY" \
+            --ref "$RELEASE_BRANCH" \
+            -f "source_ref=$feed_sha"
+
+  release-ci:
+    name: Validate release source
     needs:
-      - build
-      - sign-apk
-    if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+      - detect-release
+    if: needs.detect-release.outputs.release_commit == 'true'
+    uses: ./.github/workflows/ci.yml
+    with:
+      source_ref: ${{ needs.detect-release.outputs.source_ref }}
+      upload_packages: false
+    permissions:
+      contents: read
+
+  publish-release:
+    name: Publish release
+    needs:
+      - detect-release
+      - release-ci
+    if: needs.release-ci.result == 'success'
     runs-on: ubuntu-24.04
     timeout-minutes: 30
     permissions:
+      attestations: write
       contents: write
       id-token: write
-      attestations: write
-    outputs:
-      version: ${{ steps.set-version.outputs.version }}
-      tag: ${{ steps.set-version.outputs.tag }}
     steps:
-      - name: Checkout
+      - name: Check out release source
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          ref: ${{ github.sha }}
+          ref: ${{ needs.detect-release.outputs.source_ref }}
           persist-credentials: false
 
-      - name: Download IPK packages
-        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+      - name: Restore APK SDK
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
-          pattern: release-ipk*
-          path: release-assets
-          merge-multiple: true
+          path: tool-cache/openwrt-sdk-25.12.5-mediatek-filogic_gcc-14.3.0_musl.Linux-x86_64.tar.zst
+          key: openwrt-sdk-25.12.5-mediatek-filogic-ff4a38a397caa2cfe1c39e18f84ddede14878221b3593c3f2c4cfe24e3ec4c25
 
-      - name: Download signed APK and index
-        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
-        with:
-          name: signed-apk
-          path: release-assets
+      - name: Prepare pinned APK SDK
+        run: make prepare-apk-sdk
 
-      - name: Determine version
-        id: set-version
+      - name: Collect committed release packages
+        env:
+          RELEASE_VERSION: ${{ needs.detect-release.outputs.version }}
+        shell: bash
         run: |
           set -euo pipefail
-          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
-            ver="${{ github.event.inputs.version }}"
-          else
-            ver="$(sed -n 's/^PKG_VERSION:=\([^[:space:]#]*\).*/\1/p' package/gl-modem-community/Makefile)"
-          fi
-          echo "version=${ver}" >> "$GITHUB_OUTPUT"
-          echo "tag=v${ver}" >> "$GITHUB_OUTPUT"
+          mkdir release-assets
+          install -m 0644 \
+            "feed/25.12/gl-modem-community-${RELEASE_VERSION}-r1.apk" \
+            release-assets/
+          install -m 0644 feed/25.12/packages.adb release-assets/
+          install -m 0644 \
+            "feed/24.10/gl-modem-community_${RELEASE_VERSION}-r1_aarch64_cortex-a53.ipk" \
+            release-assets/
+          install -m 0644 \
+            "feed/21.02/gl-modem-community_${RELEASE_VERSION}-1_glinet-21.02_aarch64_cortex-a53.ipk" \
+            release-assets/
+          install -m 0644 \
+            "feed/23.05-be3600/gl-modem-community_${RELEASE_VERSION}-r1_gl-be3600-4.9_aarch64_cortex-a53_neon-vfpv4.ipk" \
+            release-assets/
 
-      - name: Add public key and checksums
-        run: |
-          set -euo pipefail
-          install -m 0644 keys/gl-modem-community.pem release-assets/
-          install -m 0644 keys/gl-modem-community.pem.sha256 release-assets/
-          (
-            cd release-assets
-            sha256sum -- * > SHA256SUMS.tmp
-            mv SHA256SUMS.tmp SHA256SUMS
-          )
-
-      - name: Verify artifacts
-        run: |
-          set -euo pipefail
-          ls -la release-assets/
-          VERSION="${{ steps.set-version.outputs.version }}"
-          test -s "release-assets/gl-modem-community-${VERSION}-r1.apk"
-          test -s "release-assets/gl-modem-community_${VERSION}-r1_aarch64_cortex-a53.ipk"
-          test -s "release-assets/gl-modem-community_${VERSION}-1_glinet-21.02_aarch64_cortex-a53.ipk"
-          test -s "release-assets/gl-modem-community_${VERSION}-r1_gl-be3600-4.9_aarch64_cortex-a53_neon-vfpv4.ipk"
-          test -s release-assets/packages.adb
-          test -s release-assets/gl-modem-community.pem
-          test -s release-assets/gl-modem-community.pem.sha256
-          test -s release-assets/SHA256SUMS
-          (
-            cd release-assets
-            sha256sum -c gl-modem-community.pem.sha256
-          )
-
-      - name: Create release
-        uses: softprops/action-gh-release@3d0d9888cb7fd7b750713d6e236d1fcb99157228 # v2
-        with:
-          tag_name: ${{ steps.set-version.outputs.tag }}
-          name: ${{ steps.set-version.outputs.tag }}
-          files: release-assets/*
-          generate_release_notes: true
-
-      - name: Generate SBOMs
+      - name: Verify packages and generate SBOMs
+        env:
+          RELEASE_VERSION: ${{ needs.detect-release.outputs.version }}
+        shell: bash
         run: |
           set -euo pipefail
           docker build --platform linux/amd64 -t mt3000-openwrt-sdk:25.12.5 tools/sdk-container
           docker run --rm --platform linux/amd64 \
+            --env "RELEASE_VERSION=${RELEASE_VERSION}" \
             --mount "type=bind,src=$(pwd),dst=/repo" \
             mt3000-openwrt-sdk:25.12.5 \
-            make -C /repo --no-print-directory generate-sbom SBOM_FORMAT=ipk \
-              SBOM_ARTIFACT=/repo/release-assets/gl-modem-community_${{ steps.set-version.outputs.version }}-r1_aarch64_cortex-a53.ipk \
-              SBOM_OUTPUT=/repo/release-assets/gl-modem-community.ipk.cdx.json
-          docker run --rm --platform linux/amd64 \
-            --mount "type=bind,src=$(pwd),dst=/repo" \
-            mt3000-openwrt-sdk:25.12.5 \
-            make -C /repo --no-print-directory generate-sbom SBOM_FORMAT=ipk \
-              SBOM_ARTIFACT=/repo/release-assets/gl-modem-community_${{ steps.set-version.outputs.version }}-1_glinet-21.02_aarch64_cortex-a53.ipk \
-              SBOM_OUTPUT=/repo/release-assets/gl-modem-community.glinet21.ipk.cdx.json
-          docker run --rm --platform linux/amd64 \
-            --mount "type=bind,src=$(pwd),dst=/repo" \
-            mt3000-openwrt-sdk:25.12.5 \
-            make -C /repo --no-print-directory generate-sbom SBOM_FORMAT=ipk \
-              SBOM_ARTIFACT=/repo/release-assets/gl-modem-community_${{ steps.set-version.outputs.version }}-r1_gl-be3600-4.9_aarch64_cortex-a53_neon-vfpv4.ipk \
-              SBOM_OUTPUT=/repo/release-assets/gl-modem-community.be3600.ipk.cdx.json
+            bash -ceu '
+              apk_tool=/repo/tool-cache/sdk-25.12.5-mediatek-filogic/staging_dir/host/bin/apk
+              apk=/repo/release-assets/gl-modem-community-${RELEASE_VERSION}-r1.apk
+              ipk=/repo/release-assets/gl-modem-community_${RELEASE_VERSION}-r1_aarch64_cortex-a53.ipk
+              glinet21_ipk=/repo/release-assets/gl-modem-community_${RELEASE_VERSION}-1_glinet-21.02_aarch64_cortex-a53.ipk
+              be3600_ipk=/repo/release-assets/gl-modem-community_${RELEASE_VERSION}-r1_gl-be3600-4.9_aarch64_cortex-a53_neon-vfpv4.ipk
 
-      - name: Upload SBOMs
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
-        with:
-          name: sbom-assets
-          path: release-assets/*.cdx.json
-          retention-days: 7
+              "$apk_tool" verify --keys-dir /repo/keys "$apk"
+              "$apk_tool" verify --keys-dir /repo/keys /repo/release-assets/packages.adb
+              "$apk_tool" adbdump --format json "$apk" \
+                >/repo/release-assets/gl-modem-community.apk.adb.json
+              "$apk_tool" adbdump --format json /repo/release-assets/packages.adb \
+                >/tmp/packages-index.json
+              jq -e --arg version "${RELEASE_VERSION}-r1" '"'"'
+                (.packages // .) as $packages |
+                ([$packages[] | select(
+                  .name == "gl-modem-community" and .version == $version
+                )] | length) == 1
+              '"'"' /tmp/packages-index.json >/dev/null
+              tar -tzf "$ipk" >/dev/null
+              tar -tzf "$glinet21_ipk" >/dev/null
+              tar -tzf "$be3600_ipk" >/dev/null
 
-  publish-feeds:
-    name: Publish package feeds
-    needs:
-      - release
-      - sign-apk
-    runs-on: ubuntu-24.04
-    timeout-minutes: 10
-    permissions:
-      contents: write
-    steps:
-      - name: Checkout
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          ref: main
-          persist-credentials: false
+              make -C /repo --no-print-directory generate-sbom \
+                SBOM_FORMAT=apk \
+                SBOM_ARTIFACT="$apk" \
+                SBOM_OUTPUT=/repo/release-assets/gl-modem-community.apk.cdx.json \
+                APK_METADATA=/repo/release-assets/gl-modem-community.apk.adb.json
+              make -C /repo --no-print-directory generate-sbom \
+                SBOM_FORMAT=ipk \
+                SBOM_ARTIFACT="$ipk" \
+                SBOM_OUTPUT=/repo/release-assets/gl-modem-community.ipk.cdx.json
+              make -C /repo --no-print-directory generate-sbom \
+                SBOM_FORMAT=ipk \
+                SBOM_ARTIFACT="$glinet21_ipk" \
+                SBOM_OUTPUT=/repo/release-assets/gl-modem-community.glinet21.ipk.cdx.json
+              make -C /repo --no-print-directory generate-sbom \
+                SBOM_FORMAT=ipk \
+                SBOM_ARTIFACT="$be3600_ipk" \
+                SBOM_OUTPUT=/repo/release-assets/gl-modem-community.be3600.ipk.cdx.json
 
-      - name: Download IPK packages
-        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
-        with:
-          pattern: release-ipk*
-          path: release-assets
-          merge-multiple: true
+              for sbom in /repo/release-assets/*.cdx.json; do
+                make -C /repo --no-print-directory validate-sbom SBOM="$sbom"
+                cyclonedx validate --input-file "$sbom"
+              done
 
-      - name: Download signed APK and index
-        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
-        with:
-          name: signed-apk
-          path: release-assets
+              validate_component() {
+                sbom=$1
+                expected_version=$2
+                expected_architecture=$3
+                jq -e \
+                  --arg version "$expected_version" \
+                  --arg architecture "$expected_architecture" \
+                  '"'"'
+                    .metadata.component.name == "gl-modem-community" and
+                    .metadata.component.version == $version and
+                    any(
+                      .metadata.component.properties[];
+                      .name == "openwrt:architecture" and .value == $architecture
+                    )
+                  '"'"' "$sbom" >/dev/null
+              }
+              validate_component \
+                /repo/release-assets/gl-modem-community.apk.cdx.json \
+                "${RELEASE_VERSION}-r1" aarch64_cortex-a53
+              validate_component \
+                /repo/release-assets/gl-modem-community.ipk.cdx.json \
+                "${RELEASE_VERSION}-r1" aarch64_cortex-a53
+              validate_component \
+                /repo/release-assets/gl-modem-community.glinet21.ipk.cdx.json \
+                "${RELEASE_VERSION}-1" aarch64_cortex-a53
+              validate_component \
+                /repo/release-assets/gl-modem-community.be3600.ipk.cdx.json \
+                "${RELEASE_VERSION}-r1" aarch64_cortex-a53_neon-vfpv4
+            '
 
-      - name: Build feeds
+      - name: Add keys and checksums
         run: |
           set -euo pipefail
-          VERSION="${{ needs.release.outputs.version }}"
-          rm -rf feed
-          mkdir -p feed/25.12 feed/24.10 feed/21.02 feed/23.05-be3600
+          install -m 0644 keys/gl-modem-community.pem release-assets/
+          install -m 0644 keys/gl-modem-community.pem.sha256 release-assets/
+          checksums="$(mktemp "${RUNNER_TEMP}/SHA256SUMS.XXXXXX")"
+          (
+            cd release-assets
+            for asset in *; do
+              test "$asset" = SHA256SUMS || sha256sum -- "$asset"
+            done | sort -k2
+          ) > "$checksums"
+          mv "$checksums" release-assets/SHA256SUMS
+          (cd release-assets && sha256sum -c gl-modem-community.pem.sha256)
 
-          # 25.12 feed (APK)
-          apk25="release-assets/gl-modem-community-${VERSION}-r1.apk"
-          cp "${apk25}" feed/25.12/
-          cp release-assets/packages.adb feed/25.12/
+      - name: Attest release assets
+        uses: actions/attest@f7c74d28b9d84cb8768d0b8ca14a4bac6ef463e6 # v4.2.0
+        with:
+          subject-path: release-assets/*
 
-          # 24.10 feed
-          ipk24="release-assets/gl-modem-community_${VERSION}-r1_aarch64_cortex-a53.ipk"
-          cp "${ipk24}" feed/24.10/
-          size24=$(stat -c%s "feed/24.10/$(basename "${ipk24}")")
-          {
-            printf 'Package: gl-modem-community\n'
-            printf 'Version: %s-r1\n' "${VERSION}"
-            printf 'Depends: comgt, flock, jq, kmod-usb-acm, kmod-usb-serial-option, kmod-usb-net-rndis\n'
-            printf 'License: GPL-3.0-only\n'
-            printf 'Section: net\n'
-            printf 'Category: Network\n'
-            printf 'Maintainer: Rudimar Ronsoni <rudironsoni@users.noreply.github.com>\n'
-            printf 'Architecture: aarch64_cortex-a53\n'
-            printf 'Size: %s\n' "${size24}"
-            printf 'Filename: %s\n' "$(basename "${ipk24}")"
-            printf 'Description: Community modem definitions and compatibility drivers for GL.iNet firmware\n'
-          } > feed/24.10/Packages
-          gzip -c feed/24.10/Packages > feed/24.10/Packages.gz
-
-          # 21.02 feed
-          ipk21="release-assets/gl-modem-community_${VERSION}-1_glinet-21.02_aarch64_cortex-a53.ipk"
-          cp "${ipk21}" feed/21.02/
-          size21=$(stat -c%s "feed/21.02/$(basename "${ipk21}")")
-          {
-            printf 'Package: gl-modem-community\n'
-            printf 'Version: %s-1\n' "${VERSION}"
-            printf 'Depends: comgt, flock, jq, kmod-usb-acm, kmod-usb-serial-option, kmod-usb-net-rndis\n'
-            printf 'License: GPL-3.0-only\n'
-            printf 'Section: net\n'
-            printf 'Category: Network\n'
-            printf 'Maintainer: Rudimar Ronsoni <rudironsoni@users.noreply.github.com>\n'
-            printf 'Architecture: aarch64_cortex-a53\n'
-            printf 'Size: %s\n' "${size21}"
-            printf 'Filename: %s\n' "$(basename "${ipk21}")"
-            printf 'Description: Community modem definitions and compatibility drivers for GL.iNet firmware\n'
-          } > feed/21.02/Packages
-          gzip -c feed/21.02/Packages > feed/21.02/Packages.gz
-
-          # GL-BE3600 4.9 feed (OpenWrt 23.05-derived GL.iNet firmware)
-          ipkbe3600="release-assets/gl-modem-community_${VERSION}-r1_gl-be3600-4.9_aarch64_cortex-a53_neon-vfpv4.ipk"
-          cp "${ipkbe3600}" feed/23.05-be3600/
-          sizebe3600=$(stat -c%s "feed/23.05-be3600/$(basename "${ipkbe3600}")")
-          {
-            printf 'Package: gl-modem-community\n'
-            printf 'Version: %s-r1\n' "${VERSION}"
-            printf 'Depends: adb, comgt, flock, jq, kmod-usb-acm, kmod-usb-serial-option, kmod-usb-net-qmi-wwan, kmod-usb-net-rndis, lua, luci-lib-nixio, uqmi\n'
-            printf 'License: GPL-3.0-only\n'
-            printf 'Section: net\n'
-            printf 'Category: Network\n'
-            printf 'Maintainer: Rudimar Ronsoni <rudironsoni@users.noreply.github.com>\n'
-            printf 'Architecture: aarch64_cortex-a53_neon-vfpv4\n'
-            printf 'Size: %s\n' "${sizebe3600}"
-            printf 'Filename: %s\n' "$(basename "${ipkbe3600}")"
-            printf 'Description: Community modem definitions and compatibility drivers for GL.iNet firmware\n'
-          } > feed/23.05-be3600/Packages
-          gzip -c feed/23.05-be3600/Packages > feed/23.05-be3600/Packages.gz
-
-      - name: Generate feed index pages
-        run: make generate-feed-index
-
-      - name: Commit and push feeds
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          set -euo pipefail
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git remote set-url origin "https://github-actions:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
-          git add -f feed/
-          git diff --cached --quiet && exit 0
-          git commit -m "feed: v${{ needs.release.outputs.version }}"
-          git push origin main
+      - name: Create or update release
+        uses: softprops/action-gh-release@3d0d9888cb7fd7b750713d6e236d1fcb99157228 # v2
+        with:
+          tag_name: ${{ needs.detect-release.outputs.tag }}
+          target_commitish: ${{ needs.detect-release.outputs.source_sha }}
+          name: ${{ needs.detect-release.outputs.tag }}
+          files: release-assets/*
+          generate_release_notes: true

@@ -9,6 +9,7 @@ PACKAGE_MAKEFILE="$REPO_DIR/package/gl-modem-community/Makefile"
 CI_WORKFLOW="$REPO_DIR/.github/workflows/ci.yml"
 RELEASE_WORKFLOW="$REPO_DIR/.github/workflows/release.yml"
 ROOT_MAKEFILE="$REPO_DIR/Makefile"
+FEED_ASSEMBLER="$REPO_DIR/tools/assemble-release-feeds"
 PUBLIC_KEY="$REPO_DIR/keys/gl-modem-community.pem"
 PUBLIC_KEY_CHECKSUM="$PUBLIC_KEY.sha256"
 
@@ -67,36 +68,67 @@ if grep -Fq 'tool-cache/sdk-*' "$CI_WORKFLOW"; then
     exit 1
 fi
 
-# Release workflow checks (simplified for new workflow)
+# Release Please owns version changes; publication only follows a manifest bump.
 grep -Fq 'name: Release' "$RELEASE_WORKFLOW"
 grep -Fq 'push:' "$RELEASE_WORKFLOW"
 grep -Fq 'workflow_dispatch:' "$RELEASE_WORKFLOW"
-grep -Fq 'needs: build' "$RELEASE_WORKFLOW"
+grep -Fq 'group: release-main' "$RELEASE_WORKFLOW"
+grep -Fq 'cancel-in-progress: false' "$RELEASE_WORKFLOW"
+grep -Fq 'googleapis/release-please-action@45996ed1f6d02564a971a2fa1b5860e934307cf7 # v5.0.0' "$RELEASE_WORKFLOW"
+grep -Fq 'config-file: release-please-config.json' "$RELEASE_WORKFLOW"
+grep -Fq 'manifest-file: .release-please-manifest.json' "$RELEASE_WORKFLOW"
+grep -Fq 'if gh release view "$tag"' "$RELEASE_WORKFLOW"
+grep -Fq 'if [[ ! -s "$release_file" ]]' "$RELEASE_WORKFLOW"
+grep -Fq "release_commit == 'true'" "$RELEASE_WORKFLOW"
+grep -Fq 'Exact existing release tag to rebuild' "$RELEASE_WORKFLOW"
+grep -Fq 'gh release view "$tag"' "$RELEASE_WORKFLOW"
+grep -Fq 'test "$(git describe --tags --exact-match HEAD)" = "$tag"' "$RELEASE_WORKFLOW"
+
+# The proposed release is built and signed before its one reviewed PR merges.
+grep -Fq 'name: Build proposed release' "$RELEASE_WORKFLOW"
+grep -Fq 'name: Add signed feeds to release PR' "$RELEASE_WORKFLOW"
+grep -Fq 'source_ref: ${{ needs.release-please.outputs.pr_sha }}' "$RELEASE_WORKFLOW"
+grep -Fq 'ref: ${{ needs.release-please.outputs.pr_sha }}' "$RELEASE_WORKFLOW"
+grep -Fq 'Release Please branch advanced from $RELEASE_SHA to $remote_sha' "$RELEASE_WORKFLOW"
+grep -Fq 'sh tools/assemble-release-feeds "$version" release-assets feed' "$RELEASE_WORKFLOW"
+grep -Fq 'git push origin "HEAD:refs/heads/${RELEASE_BRANCH}"' "$RELEASE_WORKFLOW"
+grep -Fq 'gh workflow run ci.yml' "$RELEASE_WORKFLOW"
+if grep -Fq 'git push origin main' "$RELEASE_WORKFLOW"; then
+	echo 'Release workflow must not bypass pull-request-only main protection' >&2
+	exit 1
+fi
+
+# The merged feed packages are the exact GitHub Release inputs.
 grep -Fq 'softprops/action-gh-release@' "$RELEASE_WORKFLOW"
-grep -Fq 'actions/upload-artifact@' "$RELEASE_WORKFLOW"
 grep -Fq 'actions/download-artifact@' "$RELEASE_WORKFLOW"
-grep -Fq 'publish-feeds' "$RELEASE_WORKFLOW"
 grep -Fq 'feed/25.12' "$RELEASE_WORKFLOW"
 grep -Fq 'feed/24.10' "$RELEASE_WORKFLOW"
 grep -Fq 'feed/21.02' "$RELEASE_WORKFLOW"
 grep -Fq 'feed/23.05-be3600' "$RELEASE_WORKFLOW"
-grep -Fq 'Packages.gz' "$RELEASE_WORKFLOW"
 grep -Fq 'packages.adb' "$RELEASE_WORKFLOW"
 grep -Fq 'actions/checkout@' "$RELEASE_WORKFLOW"
+grep -Fq 'actions/attest@f7c74d28b9d84cb8768d0b8ca14a4bac6ef463e6 # v4.2.0' "$RELEASE_WORKFLOW"
+grep -Fq 'target_commitish: ${{ needs.detect-release.outputs.source_sha }}' "$RELEASE_WORKFLOW"
+grep -Fq 'SBOM_FORMAT=apk' "$RELEASE_WORKFLOW"
+grep -Fq 'gl-modem-community.be3600.ipk.cdx.json' "$RELEASE_WORKFLOW"
+grep -Fq '(.packages // .) as $packages' "$RELEASE_WORKFLOW"
+grep -Fq '.metadata.component.version == $version' "$RELEASE_WORKFLOW"
+grep -Fq 'sha256sum -c gl-modem-community.pem.sha256' "$RELEASE_WORKFLOW"
 
 BASE_FEED_DEPENDS="printf 'Depends: comgt, flock, jq, kmod-usb-acm, kmod-usb-serial-option, kmod-usb-net-rndis\\n'"
 BE3600_FEED_DEPENDS="printf 'Depends: adb, comgt, flock, jq, kmod-usb-acm, kmod-usb-serial-option, kmod-usb-net-qmi-wwan, kmod-usb-net-rndis, lua, luci-lib-nixio, uqmi\\n'"
-test "$(grep -Fc "$BASE_FEED_DEPENDS" "$RELEASE_WORKFLOW")" -eq 2
-test "$(grep -Fc "$BE3600_FEED_DEPENDS" "$RELEASE_WORKFLOW")" -eq 1
+test "$(grep -Fc "$BASE_FEED_DEPENDS" "$FEED_ASSEMBLER")" -eq 2
+test "$(grep -Fc "$BE3600_FEED_DEPENDS" "$FEED_ASSEMBLER")" -eq 1
+test "$(grep -Fc "printf 'SHA256sum: %s" "$FEED_ASSEMBLER")" -eq 3
 
 # APK signing runs in the protected environment and publishes the key material.
 grep -Fq 'environment: release-signing' "$RELEASE_WORKFLOW"
 grep -Fq 'APK_SIGNING_PRIVATE_KEY' "$RELEASE_WORKFLOW"
 grep -Fq 'prepare-apk-sdk' "$RELEASE_WORKFLOW"
 grep -Fq 'sign-apk-release' "$RELEASE_WORKFLOW"
-grep -Fq 'generate-feed-index' "$RELEASE_WORKFLOW"
 grep -Fq 'keys/gl-modem-community.pem' "$RELEASE_WORKFLOW"
 grep -Fq 'SHA256SUMS' "$RELEASE_WORKFLOW"
+grep -Fq 'generate-feed-index FEED_DIR="$FEED_DIR"' "$FEED_ASSEMBLER"
 
 grep -Fq 'sign-apk-release:' "$ROOT_MAKEFILE"
 grep -Fq 'adbsign' "$ROOT_MAKEFILE"
@@ -112,6 +144,10 @@ grep -Fq 'https://github.rudironsoni.com/gl-modem-community/feed/25.12' "$REPO_D
 grep -Fq 'https://github.rudironsoni.com/gl-modem-community/feed/24.10' "$REPO_DIR/README.md"
 grep -Fq 'https://github.rudironsoni.com/gl-modem-community/feed/21.02' "$REPO_DIR/README.md"
 grep -Fq 'https://github.rudironsoni.com/gl-modem-community/feed/23.05-be3600' "$REPO_DIR/README.md"
+if grep -Fq 'releases/latest/download/SHA256SUMS' "$REPO_DIR/README.md"; then
+	echo 'Versioned package instructions must fetch checksums from the same release tag' >&2
+	exit 1
+fi
 
 test ! -d "$REPO_DIR/scripts"
 test -s "$PUBLIC_KEY"

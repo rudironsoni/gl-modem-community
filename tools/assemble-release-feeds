@@ -1,0 +1,100 @@
+#!/bin/sh
+set -eu
+
+if [ "$#" -ne 3 ]; then
+	printf 'Usage: %s VERSION RELEASE_ASSETS FEED_DIR\n' "$0" >&2
+	exit 2
+fi
+
+VERSION=$1
+RELEASE_ASSETS=$2
+FEED_DIR=$3
+unset CDPATH
+REPO_DIR=$(cd -- "$(dirname -- "$0")/.." && pwd)
+
+case "$VERSION" in
+	''|*[!0-9A-Za-z.-]*)
+		printf 'Invalid release version: %s\n' "$VERSION" >&2
+		exit 1
+		;;
+esac
+
+apk25="$RELEASE_ASSETS/gl-modem-community-${VERSION}-r1.apk"
+ipk24="$RELEASE_ASSETS/gl-modem-community_${VERSION}-r1_aarch64_cortex-a53.ipk"
+ipk21="$RELEASE_ASSETS/gl-modem-community_${VERSION}-1_glinet-21.02_aarch64_cortex-a53.ipk"
+ipkbe3600="$RELEASE_ASSETS/gl-modem-community_${VERSION}-r1_gl-be3600-4.9_aarch64_cortex-a53_neon-vfpv4.ipk"
+
+test -s "$apk25"
+test -s "$RELEASE_ASSETS/packages.adb"
+test -s "$ipk24"
+test -s "$ipk21"
+test -s "$ipkbe3600"
+
+rm -rf "$FEED_DIR"
+mkdir -p \
+	"$FEED_DIR/25.12" \
+	"$FEED_DIR/24.10" \
+	"$FEED_DIR/21.02" \
+	"$FEED_DIR/23.05-be3600"
+
+cp "$apk25" "$FEED_DIR/25.12/"
+cp "$RELEASE_ASSETS/packages.adb" "$FEED_DIR/25.12/"
+
+cp "$ipk24" "$FEED_DIR/24.10/"
+size24=$(wc -c <"$ipk24" | tr -d ' ')
+hash24=$(sha256sum "$ipk24" | awk '{print $1}')
+{
+	printf 'Package: gl-modem-community\n'
+	printf 'Version: %s-r1\n' "$VERSION"
+	printf 'Depends: comgt, flock, jq, kmod-usb-acm, kmod-usb-serial-option, kmod-usb-net-rndis\n'
+	printf 'License: GPL-3.0-only\n'
+	printf 'Section: net\n'
+	printf 'Category: Network\n'
+	printf 'Maintainer: Rudimar Ronsoni <rudironsoni@users.noreply.github.com>\n'
+	printf 'Architecture: aarch64_cortex-a53\n'
+	printf 'Size: %s\n' "$size24"
+	printf 'SHA256sum: %s\n' "$hash24"
+	printf 'Filename: %s\n' "$(basename "$ipk24")"
+	printf 'Description: Community modem definitions and compatibility drivers for GL.iNet firmware\n'
+} >"$FEED_DIR/24.10/Packages"
+gzip -c "$FEED_DIR/24.10/Packages" >"$FEED_DIR/24.10/Packages.gz"
+
+cp "$ipk21" "$FEED_DIR/21.02/"
+size21=$(wc -c <"$ipk21" | tr -d ' ')
+hash21=$(sha256sum "$ipk21" | awk '{print $1}')
+{
+	printf 'Package: gl-modem-community\n'
+	printf 'Version: %s-1\n' "$VERSION"
+	printf 'Depends: comgt, flock, jq, kmod-usb-acm, kmod-usb-serial-option, kmod-usb-net-rndis\n'
+	printf 'License: GPL-3.0-only\n'
+	printf 'Section: net\n'
+	printf 'Category: Network\n'
+	printf 'Maintainer: Rudimar Ronsoni <rudironsoni@users.noreply.github.com>\n'
+	printf 'Architecture: aarch64_cortex-a53\n'
+	printf 'Size: %s\n' "$size21"
+	printf 'SHA256sum: %s\n' "$hash21"
+	printf 'Filename: %s\n' "$(basename "$ipk21")"
+	printf 'Description: Community modem definitions and compatibility drivers for GL.iNet firmware\n'
+} >"$FEED_DIR/21.02/Packages"
+gzip -c "$FEED_DIR/21.02/Packages" >"$FEED_DIR/21.02/Packages.gz"
+
+cp "$ipkbe3600" "$FEED_DIR/23.05-be3600/"
+sizebe3600=$(wc -c <"$ipkbe3600" | tr -d ' ')
+hashbe3600=$(sha256sum "$ipkbe3600" | awk '{print $1}')
+{
+	printf 'Package: gl-modem-community\n'
+	printf 'Version: %s-r1\n' "$VERSION"
+	printf 'Depends: adb, comgt, flock, jq, kmod-usb-acm, kmod-usb-serial-option, kmod-usb-net-qmi-wwan, kmod-usb-net-rndis, lua, luci-lib-nixio, uqmi\n'
+	printf 'License: GPL-3.0-only\n'
+	printf 'Section: net\n'
+	printf 'Category: Network\n'
+	printf 'Maintainer: Rudimar Ronsoni <rudironsoni@users.noreply.github.com>\n'
+	printf 'Architecture: aarch64_cortex-a53_neon-vfpv4\n'
+	printf 'Size: %s\n' "$sizebe3600"
+	printf 'SHA256sum: %s\n' "$hashbe3600"
+	printf 'Filename: %s\n' "$(basename "$ipkbe3600")"
+	printf 'Description: Community modem definitions and compatibility drivers for GL.iNet firmware\n'
+} >"$FEED_DIR/23.05-be3600/Packages"
+gzip -c "$FEED_DIR/23.05-be3600/Packages" >"$FEED_DIR/23.05-be3600/Packages.gz"
+
+make -C "$REPO_DIR" --no-print-directory generate-feed-index FEED_DIR="$FEED_DIR"

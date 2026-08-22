@@ -159,7 +159,7 @@ cd /tmp
 wget -O gl-modem-community-${VERSION}-r1.apk \
   https://github.com/rudironsoni/gl-modem-community/releases/download/v${VERSION}/gl-modem-community-${VERSION}-r1.apk
 wget -O SHA256SUMS \
-  https://github.com/rudironsoni/gl-modem-community/releases/latest/download/SHA256SUMS
+  https://github.com/rudironsoni/gl-modem-community/releases/download/v${VERSION}/SHA256SUMS
 grep "gl-modem-community-${VERSION}-r1.apk" SHA256SUMS | sha256sum -c
 apk add /tmp/gl-modem-community-${VERSION}-r1.apk
 /etc/init.d/gl_modem_community enable
@@ -201,7 +201,7 @@ cd /tmp
 wget -O gl-modem-community_${VERSION}-r1_aarch64_cortex-a53.ipk \
   https://github.com/rudironsoni/gl-modem-community/releases/download/v${VERSION}/gl-modem-community_${VERSION}-r1_aarch64_cortex-a53.ipk
 wget -O SHA256SUMS \
-  https://github.com/rudironsoni/gl-modem-community/releases/latest/download/SHA256SUMS
+  https://github.com/rudironsoni/gl-modem-community/releases/download/v${VERSION}/SHA256SUMS
 grep "gl-modem-community_${VERSION}-r1_aarch64_cortex-a53.ipk" SHA256SUMS | sha256sum -c
 opkg install /tmp/gl-modem-community_${VERSION}-r1_aarch64_cortex-a53.ipk
 /etc/init.d/gl_modem_community enable
@@ -234,7 +234,7 @@ cd /tmp
 wget -O gl-modem-community_${VERSION}-r1_gl-be3600-4.9_aarch64_cortex-a53_neon-vfpv4.ipk \
   https://github.com/rudironsoni/gl-modem-community/releases/download/v${VERSION}/gl-modem-community_${VERSION}-r1_gl-be3600-4.9_aarch64_cortex-a53_neon-vfpv4.ipk
 wget -O SHA256SUMS \
-  https://github.com/rudironsoni/gl-modem-community/releases/latest/download/SHA256SUMS
+  https://github.com/rudironsoni/gl-modem-community/releases/download/v${VERSION}/SHA256SUMS
 grep "gl-modem-community_${VERSION}-r1_gl-be3600-4.9_aarch64_cortex-a53_neon-vfpv4.ipk" SHA256SUMS | sha256sum -c
 opkg install /tmp/gl-modem-community_${VERSION}-r1_gl-be3600-4.9_aarch64_cortex-a53_neon-vfpv4.ipk
 /etc/init.d/gl_modem_community enable
@@ -269,7 +269,7 @@ cd /tmp
 wget -O gl-modem-community_${VERSION}-1_glinet-21.02_aarch64_cortex-a53.ipk \
   https://github.com/rudironsoni/gl-modem-community/releases/download/v${VERSION}/gl-modem-community_${VERSION}-1_glinet-21.02_aarch64_cortex-a53.ipk
 wget -O SHA256SUMS \
-  https://github.com/rudironsoni/gl-modem-community/releases/latest/download/SHA256SUMS
+  https://github.com/rudironsoni/gl-modem-community/releases/download/v${VERSION}/SHA256SUMS
 grep "gl-modem-community_${VERSION}-1_glinet-21.02_aarch64_cortex-a53.ipk" SHA256SUMS | sha256sum -c
 opkg install /tmp/gl-modem-community_${VERSION}-1_glinet-21.02_aarch64_cortex-a53.ipk
 /etc/init.d/gl_modem_community enable
@@ -393,4 +393,4 @@ The [modem architecture](docs/modem-architecture.md), [package design](docs/pack
 
 Every pull request runs the offline test suite and all package targets. A release adds the signed APK and repository index, target-specific IPKs, CycloneDX SBOMs, the public key, checksums, and GitHub build-provenance attestations.
 
-[Release Please](https://github.com/googleapis/release-please) manages versions from Conventional Commits after the release artifacts pass CI and signing.
+[Release Please](https://github.com/googleapis/release-please) derives versions from Conventional Commits and maintains one release pull request. The workflow builds and signs the proposed packages, commits the generated `feed/` files to that pull request, and reruns its required CI. Merging the release pull request updates the GitHub Pages feed on `main` and publishes the matching GitHub Release from those exact committed packages.
