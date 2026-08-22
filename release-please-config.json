@@ -5,19 +5,62 @@
   "include-v-in-tag": true,
   "include-v-in-release-name": true,
   "skip-github-release": true,
-  "last-release-sha": "4fd19430c33adef637ee25a68c3dbea0a757e815",
   "changelog-sections": [
-    { "type": "feat", "section": "Features", "hidden": false },
-    { "type": "fix", "section": "Bug Fixes", "hidden": false },
-    { "type": "perf", "section": "Performance Improvements", "hidden": false },
-    { "type": "refactor", "section": "Code Refactoring", "hidden": false },
-    { "type": "docs", "section": "Documentation", "hidden": false },
-    { "type": "build", "section": "Build System", "hidden": false },
-    { "type": "ci", "section": "Continuous Integration", "hidden": false },
-    { "type": "test", "section": "Tests", "hidden": false },
-    { "type": "chore", "section": "Miscellaneous Chores", "hidden": false },
-    { "type": "style", "section": "Styles", "hidden": false },
-    { "type": "revert", "section": "Reverts", "hidden": false }
+    {
+      "type": "feat",
+      "section": "Features",
+      "hidden": false
+    },
+    {
+      "type": "fix",
+      "section": "Bug Fixes",
+      "hidden": false
+    },
+    {
+      "type": "perf",
+      "section": "Performance Improvements",
+      "hidden": false
+    },
+    {
+      "type": "refactor",
+      "section": "Code Refactoring",
+      "hidden": false
+    },
+    {
+      "type": "docs",
+      "section": "Documentation",
+      "hidden": false
+    },
+    {
+      "type": "build",
+      "section": "Build System",
+      "hidden": false
+    },
+    {
+      "type": "ci",
+      "section": "Continuous Integration",
+      "hidden": false
+    },
+    {
+      "type": "test",
+      "section": "Tests",
+      "hidden": false
+    },
+    {
+      "type": "chore",
+      "section": "Miscellaneous Chores",
+      "hidden": false
+    },
+    {
+      "type": "style",
+      "section": "Styles",
+      "hidden": false
+    },
+    {
+      "type": "revert",
+      "section": "Reverts",
+      "hidden": false
+    }
   ],
   "packages": {
     ".": {
