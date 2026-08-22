@@ -1,0 +1,12 @@
+Package: gl-modem-community
+Version: 0.3.0-r1
+Depends: adb, comgt, flock, jq, kmod-usb-acm, kmod-usb-serial-option, kmod-usb-net-qmi-wwan, kmod-usb-net-rndis, lua, luci-lib-nixio, uqmi
+License: GPL-3.0-only
+Section: net
+Category: Network
+Maintainer: Rudimar Ronsoni <rudironsoni@users.noreply.github.com>
+Architecture: aarch64_cortex-a53_neon-vfpv4
+Size: 40977
+SHA256sum: 9f360412014f7fefa3a7a0d382bc922db7bf9b876d7eae20ffee059745fc6a9b
+Filename: gl-modem-community_0.3.0-r1_gl-be3600-4.9_aarch64_cortex-a53_neon-vfpv4.ipk
+Description: Community modem definitions and compatibility drivers for GL.iNet firmware
