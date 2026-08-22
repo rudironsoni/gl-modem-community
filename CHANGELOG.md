@@ -1,5 +1,60 @@
 # Changelog
 
+## [0.3.0](https://github.com/rudironsoni/gl-modem-community/compare/v0.2.14...v0.3.0) (2026-08-22)
+
+
+### Features
+
+* add VOS 5G QMI support on GL-BE3600 ([89d1cd7](https://github.com/rudironsoni/gl-modem-community/commit/89d1cd741d2d9a78016d834ff22a3a2c0880c427))
+* **fm350:** add Dell DW5931e-eSIM support on MT3000 ([#70](https://github.com/rudironsoni/gl-modem-community/issues/70)) ([de0a50c](https://github.com/rudironsoni/gl-modem-community/commit/de0a50cc3f4e32474a512a925d8f6046cabe9c51)), closes [#24](https://github.com/rudironsoni/gl-modem-community/issues/24)
+
+
+### Bug Fixes
+
+* add checkout step before determine version ([4a0c020](https://github.com/rudironsoni/gl-modem-community/commit/4a0c02045758bdd0131b5843ac71edcdfa1d347f))
+* add debug ls to verify artifacts step ([cbe270f](https://github.com/rudironsoni/gl-modem-community/commit/cbe270faa444de8a60a8013b8e740ed7c8a05fcd))
+* add jq to SDK container for SBOM generation ([6084977](https://github.com/rudironsoni/gl-modem-community/commit/6084977d3436fd4494bdb7b4bcd7958a1d027d5f))
+* address VOS 5G review feedback ([06e7b13](https://github.com/rudironsoni/gl-modem-community/commit/06e7b13a107be978bde489110ba2e39f99b6ac9c))
+* **ci:** avoid checksum pipeline aliasing ([929d4dc](https://github.com/rudironsoni/gl-modem-community/commit/929d4dc553a61cde0b7a9644fa7d6d7be296467f))
+* **feeds:** publish signed 25.12 APK feed and index pages for GitHub Pages ([#73](https://github.com/rudironsoni/gl-modem-community/issues/73)) ([51ad197](https://github.com/rudironsoni/gl-modem-community/commit/51ad197c0b6f53c5a2eeee79674cd085776ab2fe))
+* **feeds:** scope GL-BE3600 dependencies ([8305192](https://github.com/rudironsoni/gl-modem-community/commit/830519219164f8644774a3cffb65a7412b350ff8))
+* fix shellcheck and actionlint issues in release workflow ([c942bf7](https://github.com/rudironsoni/gl-modem-community/commit/c942bf7c408e2869091385db59782b2900ecc009))
+* **fm350:** restore 4.8.1 eSIM, dual-slot, and boot state on MT3000 ([#71](https://github.com/rudironsoni/gl-modem-community/issues/71)) ([62e5e6c](https://github.com/rudironsoni/gl-modem-community/commit/62e5e6c8a703da11b8dc8c9d0734d635be47301e))
+* move set-version step before verify artifacts for actionlint ([ea44a06](https://github.com/rudironsoni/gl-modem-community/commit/ea44a0612386cbacbac288b41d94b76d36c136b8))
+* preserve stock modem_AT arguments for VOS ([124b820](https://github.com/rudironsoni/gl-modem-community/commit/124b8201cadee1549268ce78408ef7c3e3f167b7))
+* **release:** bind publication to immutable inputs ([918289b](https://github.com/rudironsoni/gl-modem-community/commit/918289b24560c0ae1300af15b607c7a79c98c89a))
+* **release:** merge validated release proposals ([#78](https://github.com/rudironsoni/gl-modem-community/issues/78)) ([41edb52](https://github.com/rudironsoni/gl-modem-community/commit/41edb52c4ffedaf1aa07ee5b24308f5694a9f710))
+* **release:** publish only complete unreleased feeds ([e46e926](https://github.com/rudironsoni/gl-modem-community/commit/e46e9268171acdd75a2f27c2f2d7443f9e8de642))
+* **release:** reconcile Release Please baseline ([9444c3e](https://github.com/rudironsoni/gl-modem-community/commit/9444c3ea51c6debf357705d42e1d10c73d620d8c))
+* **release:** reconcile Release Please baseline ([#75](https://github.com/rudironsoni/gl-modem-community/issues/75)) ([78a8c2b](https://github.com/rudironsoni/gl-modem-community/commit/78a8c2b200b7e1edf951898da1b36ef39dc8af3c))
+* **release:** reconcile stale pending labels ([80c697b](https://github.com/rudironsoni/gl-modem-community/commit/80c697bdf0a7d1dff145fe01a586772546fb0d11))
+* **release:** restore automatic versioned publication ([52a8c27](https://github.com/rudironsoni/gl-modem-community/commit/52a8c274e45ef9a7f6018b0dd6655d1d5e2e00ed))
+* **release:** restore automatic versioned publication ([#74](https://github.com/rudironsoni/gl-modem-community/issues/74)) ([cec158e](https://github.com/rudironsoni/gl-modem-community/commit/cec158e20a24d324cdfb6d2bd5450842470087bc))
+* remove APK SBOM generation (requires metadata) ([8fbc24d](https://github.com/rudironsoni/gl-modem-community/commit/8fbc24dcebe51f2ece12d155804c73cb72705013))
+* replace Release Please with simple reliable release workflow ([dacb2b4](https://github.com/rudironsoni/gl-modem-community/commit/dacb2b4369eefa5c257d63c8723d0978db5891d0))
+* update test-release-config.sh for new release workflow ([f80030e](https://github.com/rudironsoni/gl-modem-community/commit/f80030eaaca2e567fe9a99d9448f0ac7b3f3a7a4))
+* use correct action SHA pins in release workflow ([dbfa854](https://github.com/rudironsoni/gl-modem-community/commit/dbfa85410dcfd381a4ca52a9184f819cc80b4498))
+* use correct softprops/action-gh-release SHA ([a13e21b](https://github.com/rudironsoni/gl-modem-community/commit/a13e21b27f7f31b38c5cb3131ea7febc91528f7e))
+* use correct softprops/action-gh-release SHA ([de1f04f](https://github.com/rudironsoni/gl-modem-community/commit/de1f04fa8a6982e902f471cee3a09aaffc602d4f))
+* use exact filenames in verify artifacts step ([ebbe7d7](https://github.com/rudironsoni/gl-modem-community/commit/ebbe7d73ba9b133569afada7bb5bf936f788f5f5))
+* use specific glob patterns in verify artifacts step ([f773394](https://github.com/rudironsoni/gl-modem-community/commit/f773394842c0b34b2e98337a918b5b80c44bf4d5))
+* **vos5g:** block on prepare contention and stamp completed handoffs ([3fa699b](https://github.com/rudironsoni/gl-modem-community/commit/3fa699b01b7b8dae298e48c1dad678d33456b4f5))
+* **vos5g:** release the WDS client when autoconnect disable fails ([f2658a9](https://github.com/rudironsoni/gl-modem-community/commit/f2658a9d8077a10bcd5b0bc578287dcb3b1b5297))
+
+
+### Documentation
+
+* remove transient GL-BE3600 CI status ([51b4a05](https://github.com/rudironsoni/gl-modem-community/commit/51b4a054544ab801a2612a2c2039684981821683))
+* rewrite unknowns.md as a remaining-gaps tracker ([#72](https://github.com/rudironsoni/gl-modem-community/issues/72)) ([87b02fa](https://github.com/rudironsoni/gl-modem-community/commit/87b02fa3a3e96fdf86224f67115e1dc162296f81))
+* standardize feed URLs to HTTPS custom domain and tighten README install UX ([#64](https://github.com/rudironsoni/gl-modem-community/issues/64)) ([10857f8](https://github.com/rudironsoni/gl-modem-community/commit/10857f83abeeaee57338ddcf1aca12f4d284c2a4))
+
+
+### Miscellaneous Chores
+
+* **deps:** bump actions/checkout from 4.2.2 to 7.0.1 ([#66](https://github.com/rudironsoni/gl-modem-community/issues/66)) ([29754e1](https://github.com/rudironsoni/gl-modem-community/commit/29754e1b4570dbccfb0c6d486cff7cc30a4a3c3d))
+* **deps:** bump debian from `7b140f3` to `abd67ff` in /tools/analysis-container ([#67](https://github.com/rudironsoni/gl-modem-community/issues/67)) ([85d7fdc](https://github.com/rudironsoni/gl-modem-community/commit/85d7fdc71ecbe6f975a032e8e0ab14e247de2efd))
+* **deps:** bump debian from `7b140f3` to `abd67ff` in /tools/sdk-container ([#65](https://github.com/rudironsoni/gl-modem-community/issues/65)) ([1de5ab7](https://github.com/rudironsoni/gl-modem-community/commit/1de5ab7c5bedeb41533b0506e7e6fbe3d334f2ae))
+
 ## [0.2.10](https://github.com/rudironsoni/gl-modem-community/compare/v0.2.9...v0.2.10) (2026-08-07)
 
 
