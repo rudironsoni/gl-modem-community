@@ -12,11 +12,11 @@
 # release overlap.
 #
 # Optional environment:
-#   USIGN_SEC_FILE  usign private key; when unset the IPK indexes stay
-#                   unsigned, matching the previous working feed. When set,
-#                   every generated Packages index is signed and the public
-#                   key is published at releases/<version>/<key-id>.pub
-#                   (fails closed only for that optional signing pass).
+#   USIGN_SEC_FILE  usign private key; when set, every generated Packages
+#                   index is signed and the public key is published at
+#                   releases/<version>/<key-id>.pub (fails closed when the
+#                   public key or usign tool is missing). The release
+#                   workflow always sets this.
 #   USIGN_PUB_FILE  usign public key (default: keys/gl-modem-community-usign.pub)
 #   USIGN_BIN       usign binary (default: usign)
 set -eu

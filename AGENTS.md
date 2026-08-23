@@ -48,10 +48,10 @@ Add modem behavior at the narrowest extension point. Do not turn FM350-specific 
 
 The stable public key paths are:
 
-- `keys/gl-modem-community.pem`
-- `keys/gl-modem-community.pem.sha256`
+- `keys/gl-modem-community.pem` and `keys/gl-modem-community.pem.sha256` (APK signing)
+- `keys/gl-modem-community-usign.pub` and `keys/gl-modem-community-usign.pub.sha256` (usign, IPK feed indexes)
 
-Do not add dates or release versions to key filenames. Key rotation requires a documented fingerprint, an overlap period, and an explicit migration plan. Never commit the private key or print it in logs. GitHub Actions reads `APK_SIGNING_PRIVATE_KEY` only from the protected `release-signing` environment.
+Do not add dates or release versions to key filenames. Key rotation requires a documented fingerprint, an overlap period, and an explicit migration plan. Never commit a private key or print it in logs. GitHub Actions reads `APK_SIGNING_PRIVATE_KEY` and `USIGN_SIGNING_PRIVATE_KEY` only from the protected `release-signing` environment.
 
 Every release channel ships one architecture-independent package (`PKGARCH:=all`); adding a router adds an architecture directory to the feed, never a new package target. The feed follows the `releases/<version>/packages/<architecture>/<section>/` layout, and the stable channels are:
 
@@ -59,7 +59,7 @@ Every release channel ships one architecture-independent package (`PKGARCH:=all`
 - `https://github.rudironsoni.com/gl-modem-community/feed/releases/24.10/` (IPK)
 - `https://github.rudironsoni.com/gl-modem-community/feed/releases/21.02/` (IPK, GL.iNet stock firmware)
 
-The release workflow signs the APK and `packages.adb` with the existing APK key, publishes the public key and checksum, generates CycloneDX SBOMs, and creates GitHub provenance attestations. IPK `Packages` indexes stay unsigned unless a usign keypair is later added; that path is optional and must not block a release. User-facing installation must verify the APK key and use normal trust validation. Never recommend `--allow-untrusted`.
+The release workflow signs the APK and `packages.adb`, signs each IPK `Packages` index with usign and publishes the key at `releases/<version>/<key-id>.pub` (lowercase key ID `79b5dc268b4698f5`, installed on routers as `/etc/opkg/keys/79b5dc268b4698f5`), publishes the public keys and checksums, generates CycloneDX SBOMs, and creates GitHub provenance attestations. User-facing installation must verify the keys and use normal trust validation. Never recommend `--allow-untrusted`.
 
 LuCI is the intended feed installation path after the one-time public-key bootstrap. Keep README instructions aligned with **System → Software → Configure apk**, `/etc/apk/repositories.d/customfeeds.list`, **Update lists…**, package search, installation, and service activation. If LuCI exposes **Configure opkg**, the APK feed is not compatible with that firmware.
 

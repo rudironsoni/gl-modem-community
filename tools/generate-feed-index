@@ -5,7 +5,7 @@
 #
 # The feed follows the community-standard layout
 #   releases/<major.minor version>/packages/<package arch>/packages
-# and, when present, the opkg usign public key at
+# with the opkg usign public key published at
 #   releases/<major.minor version>/<key-id>.pub
 # Legacy top-level channel directories (25.12, 24.10, 21.02) are kept for one
 # release overlap and receive a deprecation banner.

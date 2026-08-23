@@ -167,15 +167,17 @@ grep -Fq 'keys/gl-modem-community.pem' "$RELEASE_WORKFLOW"
 grep -Fq 'SHA256SUMS' "$RELEASE_WORKFLOW"
 grep -Fq 'generate-feed-index FEED_DIR="$FEED_DIR"' "$FEED_ASSEMBLER"
 
-# IPK Packages indexes stay unsigned unless a usign keypair is later added.
-# The existing APK signing key remains the only required release secret.
-! grep -Fq 'test -n "$USIGN_SIGNING_PRIVATE_KEY"' "$RELEASE_WORKFLOW"
+# IPK Packages indexes are usign-signed with the dedicated stable key.
+grep -Fq 'test -n "$USIGN_SIGNING_PRIVATE_KEY"' "$RELEASE_WORKFLOW"
 grep -Fq 'USIGN_SIGNING_PRIVATE_KEY' "$RELEASE_WORKFLOW"
-grep -Fq '[ -s keys/gl-modem-community-usign.pub ]' "$RELEASE_WORKFLOW"
+grep -Fq 'keys/gl-modem-community-usign.pub' "$RELEASE_WORKFLOW"
+grep -Fq 'sha256sum -c gl-modem-community-usign.pub.sha256' "$RELEASE_WORKFLOW"
 grep -Fq 'USIGN_SEC_FILE' "$FEED_ASSEMBLER"
 grep -Fq 'keys/gl-modem-community-usign.pub' "$FEED_ASSEMBLER"
 grep -Fq '"$1.sig"' "$FEED_ASSEMBLER"
 grep -Fq '$USIGN_KEY_ID.pub' "$FEED_ASSEMBLER"
+test -s "$REPO_DIR/keys/gl-modem-community-usign.pub"
+test -s "$REPO_DIR/keys/gl-modem-community-usign.pub.sha256"
 
 grep -Fq 'sign-apk-release:' "$ROOT_MAKEFILE"
 grep -Fq 'adbsign' "$ROOT_MAKEFILE"
@@ -203,7 +205,9 @@ openssl pkey -pubin -in "$PUBLIC_KEY" -noout
 (
     cd "$(dirname "$PUBLIC_KEY")"
     sha256sum -c "$(basename "$PUBLIC_KEY_CHECKSUM")"
+    sha256sum -c gl-modem-community-usign.pub.sha256
 )
+grep -Fq '79b5dc268b4698f5' "$REPO_DIR/README.md"
 
 if grep -RFn --include='*.md' -- '--allow-untrusted' "$REPO_DIR/README.md" "$REPO_DIR/docs"; then
     echo 'Documentation must not instruct users to bypass APK signature verification' >&2

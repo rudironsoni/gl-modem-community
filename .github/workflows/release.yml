@@ -255,6 +255,8 @@ jobs:
         run: |
           set -euo pipefail
           test -n "$APK_SIGNING_PRIVATE_KEY"
+          test -n "$USIGN_SIGNING_PRIVATE_KEY"
+          test -s keys/gl-modem-community-usign.pub
           version="$(jq -er '.["."]' .release-please-manifest.json)"
           package_version="$(sed -n 's/^PKG_VERSION:=\([^[:space:]#]*\).*/\1/p' package/gl-modem-community/Makefile)"
           test "$version" = "$package_version"
@@ -266,9 +268,7 @@ jobs:
           trap 'rm -rf "$signing_dir"' EXIT
           printf '%s\n' "$APK_SIGNING_PRIVATE_KEY" > "$signing_dir/private-key.pem"
           unset APK_SIGNING_PRIVATE_KEY
-          if [ -n "${USIGN_SIGNING_PRIVATE_KEY:-}" ] && [ -s keys/gl-modem-community-usign.pub ]; then
-            printf '%s\n' "$USIGN_SIGNING_PRIVATE_KEY" > "$signing_dir/usign.sec"
-          fi
+          printf '%s\n' "$USIGN_SIGNING_PRIVATE_KEY" > "$signing_dir/usign.sec"
           unset USIGN_SIGNING_PRIVATE_KEY
 
           docker build --platform linux/amd64 -t mt3000-openwrt-sdk:25.12.5 tools/sdk-container
@@ -284,16 +284,12 @@ jobs:
               OUTPUT_INDEX=/repo/release-assets/packages.adb \
               OUTPUT_METADATA=/repo/release-assets/gl-modem-community.apk.adb.json
 
-          if [ -s "$signing_dir/usign.sec" ]; then
-            usign_bin="tool-cache/sdk-25.12.5-mediatek-filogic/staging_dir/host/bin/usign"
-            test -x "$usign_bin"
-            USIGN_BIN="$usign_bin" \
-            USIGN_SEC_FILE="$signing_dir/usign.sec" \
-            USIGN_PUB_FILE=keys/gl-modem-community-usign.pub \
-              sh tools/assemble-release-feeds "$version" release-assets feed
-          else
+          usign_bin="tool-cache/sdk-25.12.5-mediatek-filogic/staging_dir/host/bin/usign"
+          test -x "$usign_bin"
+          USIGN_BIN="$usign_bin" \
+          USIGN_SEC_FILE="$signing_dir/usign.sec" \
+          USIGN_PUB_FILE=keys/gl-modem-community-usign.pub \
             sh tools/assemble-release-feeds "$version" release-assets feed
-          fi
 
       - name: Commit feeds and dispatch final CI
         id: feed
@@ -635,10 +631,8 @@ jobs:
           set -euo pipefail
           install -m 0644 keys/gl-modem-community.pem release-assets/
           install -m 0644 keys/gl-modem-community.pem.sha256 release-assets/
-          if [ -s keys/gl-modem-community-usign.pub ]; then
-            install -m 0644 keys/gl-modem-community-usign.pub release-assets/
-            install -m 0644 keys/gl-modem-community-usign.pub.sha256 release-assets/
-          fi
+          install -m 0644 keys/gl-modem-community-usign.pub release-assets/
+          install -m 0644 keys/gl-modem-community-usign.pub.sha256 release-assets/
           checksums="$(mktemp "${RUNNER_TEMP}/SHA256SUMS.XXXXXX")"
           (
             cd release-assets
@@ -648,9 +642,7 @@ jobs:
           ) > "$checksums"
           mv "$checksums" release-assets/SHA256SUMS
           (cd release-assets && sha256sum -c gl-modem-community.pem.sha256)
-          if [ -s keys/gl-modem-community-usign.pub ]; then
-            (cd release-assets && sha256sum -c gl-modem-community-usign.pub.sha256)
-          fi
+          (cd release-assets && sha256sum -c gl-modem-community-usign.pub.sha256)
 
       - name: Attest release assets
         uses: actions/attest@f7c74d28b9d84cb8768d0b8ca14a4bac6ef463e6 # v4.2.0
