@@ -133,24 +133,29 @@ These cases remain **not tested** on GL-BE3600:
 Consequently this evidence does not claim that GL-BE3600 supports FM350-GL or
 every modem supported by the project.
 
-## Reproducible package target
+## Reproducible package
 
-`make package-be3600` uses the checksum-pinned upstream OpenWrt 23.05.5
-IPQ807x generic SDK:
+GL-BE3600 no longer has a dedicated build target. It installs the unified
+architecture-independent 21.02 package built by `make package-glinet21`
+(`gl-modem-community_<version>-1_glinet-21.02_all.ipk`, control field
+`Architecture: all`). The feed publishes the identical artifact under the
+router's architecture directory:
 
-- archive:
-  `openwrt-sdk-23.05.5-ipq807x-generic_gcc-12.3.0_musl.Linux-x86_64.tar.xz`;
-- SHA-256:
-  `57c8a1d5586f1548ebe360d71a6dd9deec7833f5cb3e5b93d5a618c6da6e9399`;
-- source:
-  `https://downloads.openwrt.org/releases/23.05.5/targets/ipq807x/generic/`.
+`https://github.rudironsoni.com/gl-modem-community/feed/releases/21.02/packages/aarch64_cortex-a53_neon-vfpv4/packages`
 
-The SDK is a userspace ABI surrogate: upstream OpenWrt does not publish the
-GL.iNet IPQ5332 firmware build tree. It supplies the ARMv8 Cortex-A53 compiler
-and OpenWrt 23.05 musl userspace, while the package target emits GL.iNet's
-observed `aarch64_cortex-a53_neon-vfpv4` package architecture. The package
-must remain userspace-only; adding a kernel module requires the exact GL.iNet
-source tree and configuration.
+The two bundled LD_PRELOAD shims are compiled for the shared aarch64
+Cortex-A53 musl userspace; on any other machine type the AT wrapper skips the
+preload and logs the reason instead of failing. VOS 5G tooling (`adb`,
+`uqmi`, `kmod-usb-net-qmi-wwan`, `luci-lib-nixio`, `lua`) is checked at
+runtime rather than declared as a hard dependency, so the package installs on
+firmwares that lack it and logs the exact missing tools.
+
+`[UNVERIFIED]` The unified `Architecture: all` package and the runtime
+dependency checks have not yet been re-tested on GL-BE3600 hardware; the
+evidence in this document was gathered with the earlier dedicated
+`aarch64_cortex-a53_neon-vfpv4` build. The package must remain
+userspace-only; adding a kernel module requires the exact GL.iNet source tree
+and configuration.
 
 ## Evidence privacy
 
