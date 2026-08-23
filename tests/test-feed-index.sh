@@ -17,12 +17,10 @@ mkdir -p "$apk_dir" "$ipk24_dir" "$ipk21_dir" "$ipk21_neon_dir" \
 	"$tmp/feed/25.12" "$tmp/feed/24.10" "$tmp/feed/21.02"
 printf 'apk' > "$apk_dir/gl-modem-community-0.0.1-r1.apk"
 printf 'adb' > "$apk_dir/packages.adb"
-for dir in "$ipk24_dir"; do
-	printf 'ipk' > "$dir/gl-modem-community_0.0.1-r1_all.ipk"
-	printf 'idx' > "$dir/Packages"
-	printf 'idz' > "$dir/Packages.gz"
-	printf 'sig' > "$dir/Packages.sig"
-done
+printf 'ipk' > "$ipk24_dir/gl-modem-community_0.0.1-r1_all.ipk"
+printf 'idx' > "$ipk24_dir/Packages"
+printf 'idz' > "$ipk24_dir/Packages.gz"
+printf 'sig' > "$ipk24_dir/Packages.sig"
 for dir in "$ipk21_dir" "$ipk21_neon_dir"; do
 	printf 'ipk' > "$dir/gl-modem-community_0.0.1-1_glinet-21.02_all.ipk"
 	printf 'idx' > "$dir/Packages"
