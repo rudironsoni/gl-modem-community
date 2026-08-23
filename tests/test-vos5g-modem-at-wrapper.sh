@@ -28,8 +28,11 @@ cat >"$tmp/bin/logger" <<'EOF'
 exit 0
 EOF
 chmod +x "$tmp/stock" "$tmp/bin/logger"
+# The wrapper only preloads shims that exist on disk.
+touch "$tmp/vos5g-at-compat.so" "$tmp/fm350-at-compat.so"
 
 PATH=$tmp/bin:$PATH SYS_USB=$tmp/sys STOCK_MODEM_AT=$tmp/stock \
+	GL_MODEM_MACHINE=aarch64 \
 	VOS5G_COMPAT=$tmp/vos5g-at-compat.so TEST_ARGS=$tmp/args \
 	TEST_PORT=$tmp/port TEST_FM350_PORT=$tmp/fm350-port \
 	TEST_PRELOAD=$tmp/preload \
@@ -41,6 +44,7 @@ test "$(cat "$tmp/preload")" = "$tmp/vos5g-at-compat.so"
 # A complete VOS invocation keeps every stock argument and the supplied AT
 # port unchanged while still enabling the response compatibility preload.
 PATH=$tmp/bin:$PATH SYS_USB=$tmp/sys STOCK_MODEM_AT=$tmp/stock \
+	GL_MODEM_MACHINE=aarch64 \
 	VOS5G_COMPAT=$tmp/vos5g-at-compat.so TEST_ARGS=$tmp/args \
 	TEST_PORT=$tmp/port TEST_FM350_PORT=$tmp/fm350-port \
 	TEST_PRELOAD=$tmp/preload \
@@ -52,6 +56,7 @@ test "$(cat "$tmp/preload")" = "$tmp/vos5g-at-compat.so"
 # The pre-existing FM350 branch must keep the original arguments, port
 # environment and compatibility preload while the VOS branch sits beside it.
 PATH=$tmp/bin:$PATH SYS_USB=$tmp/sys STOCK_MODEM_AT=$tmp/stock \
+	GL_MODEM_MACHINE=aarch64 \
 	FM350_COMPAT=$tmp/fm350-at-compat.so TEST_ARGS=$tmp/args \
 	TEST_PORT=$tmp/port TEST_FM350_PORT=$tmp/fm350-port \
 	TEST_PRELOAD=$tmp/preload \
@@ -61,9 +66,33 @@ test "$(cat "$tmp/fm350-port")" = /dev/ttyUSB4
 test "$(cat "$tmp/preload")" = "$tmp/fm350-at-compat.so"
 
 PATH=$tmp/bin:$PATH SYS_USB=$tmp/sys STOCK_MODEM_AT=$tmp/stock \
+	GL_MODEM_MACHINE=aarch64 \
 	TEST_ARGS=$tmp/args TEST_PORT=$tmp/port TEST_PRELOAD=$tmp/preload \
 	TEST_FM350_PORT=$tmp/fm350-port \
 	"$wrapper" -B 3-1 -P /dev/ttyUSB9 -O9
 test "$(cat "$tmp/args")" = '-B 3-1 -P /dev/ttyUSB9 -O9'
 test -z "$(cat "$tmp/port")"
+test -z "$(cat "$tmp/preload")"
+
+# On a non-aarch64 router the architecture-independent package still corrects
+# the VOS arguments but must never preload the aarch64 shim.
+PATH=$tmp/bin:$PATH SYS_USB=$tmp/sys STOCK_MODEM_AT=$tmp/stock \
+	GL_MODEM_MACHINE=mips \
+	VOS5G_COMPAT=$tmp/vos5g-at-compat.so TEST_ARGS=$tmp/args \
+	TEST_PORT=$tmp/port TEST_FM350_PORT=$tmp/fm350-port \
+	TEST_PRELOAD=$tmp/preload \
+	"$wrapper" --stock-flag keep -B 2-1 -P -O7 --tail value
+test "$(cat "$tmp/args")" = '--stock-flag keep -B 2-1 -P /dev/ttyUSB7 -O7 --tail value'
+test -z "$(cat "$tmp/port")"
+test -z "$(cat "$tmp/preload")"
+
+# A missing shim file skips the preload even on aarch64.
+PATH=$tmp/bin:$PATH SYS_USB=$tmp/sys STOCK_MODEM_AT=$tmp/stock \
+	GL_MODEM_MACHINE=aarch64 \
+	FM350_COMPAT=$tmp/missing-fm350-at-compat.so TEST_ARGS=$tmp/args \
+	TEST_PORT=$tmp/port TEST_FM350_PORT=$tmp/fm350-port \
+	TEST_PRELOAD=$tmp/preload \
+	"$wrapper" -B 4-1 -P /dev/ttyUSB4 -O2
+test "$(cat "$tmp/args")" = '-B 4-1 -P /dev/ttyUSB4 -O2'
+test -z "$(cat "$tmp/fm350-port")"
 test -z "$(cat "$tmp/preload")"
