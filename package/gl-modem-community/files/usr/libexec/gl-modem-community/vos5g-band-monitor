@@ -23,6 +23,14 @@ log() {
 	"$LOGGER_BIN" -t gl-modem-community "vos5g-band-monitor: $*"
 }
 
+# The unified package does not hard-depend on uqmi; skip the cache refresh
+# with an actionable log line when it is missing.
+vos5g_tools_ready() {
+	command -v "$UQMI_BIN" >/dev/null 2>&1 && return 0
+	log "VOS 5G band cache disabled: missing $UQMI_BIN; run: opkg install uqmi"
+	return 1
+}
+
 valid_bus() {
 	case "$1" in
 	''|*[!A-Za-z0-9._-]*) return 1 ;;
@@ -113,6 +121,7 @@ query_one() {
 	bus=$1
 	valid_bus "$bus" || return 1
 	is_vos5g "$bus" || return 1
+	vos5g_tools_ready || return 1
 	device=$(qmi_control_device "$bus") || return 1
 	"$DEVICE_TEST_BIN" -c "$device" || return 1
 

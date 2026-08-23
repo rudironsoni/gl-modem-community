@@ -31,6 +31,19 @@ log() {
 	"$LOGGER_BIN" -t gl-modem-community "vos5g-qmi: $*"
 }
 
+# The unified package does not hard-depend on the VOS 5G tooling so it stays
+# installable on firmwares that lack these packages. Refuse the preparation
+# with one actionable log line instead of failing mid-handoff.
+vos5g_tools_ready() {
+	missing=
+	for tool in "$ADB_BIN" "$UQMI_BIN"; do
+		command -v "$tool" >/dev/null 2>&1 || missing="$missing $tool"
+	done
+	[ -z "$missing" ] && return 0
+	log "VOS 5G support disabled: missing$missing; run: opkg install adb uqmi kmod-usb-net-qmi-wwan luci-lib-nixio lua"
+	return 1
+}
+
 valid_bus() {
 	case "$1" in
 	''|*[!A-Za-z0-9._-]*) return 1 ;;
@@ -287,6 +300,7 @@ prepare_locked() {
 	bus=$1
 	valid_bus "$bus" || return 1
 	is_vos5g "$bus" || return 0
+	vos5g_tools_ready || return 0
 	mkdir -p "$LOCK_ROOT"
 	exec 9>"$LOCK_ROOT/vos5g-qmi-$bus.lock"
 	# Block instead of skipping on contention.  A caller that loses the
