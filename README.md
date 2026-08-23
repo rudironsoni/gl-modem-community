@@ -174,15 +174,7 @@ apk add /tmp/gl-modem-community-${VERSION}-r1.apk
 
 #### Option A (recommended): Install from the OpenWrt 24 feed
 
-The IPK feed indexes are signed with [usign](https://openwrt.org/docs/guide-user/security/keygen). Install the feed's public key once so `opkg` verifies the index. The key file is listed in the release channel directory as `<key-id>.pub`; on the router it must be saved as `/etc/opkg/keys/<key-id>` (the lowercase key ID, no extension):
-
-```sh
-key_id='<key-id>'  # the .pub filename listed at https://github.rudironsoni.com/gl-modem-community/feed/releases/24.10/
-wget -O "/etc/opkg/keys/${key_id}" \
-  "https://github.rudironsoni.com/gl-modem-community/feed/releases/24.10/${key_id}.pub"
-```
-
-Then add the OpenWrt 24 feed to `/etc/opkg/customfeeds.conf`. Create the file first if it does not exist:
+Add the OpenWrt 24 feed to `/etc/opkg/customfeeds.conf`. Create the file first if it does not exist:
 
 ```sh
 touch /etc/opkg/customfeeds.conf
@@ -231,13 +223,7 @@ Current GL.iNet OEM firmware (stable 4.8.x and beta 4.9.x) runs `opkg`. One chan
 | GL-MT3000 | `aarch64_cortex-a53` | `https://github.rudironsoni.com/gl-modem-community/feed/releases/21.02/packages/aarch64_cortex-a53/packages` |
 | GL-BE3600 | `aarch64_cortex-a53_neon-vfpv4` | `https://github.rudironsoni.com/gl-modem-community/feed/releases/21.02/packages/aarch64_cortex-a53_neon-vfpv4/packages` |
 
-Install the feed's usign public key once, then add the feed. The key file is listed in the channel directory as `<key-id>.pub` and must be saved as `/etc/opkg/keys/<key-id>` on the router:
-
 ```sh
-key_id='<key-id>'  # the .pub filename listed at https://github.rudironsoni.com/gl-modem-community/feed/releases/21.02/
-wget -O "/etc/opkg/keys/${key_id}" \
-  "https://github.rudironsoni.com/gl-modem-community/feed/releases/21.02/${key_id}.pub"
-
 touch /etc/opkg/customfeeds.conf
 chmod 0644 /etc/opkg/customfeeds.conf
 echo 'src/gz gl-modem-community https://github.rudironsoni.com/gl-modem-community/feed/releases/21.02/packages/aarch64_cortex-a53/packages' \
@@ -383,6 +369,6 @@ The [modem architecture](docs/modem-architecture.md), [package design](docs/pack
 
 ## Releases
 
-Every pull request runs the offline test suite and all package targets. A release adds the signed APK and repository index, architecture-independent IPKs with usign-signed feed indexes, CycloneDX SBOMs, the public keys, checksums, and GitHub build-provenance attestations.
+Every pull request runs the offline test suite and all package targets. A release adds the signed APK and repository index, architecture-independent IPKs, CycloneDX SBOMs, the APK public key, checksums, and GitHub build-provenance attestations.
 
 [Release Please](https://github.com/googleapis/release-please) derives versions from Conventional Commits and maintains one release pull request. The workflow builds and signs the proposed packages, commits the generated `feed/` files to that pull request, and reruns its required CI. Merging the release pull request updates the GitHub Pages feed on `main` and publishes the matching GitHub Release from those exact committed packages.

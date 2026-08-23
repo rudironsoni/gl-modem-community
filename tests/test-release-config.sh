@@ -167,10 +167,11 @@ grep -Fq 'keys/gl-modem-community.pem' "$RELEASE_WORKFLOW"
 grep -Fq 'SHA256SUMS' "$RELEASE_WORKFLOW"
 grep -Fq 'generate-feed-index FEED_DIR="$FEED_DIR"' "$FEED_ASSEMBLER"
 
-# The opkg feed indexes are usign-signed with the dedicated stable key.
+# IPK Packages indexes stay unsigned unless a usign keypair is later added.
+# The existing APK signing key remains the only required release secret.
+! grep -Fq 'test -n "$USIGN_SIGNING_PRIVATE_KEY"' "$RELEASE_WORKFLOW"
 grep -Fq 'USIGN_SIGNING_PRIVATE_KEY' "$RELEASE_WORKFLOW"
-grep -Fq 'keys/gl-modem-community-usign.pub' "$RELEASE_WORKFLOW"
-grep -Fq 'sha256sum -c gl-modem-community-usign.pub.sha256' "$RELEASE_WORKFLOW"
+grep -Fq '[ -s keys/gl-modem-community-usign.pub ]' "$RELEASE_WORKFLOW"
 grep -Fq 'USIGN_SEC_FILE' "$FEED_ASSEMBLER"
 grep -Fq 'keys/gl-modem-community-usign.pub' "$FEED_ASSEMBLER"
 grep -Fq '"$1.sig"' "$FEED_ASSEMBLER"
