@@ -617,7 +617,7 @@ jobs:
               }
               validate_component \
                 /repo/release-assets/gl-modem-community.apk.cdx.json \
-                "${RELEASE_VERSION}-r1" all
+                "${RELEASE_VERSION}-r1" noarch
               validate_component \
                 /repo/release-assets/gl-modem-community.ipk.cdx.json \
                 "${RELEASE_VERSION}-r1" all

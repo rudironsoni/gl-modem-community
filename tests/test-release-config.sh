@@ -150,7 +150,8 @@ grep -Fq '(.packages // .) as $packages' "$RELEASE_WORKFLOW"
 grep -Fq '.metadata.component.version == $version' "$RELEASE_WORKFLOW"
 grep -Fq 'sha256sum -c gl-modem-community.pem.sha256' "$RELEASE_WORKFLOW"
 test "$(grep -Fc '"${RELEASE_VERSION}-1" all' "$RELEASE_WORKFLOW")" -eq 1
-test "$(grep -Fc '"${RELEASE_VERSION}-r1" all' "$RELEASE_WORKFLOW")" -eq 2
+test "$(grep -Fc '"${RELEASE_VERSION}-r1" all' "$RELEASE_WORKFLOW")" -eq 1
+test "$(grep -Fc '"${RELEASE_VERSION}-r1" noarch' "$RELEASE_WORKFLOW")" -eq 1
 
 BASE_FEED_DEPENDS="printf 'Depends: comgt, flock, jq, kmod-usb-acm, kmod-usb-serial-option, kmod-usb-net-rndis\\n'"
 test "$(grep -Fc "$BASE_FEED_DEPENDS" "$FEED_ASSEMBLER")" -eq 1
