@@ -7,10 +7,6 @@ PKG_RELEASE:=1
 PKG_LICENSE:=GPL-3.0-only
 PKG_MAINTAINER:=Rudimar Ronsoni <rudironsoni@users.noreply.github.com>
 
-ifneq ($(BE3600_BUILD),)
-  PKGARCH:=aarch64_cortex-a53_neon-vfpv4
-endif
-
 # Common runtime dependencies (all GL.iNet firmwares include these kernel modules)
 COMMON_DEPENDS := \
 	comgt \
@@ -20,22 +16,15 @@ COMMON_DEPENDS := \
 	+kmod-usb-serial-option \
 	+kmod-usb-net-rndis
 
-# VOS 5G is verified only on the dedicated GL-BE3600 target. Keep its tools
-# out of the APK, generic IPK, and legacy GL.iNet feed dependency closures.
-ifneq ($(BE3600_BUILD),)
-COMMON_DEPENDS += \
-	adb \
-	+kmod-usb-net-qmi-wwan \
-	lua \
-	+luci-lib-nixio \
-	uqmi
-endif
-
 define Package/gl-modem-community
   SECTION:=net
   CATEGORY:=Network
   SUBMENU:=WWAN
   TITLE:=Community modem drivers for GL.iNet firmware
+  # One architecture-independent package serves every supported router.
+  # VOS 5G tooling (adb, uqmi, ...) is checked at runtime instead of being a
+  # hard dependency so the package installs on firmwares that lack it.
+  PKGARCH:=all
   DEPENDS:=$(COMMON_DEPENDS)
 endef
 
