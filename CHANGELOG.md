@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.1](https://github.com/rudironsoni/gl-modem-community/compare/v0.4.0...v0.4.1) (2026-08-24)
+
+
+### Bug Fixes
+
+* **release:** do not fail the run that just published a release ([#84](https://github.com/rudironsoni/gl-modem-community/issues/84)) ([37a4ee5](https://github.com/rudironsoni/gl-modem-community/commit/37a4ee5622ab3750eae3a15062ed780139004a24))
+
 ## [0.4.0](https://github.com/rudironsoni/gl-modem-community/compare/v0.3.0...v0.4.0) (2026-08-24)
 
 
