@@ -138,13 +138,6 @@ jobs:
           if [[ -n "$baseline" ]]; then
             active=true
           fi
-          gh pr list \
-            --repo "$GITHUB_REPOSITORY" \
-            --state merged \
-            --label 'autorelease: pending' \
-            --limit 100 \
-            --json number,title,mergeCommit \
-            --jq '.[] | [.number, .title, .mergeCommit.oid] | @tsv' |
           while IFS=$'\t' read -r number title merge_sha; do
             retag=false
             version="$(sed -n 's/.*release \([0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\).*/\1/p' <<< "$title")"
@@ -159,12 +152,19 @@ jobs:
               esac
             fi
             if [[ "$retag" == true ]]; then
+              echo "Retagging merged release PR #${number} (${title}) as autorelease: tagged"
               gh pr edit "$number" \
                 --repo "$GITHUB_REPOSITORY" \
                 --remove-label 'autorelease: pending' \
                 --add-label 'autorelease: tagged'
             fi
-          done
+          done < <(gh pr list \
+            --repo "$GITHUB_REPOSITORY" \
+            --state merged \
+            --label 'autorelease: pending' \
+            --limit 100 \
+            --json number,title,mergeCommit \
+            --jq '.[] | [.number, .title, .mergeCommit.oid] | @tsv')
           echo "active=${active}" >> "$GITHUB_OUTPUT"
 
       - name: Create or update release PR
