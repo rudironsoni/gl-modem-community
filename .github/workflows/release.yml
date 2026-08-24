@@ -557,7 +557,7 @@ jobs:
 
       - name: Verify packages and generate SBOMs
         env:
-          RELEASE_VERSION: ${{ needs.detect-release.outputs.version }}
+          RELEASE_VERSION: ${{ needs.merge-release-pr.outputs.version || needs.detect-release.outputs.version }}
         shell: bash
         run: |
           set -euo pipefail

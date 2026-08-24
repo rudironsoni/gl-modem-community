@@ -136,6 +136,18 @@ if grep -Fq 'git push origin main' "$RELEASE_WORKFLOW"; then
 	exit 1
 fi
 
+# After auto-merging a Release Please PR, publish must verify the merged
+# package version. detect-release still sees the pre-merge manifest
+# (release run 180 collected 0.4.1, then verified 0.4.0).
+expected_publish_version='RELEASE_VERSION: ${{ needs.merge-release-pr.outputs.version || needs.detect-release.outputs.version }}'
+collect_version="$(awk '/name: Collect committed release packages/,/name: Verify packages and generate SBOMs/' "$RELEASE_WORKFLOW" | grep -F 'RELEASE_VERSION:' | sed 's/^[[:space:]]*//')"
+verify_version="$(awk '/name: Verify packages and generate SBOMs/,/name: Add keys and checksums/' "$RELEASE_WORKFLOW" | grep -F 'RELEASE_VERSION:' | sed 's/^[[:space:]]*//')"
+test "$(printf '%s\n' "$collect_version" | wc -l)" -eq 1
+test "$(printf '%s\n' "$verify_version" | wc -l)" -eq 1
+test "$collect_version" = "$expected_publish_version"
+test "$verify_version" = "$expected_publish_version"
+test "$(grep -cF "$expected_publish_version" "$RELEASE_WORKFLOW")" -eq 2
+
 # The merged feed packages are the exact GitHub Release inputs.
 grep -Fq 'softprops/action-gh-release@' "$RELEASE_WORKFLOW"
 grep -Fq 'actions/download-artifact@' "$RELEASE_WORKFLOW"
