@@ -79,11 +79,6 @@ jobs:
             sdk_archive: tool-cache/openwrt-sdk-21.02.7-mediatek-mt7622_gcc-8.4.0_musl.Linux-x86_64.tar.xz
             sdk_cache_key: openwrt-sdk-21.02.7-mediatek-mt7622-723b08a90778779cbc20da03a36fa0e213b22dd63ce601803f0eae44f303681d
             artifact_glob: artifacts/*.ipk
-          - kind: ipk-be3600
-            target: package-be3600
-            sdk_archive: tool-cache/openwrt-sdk-23.05.5-ipq807x-generic_gcc-12.3.0_musl.Linux-x86_64.tar.xz
-            sdk_cache_key: openwrt-sdk-23.05.5-ipq807x-generic-57c8a1d5586f1548ebe360d71a6dd9deec7833f5cb3e5b93d5a618c6da6e9399
-            artifact_glob: artifacts/*.ipk
     steps:
       - name: Check out repository
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -113,17 +108,12 @@ jobs:
               test -s "$asset"
               ;;
             ipk)
-              asset="artifacts/gl-modem-community_${version}-r1_aarch64_cortex-a53.ipk"
+              asset="artifacts/gl-modem-community_${version}-r1_all.ipk"
               test -s "$asset"
               tar -tzf "$asset" >/dev/null
               ;;
             ipk-glinet21)
-              asset="artifacts/gl-modem-community_${version}-1_glinet-21.02_aarch64_cortex-a53.ipk"
-              test -s "$asset"
-              tar -tzf "$asset" >/dev/null
-              ;;
-            ipk-be3600)
-              asset="artifacts/gl-modem-community_${version}-r1_gl-be3600-4.9_aarch64_cortex-a53_neon-vfpv4.ipk"
+              asset="artifacts/gl-modem-community_${version}-1_glinet-21.02_all.ipk"
               test -s "$asset"
               tar -tzf "$asset" >/dev/null
               ;;

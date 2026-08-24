@@ -6,10 +6,18 @@ stock=${STOCK_MODEM_AT:-/var/run/gl-modem-community/modem_AT.stock}
 compat=${FM350_COMPAT:-/usr/lib/gl-modem-community/fm350-at-compat.so}
 vos5g_compat=${VOS5G_COMPAT:-/usr/lib/gl-modem-community/vos5g-at-compat.so}
 sys_usb=${SYS_USB:-/sys/bus/usb}
+machine=${GL_MODEM_MACHINE:-$(uname -m)}
 bus=
 port=
 port_missing=0
 previous=
+
+# The compat shims ship as aarch64 builds inside the architecture-independent
+# package. Preload them only on aarch64 routers where the file is present;
+# everywhere else fall through to unmodified stock behavior.
+preload_supported() {
+	[ "$machine" = aarch64 ] && [ -f "$1" ]
+}
 
 for argument in "$@"; do
 	case "$previous" in
@@ -31,10 +39,15 @@ if [ -n "$bus" ] && [ -n "$port" ] &&
 	[ "$(cat "$sys_usb/devices/$bus/idVendor" 2>/dev/null || true)" = 0e8d ]; then
 	case "$(cat "$sys_usb/devices/$bus/idProduct" 2>/dev/null || true)" in
 		7126|7127)
-			export GL_MODEM_FM350_AT_PORT=$port
-			export LD_PRELOAD=$compat
-			logger -t gl-modem-community \
-				"FM350 modem_AT compatibility active bus=$bus port=$port"
+			if preload_supported "$compat"; then
+				export GL_MODEM_FM350_AT_PORT=$port
+				export LD_PRELOAD=$compat
+				logger -t gl-modem-community \
+					"FM350 modem_AT compatibility active bus=$bus port=$port"
+			else
+				logger -t gl-modem-community \
+					"FM350 modem_AT compatibility unavailable machine=$machine shim=$compat"
+			fi
 			;;
 	esac
 fi
@@ -73,10 +86,15 @@ if [ -n "$bus" ] &&
 	fi
 
 	if [ -n "$port" ]; then
-		export GL_MODEM_VOS5G_AT_PORT=$port
-		export LD_PRELOAD=$vos5g_compat
-		logger -t gl-modem-community \
-			"VOS 5G modem_AT compatibility active bus=$bus port=$port"
+		if preload_supported "$vos5g_compat"; then
+			export GL_MODEM_VOS5G_AT_PORT=$port
+			export LD_PRELOAD=$vos5g_compat
+			logger -t gl-modem-community \
+				"VOS 5G modem_AT compatibility active bus=$bus port=$port"
+		else
+			logger -t gl-modem-community \
+				"VOS 5G modem_AT compatibility unavailable machine=$machine shim=$vos5g_compat"
+		fi
 	fi
 fi
 

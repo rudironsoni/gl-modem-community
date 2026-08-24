@@ -60,9 +60,7 @@ grep -Fq 'workflow_dispatch:' "$CI_WORKFLOW"
 grep -Fq 'name: CI required' "$CI_WORKFLOW"
 grep -Fq 'kind: ipk' "$CI_WORKFLOW"
 grep -Fq 'kind: ipk-glinet21' "$CI_WORKFLOW"
-grep -Fq 'kind: ipk-be3600' "$CI_WORKFLOW"
 grep -Fq 'kind: apk' "$CI_WORKFLOW"
-grep -Fq 'package-be3600: SDK_NAME = openwrt-sdk-23.05.5-ipq807x-generic' "$ROOT_MAKEFILE"
 grep -Fq 'if: inputs.upload_packages' "$CI_WORKFLOW"
 grep -Fq 'path: ${{ matrix.sdk_archive }}' "$CI_WORKFLOW"
 if grep -Fq 'tool-cache/sdk-*' "$CI_WORKFLOW"; then
@@ -138,26 +136,27 @@ fi
 # The merged feed packages are the exact GitHub Release inputs.
 grep -Fq 'softprops/action-gh-release@' "$RELEASE_WORKFLOW"
 grep -Fq 'actions/download-artifact@' "$RELEASE_WORKFLOW"
-grep -Fq 'feed/25.12' "$RELEASE_WORKFLOW"
-grep -Fq 'feed/24.10' "$RELEASE_WORKFLOW"
-grep -Fq 'feed/21.02' "$RELEASE_WORKFLOW"
-grep -Fq 'feed/23.05-be3600' "$RELEASE_WORKFLOW"
+grep -Fq 'feed/releases/25.12/packages/aarch64_cortex-a53/packages' "$RELEASE_WORKFLOW"
+grep -Fq 'feed/releases/24.10/packages/aarch64_cortex-a53/packages' "$RELEASE_WORKFLOW"
+grep -Fq 'feed/releases/21.02/packages/aarch64_cortex-a53/packages' "$RELEASE_WORKFLOW"
+grep -Fq 'feed/releases/21.02/packages/aarch64_cortex-a53_neon-vfpv4/packages' "$RELEASE_WORKFLOW"
 grep -Fq 'packages.adb' "$RELEASE_WORKFLOW"
 grep -Fq 'actions/checkout@' "$RELEASE_WORKFLOW"
 grep -Fq 'actions/attest@f7c74d28b9d84cb8768d0b8ca14a4bac6ef463e6 # v4.2.0' "$RELEASE_WORKFLOW"
 grep -Fq 'target_commitish: ${{ needs.merge-release-pr.outputs.release_sha || needs.detect-release.outputs.source_sha }}' "$RELEASE_WORKFLOW"
 grep -Fq 'SBOM_FORMAT=apk' "$RELEASE_WORKFLOW"
-grep -Fq 'gl-modem-community.be3600.ipk.cdx.json' "$RELEASE_WORKFLOW"
+grep -Fq 'gl-modem-community.glinet21.ipk.cdx.json' "$RELEASE_WORKFLOW"
 grep -Fq '(.packages // .) as $packages' "$RELEASE_WORKFLOW"
 grep -Fq '.metadata.component.version == $version' "$RELEASE_WORKFLOW"
 grep -Fq 'sha256sum -c gl-modem-community.pem.sha256' "$RELEASE_WORKFLOW"
-test "$(grep -Fc '"${RELEASE_VERSION}-1" aarch64_cortex-a53' "$RELEASE_WORKFLOW")" -eq 2
+test "$(grep -Fc '"${RELEASE_VERSION}-1" all' "$RELEASE_WORKFLOW")" -eq 1
+test "$(grep -Fc '"${RELEASE_VERSION}-r1" all' "$RELEASE_WORKFLOW")" -eq 1
+test "$(grep -Fc '"${RELEASE_VERSION}-r1" noarch' "$RELEASE_WORKFLOW")" -eq 1
 
 BASE_FEED_DEPENDS="printf 'Depends: comgt, flock, jq, kmod-usb-acm, kmod-usb-serial-option, kmod-usb-net-rndis\\n'"
-BE3600_FEED_DEPENDS="printf 'Depends: adb, comgt, flock, jq, kmod-usb-acm, kmod-usb-serial-option, kmod-usb-net-qmi-wwan, kmod-usb-net-rndis, lua, luci-lib-nixio, uqmi\\n'"
-test "$(grep -Fc "$BASE_FEED_DEPENDS" "$FEED_ASSEMBLER")" -eq 2
-test "$(grep -Fc "$BE3600_FEED_DEPENDS" "$FEED_ASSEMBLER")" -eq 1
-test "$(grep -Fc "printf 'SHA256sum: %s" "$FEED_ASSEMBLER")" -eq 3
+test "$(grep -Fc "$BASE_FEED_DEPENDS" "$FEED_ASSEMBLER")" -eq 1
+test "$(grep -Fc "printf 'SHA256sum: %s" "$FEED_ASSEMBLER")" -eq 1
+grep -Fq "printf 'Architecture: all" "$FEED_ASSEMBLER"
 
 # APK signing runs in the protected environment and publishes the key material.
 grep -Fq 'environment: release-signing' "$RELEASE_WORKFLOW"
@@ -168,6 +167,18 @@ grep -Fq 'keys/gl-modem-community.pem' "$RELEASE_WORKFLOW"
 grep -Fq 'SHA256SUMS' "$RELEASE_WORKFLOW"
 grep -Fq 'generate-feed-index FEED_DIR="$FEED_DIR"' "$FEED_ASSEMBLER"
 
+# IPK Packages indexes are usign-signed with the dedicated stable key.
+grep -Fq 'test -n "$USIGN_SIGNING_PRIVATE_KEY"' "$RELEASE_WORKFLOW"
+grep -Fq 'USIGN_SIGNING_PRIVATE_KEY' "$RELEASE_WORKFLOW"
+grep -Fq 'keys/gl-modem-community-usign.pub' "$RELEASE_WORKFLOW"
+grep -Fq 'sha256sum -c gl-modem-community-usign.pub.sha256' "$RELEASE_WORKFLOW"
+grep -Fq 'USIGN_SEC_FILE' "$FEED_ASSEMBLER"
+grep -Fq 'keys/gl-modem-community-usign.pub' "$FEED_ASSEMBLER"
+grep -Fq '"$1.sig"' "$FEED_ASSEMBLER"
+grep -Fq '$USIGN_KEY_ID.pub' "$FEED_ASSEMBLER"
+test -s "$REPO_DIR/keys/gl-modem-community-usign.pub"
+test -s "$REPO_DIR/keys/gl-modem-community-usign.pub.sha256"
+
 grep -Fq 'sign-apk-release:' "$ROOT_MAKEFILE"
 grep -Fq 'adbsign' "$ROOT_MAKEFILE"
 grep -Fq 'mkndx' "$ROOT_MAKEFILE"
@@ -175,13 +186,13 @@ grep -Fq 'verify --keys-dir' "$ROOT_MAKEFILE"
 grep -Fq 'empty-keys' "$ROOT_MAKEFILE"
 grep -Fq 'prepare-apk-sdk:' "$ROOT_MAKEFILE"
 grep -Fq 'generate-feed-index:' "$ROOT_MAKEFILE"
-grep -Fq '23.05-be3600)' "$ROOT_MAKEFILE"
+grep -Fq 'tools/generate-feed-index "$(FEED_DIR)" "$(FEED_URL)"' "$ROOT_MAKEFILE"
 
 # README contains every feed URL
-grep -Fq 'https://github.rudironsoni.com/gl-modem-community/feed/25.12' "$REPO_DIR/README.md"
-grep -Fq 'https://github.rudironsoni.com/gl-modem-community/feed/24.10' "$REPO_DIR/README.md"
-grep -Fq 'https://github.rudironsoni.com/gl-modem-community/feed/21.02' "$REPO_DIR/README.md"
-grep -Fq 'https://github.rudironsoni.com/gl-modem-community/feed/23.05-be3600' "$REPO_DIR/README.md"
+grep -Fq 'https://github.rudironsoni.com/gl-modem-community/feed/releases/25.12/packages/aarch64_cortex-a53/packages/packages.adb' "$REPO_DIR/README.md"
+grep -Fq 'https://github.rudironsoni.com/gl-modem-community/feed/releases/24.10/packages/aarch64_cortex-a53/packages' "$REPO_DIR/README.md"
+grep -Fq 'https://github.rudironsoni.com/gl-modem-community/feed/releases/21.02/packages/aarch64_cortex-a53/packages' "$REPO_DIR/README.md"
+grep -Fq 'https://github.rudironsoni.com/gl-modem-community/feed/releases/21.02/packages/aarch64_cortex-a53_neon-vfpv4/packages' "$REPO_DIR/README.md"
 if grep -Fq 'releases/latest/download/SHA256SUMS' "$REPO_DIR/README.md"; then
 	echo 'Versioned package instructions must fetch checksums from the same release tag' >&2
 	exit 1
@@ -194,7 +205,9 @@ openssl pkey -pubin -in "$PUBLIC_KEY" -noout
 (
     cd "$(dirname "$PUBLIC_KEY")"
     sha256sum -c "$(basename "$PUBLIC_KEY_CHECKSUM")"
+    sha256sum -c gl-modem-community-usign.pub.sha256
 )
+grep -Fq '79b5dc268b4698f5' "$REPO_DIR/README.md"
 
 if grep -RFn --include='*.md' -- '--allow-untrusted' "$REPO_DIR/README.md" "$REPO_DIR/docs"; then
     echo 'Documentation must not instruct users to bypass APK signature verification' >&2

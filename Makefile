@@ -24,7 +24,7 @@ CHANNEL_MANIFEST := $(REPO_DIR)/config/firmware-channels.json
 .PHONY: tools download verify identify extract inventory inventory-filesystem
 .PHONY: inventory-packages find-modem-components analyze analyze-frontend
 .PHONY: analyze-elf extract-strings report test package package-opkg
-.PHONY: package-glinet21 package-be3600 check-firmware-channels verify-firmware-channels
+.PHONY: package-glinet21 check-firmware-channels verify-firmware-channels
 .PHONY: generate-sbom validate-sbom verify-signing-key sign-apk-release clean-work
 .PHONY: prepare-apk-sdk generate-feed-index
 
@@ -279,7 +279,7 @@ package-opkg: SDK_SHA256 = b9762b8e1c8e114b0e6a252b98e94e6e4a1d2496beb9f6044c262
 package-opkg: SDK_DIR_NAME = sdk-24.10.4-mediatek-filogic
 package-opkg: BUILD_IMAGE = mt3000-openwrt-sdk:24.10.4
 package-opkg: PACKAGE_GLOB = gl-modem-community*.ipk
-package-opkg: PACKAGE_ASSET = gl-modem-community_$(PACKAGE_VERSION)-r$(PACKAGE_RELEASE)_aarch64_cortex-a53.ipk
+package-opkg: PACKAGE_ASSET = gl-modem-community_$(PACKAGE_VERSION)-r$(PACKAGE_RELEASE)_all.ipk
 package-opkg: BUILD_REPORT = package-opkg-build.txt
 package-opkg: HASH_REPORT = gl-modem-community.ipk.sha256
 package-opkg: ARTIFACT_REPORT = package-opkg-artifact-path.txt
@@ -290,24 +290,12 @@ package-glinet21: SDK_SHA256 = 723b08a90778779cbc20da03a36fa0e213b22dd63ce601803
 package-glinet21: SDK_DIR_NAME = sdk-21.02.7-mediatek-mt7622
 package-glinet21: BUILD_IMAGE = mt3000-openwrt-sdk:21.02.7
 package-glinet21: PACKAGE_GLOB = gl-modem-community*.ipk
-package-glinet21: PACKAGE_ASSET = gl-modem-community_$(PACKAGE_VERSION)-$(PACKAGE_RELEASE)_glinet-21.02_aarch64_cortex-a53.ipk
+package-glinet21: PACKAGE_ASSET = gl-modem-community_$(PACKAGE_VERSION)-$(PACKAGE_RELEASE)_glinet-21.02_all.ipk
 package-glinet21: BUILD_REPORT = package-glinet21-build.txt
 package-glinet21: HASH_REPORT = gl-modem-community-glinet21.ipk.sha256
 package-glinet21: ARTIFACT_REPORT = package-glinet21-artifact-path.txt
 
-package-be3600: SDK_NAME = openwrt-sdk-23.05.5-ipq807x-generic_gcc-12.3.0_musl.Linux-x86_64.tar.xz
-package-be3600: SDK_URL = https://downloads.openwrt.org/releases/23.05.5/targets/ipq807x/generic/$(SDK_NAME)
-package-be3600: SDK_SHA256 = 57c8a1d5586f1548ebe360d71a6dd9deec7833f5cb3e5b93d5a618c6da6e9399
-package-be3600: SDK_DIR_NAME = sdk-23.05.5-ipq807x-generic
-package-be3600: BUILD_IMAGE = be3600-openwrt-sdk:23.05.5
-package-be3600: PACKAGE_GLOB = gl-modem-community*.ipk
-package-be3600: PACKAGE_ASSET = gl-modem-community_$(PACKAGE_VERSION)-r$(PACKAGE_RELEASE)_gl-be3600-4.9_aarch64_cortex-a53_neon-vfpv4.ipk
-package-be3600: BUILD_REPORT = package-be3600-build.txt
-package-be3600: HASH_REPORT = gl-modem-community-be3600.ipk.sha256
-package-be3600: ARTIFACT_REPORT = package-be3600-artifact-path.txt
-package-be3600: PACKAGE_MAKE_ARGS = BE3600_BUILD=1
-
-package package-opkg package-be3600:
+package package-opkg:
 	sdk_archive="$(REPO_DIR)/tool-cache/$(SDK_NAME)"
 	sdk_dir="$(REPO_DIR)/tool-cache/$(SDK_DIR_NAME)"
 	mkdir -p "$(REPO_DIR)/tool-cache" "$(REPO_DIR)/artifacts" "$(ANALYSIS_DIR)/reports" "$(ANALYSIS_DIR)/hashes"
@@ -331,7 +319,7 @@ package package-opkg package-be3600:
 			set -eu
 			cd /repo/tool-cache/$(SDK_DIR_NAME)
 			make defconfig
-			make V=s $(PACKAGE_MAKE_ARGS) package/gl-modem-community/compile
+			make V=s package/gl-modem-community/compile
 		" >"$(ANALYSIS_DIR)/reports/$(BUILD_REPORT)" 2>&1
 	artifact=$$(find "$$sdk_dir/bin/packages" -type f -name '$(PACKAGE_GLOB)' -print | head -n 1)
 	test -n "$$artifact"
@@ -685,72 +673,7 @@ sign-apk-release:
 generate-feed-index: FEED_DIR = $(REPO_DIR)/feed
 generate-feed-index: FEED_URL = https://github.rudironsoni.com/gl-modem-community/feed
 generate-feed-index:
-	test -d "$(FEED_DIR)"
-	root_items=""
-	found=0
-	for channel_dir in "$(FEED_DIR)"/*/; do
-		test -d "$$channel_dir" || continue
-		found=1
-		channel=$$(basename "$$channel_dir")
-		case "$$channel" in
-			25.12)
-				label='GL.iNet OpenWrt 25 (APK)'
-				snippet_hint='Add this line to /etc/apk/repositories.d/customfeeds.list:'
-				snippet='$(FEED_URL)/25.12/packages.adb'
-				;;
-			24.10)
-				label='OpenWrt 24 (IPK)'
-				snippet_hint='Add this line to /etc/opkg/customfeeds.conf:'
-				snippet='src/gz gl-modem-community $(FEED_URL)/24.10'
-				;;
-			21.02)
-				label='GL.iNet 4.8.x stable and 4.9.x beta (IPK)'
-				snippet_hint='Add this line to /etc/opkg/customfeeds.conf:'
-				snippet='src/gz gl-modem-community $(FEED_URL)/21.02'
-				;;
-			23.05-be3600)
-				label='GL.iNet GL-BE3600 4.9.x (IPK)'
-				snippet_hint='Add this line to /etc/opkg/customfeeds.conf:'
-				snippet='src/gz gl-modem-community $(FEED_URL)/23.05-be3600'
-				;;
-			*)
-				printf 'Unknown feed channel: %s\n' "$$channel" >&2
-				exit 1
-				;;
-		esac
-		{
-			printf '<!DOCTYPE html>\n<html lang="en">\n<head>\n'
-			printf '<meta charset="utf-8">\n'
-			printf '<meta name="viewport" content="width=device-width, initial-scale=1">\n'
-			printf '<title>gl-modem-community feed %s</title>\n</head>\n<body>\n' "$$channel"
-			printf '<h1>gl-modem-community feed %s</h1>\n' "$$channel"
-			printf '<p>%s</p>\n' "$$label"
-			printf '<p>%s</p>\n<pre>%s</pre>\n' "$$snippet_hint" "$$snippet"
-			printf '<h2>Files</h2>\n<ul>\n'
-			for feed_file in "$$channel_dir"*; do
-				test -f "$$feed_file" || continue
-				name=$$(basename "$$feed_file")
-				test "$$name" != index.html || continue
-				printf '<li><a href="%s">%s</a></li>\n' "$$name" "$$name"
-			done
-			printf '</ul>\n'
-			printf '<p><a href="../">All feeds</a> - '
-			printf '<a href="https://github.com/rudironsoni/gl-modem-community">Project repository</a></p>\n'
-			printf '</body>\n</html>\n'
-		} >"$$channel_dir/index.html"
-		root_items="$$root_items<li><a href=\"$$channel/\">$$channel</a> - $$label</li>"
-	done
-	test "$$found" -eq 1
-	{
-		printf '<!DOCTYPE html>\n<html lang="en">\n<head>\n'
-		printf '<meta charset="utf-8">\n'
-		printf '<meta name="viewport" content="width=device-width, initial-scale=1">\n'
-		printf '<title>gl-modem-community package feeds</title>\n</head>\n<body>\n'
-		printf '<h1>gl-modem-community package feeds</h1>\n'
-		printf '<ul>\n%s\n</ul>\n' "$$root_items"
-		printf '<p><a href="https://github.com/rudironsoni/gl-modem-community">Project repository</a></p>\n'
-		printf '</body>\n</html>\n'
-	} >"$(FEED_DIR)/index.html"
+	tools/generate-feed-index "$(FEED_DIR)" "$(FEED_URL)"
 
 clean-work:
 	@echo "Remove ignored work directories manually after reviewing their paths."

@@ -22,6 +22,8 @@ define Package/gl-modem-community
   SUBMENU:=WWAN
   TITLE:=Community modem drivers for GL.iNet firmware
   DEPENDS:=$(COMMON_DEPENDS)
+  # One architecture-independent package serves every supported router.
+  PKGARCH:=all
 endef
 
 define Package/gl-modem-community/description

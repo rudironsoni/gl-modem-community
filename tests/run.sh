@@ -18,6 +18,7 @@ find /repo/package/gl-modem-community/files -type f -name "*.lua" -exec luac5.1 
         /repo/package/gl-modem-community/files/usr/libexec/gl-modem-community/vos5g-qmi-system-mode
 shellcheck -S warning -e SC1091,SC2034,SC3043 /repo/tests/*.sh \
 		/repo/tools/assemble-release-feeds \
+		/repo/tools/generate-feed-index \
 		/repo/package/gl-modem-community/files/etc/init.d/gl_modem_community \
 		/repo/package/gl-modem-community/files/usr/libexec/gl-modem-community/merge-models \
 		/repo/package/gl-modem-community/files/usr/libexec/gl-modem-community/modem_AT-wrapper \
@@ -91,7 +92,7 @@ run_test "$REPO_DIR/tests/test-ensure-option-ids.sh"
 run_test "$REPO_DIR/tests/test-fm350-boot-restore.sh"
 run_test "$REPO_DIR/tests/test-vos5g-qmi.sh"
 run_test "$REPO_DIR/tests/test-vos5g-band-monitor.sh"
-run_test "$REPO_DIR/tests/test-be3600-target.sh"
+run_test "$REPO_DIR/tests/test-unified-channels.sh"
 
 tmp=$(mktemp -d "${TMPDIR:-/tmp}/gl-modem-community-test.XXXXXX")
 trap 'rm -rf "$tmp"' EXIT INT TERM

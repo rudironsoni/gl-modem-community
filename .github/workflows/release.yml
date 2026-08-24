@@ -93,11 +93,11 @@ jobs:
           fi
           if [[ "$GITHUB_EVENT_NAME" != workflow_dispatch ]]; then
             release_files=(
-              "feed/25.12/gl-modem-community-${version}-r1.apk"
-              "feed/25.12/packages.adb"
-              "feed/24.10/gl-modem-community_${version}-r1_aarch64_cortex-a53.ipk"
-              "feed/21.02/gl-modem-community_${version}-1_glinet-21.02_aarch64_cortex-a53.ipk"
-              "feed/23.05-be3600/gl-modem-community_${version}-r1_gl-be3600-4.9_aarch64_cortex-a53_neon-vfpv4.ipk"
+              "feed/releases/25.12/packages/aarch64_cortex-a53/packages/gl-modem-community-${version}-r1.apk"
+              "feed/releases/25.12/packages/aarch64_cortex-a53/packages/packages.adb"
+              "feed/releases/24.10/packages/aarch64_cortex-a53/packages/gl-modem-community_${version}-r1_all.ipk"
+              "feed/releases/21.02/packages/aarch64_cortex-a53/packages/gl-modem-community_${version}-1_glinet-21.02_all.ipk"
+              "feed/releases/21.02/packages/aarch64_cortex-a53_neon-vfpv4/packages/gl-modem-community_${version}-1_glinet-21.02_all.ipk"
             )
             for release_file in "${release_files[@]}"; do
               if [[ ! -s "$release_file" ]]; then
@@ -250,10 +250,13 @@ jobs:
       - name: Sign APK and generate feeds
         env:
           APK_SIGNING_PRIVATE_KEY: ${{ secrets.APK_SIGNING_PRIVATE_KEY }}
+          USIGN_SIGNING_PRIVATE_KEY: ${{ secrets.USIGN_SIGNING_PRIVATE_KEY }}
         shell: bash
         run: |
           set -euo pipefail
           test -n "$APK_SIGNING_PRIVATE_KEY"
+          test -n "$USIGN_SIGNING_PRIVATE_KEY"
+          test -s keys/gl-modem-community-usign.pub
           version="$(jq -er '.["."]' .release-please-manifest.json)"
           package_version="$(sed -n 's/^PKG_VERSION:=\([^[:space:]#]*\).*/\1/p' package/gl-modem-community/Makefile)"
           test "$version" = "$package_version"
@@ -265,6 +268,8 @@ jobs:
           trap 'rm -rf "$signing_dir"' EXIT
           printf '%s\n' "$APK_SIGNING_PRIVATE_KEY" > "$signing_dir/private-key.pem"
           unset APK_SIGNING_PRIVATE_KEY
+          printf '%s\n' "$USIGN_SIGNING_PRIVATE_KEY" > "$signing_dir/usign.sec"
+          unset USIGN_SIGNING_PRIVATE_KEY
 
           docker build --platform linux/amd64 -t mt3000-openwrt-sdk:25.12.5 tools/sdk-container
           docker run --rm --platform linux/amd64 \
@@ -279,7 +284,12 @@ jobs:
               OUTPUT_INDEX=/repo/release-assets/packages.adb \
               OUTPUT_METADATA=/repo/release-assets/gl-modem-community.apk.adb.json
 
-          sh tools/assemble-release-feeds "$version" release-assets feed
+          usign_bin="tool-cache/sdk-25.12.5-mediatek-filogic/staging_dir/host/bin/usign"
+          test -x "$usign_bin"
+          USIGN_BIN="$usign_bin" \
+          USIGN_SEC_FILE="$signing_dir/usign.sec" \
+          USIGN_PUB_FILE=keys/gl-modem-community-usign.pub \
+            sh tools/assemble-release-feeds "$version" release-assets feed
 
       - name: Commit feeds and dispatch final CI
         id: feed
@@ -524,18 +534,18 @@ jobs:
         run: |
           set -euo pipefail
           mkdir release-assets
+          apk_feed="feed/releases/25.12/packages/aarch64_cortex-a53/packages"
+          ipk24_feed="feed/releases/24.10/packages/aarch64_cortex-a53/packages"
+          ipk21_feed="feed/releases/21.02/packages/aarch64_cortex-a53/packages"
           install -m 0644 \
-            "feed/25.12/gl-modem-community-${RELEASE_VERSION}-r1.apk" \
+            "${apk_feed}/gl-modem-community-${RELEASE_VERSION}-r1.apk" \
             release-assets/
-          install -m 0644 feed/25.12/packages.adb release-assets/
+          install -m 0644 "${apk_feed}/packages.adb" release-assets/
           install -m 0644 \
-            "feed/24.10/gl-modem-community_${RELEASE_VERSION}-r1_aarch64_cortex-a53.ipk" \
+            "${ipk24_feed}/gl-modem-community_${RELEASE_VERSION}-r1_all.ipk" \
             release-assets/
           install -m 0644 \
-            "feed/21.02/gl-modem-community_${RELEASE_VERSION}-1_glinet-21.02_aarch64_cortex-a53.ipk" \
-            release-assets/
-          install -m 0644 \
-            "feed/23.05-be3600/gl-modem-community_${RELEASE_VERSION}-r1_gl-be3600-4.9_aarch64_cortex-a53_neon-vfpv4.ipk" \
+            "${ipk21_feed}/gl-modem-community_${RELEASE_VERSION}-1_glinet-21.02_all.ipk" \
             release-assets/
 
       - name: Verify packages and generate SBOMs
@@ -552,9 +562,8 @@ jobs:
             bash -ceu '
               apk_tool=/repo/tool-cache/sdk-25.12.5-mediatek-filogic/staging_dir/host/bin/apk
               apk=/repo/release-assets/gl-modem-community-${RELEASE_VERSION}-r1.apk
-              ipk=/repo/release-assets/gl-modem-community_${RELEASE_VERSION}-r1_aarch64_cortex-a53.ipk
-              glinet21_ipk=/repo/release-assets/gl-modem-community_${RELEASE_VERSION}-1_glinet-21.02_aarch64_cortex-a53.ipk
-              be3600_ipk=/repo/release-assets/gl-modem-community_${RELEASE_VERSION}-r1_gl-be3600-4.9_aarch64_cortex-a53_neon-vfpv4.ipk
+              ipk=/repo/release-assets/gl-modem-community_${RELEASE_VERSION}-r1_all.ipk
+              glinet21_ipk=/repo/release-assets/gl-modem-community_${RELEASE_VERSION}-1_glinet-21.02_all.ipk
 
               "$apk_tool" verify --keys-dir /repo/keys "$apk"
               "$apk_tool" verify --keys-dir /repo/keys /repo/release-assets/packages.adb
@@ -570,7 +579,6 @@ jobs:
               '"'"' /tmp/packages-index.json >/dev/null
               tar -tzf "$ipk" >/dev/null
               tar -tzf "$glinet21_ipk" >/dev/null
-              tar -tzf "$be3600_ipk" >/dev/null
 
               make -C /repo --no-print-directory generate-sbom \
                 SBOM_FORMAT=apk \
@@ -585,10 +593,6 @@ jobs:
                 SBOM_FORMAT=ipk \
                 SBOM_ARTIFACT="$glinet21_ipk" \
                 SBOM_OUTPUT=/repo/release-assets/gl-modem-community.glinet21.ipk.cdx.json
-              make -C /repo --no-print-directory generate-sbom \
-                SBOM_FORMAT=ipk \
-                SBOM_ARTIFACT="$be3600_ipk" \
-                SBOM_OUTPUT=/repo/release-assets/gl-modem-community.be3600.ipk.cdx.json
 
               for sbom in /repo/release-assets/*.cdx.json; do
                 make -C /repo --no-print-directory validate-sbom SBOM="$sbom"
@@ -613,16 +617,13 @@ jobs:
               }
               validate_component \
                 /repo/release-assets/gl-modem-community.apk.cdx.json \
-                "${RELEASE_VERSION}-r1" aarch64_cortex-a53
+                "${RELEASE_VERSION}-r1" noarch
               validate_component \
                 /repo/release-assets/gl-modem-community.ipk.cdx.json \
-                "${RELEASE_VERSION}-r1" aarch64_cortex-a53
+                "${RELEASE_VERSION}-r1" all
               validate_component \
                 /repo/release-assets/gl-modem-community.glinet21.ipk.cdx.json \
-                "${RELEASE_VERSION}-1" aarch64_cortex-a53
-              validate_component \
-                /repo/release-assets/gl-modem-community.be3600.ipk.cdx.json \
-                "${RELEASE_VERSION}-1" aarch64_cortex-a53
+                "${RELEASE_VERSION}-1" all
             '
 
       - name: Add keys and checksums
@@ -630,6 +631,8 @@ jobs:
           set -euo pipefail
           install -m 0644 keys/gl-modem-community.pem release-assets/
           install -m 0644 keys/gl-modem-community.pem.sha256 release-assets/
+          install -m 0644 keys/gl-modem-community-usign.pub release-assets/
+          install -m 0644 keys/gl-modem-community-usign.pub.sha256 release-assets/
           checksums="$(mktemp "${RUNNER_TEMP}/SHA256SUMS.XXXXXX")"
           (
             cd release-assets
@@ -639,6 +642,7 @@ jobs:
           ) > "$checksums"
           mv "$checksums" release-assets/SHA256SUMS
           (cd release-assets && sha256sum -c gl-modem-community.pem.sha256)
+          (cd release-assets && sha256sum -c gl-modem-community-usign.pub.sha256)
 
       - name: Attest release assets
         uses: actions/attest@f7c74d28b9d84cb8768d0b8ca14a4bac6ef463e6 # v4.2.0

@@ -20,3 +20,4 @@
 
 # opkg feed (published by release workflow)
 feed/
+keys/*.sec

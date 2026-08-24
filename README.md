@@ -21,12 +21,11 @@ The first driver targets the Fibocom FM350-GL on a GL.iNet GL-MT3000 (Beryl AX).
    command -v opkg && echo 'opkg firmware'
    ```
 
-2. Pick the matching feed:
+2. Pick the release channel that matches the OS version. One architecture-independent package per channel serves every supported router:
 
-   - GL.iNet OpenWrt 25 (APK): `https://github.rudironsoni.com/gl-modem-community/feed/25.12`
-   - OpenWrt 24 (IPK): `https://github.rudironsoni.com/gl-modem-community/feed/24.10`
-   - GL.iNet GL-MT3000 stable/beta 4.8.x/4.9.x (IPK): `https://github.rudironsoni.com/gl-modem-community/feed/21.02`
-   - GL.iNet GL-BE3600 4.9.x (IPK): `https://github.rudironsoni.com/gl-modem-community/feed/23.05-be3600`
+   - GL.iNet OpenWrt 25 (APK): `https://github.rudironsoni.com/gl-modem-community/feed/releases/25.12/`
+   - OpenWrt 24 (IPK): `https://github.rudironsoni.com/gl-modem-community/feed/releases/24.10/`
+   - GL.iNet stock firmware 4.8.x/4.9.x, GL-MT3000 and GL-BE3600 (IPK): `https://github.rudironsoni.com/gl-modem-community/feed/releases/21.02/`
 
 3. Follow the install path in [Install the current release](#install-the-current-release).
 4. Run the checks in [Verify the FM350 setup](#verify-the-fm350-setup) before relying on production traffic.
@@ -39,8 +38,8 @@ A package that builds against an SDK has not necessarily been tested on firmware
 | --- | --- | --- | --- |
 | GL.iNet OpenWrt 25 on GL-MT3000 | APK | Builds with the pinned OpenWrt 25.12.5 MediaTek Filogic SDK | Partially tested with FM350-GL |
 | GL.iNet OEM or OpenWrt 24 on GL-MT3000 | IPK | Builds with the pinned OpenWrt 24.10.7 MediaTek Filogic SDK | Not tested |
-| GL.iNet 4.9.0 release2 build 1036 on GL-BE3600 | IPK | Dedicated target uses the pinned OpenWrt 23.05.5 IPQ807x userspace ABI surrogate | VOS 5G data session verified; stock-supported modem and FM350-GL not tested |
-| Other GL.iNet routers | Target-specific package required | Not built | Not tested |
+| GL.iNet 4.9.0 release2 build 1036 on GL-BE3600 | IPK | Uses the unified architecture-independent 21.02 package | VOS 5G data session verified with the earlier dedicated build; the unified package is `[UNVERIFIED]` on this router |
+| Other GL.iNet routers | Same architecture-independent package; the feed needs the router's architecture directory | Not published | Not tested |
 | Vanilla OpenWrt | Not applicable | GL.iNet cellular services are absent | Not supported |
 
 Dell DW5931e-eSIM (`0e8d:7127`) on GL-MT3000 4.8.1 uses USB interface 6 as the AT port (`/dev/ttyUSB4`). Interface 5 is ADB and is skipped. The kernel hotplug `PRODUCT` value may be `e8d/7127/1` (no leading zero). FCC lock is cleared with `AT+GTFCCLOCKMODE=0` plus a USB power cycle when `AT+GTFCCEFFSTATUS?` reports `2,0`.
@@ -83,7 +82,7 @@ The screenshots below show the FM350-GL in the GL.iNet admin panel and mobile ap
 
 ## Install the current release
 
-Your firmware uses one of four feeds. Determine which one applies first:
+Your firmware uses one of three release channels. Determine which one applies first:
 
 ```sh
 cat /etc/openwrt_release
@@ -91,14 +90,18 @@ command -v apk && echo 'apk firmware'
 command -v opkg && echo 'opkg firmware'
 ```
 
-| Firmware | Destination feed | Package |
+| Firmware | Release channel | Package |
 | --- | --- | --- |
-| GL.iNet OpenWrt 25 | [`https://github.rudironsoni.com/gl-modem-community/feed/25.12`](https://github.rudironsoni.com/gl-modem-community/feed/25.12) | APK |
-| OpenWrt 24 | [`https://github.rudironsoni.com/gl-modem-community/feed/24.10`](https://github.rudironsoni.com/gl-modem-community/feed/24.10) | IPK |
-| GL-MT3000 4.8.1 stable and 4.9.x beta | [`https://github.rudironsoni.com/gl-modem-community/feed/21.02`](https://github.rudironsoni.com/gl-modem-community/feed/21.02) | IPK |
-| GL-BE3600 4.9.x | [`https://github.rudironsoni.com/gl-modem-community/feed/23.05-be3600`](https://github.rudironsoni.com/gl-modem-community/feed/23.05-be3600) | IPK |
+| GL.iNet OpenWrt 25 | [`https://github.rudironsoni.com/gl-modem-community/feed/releases/25.12/`](https://github.rudironsoni.com/gl-modem-community/feed/releases/25.12/) | APK |
+| OpenWrt 24 | [`https://github.rudironsoni.com/gl-modem-community/feed/releases/24.10/`](https://github.rudironsoni.com/gl-modem-community/feed/releases/24.10/) | IPK |
+| GL.iNet stock 4.8.x/4.9.x (GL-MT3000, GL-BE3600) | [`https://github.rudironsoni.com/gl-modem-community/feed/releases/21.02/`](https://github.rudironsoni.com/gl-modem-community/feed/releases/21.02/) | IPK |
+
+Each channel ships one architecture-independent package (`Architecture: all`). Inside a channel, the feed follows the standard `releases/<version>/packages/<architecture>/packages/` layout; every architecture directory carries an identical copy of the same package, so pick the directory that matches your router's `DISTRIB_ARCH` from `/etc/openwrt_release`.
 
 All installs require GL.iNet's proprietary cellular services. Check the [compatibility status](#compatibility-status) before installing on hardware that is not yet marked tested.
+
+> [!NOTE]
+> The previous flat feed URLs (`feed/25.12`, `feed/24.10`, `feed/21.02`) keep working for one more release and then disappear; switch `customfeeds` entries to the `feed/releases/...` URLs above. The dedicated `feed/23.05-be3600` channel is retired: GL-BE3600 now installs the unified 21.02 package from `feed/releases/21.02/packages/aarch64_cortex-a53_neon-vfpv4/packages`.
 
 > [!NOTE]
 > The feeds are static files served by GitHub Pages. `opkg update` and `apk update` fetch them with plain HTTP clients that cannot answer JavaScript challenges. If the feed domain sits behind a CDN with bot protection (for example Cloudflare), requests to `/gl-modem-community/feed/*` must be exempted from managed challenges, or feed downloads fail on the router even though the same URLs open in a browser.
@@ -126,7 +129,7 @@ chmod 0644 /etc/apk/keys/gl-modem-community.pem
 4. Add this line to `/etc/apk/repositories.d/customfeeds.list`. `apk` reads a repository line as the index URL itself, so it must end in `packages.adb`:
 
    ```text
-   https://github.rudironsoni.com/gl-modem-community/feed/25.12/packages.adb
+   https://github.rudironsoni.com/gl-modem-community/feed/releases/25.12/packages/aarch64_cortex-a53/packages/packages.adb
    ```
 
 5. Save the configuration and select **Update lists**.
@@ -138,7 +141,7 @@ If the software button says **Configure opkg**, use the IPK instructions below i
 #### Option B: Install the APK feed without LuCI
 
 ```sh
-feed='https://github.rudironsoni.com/gl-modem-community/feed/25.12/packages.adb'
+feed='https://github.rudironsoni.com/gl-modem-community/feed/releases/25.12/packages/aarch64_cortex-a53/packages/packages.adb'
 mkdir -p /etc/apk/repositories.d
 touch /etc/apk/repositories.d/customfeeds.list
 grep -Fqx "$feed" /etc/apk/repositories.d/customfeeds.list || \
@@ -171,12 +174,19 @@ apk add /tmp/gl-modem-community-${VERSION}-r1.apk
 
 #### Option A (recommended): Install from the OpenWrt 24 feed
 
-Add the OpenWrt 24 feed to `/etc/opkg/customfeeds.conf`. Create the file first if it does not exist:
+The IPK feed indexes are signed with [usign](https://openwrt.org/docs/guide-user/security/keygen). Install the feed's public key once so `opkg` verifies the index:
+
+```sh
+wget -O /etc/opkg/keys/79b5dc268b4698f5 \
+  https://github.rudironsoni.com/gl-modem-community/feed/releases/24.10/79b5dc268b4698f5.pub
+```
+
+Then add the OpenWrt 24 feed to `/etc/opkg/customfeeds.conf`. Create the file first if it does not exist:
 
 ```sh
 touch /etc/opkg/customfeeds.conf
 chmod 0644 /etc/opkg/customfeeds.conf
-echo 'src/gz gl-modem-community https://github.rudironsoni.com/gl-modem-community/feed/24.10' \
+echo 'src/gz gl-modem-community https://github.rudironsoni.com/gl-modem-community/feed/releases/24.10/packages/aarch64_cortex-a53/packages' \
   >> /etc/opkg/customfeeds.conf
 opkg update
 opkg install gl-modem-community
@@ -198,65 +208,45 @@ Install a single IPK manually with `VERSION` set to the release tag:
 
 ```sh
 cd /tmp
-wget -O gl-modem-community_${VERSION}-r1_aarch64_cortex-a53.ipk \
-  https://github.com/rudironsoni/gl-modem-community/releases/download/v${VERSION}/gl-modem-community_${VERSION}-r1_aarch64_cortex-a53.ipk
+wget -O gl-modem-community_${VERSION}-r1_all.ipk \
+  https://github.com/rudironsoni/gl-modem-community/releases/download/v${VERSION}/gl-modem-community_${VERSION}-r1_all.ipk
 wget -O SHA256SUMS \
   https://github.com/rudironsoni/gl-modem-community/releases/download/v${VERSION}/SHA256SUMS
-grep "gl-modem-community_${VERSION}-r1_aarch64_cortex-a53.ipk" SHA256SUMS | sha256sum -c
-opkg install /tmp/gl-modem-community_${VERSION}-r1_aarch64_cortex-a53.ipk
+grep "gl-modem-community_${VERSION}-r1_all.ipk" SHA256SUMS | sha256sum -c
+opkg install /tmp/gl-modem-community_${VERSION}-r1_all.ipk
 /etc/init.d/gl_modem_community enable
 /etc/init.d/gl_modem_community restart
 /etc/init.d/gl_cellular_manager restart
-```
-
-### GL.iNet GL-BE3600 4.9.x (IPK)
-
-The Slate 7 reports package architecture
-`aarch64_cortex-a53_neon-vfpv4`; do not install the GL-MT3000 IPK on it.
-
-#### Option A (recommended): Install from the GL-BE3600 feed
-
-```sh
-touch /etc/opkg/customfeeds.conf
-chmod 0644 /etc/opkg/customfeeds.conf
-echo 'src/gz gl-modem-community https://github.rudironsoni.com/gl-modem-community/feed/23.05-be3600' \
-  >> /etc/opkg/customfeeds.conf
-opkg update
-opkg install gl-modem-community
-/etc/init.d/gl_modem_community enable
-/etc/init.d/gl_modem_community restart
-```
-
-#### Option B: Install one IPK manually
-
-```sh
-cd /tmp
-wget -O gl-modem-community_${VERSION}-r1_gl-be3600-4.9_aarch64_cortex-a53_neon-vfpv4.ipk \
-  https://github.com/rudironsoni/gl-modem-community/releases/download/v${VERSION}/gl-modem-community_${VERSION}-r1_gl-be3600-4.9_aarch64_cortex-a53_neon-vfpv4.ipk
-wget -O SHA256SUMS \
-  https://github.com/rudironsoni/gl-modem-community/releases/download/v${VERSION}/SHA256SUMS
-grep "gl-modem-community_${VERSION}-r1_gl-be3600-4.9_aarch64_cortex-a53_neon-vfpv4.ipk" SHA256SUMS | sha256sum -c
-opkg install /tmp/gl-modem-community_${VERSION}-r1_gl-be3600-4.9_aarch64_cortex-a53_neon-vfpv4.ipk
-/etc/init.d/gl_modem_community enable
-/etc/init.d/gl_modem_community restart
 ```
 
 ### GL.iNet current stable and beta (IPK 21.02)
 
 #### Option A (recommended): Install from the GL.iNet 21.02 feed
 
-Current GL-MT3000 OEM firmware (stable 4.8.x and beta 4.9.x) runs OpenWrt 21.02 with `opkg`. Use the feed for the 21.02 build. GL-BE3600 uses the dedicated feed above instead.
+Current GL.iNet OEM firmware (stable 4.8.x and beta 4.9.x) runs `opkg`. One channel serves every supported router; only the architecture directory in the feed URL differs:
+
+| Router | `DISTRIB_ARCH` | Feed URL |
+| --- | --- | --- |
+| GL-MT3000 | `aarch64_cortex-a53` | `https://github.rudironsoni.com/gl-modem-community/feed/releases/21.02/packages/aarch64_cortex-a53/packages` |
+| GL-BE3600 | `aarch64_cortex-a53_neon-vfpv4` | `https://github.rudironsoni.com/gl-modem-community/feed/releases/21.02/packages/aarch64_cortex-a53_neon-vfpv4/packages` |
+
+Install the feed's usign public key once, then add the feed:
 
 ```sh
+wget -O /etc/opkg/keys/79b5dc268b4698f5 \
+  https://github.rudironsoni.com/gl-modem-community/feed/releases/21.02/79b5dc268b4698f5.pub
+
 touch /etc/opkg/customfeeds.conf
 chmod 0644 /etc/opkg/customfeeds.conf
-echo 'src/gz gl-modem-community https://github.rudironsoni.com/gl-modem-community/feed/21.02' \
+echo 'src/gz gl-modem-community https://github.rudironsoni.com/gl-modem-community/feed/releases/21.02/packages/aarch64_cortex-a53/packages' \
   >> /etc/opkg/customfeeds.conf
 opkg update
 opkg install gl-modem-community
 /etc/init.d/gl_modem_community enable
 /etc/init.d/gl_modem_community restart
 ```
+
+On GL-BE3600, use the `aarch64_cortex-a53_neon-vfpv4` feed URL from the table instead. VOS 5G support additionally needs tooling that the stock firmware may not include; the package installs without it and logs which tools are missing. Install them with `opkg install adb uqmi kmod-usb-net-qmi-wwan luci-lib-nixio lua`. `[UNVERIFIED]` The unified architecture-independent package has not yet been re-tested on GL-BE3600 hardware; the VOS 5G evidence below was gathered with the earlier dedicated build.
 
 A new release upgrade is the same as the OpenWrt 24 case: `opkg update` then `opkg upgrade gl-modem-community`.
 
@@ -266,12 +256,12 @@ Install a single IPK manually with `VERSION` set to the release tag:
 
 ```sh
 cd /tmp
-wget -O gl-modem-community_${VERSION}-1_glinet-21.02_aarch64_cortex-a53.ipk \
-  https://github.com/rudironsoni/gl-modem-community/releases/download/v${VERSION}/gl-modem-community_${VERSION}-1_glinet-21.02_aarch64_cortex-a53.ipk
+wget -O gl-modem-community_${VERSION}-1_glinet-21.02_all.ipk \
+  https://github.com/rudironsoni/gl-modem-community/releases/download/v${VERSION}/gl-modem-community_${VERSION}-1_glinet-21.02_all.ipk
 wget -O SHA256SUMS \
   https://github.com/rudironsoni/gl-modem-community/releases/download/v${VERSION}/SHA256SUMS
-grep "gl-modem-community_${VERSION}-1_glinet-21.02_aarch64_cortex-a53.ipk" SHA256SUMS | sha256sum -c
-opkg install /tmp/gl-modem-community_${VERSION}-1_glinet-21.02_aarch64_cortex-a53.ipk
+grep "gl-modem-community_${VERSION}-1_glinet-21.02_all.ipk" SHA256SUMS | sha256sum -c
+opkg install /tmp/gl-modem-community_${VERSION}-1_glinet-21.02_all.ipk
 /etc/init.d/gl_modem_community enable
 /etc/init.d/gl_modem_community restart
 ```
@@ -350,7 +340,7 @@ make tools
 make test
 make package
 make package-opkg
-make package-be3600
+make package-glinet21
 git diff --check
 ```
 
@@ -362,7 +352,7 @@ Supporting another router requires more than adding its name to a table:
 
 1. Confirm that its stock firmware provides compatible `cellular_manager`, `modem_AT`, model table, RPC, and ubus paths.
 2. Record the router architecture, exact firmware version, package manager, and SDK source.
-3. Add a checksum-pinned package target for the architecture.
+3. Add the router's package architecture string to the per-channel architecture tables in `tools/assemble-release-feeds`; the package itself is architecture-independent and needs no new build target.
 4. Run the offline suite and inspect the package contents before installation.
 5. Test both a stock-supported modem and a community modem on the router.
 6. Confirm that stopping the service restores stock behavior.
@@ -378,7 +368,7 @@ make tools
 make test
 make package
 make package-opkg
-make package-be3600
+make package-glinet21
 ```
 
 To reproduce the stock firmware analysis:
@@ -391,6 +381,6 @@ The [modem architecture](docs/modem-architecture.md), [package design](docs/pack
 
 ## Releases
 
-Every pull request runs the offline test suite and all package targets. A release adds the signed APK and repository index, target-specific IPKs, CycloneDX SBOMs, the public key, checksums, and GitHub build-provenance attestations.
+Every pull request runs the offline test suite and all package targets. A release adds the signed APK and repository index, architecture-independent IPKs with usign-signed feed indexes, CycloneDX SBOMs, the public keys, checksums, and GitHub build-provenance attestations.
 
 [Release Please](https://github.com/googleapis/release-please) derives versions from Conventional Commits and maintains one release pull request. The workflow builds and signs the proposed packages, commits the generated `feed/` files to that pull request, and reruns its required CI. Merging the release pull request updates the GitHub Pages feed on `main` and publishes the matching GitHub Release from those exact committed packages.

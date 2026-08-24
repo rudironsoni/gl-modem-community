@@ -1,4 +1,24 @@
 #!/bin/sh
+# SPDX-License-Identifier: GPL-3.0-only
+#
+# Assemble the published package feed from the release assets.
+#
+# One architecture-independent package per OS version is published under the
+# community-standard layout
+#   releases/<major.minor version>/packages/<package arch>/packages
+# Every architecture directory of a release carries a copy of the same
+# single artifact; supporting a new router only adds an architecture string
+# to the tables below. Legacy top-level channel directories are kept for one
+# release overlap.
+#
+# Optional environment:
+#   USIGN_SEC_FILE  usign private key; when set, every generated Packages
+#                   index is signed and the public key is published at
+#                   releases/<version>/<key-id>.pub (fails closed when the
+#                   public key or usign tool is missing). The release
+#                   workflow always sets this.
+#   USIGN_PUB_FILE  usign public key (default: keys/gl-modem-community-usign.pub)
+#   USIGN_BIN       usign binary (default: usign)
 set -eu
 
 if [ "$#" -ne 3 ]; then
@@ -12,6 +32,16 @@ FEED_DIR=$3
 unset CDPATH
 REPO_DIR=$(cd -- "$(dirname -- "$0")/.." && pwd)
 
+USIGN_BIN=${USIGN_BIN:-usign}
+USIGN_PUB_FILE=${USIGN_PUB_FILE:-$REPO_DIR/keys/gl-modem-community-usign.pub}
+USIGN_SEC_FILE=${USIGN_SEC_FILE:-}
+
+# Supported package architectures per OS-version release. All entries of a
+# release list the identical Architecture: all package.
+ARCHS_2102='aarch64_cortex-a53 aarch64_cortex-a53_neon-vfpv4'
+ARCHS_2410='aarch64_cortex-a53'
+ARCHS_2512='aarch64_cortex-a53'
+
 case "$VERSION" in
 	''|*[!0-9A-Za-z.-]*)
 		printf 'Invalid release version: %s\n' "$VERSION" >&2
@@ -20,81 +50,85 @@ case "$VERSION" in
 esac
 
 apk25="$RELEASE_ASSETS/gl-modem-community-${VERSION}-r1.apk"
-ipk24="$RELEASE_ASSETS/gl-modem-community_${VERSION}-r1_aarch64_cortex-a53.ipk"
-ipk21="$RELEASE_ASSETS/gl-modem-community_${VERSION}-1_glinet-21.02_aarch64_cortex-a53.ipk"
-ipkbe3600="$RELEASE_ASSETS/gl-modem-community_${VERSION}-r1_gl-be3600-4.9_aarch64_cortex-a53_neon-vfpv4.ipk"
+ipk24="$RELEASE_ASSETS/gl-modem-community_${VERSION}-r1_all.ipk"
+ipk21="$RELEASE_ASSETS/gl-modem-community_${VERSION}-1_glinet-21.02_all.ipk"
 
 test -s "$apk25"
 test -s "$RELEASE_ASSETS/packages.adb"
 test -s "$ipk24"
 test -s "$ipk21"
-test -s "$ipkbe3600"
+
+if [ -n "$USIGN_SEC_FILE" ]; then
+	test -s "$USIGN_SEC_FILE"
+	test -s "$USIGN_PUB_FILE"
+	command -v "$USIGN_BIN" >/dev/null 2>&1
+	USIGN_KEY_ID=$("$USIGN_BIN" -F -p "$USIGN_PUB_FILE" | tr '[:upper:]' '[:lower:]')
+	test -n "$USIGN_KEY_ID"
+fi
+
+sign_index() {
+	[ -n "$USIGN_SEC_FILE" ] || return 0
+	"$USIGN_BIN" -S -m "$1" -s "$USIGN_SEC_FILE" -x "$1.sig"
+}
+
+publish_key() {
+	# $1 = releases/<version> directory
+	[ -n "$USIGN_SEC_FILE" ] || return 0
+	cp "$USIGN_PUB_FILE" "$1/$USIGN_KEY_ID.pub"
+}
+
+write_ipk_section() {
+	# $1 = target directory, $2 = ipk path, $3 = package version string
+	mkdir -p "$1"
+	cp "$2" "$1/"
+	size=$(wc -c <"$2" | tr -d ' ')
+	hash=$(sha256sum "$2" | awk '{print $1}')
+	{
+		printf 'Package: gl-modem-community\n'
+		printf 'Version: %s\n' "$3"
+		printf 'Depends: comgt, flock, jq, kmod-usb-acm, kmod-usb-serial-option, kmod-usb-net-rndis\n'
+		printf 'License: GPL-3.0-only\n'
+		printf 'Section: net\n'
+		printf 'Category: Network\n'
+		printf 'Maintainer: Rudimar Ronsoni <rudironsoni@users.noreply.github.com>\n'
+		printf 'Architecture: all\n'
+		printf 'Size: %s\n' "$size"
+		printf 'SHA256sum: %s\n' "$hash"
+		printf 'Filename: %s\n' "$(basename "$2")"
+		printf 'Description: Community modem definitions and compatibility drivers for GL.iNet firmware\n'
+	} >"$1/Packages"
+	gzip -c "$1/Packages" >"$1/Packages.gz"
+	sign_index "$1/Packages"
+}
+
+write_apk_section() {
+	# $1 = target directory
+	mkdir -p "$1"
+	cp "$apk25" "$1/"
+	cp "$RELEASE_ASSETS/packages.adb" "$1/"
+}
 
 rm -rf "$FEED_DIR"
-mkdir -p \
-	"$FEED_DIR/25.12" \
-	"$FEED_DIR/24.10" \
-	"$FEED_DIR/21.02" \
-	"$FEED_DIR/23.05-be3600"
 
-cp "$apk25" "$FEED_DIR/25.12/"
-cp "$RELEASE_ASSETS/packages.adb" "$FEED_DIR/25.12/"
+for arch in $ARCHS_2512; do
+	write_apk_section "$FEED_DIR/releases/25.12/packages/$arch/packages"
+done
 
-cp "$ipk24" "$FEED_DIR/24.10/"
-size24=$(wc -c <"$ipk24" | tr -d ' ')
-hash24=$(sha256sum "$ipk24" | awk '{print $1}')
-{
-	printf 'Package: gl-modem-community\n'
-	printf 'Version: %s-r1\n' "$VERSION"
-	printf 'Depends: comgt, flock, jq, kmod-usb-acm, kmod-usb-serial-option, kmod-usb-net-rndis\n'
-	printf 'License: GPL-3.0-only\n'
-	printf 'Section: net\n'
-	printf 'Category: Network\n'
-	printf 'Maintainer: Rudimar Ronsoni <rudironsoni@users.noreply.github.com>\n'
-	printf 'Architecture: aarch64_cortex-a53\n'
-	printf 'Size: %s\n' "$size24"
-	printf 'SHA256sum: %s\n' "$hash24"
-	printf 'Filename: %s\n' "$(basename "$ipk24")"
-	printf 'Description: Community modem definitions and compatibility drivers for GL.iNet firmware\n'
-} >"$FEED_DIR/24.10/Packages"
-gzip -c "$FEED_DIR/24.10/Packages" >"$FEED_DIR/24.10/Packages.gz"
+for arch in $ARCHS_2410; do
+	write_ipk_section "$FEED_DIR/releases/24.10/packages/$arch/packages" \
+		"$ipk24" "${VERSION}-r1"
+done
+publish_key "$FEED_DIR/releases/24.10"
 
-cp "$ipk21" "$FEED_DIR/21.02/"
-size21=$(wc -c <"$ipk21" | tr -d ' ')
-hash21=$(sha256sum "$ipk21" | awk '{print $1}')
-{
-	printf 'Package: gl-modem-community\n'
-	printf 'Version: %s-1\n' "$VERSION"
-	printf 'Depends: comgt, flock, jq, kmod-usb-acm, kmod-usb-serial-option, kmod-usb-net-rndis\n'
-	printf 'License: GPL-3.0-only\n'
-	printf 'Section: net\n'
-	printf 'Category: Network\n'
-	printf 'Maintainer: Rudimar Ronsoni <rudironsoni@users.noreply.github.com>\n'
-	printf 'Architecture: aarch64_cortex-a53\n'
-	printf 'Size: %s\n' "$size21"
-	printf 'SHA256sum: %s\n' "$hash21"
-	printf 'Filename: %s\n' "$(basename "$ipk21")"
-	printf 'Description: Community modem definitions and compatibility drivers for GL.iNet firmware\n'
-} >"$FEED_DIR/21.02/Packages"
-gzip -c "$FEED_DIR/21.02/Packages" >"$FEED_DIR/21.02/Packages.gz"
+for arch in $ARCHS_2102; do
+	write_ipk_section "$FEED_DIR/releases/21.02/packages/$arch/packages" \
+		"$ipk21" "${VERSION}-1"
+done
+publish_key "$FEED_DIR/releases/21.02"
 
-cp "$ipkbe3600" "$FEED_DIR/23.05-be3600/"
-sizebe3600=$(wc -c <"$ipkbe3600" | tr -d ' ')
-hashbe3600=$(sha256sum "$ipkbe3600" | awk '{print $1}')
-{
-	printf 'Package: gl-modem-community\n'
-	printf 'Version: %s-r1\n' "$VERSION"
-	printf 'Depends: adb, comgt, flock, jq, kmod-usb-acm, kmod-usb-serial-option, kmod-usb-net-qmi-wwan, kmod-usb-net-rndis, lua, luci-lib-nixio, uqmi\n'
-	printf 'License: GPL-3.0-only\n'
-	printf 'Section: net\n'
-	printf 'Category: Network\n'
-	printf 'Maintainer: Rudimar Ronsoni <rudironsoni@users.noreply.github.com>\n'
-	printf 'Architecture: aarch64_cortex-a53_neon-vfpv4\n'
-	printf 'Size: %s\n' "$sizebe3600"
-	printf 'SHA256sum: %s\n' "$hashbe3600"
-	printf 'Filename: %s\n' "$(basename "$ipkbe3600")"
-	printf 'Description: Community modem definitions and compatibility drivers for GL.iNet firmware\n'
-} >"$FEED_DIR/23.05-be3600/Packages"
-gzip -c "$FEED_DIR/23.05-be3600/Packages" >"$FEED_DIR/23.05-be3600/Packages.gz"
+# Deprecated legacy channel locations, kept for one release overlap.
+write_apk_section "$FEED_DIR/25.12"
+write_ipk_section "$FEED_DIR/24.10" "$ipk24" "${VERSION}-r1"
+write_ipk_section "$FEED_DIR/21.02" "$ipk21" "${VERSION}-1"
 
 make -C "$REPO_DIR" --no-print-directory generate-feed-index FEED_DIR="$FEED_DIR"

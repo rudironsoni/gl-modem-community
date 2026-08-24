@@ -1,0 +1,215 @@
+#!/bin/sh
+# SPDX-License-Identifier: GPL-3.0-only
+#
+# Generate deterministic index.html files for the published package feed.
+#
+# The feed follows the community-standard layout
+#   releases/<major.minor version>/packages/<package arch>/packages
+# with the opkg usign public key published at
+#   releases/<major.minor version>/<key-id>.pub
+# Legacy top-level channel directories (25.12, 24.10, 21.02) are kept for one
+# release overlap and receive a deprecation banner.
+set -eu
+
+if [ "$#" -ne 2 ]; then
+	printf 'Usage: %s FEED_DIR FEED_URL\n' "$0" >&2
+	exit 2
+fi
+
+FEED_DIR=$1
+FEED_URL=$2
+REPO_URL='https://github.com/rudironsoni/gl-modem-community'
+
+test -d "$FEED_DIR"
+
+release_label() {
+	case "$1" in
+		21.02) printf 'GL.iNet stock firmware 4.8.x/4.9.x, all supported routers (IPK)' ;;
+		24.10) printf 'OpenWrt 24 (IPK)' ;;
+		25.12) printf 'GL.iNet OpenWrt 25 (APK)' ;;
+		*)
+			printf 'Unknown feed release: %s\n' "$1" >&2
+			exit 1
+			;;
+	esac
+}
+
+release_format() {
+	case "$1" in
+		25.12) printf 'apk' ;;
+		*) printf 'ipk' ;;
+	esac
+}
+
+html_open() {
+	# $1 = page title
+	printf '<!DOCTYPE html>\n<html lang="en">\n<head>\n'
+	printf '<meta charset="utf-8">\n'
+	printf '<meta name="viewport" content="width=device-width, initial-scale=1">\n'
+	printf '<title>%s</title>\n</head>\n<body>\n' "$1"
+	printf '<h1>%s</h1>\n' "$1"
+}
+
+html_close() {
+	# $1 = relative link target for the parent listing, empty for none
+	if [ -n "$1" ]; then
+		printf '<p><a href="%s">Up</a> - ' "$1"
+	else
+		printf '<p>'
+	fi
+	printf '<a href="%s">Project repository</a></p>\n' "$REPO_URL"
+	printf '</body>\n</html>\n'
+}
+
+html_file_list() {
+	# $1 = directory
+	printf '<h2>Files</h2>\n<ul>\n'
+	for entry in "$1"/*; do
+		test -f "$entry" || continue
+		name=$(basename "$entry")
+		test "$name" != index.html || continue
+		printf '<li><a href="%s">%s</a></li>\n' "$name" "$name"
+	done
+	printf '</ul>\n'
+}
+
+write_section_index() {
+	# $1 = section dir, $2 = release version, $3 = package arch
+	section_url="$FEED_URL/releases/$2/packages/$3/packages"
+	{
+		html_open "gl-modem-community feed $2 ($3)"
+		printf '<p>%s</p>\n' "$(release_label "$2")"
+		if [ "$(release_format "$2")" = apk ]; then
+			printf '<p>Add this line to /etc/apk/repositories.d/customfeeds.list:</p>\n'
+			printf '<pre>%s/packages.adb</pre>\n' "$section_url"
+		else
+			printf '<p>Add this line to /etc/opkg/customfeeds.conf:</p>\n'
+			printf '<pre>src/gz gl-modem-community %s</pre>\n' "$section_url"
+		fi
+		html_file_list "$1"
+		html_close "../../../"
+	} >"$1/index.html"
+}
+
+write_arch_index() {
+	# $1 = arch dir, $2 = release version, $3 = package arch
+	{
+		html_open "gl-modem-community feed $2 ($3)"
+		printf '<p>%s</p>\n' "$(release_label "$2")"
+		printf '<ul>\n<li><a href="packages/">packages</a></li>\n</ul>\n'
+		html_close "../"
+	} >"$1/index.html"
+}
+
+write_packages_index() {
+	# $1 = packages dir, $2 = release version; lists the arch directories
+	{
+		html_open "gl-modem-community feed $2 architectures"
+		printf '<p>%s</p>\n' "$(release_label "$2")"
+		printf '<ul>\n'
+		for arch_dir in "$1"/*/; do
+			test -d "$arch_dir" || continue
+			arch=$(basename "$arch_dir")
+			printf '<li><a href="%s/">%s</a></li>\n' "$arch" "$arch"
+		done
+		printf '</ul>\n'
+		html_close "../"
+	} >"$1/index.html"
+}
+
+write_release_index() {
+	# $1 = release dir, $2 = release version
+	{
+		html_open "gl-modem-community feed release $2"
+		printf '<p>%s</p>\n' "$(release_label "$2")"
+		printf '<ul>\n<li><a href="packages/">packages</a></li>\n</ul>\n'
+		if [ "$(release_format "$2")" = ipk ]; then
+			key_listed=0
+			for key_file in "$1"/*.pub; do
+				test -f "$key_file" || continue
+				if [ "$key_listed" -eq 0 ]; then
+					printf '<h2>opkg signing key</h2>\n'
+					printf '<p>Download the key to /etc/opkg/keys/&lt;key-id&gt; (lowercase filename):</p>\n<ul>\n'
+					key_listed=1
+				fi
+				printf '<li><a href="%s">%s</a></li>\n' "$(basename "$key_file")" "$(basename "$key_file")"
+			done
+			[ "$key_listed" -eq 0 ] || printf '</ul>\n'
+		fi
+		html_close "../"
+	} >"$1/index.html"
+}
+
+write_legacy_index() {
+	# $1 = legacy dir, $2 = release version
+	{
+		html_open "gl-modem-community feed $2 (deprecated location)"
+		printf '<p>%s</p>\n' "$(release_label "$2")"
+		printf '<p><strong>Deprecated:</strong> this directory is kept for one release overlap. '
+		printf 'Switch to the new location:</p>\n'
+		if [ "$(release_format "$2")" = apk ]; then
+			printf '<pre>%s/releases/%s/packages/aarch64_cortex-a53/packages/packages.adb</pre>\n' \
+				"$FEED_URL" "$2"
+		else
+			printf '<pre>src/gz gl-modem-community %s/releases/%s/packages/&lt;package arch&gt;/packages</pre>\n' \
+				"$FEED_URL" "$2"
+		fi
+		html_file_list "$1"
+		html_close "../"
+	} >"$1/index.html"
+}
+
+releases_root=$FEED_DIR/releases
+test -d "$releases_root"
+
+release_items=""
+found=0
+for release_dir in "$releases_root"/*/; do
+	test -d "$release_dir" || continue
+	found=1
+	release=$(basename "$release_dir")
+	label=$(release_label "$release")
+
+	packages_root=$release_dir/packages
+	test -d "$packages_root"
+	for arch_dir in "$packages_root"/*/; do
+		test -d "$arch_dir" || continue
+		arch=$(basename "$arch_dir")
+		section_dir=${arch_dir%/}/packages
+		test -d "$section_dir"
+		write_section_index "$section_dir" "$release" "$arch"
+		write_arch_index "${arch_dir%/}" "$release" "$arch"
+	done
+	write_packages_index "$packages_root" "$release"
+	write_release_index "${release_dir%/}" "$release"
+	release_items="$release_items<li><a href=\"$release/\">$release</a> - $label</li>"
+done
+test "$found" -eq 1
+
+{
+	html_open 'gl-modem-community feed releases'
+	printf '<ul>\n%s\n</ul>\n' "$release_items"
+	html_close "../"
+} >"$releases_root/index.html"
+
+root_items="<li><a href=\"releases/\">releases</a> - one package per OS version</li>"
+for channel_dir in "$FEED_DIR"/*/; do
+	test -d "$channel_dir" || continue
+	channel=$(basename "$channel_dir")
+	case "$channel" in
+		releases) continue ;;
+		21.02|24.10|25.12) ;;
+		*)
+			printf 'Unknown feed channel: %s\n' "$channel" >&2
+			exit 1
+			;;
+	esac
+	write_legacy_index "${channel_dir%/}" "$channel"
+	root_items="$root_items<li><a href=\"$channel/\">$channel</a> - $(release_label "$channel") (deprecated location)</li>"
+done
+
+{
+	html_open 'gl-modem-community package feeds'
+	printf '<ul>\n%s\n</ul>\n' "$root_items"
+	html_close ""
+} >"$FEED_DIR/index.html"
