@@ -137,27 +137,34 @@ jobs:
           active=false
           if [[ -n "$baseline" ]]; then
             active=true
-            gh pr list \
-              --repo "$GITHUB_REPOSITORY" \
-              --state merged \
-              --label 'autorelease: pending' \
-              --limit 100 \
-              --json number,mergeCommit \
-              --jq '.[] | [.number, .mergeCommit.oid] | @tsv' |
-            while IFS=$'\t' read -r number merge_sha; do
+          fi
+          while IFS=$'\t' read -r number title merge_sha; do
+            retag=false
+            version="$(sed -n 's/.*release \([0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\).*/\1/p' <<< "$title")"
+            if [[ -n "$version" ]] && gh release view "v${version}" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+              retag=true
+            elif [[ -n "$baseline" ]]; then
               compare_status="$(gh api \
                 "repos/${GITHUB_REPOSITORY}/compare/${merge_sha}...${baseline}" \
                 --jq '.status')"
               case "$compare_status" in
-                ahead|identical)
-                  gh pr edit "$number" \
-                    --repo "$GITHUB_REPOSITORY" \
-                    --remove-label 'autorelease: pending' \
-                    --add-label 'autorelease: tagged'
-                  ;;
+                ahead|identical) retag=true ;;
               esac
-            done
-          fi
+            fi
+            if [[ "$retag" == true ]]; then
+              echo "Retagging merged release PR #${number} (${title}) as autorelease: tagged"
+              gh pr edit "$number" \
+                --repo "$GITHUB_REPOSITORY" \
+                --remove-label 'autorelease: pending' \
+                --add-label 'autorelease: tagged'
+            fi
+          done < <(gh pr list \
+            --repo "$GITHUB_REPOSITORY" \
+            --state merged \
+            --label 'autorelease: pending' \
+            --limit 100 \
+            --json number,title,mergeCommit \
+            --jq '.[] | [.number, .title, .mergeCommit.oid] | @tsv')
           echo "active=${active}" >> "$GITHUB_OUTPUT"
 
       - name: Create or update release PR
@@ -183,6 +190,19 @@ jobs:
           if [[ "$RELEASE_BASELINE_ACTIVE" == true && "$RELEASE_PRS_CREATED" != true ]]; then
             echo "Release Please baseline migration did not create a release PR" >&2
             exit 1
+          fi
+          if [[ "$RELEASE_PRS_CREATED" != true ]]; then
+            pending="$(gh pr list \
+              --repo "$GITHUB_REPOSITORY" \
+              --state merged \
+              --label 'autorelease: pending' \
+              --limit 1 \
+              --json number \
+              --jq 'length')"
+            if [[ "$pending" != 0 ]]; then
+              echo "Release Please did not create a PR because merged release PRs are still labeled autorelease: pending" >&2
+              exit 1
+            fi
           fi
           if [[ "$RELEASE_PRS_CREATED" == true ]]; then
             branch="$(jq -er '.[0].headBranchName' <<< "$RELEASE_PRS")"
