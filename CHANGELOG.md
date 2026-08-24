@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.4.0](https://github.com/rudironsoni/gl-modem-community/compare/v0.3.0...v0.4.0) (2026-08-24)
+
+
+### Features
+
+* single architecture-independent package per OS version with standard feed layout ([#81](https://github.com/rudironsoni/gl-modem-community/issues/81)) ([73b1c5e](https://github.com/rudironsoni/gl-modem-community/commit/73b1c5ef01e33d95fdcde39d0d02d4561a0f8d92))
+
+
+### Bug Fixes
+
+* **release:** retag published Release Please PRs so the next release can start ([#82](https://github.com/rudironsoni/gl-modem-community/issues/82)) ([82138ee](https://github.com/rudironsoni/gl-modem-community/commit/82138eec9bace3ce817df4414195ed8467c27246))
+
 ## [0.3.0](https://github.com/rudironsoni/gl-modem-community/compare/v0.2.14...v0.3.0) (2026-08-22)
 
 
