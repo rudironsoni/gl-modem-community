@@ -51,7 +51,7 @@ The stable public key paths are:
 - `keys/gl-modem-community.pem` and `keys/gl-modem-community.pem.sha256` (APK signing)
 - `keys/gl-modem-community-usign.pub` and `keys/gl-modem-community-usign.pub.sha256` (usign, IPK feed indexes)
 
-Do not add dates or release versions to key filenames. Key rotation requires a documented fingerprint, an overlap period, and an explicit migration plan. Never commit a private key or print it in logs. GitHub Actions reads `APK_SIGNING_PRIVATE_KEY` and `USIGN_SIGNING_PRIVATE_KEY` only from the protected `release-signing` environment.
+Do not add dates or release versions to key filenames. Key rotation requires a documented fingerprint, an overlap period, and an explicit migration plan. Never commit a private key or print it in logs. GitHub Actions reads `APK_SIGNING_PRIVATE_KEY` and `USIGN_SIGNING_PRIVATE_KEY` from repository or `release-signing` environment secrets. The signing job uses `environment: release-signing`, so either location is visible.
 
 Every release channel ships one architecture-independent package (`PKGARCH:=all`); adding a router adds an architecture directory to the feed, never a new package target. The feed follows the `releases/<version>/packages/<architecture>/<section>/` layout, and the stable channels are:
 
