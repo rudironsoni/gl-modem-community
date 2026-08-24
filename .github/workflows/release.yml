@@ -191,19 +191,6 @@ jobs:
             echo "Release Please baseline migration did not create a release PR" >&2
             exit 1
           fi
-          if [[ "$RELEASE_PRS_CREATED" != true ]]; then
-            pending="$(gh pr list \
-              --repo "$GITHUB_REPOSITORY" \
-              --state merged \
-              --label 'autorelease: pending' \
-              --limit 1 \
-              --json number \
-              --jq 'length')"
-            if [[ "$pending" != 0 ]]; then
-              echo "Release Please did not create a PR because merged release PRs are still labeled autorelease: pending" >&2
-              exit 1
-            fi
-          fi
           if [[ "$RELEASE_PRS_CREATED" == true ]]; then
             branch="$(jq -er '.[0].headBranchName' <<< "$RELEASE_PRS")"
             if [[ "$branch" != release-please--* ]]; then
@@ -679,23 +666,37 @@ jobs:
           generate_release_notes: true
 
       - name: Mark automated release PR as tagged
-        if: needs.merge-release-pr.outputs.release_pr_number != ''
         env:
           GH_TOKEN: ${{ github.token }}
           RELEASE_PR_NUMBER: ${{ needs.merge-release-pr.outputs.release_pr_number }}
+          RELEASE_TAG: ${{ needs.merge-release-pr.outputs.tag || needs.detect-release.outputs.tag }}
         shell: bash
         run: |
           set -euo pipefail
-          edit_args=(
-            "$RELEASE_PR_NUMBER"
-            --repo "$GITHUB_REPOSITORY"
-            --add-label 'autorelease: tagged'
-          )
-          if gh pr view "$RELEASE_PR_NUMBER" \
-            --repo "$GITHUB_REPOSITORY" \
-            --json labels \
-            --jq '.labels[].name' |
-            grep -Fxq 'autorelease: pending'; then
-            edit_args+=(--remove-label 'autorelease: pending')
+          retag_pr() {
+            number=$1
+            echo "Retagging merged release PR #${number} as autorelease: tagged"
+            gh pr edit "$number" \
+              --repo "$GITHUB_REPOSITORY" \
+              --remove-label 'autorelease: pending' \
+              --add-label 'autorelease: tagged'
+          }
+          if [[ -n "$RELEASE_PR_NUMBER" ]]; then
+            retag_pr "$RELEASE_PR_NUMBER"
           fi
-          gh pr edit "${edit_args[@]}"
+          published_version="${RELEASE_TAG#v}"
+          while IFS=$'\t' read -r number title; do
+            test -n "$number" || continue
+            version="$(sed -n 's/.*release \([0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\).*/\1/p' <<< "$title")"
+            if [[ -n "$published_version" && "$version" == "$published_version" ]]; then
+              retag_pr "$number"
+            elif [[ -n "$version" ]] && gh release view "v${version}" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+              retag_pr "$number"
+            fi
+          done < <(gh pr list \
+            --repo "$GITHUB_REPOSITORY" \
+            --state merged \
+            --label 'autorelease: pending' \
+            --limit 100 \
+            --json number,title \
+            --jq '.[] | [.number, .title] | @tsv')
