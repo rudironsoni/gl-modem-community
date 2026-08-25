@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.2](https://github.com/rudironsoni/gl-modem-community/compare/v0.4.1...v0.4.2) (2026-08-25)
+
+
+### Miscellaneous Chores
+
+* **deps:** bump actions/attest from 4.2.0 to 4.2.2 ([#87](https://github.com/rudironsoni/gl-modem-community/issues/87)) ([995de57](https://github.com/rudironsoni/gl-modem-community/commit/995de5797cec3f04eb5eb20845ba3a9e169f0f25))
+
 ## [0.4.1](https://github.com/rudironsoni/gl-modem-community/compare/v0.4.0...v0.4.1) (2026-08-24)
 
 
