@@ -1,5 +1,5 @@
 Package: gl-modem-community
-Version: 0.4.1-1
+Version: 0.4.2-1
 Depends: comgt, flock, jq, kmod-usb-acm, kmod-usb-serial-option, kmod-usb-net-rndis
 License: GPL-3.0-only
 Section: net
@@ -7,6 +7,6 @@ Category: Network
 Maintainer: Rudimar Ronsoni <rudironsoni@users.noreply.github.com>
 Architecture: all
 Size: 40602
-SHA256sum: b0967d4bf059852b85a13ccae4be3bb069b6fb372050bf2349adf68d8dcc2f63
-Filename: gl-modem-community_0.4.1-1_glinet-21.02_all.ipk
+SHA256sum: fb8bf2bd30c7ede7402f5e7e2597a68f6402dd915eff649cd5f3a9b8c5b6a3de
+Filename: gl-modem-community_0.4.2-1_glinet-21.02_all.ipk
 Description: Community modem definitions and compatibility drivers for GL.iNet firmware
