@@ -157,7 +157,7 @@ grep -Fq 'feed/releases/21.02/packages/aarch64_cortex-a53/packages' "$RELEASE_WO
 grep -Fq 'feed/releases/21.02/packages/aarch64_cortex-a53_neon-vfpv4/packages' "$RELEASE_WORKFLOW"
 grep -Fq 'packages.adb' "$RELEASE_WORKFLOW"
 grep -Fq 'actions/checkout@' "$RELEASE_WORKFLOW"
-grep -Fq 'actions/attest@f7c74d28b9d84cb8768d0b8ca14a4bac6ef463e6 # v4.2.0' "$RELEASE_WORKFLOW"
+grep -Fq 'actions/attest@1e69f48acb82d1966a394da916b4c1698aa569d6 # v4.2.2' "$RELEASE_WORKFLOW"
 grep -Fq 'target_commitish: ${{ needs.merge-release-pr.outputs.release_sha || needs.detect-release.outputs.source_sha }}' "$RELEASE_WORKFLOW"
 grep -Fq 'SBOM_FORMAT=apk' "$RELEASE_WORKFLOW"
 grep -Fq 'gl-modem-community.glinet21.ipk.cdx.json' "$RELEASE_WORKFLOW"
