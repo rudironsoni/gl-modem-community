@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.3](https://github.com/rudironsoni/gl-modem-community/compare/v0.4.2...v0.4.3) (2026-09-05)
+
+
+### Miscellaneous Chores
+
+* **deps:** bump debian from `abd67ff` to `8820086` in /tools/analysis-container ([#90](https://github.com/rudironsoni/gl-modem-community/issues/90)) ([9d99046](https://github.com/rudironsoni/gl-modem-community/commit/9d99046419d6442465f4541aa0425ae8395b5959))
+
 ## [0.4.2](https://github.com/rudironsoni/gl-modem-community/compare/v0.4.1...v0.4.2) (2026-08-25)
 
 
