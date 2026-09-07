@@ -379,6 +379,7 @@ verify-firmware-channels: CHANNEL_VERIFY_IMAGES = 1
 check-firmware-channels verify-firmware-channels:
 	tmp=$$(mktemp -d "$${TMPDIR:-/tmp}/gl-modem-channel-check.XXXXXX")
 	trap 'rm -rf "$$tmp"' EXIT HUP INT TERM
+	: >"$$tmp/metadata-drift"
 	for model in $$(jq -r '.channels[].api_model' "$(CHANNEL_MANIFEST)" | sort -u); do
 		curl --fail --silent --show-error --location \
 			"https://firmware-api.gl-inet.com/cloud-api/model/info?model=$$model" >"$$tmp/$$model.json"
@@ -427,10 +428,18 @@ check-firmware-channels verify-firmware-channels:
 		if [ "$$actual" != "$$expected" ]; then
 			printf 'GL.iNet channel drift detected for %s\nexpected: %s\nactual:   %s\n' \
 				"$$channel" "$$expected" "$$actual" >&2
-			exit 1
+			printf '%s\n' "$$channel" >>"$$tmp/metadata-drift"
+			continue
 		fi
 		printf 'channel metadata verified: %s\n' "$$channel"
-		[ "$(CHANNEL_VERIFY_IMAGES)" -eq 1 ] || continue
+	done
+	if [ -s "$$tmp/metadata-drift" ]; then
+		exit 1
+	fi
+	[ "$(CHANNEL_VERIFY_IMAGES)" -eq 1 ] || exit 0
+	jq -c '.channels[]' "$(CHANNEL_MANIFEST)" |
+	while IFS= read -r row; do
+		channel=$$(printf '%s\n' "$$row" | jq -r '.channel')
 		url=$$(printf '%s\n' "$$row" | jq -r '.artifact.url')
 		name=$$(printf '%s\n' "$$row" | jq -r '.artifact.name')
 		sha=$$(printf '%s\n' "$$row" | jq -r '.artifact.sha256')

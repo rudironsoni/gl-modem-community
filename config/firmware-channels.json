@@ -6,39 +6,39 @@
     {
       "channel": "stable",
       "api_model": "mt3000",
-      "glinet_version": "4.8.1",
+      "glinet_version": "4.9.0",
       "stage": "RELEASE",
-      "release_time": "2025-08-19 22:39:41",
+      "release_time": "2026-09-04 09:49:07",
       "artifact": {
-        "name": "mt3000-4.8.1-0819-1755615825.tar",
-        "url": "https://fw.gl-inet.com/firmware/mt3000/release/mt3000-4.8.1-0819-1755615825.tar",
-        "sha256": "ee038ee0f399c1454cc660dd47811b44697f5304e0f61af145c7dca6817d0e5c",
-        "size": 60929070
+        "name": "mt3000-4.9.0_release5-1094-0902-1788316686.tar",
+        "url": "https://fw.gl-inet.com/firmware/mt3000/release/mt3000-4.9.0_release5-1094-0902-1788316686.tar",
+        "sha256": "0e6dcecefb348d6de1535064789d98fdc796555c64c0d5b3c140507c2634a684",
+        "size": 73242650
       },
       "firmware": {
-        "openwrt_release": "21.02-SNAPSHOT",
+        "openwrt_release": "21.02-SNAPSHOT r15812+920-46b6ee7ffc",
         "target": "mediatek/mt7981",
         "architecture": "aarch64_cortex-a53",
         "kernel": "5.4.211",
         "package_manager": "opkg",
-        "cellular_stack": "legacy"
+        "cellular_stack": "modern"
       },
       "package_profile": "glinet21"
     },
     {
       "channel": "beta",
       "api_model": "mt3000",
-      "glinet_version": "4.9.0",
+      "glinet_version": "4.11.0",
       "stage": "TESTING",
-      "release_time": "2026-07-03 17:52:16",
+      "release_time": "2026-09-05 09:54:40",
       "artifact": {
-        "name": "mt3000-4.9.0_beta6-1047-0703-1783066682.tar",
-        "url": "https://fw.gl-inet.com/firmware/mt3000/testing/mt3000-4.9.0_beta6-1047-0703-1783066682.tar",
-        "sha256": "03a9ed1d99ca9728eca6042f06c56cea5df299cd1e168b5f9fb51663bda24a32",
-        "size": 73223281
+        "name": "mt3000-4.11.0_beta1-1112-0904-1788511848.tar",
+        "url": "https://fw.gl-inet.com/firmware/mt3000/testing/mt3000-4.11.0_beta1-1112-0904-1788511848.tar",
+        "sha256": "9fb640403b702a81c61745cdc96137880ea8133f169b36950f0eba4aaedb6ae0",
+        "size": 80183261
       },
       "firmware": {
-        "openwrt_release": "21.02-SNAPSHOT",
+        "openwrt_release": "21.02-SNAPSHOT r15812+926-46b6ee7ffc",
         "target": "mediatek/mt7981",
         "architecture": "aarch64_cortex-a53",
         "kernel": "5.4.211",
