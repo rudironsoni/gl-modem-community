@@ -22,10 +22,10 @@ jq -e '
 	([.channels[] | select(.channel == "stable" or .channel == "beta") | .package_profile] | unique) ==
 		["glinet21"] and
 	(.channels[] | select(.channel == "stable") |
-		.firmware.openwrt_release == "21.02-SNAPSHOT" and
-		.firmware.cellular_stack == "legacy") and
+		(.firmware.openwrt_release | startswith("21.02-SNAPSHOT")) and
+		.firmware.cellular_stack == "modern") and
 	(.channels[] | select(.channel == "beta") |
-		.firmware.openwrt_release == "21.02-SNAPSHOT" and
+		(.firmware.openwrt_release | startswith("21.02-SNAPSHOT")) and
 		.firmware.cellular_stack == "modern") and
 	(.channels[] | select(.channel == "openwrt24") |
 		.firmware.openwrt_release == "24.10.4 r28959-29397011cc") and
@@ -38,4 +38,5 @@ grep -Fq 'package-opkg: SDK_NAME = openwrt-sdk-24.10.4-mediatek-filogic' "$makef
 grep -Fq 'package prepare-apk-sdk: SDK_NAME = openwrt-sdk-25.12.5-mediatek-filogic' "$makefile"
 grep -Fq 'check-firmware-channels:' "$makefile"
 grep -Fq 'verify-firmware-channels:' "$makefile"
+grep -Fq 'metadata-drift' "$makefile"
 test ! -d "$repo_dir/scripts"

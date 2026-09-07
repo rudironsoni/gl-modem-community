@@ -17,8 +17,8 @@ and reproduce those checks.
 
 | Channel | GL.iNet release | Embedded OpenWrt | Kernel | Package manager | Cellular stack | Package target |
 | --- | --- | --- | --- | --- | --- | --- |
-| stable | 4.8.1 | `21.02-SNAPSHOT`, `mediatek/mt7981` | `5.4.211` | OPKG | Legacy `modem` stack | `make package-glinet21` |
-| beta | 4.9.0 beta6 | `21.02-SNAPSHOT`, `mediatek/mt7981` | `5.4.211` | OPKG | Modern `gl_cellular_manager` | `make package-glinet21` |
+| stable | 4.9.0 release5 | `21.02-SNAPSHOT r15812+920-46b6ee7ffc`, `mediatek/mt7981` | `5.4.211` | OPKG | Modern `gl_cellular_manager` | `make package-glinet21` |
+| beta | 4.11.0 beta1 | `21.02-SNAPSHOT r15812+926-46b6ee7ffc`, `mediatek/mt7981` | `5.4.211` | OPKG | Modern `gl_cellular_manager` | `make package-glinet21` |
 | openwrt24 | 4.9.0 op24 beta1 | `24.10.4 r28959-29397011cc`, `mediatek/filogic` | `6.6.110` | OPKG | Modern `gl_cellular_manager` | `make package-opkg` |
 | openwrt25 | 4.9.1 op25 beta3 | `25.12.5 r33051-f5dae5ece4`, `mediatek/filogic` | `6.12.94` | APK | Modern `gl_cellular_manager` | `make package` |
 
@@ -26,8 +26,8 @@ and reproduce those checks.
 
 | Channel | Artifact | SHA-256 |
 | --- | --- | --- |
-| stable | [`mt3000-4.8.1-0819-1755615825.tar`](https://fw.gl-inet.com/firmware/mt3000/release/mt3000-4.8.1-0819-1755615825.tar) | `ee038ee0f399c1454cc660dd47811b44697f5304e0f61af145c7dca6817d0e5c` |
-| beta | [`mt3000-4.9.0_beta6-1047-0703-1783066682.tar`](https://fw.gl-inet.com/firmware/mt3000/testing/mt3000-4.9.0_beta6-1047-0703-1783066682.tar) | `03a9ed1d99ca9728eca6042f06c56cea5df299cd1e168b5f9fb51663bda24a32` |
+| stable | [`mt3000-4.9.0_release5-1094-0902-1788316686.tar`](https://fw.gl-inet.com/firmware/mt3000/release/mt3000-4.9.0_release5-1094-0902-1788316686.tar) | `0e6dcecefb348d6de1535064789d98fdc796555c64c0d5b3c140507c2634a684` |
+| beta | [`mt3000-4.11.0_beta1-1112-0904-1788511848.tar`](https://fw.gl-inet.com/firmware/mt3000/testing/mt3000-4.11.0_beta1-1112-0904-1788511848.tar) | `9fb640403b702a81c61745cdc96137880ea8133f169b36950f0eba4aaedb6ae0` |
 | openwrt24 | [`mt3000-op-4.9.0-op24_beta1-1015-0528-1779955715.bin`](https://fw.gl-inet.com/firmware/mt3000-open/testing/mt3000-op-4.9.0-op24_beta1-1015-0528-1779955715.bin) | `320902010e976ce82843b121569913c4b1b2727df3a6ffbd0b2390a828c1e750` |
 | openwrt25 | [`mt3000-op-4.9.1-op25_beta3-1035-0721-1784638698.bin`](https://fw.gl-inet.com/firmware/mt3000-open/testing/mt3000-op-4.9.1-op25_beta3-1035-0721-1784638698.bin) | `5c15e3a5492c5ad5cb6015b200d18799b0d942ab7915e00eeeb60709495ab353` |
 

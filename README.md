@@ -25,7 +25,7 @@ The first driver targets the Fibocom FM350-GL on a GL.iNet GL-MT3000 (Beryl AX).
 
    - GL.iNet OpenWrt 25 (APK): `https://github.rudironsoni.com/gl-modem-community/feed/releases/25.12/`
    - OpenWrt 24 (IPK): `https://github.rudironsoni.com/gl-modem-community/feed/releases/24.10/`
-   - GL.iNet stock firmware 4.8.x/4.9.x, GL-MT3000 and GL-BE3600 (IPK): `https://github.rudironsoni.com/gl-modem-community/feed/releases/21.02/`
+   - GL.iNet stock firmware 4.8.x/4.9.x/4.11.x, GL-MT3000 and GL-BE3600 (IPK): `https://github.rudironsoni.com/gl-modem-community/feed/releases/21.02/`
 
 3. Follow the install path in [Install the current release](#install-the-current-release).
 4. Run the checks in [Verify the FM350 setup](#verify-the-fm350-setup) before relying on production traffic.
